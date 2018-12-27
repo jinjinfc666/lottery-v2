@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <title>彩票后台管理系统</title>
+    <!--[if lt IE 9]>
+    <meta http-equiv="refresh" content="0;ie.html" />
+    <![endif]-->
+
+    <link href="css/bootstrap.min14ed.css?v=3.3.6" rel="stylesheet">
+    <link href="css/font-awesome.min93e3.css?v=4.4.0" rel="stylesheet">
+    <link href="css/animate.min.css" rel="stylesheet">
+    <link href="css/style.min862f.css?v=4.1.0" rel="stylesheet">
+    <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="js/self_js.js"></script>
+    <script type="text/javascript">
+         $(document).ready(function () {
+            queryUserInfo();
+            queryPermission();
+        });
+        function parseDomain() {
+            var currURL = location.href;
+            var domain = '';
+            if (currURL.indexOf("http") >= 0) {
+                if (currURL.indexOf("/", currURL.indexOf("http") + 7) > 0) {
+                    domain = currURL.substring(0, currURL.indexOf("/", currURL
+                            .indexOf("http") + 7));
+                } else {
+                    domain = currURL;
+                }
+            }
+            if (typeof domain == 'undefined' || domain.length == 0) {
+                return '';
+            }
+            if (domain.indexOf(":", 7) > 0) {
+                domain = domain.substring(0, domain.indexOf(":", 7));
+            }
+            return domain;
+        }
+        function logout() {
+            var access_token=sessionStorage.getItem("access_token");
+            var token="Bearer " + access_token;
+            var domain=parseDomain();
+            var url=domain+"/lottery-api/security/logout";
+            $.ajax({
+                url: url,
+                type: "GET",
+                async: false, // 设置同步方式
+                data: {
+                },
+                dataType: "json",
+//                    beforeSend: function(xhr) {
+//                        xhr.setRequestHeader("Authorization");
+//                    },
+//                    headers:{"Authorization":token},
+                beforeSend: function (XMLHttpRequest) {
+                    XMLHttpRequest.setRequestHeader("Authorization", token);
+                },
+                error: function () {
+                    
+                },
+                success: function (data) {
+                    if(data.status=="1"){
+                        var url = "index.html";
+                        window.location.href = url;
+                    }else{
+                        var url = "index.html";
+                        window.location.href = url;
+                    }
+                }
+            });
+        }
+        function queryUserInfo(){
+            var access_token=sessionStorage.getItem("access_token");
+            var token="Bearer " + access_token;
+            var domain=parseDomain();
+            var url=domain+"/lottery-api/users/queryNowUserInfo";
+            $.ajax({
+                url: url,
+                type: "GET",
+                async: false, // 设置同步方式
+                data: {
+                },
+                dataType: "json",
+//                    beforeSend: function(xhr) {
+//                        xhr.setRequestHeader("Authorization");
+//                    },
+//                    headers:{"Authorization":token},
+                beforeSend: function (XMLHttpRequest) {
+                    XMLHttpRequest.setRequestHeader("Authorization", token);
+                },
+                error: function () {
+                    alert("系统错误");
+                },
+                success: function (data) {
+                    if(data.status=="1"){
+                        document.getElementsByTagName('strong')[0].textContent=data.data.userName;
+                    }else{
+                        alert(getErroe(data.error_code));
+                    }
+                }
+            });
+        }
+        function queryPermission(){
+            var access_token=sessionStorage.getItem("access_token");
+            var token="Bearer " + access_token;
+            var domain=parseDomain();
+            var url=domain+"/lottery-api/SysUser/queryGetByUserId";
+            $.ajax({
+                url: url,
+                type: "GET",
+                async: false, // 设置同步方式
+                data: {
+                },
+                dataType: "json",
+//                    beforeSend: function(xhr) {
+//                        xhr.setRequestHeader("Authorization");
+//                    },
+//                    headers:{"Authorization":token},
+                beforeSend: function (XMLHttpRequest) {
+                    XMLHttpRequest.setRequestHeader("Authorization", token);
+                },
+                error: function () {
+                    alert("系统错误");
+                    return false;
+                },
+                success: function (data) {
+                    if(data.status=="1"){
+                        if(data.data.length>0){
+                            $.each(data.data, function(key, val) {  
+                                if(val=='ROLE_CUSTOMER_SERVICE'||val=='ROLE_MANAGER'){
+                                    document.getElementById("betting").style.display="inline";
+                                }
+                                if(val=='ROLE_ADMIN'||val=='ROLE_CUSTOMER_SERVICE'||val=='ROLE_FINANCE'){
+                                    document.getElementById("administrator").style.display="inline";
+                                    document.getElementById("member_management").style.display="inline";
+                                }
+                                if(val=='ROLE_ADMIN'){
+                                    document.getElementById("agent").style.display="inline";
+                                }
+                                if(val=='ROLE_CUSTOMER_SERVICE'||val=='ROLE_MANAGER'||val=='ROLE_FINANCE'){
+                                    document.getElementById("system_operation").style.display="inline";
+                                }
+                                if(val=='ROLE_ADMIN'||val=='ROLE_RISK_MANAGEMENT'){
+                                    document.getElementById("login_log").style.display="inline";
+                                    document.getElementById("operation_log").style.display="inline";
+                                }
+                                if(val=='ROLE_CUSTOMER_SERVICE'){
+                                    document.getElementById("signupRecRecord").style.display="inline";
+                                    document.getElementById("siteMessage").style.display="inline";
+                                }
+                            });
+                        }
+                    }else{
+                        alert(getErroe(data.error_code));
+                    }
+                }
+            });
+        }
+    </script>
+</head>
+
+<body class="fixed-sidebar full-height-layout gray-bg" style="overflow:hidden">
+    <div id="wrapper">
+        <!--左侧导航开始-->
+        <nav class="navbar-default navbar-static-side" role="navigation">
+            <div class="nav-close"><i class="fa fa-times-circle"></i>
+            </div>
+            <div class="sidebar-collapse">
+                <ul class="nav" id="side-menu">
+                    <li class="nav-header">
+                        <div class="dropdown profile-element">
+                            <span><img alt="image" class="img-circle" src="img/avatar.png" /></span>
+                            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                                <span class="clear">
+                               <span class="block m-t-xs"><strong class="font-bold" id="userName"></strong><b class="caret"></b></span>
+                                <!--<span class="text-muted text-xs block">超级管理员<b class="caret"></b></span>-->
+                                </span>
+                            </a>
+                            <ul class="dropdown-menu animated fadeInRight m-t-xs">
+                                <li>
+                                    <a class="J_menuItem" href="PersonalCenter/SiteMessage/SiteMessageAll.html?v=4.0">站内信</a>
+                                    <a class="J_menuItem"  href="PersonalCenter/updatePWD.html?v=4.0">修改密码</a>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <!--<a class="J_menuItem"  href="PersonalCenter/updatePWD.html?v=4.0">修改密码</a>-->
+                                    <a class="J_menuItem"  onclick="logout()">安全退出</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+<!--                    <li>
+                        <a class="J_menuItem">
+                            <i class="fa fa-home"></i>
+                            <span class="nav-label">首页</span>
+                        </a>
+                    </li>-->
+                    <li>
+                        <a  class="J_menuItem"  >
+                            <i class="fa fa-columns"></i> 
+                            <span class="nav-label">平台报表</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a class="J_menuItem"  href="PPL.html?v=4.0">平台盈亏</a>
+                            </li>
+                            <li>
+                                <a class="J_menuItem"  href="report/flow_account_details.html?v=4.0">流水账目明细</a>
+                            </li>
+                            <li>
+                                <a class="J_menuItem"  href="report/MReport.html?v=4.0">会员盈亏报表</a>
+                            </li>
+                            <li>
+                                <a class="J_menuItem"  href="report/MReportTeam.html?v=4.0">团队盈亏报表(新)</a>
+                            </li>
+                            <li>
+                                <a class="J_menuItem"  href="report/LReport.html?v=4.0">团队盈亏报表(彩种查询)</a>
+                            </li>
+                            <li>
+                                <a class="J_menuItem"  href="report/OrderSource.html?v=4.0">订单数据来源</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li id="administrator" style="display: none;">
+                        <a class="J_menuItem">
+                            <i class="fa fa fa-bar-chart-o"></i>
+                            <span class="nav-label">系统管理</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a class="J_menuItem">
+                                    <i class="fa fa fa-bar-chart-o"></i>
+                                    <span class="nav-label">系统代码管理</span>
+                                    <span class="fa arrow"></span>
+                                </a>
+                                <ul class="nav nav-second-level">
+                                    <li>
+                                        <a class="J_menuItem"  href="SystemConfiguration/SysCodeBigType.html?v=4.0">&nbsp;&nbsp;&nbsp;&nbsp;代码类型管理</a>
+                                    </li>
+                                    <li>
+                                        <a class="J_menuItem"  href="SystemConfiguration/SmallLotteryType.html?v=4.0">&nbsp;&nbsp;&nbsp;&nbsp;彩种类型配置</a>
+                                    </li>
+                                    <li>
+                                        <a class="J_menuItem"  href="SystemConfiguration/SmallFlowType.html?v=4.0">&nbsp;&nbsp;&nbsp;&nbsp;流水类型配置</a>
+                                    </li>
+                                    <li>
+                                        <a class="J_menuItem"  href="SystemConfiguration/SmallLuckyDraw.html?v=4.0">&nbsp;&nbsp;&nbsp;&nbsp;幸运抽奖配置</a>
+                                    </li>
+                                    <li>
+                                        <a class="J_menuItem"  href="SystemConfiguration/SmallPaymentPlatform.html?v=4.0">&nbsp;&nbsp;&nbsp;&nbsp;支付平台配置</a>
+                                    </li>
+                                    <li>
+                                        <a class="J_menuItem"  href="SystemConfiguration/SmallSignInDay.html?v=4.0">&nbsp;&nbsp;&nbsp;&nbsp;签到活动配置</a>
+                                    </li>
+                                    <li>
+                                        <a class="J_menuItem"  href="SystemConfiguration/SmallPTypeClassicfication.html?v=4.0">&nbsp;&nbsp;&nbsp;&nbsp;玩法类型配置</a>
+                                    </li>
+                                    <li>
+                                        <a class="J_menuItem"  href="SystemConfiguration/SmallLotteryConfig.html?v=4.0">&nbsp;&nbsp;&nbsp;&nbsp;彩种属性配置</a>
+                                    </li>
+                                    <li>
+                                        <a class="J_menuItem"  href="SystemConfiguration/SmallWithdraw.html?v=4.0">&nbsp;&nbsp;&nbsp;&nbsp;提款设置</a>
+                                    </li>
+                                    <li>
+                                        <a class="J_menuItem"  href="SystemConfiguration/SmallSystemParameters.html?v=4.0">&nbsp;&nbsp;&nbsp;&nbsp;系统参数设置</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a class="J_menuItem"  href="SystemConfiguration/IpBlackList.html?v=4.0">黑名单</a>
+                            </li>
+                            <li>
+                                <a class="J_menuItem"  href="SystemConfiguration/playType.html?v=4.0">彩种玩法配置</a>
+                            </li>
+                            <li>
+                                <a class="J_menuItem">
+                                    <i class="fa fa fa-bar-chart-o"></i>
+                                    <span class="nav-label">权限控制</span>
+                                    <span class="fa arrow"></span>
+                                </a>
+                                <ul class="nav nav-second-level">
+                                    <li>
+                                        <a class="J_menuItem"  href="SystemConfiguration/PermissionConfiguration/sysUserInfo.html?v=4.0">&nbsp;&nbsp;&nbsp;&nbsp;系统用户配置</a>
+                                    </li>
+                                    <li>
+                                        <a class="J_menuItem"  href="SystemConfiguration/PermissionConfiguration/sysRole.html?v=4.0">&nbsp;&nbsp;&nbsp;&nbsp;系统角色配置</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a class="J_menuItem">
+                                    <i class="fa fa fa-bar-chart-o"></i>
+                                    <span class="nav-label">充值配置</span>
+                                    <span class="fa arrow"></span>
+                                </a>
+                                <ul class="nav nav-second-level">
+                                    <li>
+                                        <a class="J_menuItem"  href="SystemConfiguration/deposit/payType.html?v=4.0">&nbsp;&nbsp;&nbsp;&nbsp;充值方式</a>
+                                    </li>
+                                    <li>
+                                        <a class="J_menuItem"  href="SystemConfiguration/deposit/payChannel.html?v=4.0">&nbsp;&nbsp;&nbsp;&nbsp;充值渠道</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li id="member_management" style="display: none;">
+                        <a class="J_menuItem">
+                            <i class="fa fa-edit"></i> 
+                            <span class="nav-label">会员管理</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a class="J_menuItem"  href="MemberManagement/UserInfo.html?v=4.0">会员信息</a>
+                            </li>
+                            <li>
+                                <a class="J_menuItem"  href="MemberManagement/UserAccount.html?v=4.0">会员账户</a>
+                            </li>
+                            <li id="agent" style="display: none;">
+                                <a class="J_menuItem"  href="MemberManagement/agent.html?v=4.0">代理维护</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li id="system_operation" style="display: none;">
+                        <a class="J_menuItem">
+                            <i class="fa fa-edit"></i> 
+                            <span class="nav-label">系统操作</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a class="J_menuItem"  href="SystemOperation/UnifiedWwithdrawal.html?v=4.0">期次处理</a>
+                            </li>
+                            <li id="betting" style="display: none;">
+                                <a class="J_menuItem"  href="report/lottery_transaction.html?v=4.0">投注订单</a>
+                            </li>
+                            <li>
+                                <a class="J_menuItem"  href="report/DWDetails.html?v=4.0">存取款明细列表</a>
+                            </li>
+<!--                            <li>
+                                <a class="J_menuItem"  href="updatePWD.html?v=4.0">修改密码</a>
+                            </li>-->
+                        </ul>
+                    </li>
+                    <li>
+                        <a class="J_menuItem">
+                            <i class="fa fa-edit"></i> 
+                            <span class="nav-label">个人中心</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a class="J_menuItem"  href="PersonalCenter/updatePWD.html?v=4.0">修改密码</a>
+                            </li>
+                            <li id="signupRecRecord" style="display: none;">
+                                <a class="J_menuItem"  href="PersonalCenter/SignupRecRecord.html?v=4.0">查看签到记录</a>
+                            </li>
+                            <li id="login_log" style="display: none;">
+                                <a class="J_menuItem">
+                                    <i class="fa fa fa-bar-chart-o"></i>
+                                    <span class="nav-label">登录日志</span>
+                                    <span class="fa arrow"></span>
+                                </a>
+                                <ul class="nav nav-second-level">
+                                     <li>
+                                        <a class="J_menuItem"  href="PersonalCenter/LogBackstage.html?v=4.0">&nbsp;&nbsp;&nbsp;&nbsp;查看后台管理人员</a>
+                                    </li>
+                                    <li>
+                                        <a class="J_menuItem"  href="PersonalCenter/LogFrontDesk.html?v=4.0">&nbsp;&nbsp;&nbsp;&nbsp;查看用户</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li id="operation_log" style="display: none;">
+                                <a class="J_menuItem">
+                                    <i class="fa fa fa-bar-chart-o"></i>
+                                    <span class="nav-label">操作日志</span>
+                                    <span class="fa arrow"></span>
+                                </a>
+                                <ul class="nav nav-second-level">
+                                     <li>
+                                        <a class="J_menuItem"  href="PersonalCenter/operation_log/OperationLogBackstage.html?v=4.0">&nbsp;&nbsp;&nbsp;&nbsp;后台管理人员操作日志</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li id="siteMessage" style="display: none;">
+                                <a class="J_menuItem">
+                                    <i class="fa fa fa-bar-chart-o"></i>
+                                    <span class="nav-label">站内信</span>
+                                    <span class="fa arrow"></span>
+                                </a>
+                                <ul class="nav nav-second-level">
+                                    <li>
+                                        <a class="J_menuItem"  href="PersonalCenter/SiteMessage/SiteMessageAll.html?v=4.0">&nbsp;&nbsp;&nbsp;&nbsp;全部消息</a>
+                                    </li>
+                                    <li>
+                                        <a class="J_menuItem"  href="PersonalCenter/SiteMessage/SiteMessageRead.html?v=4.0">&nbsp;&nbsp;&nbsp;&nbsp;已读消息</a>
+                                    </li>
+                                    <li>
+                                        <a class="J_menuItem"  href="PersonalCenter/SiteMessage/SiteMessageNoRead.html?v=4.0">&nbsp;&nbsp;&nbsp;&nbsp;未读消息</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <!--左侧导航结束-->
+        <!--右侧部分开始-->
+        <div id="page-wrapper" class="gray-bg dashbard-1">
+            <div class="row border-bottom">
+                <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0;background-color: #2f4050">
+                    <div class="navbar-header"><a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
+                    </div>
+                    <ul class="nav navbar-top-links navbar-right">
+                        <li class="dropdown hidden-xs">
+                            <a class="right-sidebar-toggle" aria-expanded="false" onclick="logout()">
+                                <i class="fa fa fa-sign-out"></i> 退出
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                <div class="row content-tabs">
+                    <nav class="page-tabs J_menuTabs">
+                        <div class="page-tabs-content">
+                            <!--<a href="javascript:;" class="active J_menuTab" data-id="index_v1.html">首页</a>-->
+                        </div>
+                    </nav>
+                </div>
+            </div>
+            <div class="row J_mainContent" id="content-main">
+                <iframe class="J_iframe" name="iframe0" width="100%" height="100%" src="" frameborder="0" data-id="PPL.html?v=4.0" seamless></iframe>
+            </div>
+        </div>
+        <!--右侧部分结束-->
+    </div>
+    <script src="js/jquery.min.js?v=2.1.4"></script>
+    <script src="js/bootstrap.min.js?v=3.3.6"></script>
+    <script src="js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+    <script src="js/plugins/layer/layer.min.js"></script>
+    <script src="js/tjs.min.js?v=4.1.0"></script>
+    <script type="text/javascript" src="js/contabs.min.js"></script>
+    <script src="js/plugins/pace/pace.min.js"></script>
+</body>
+</html>

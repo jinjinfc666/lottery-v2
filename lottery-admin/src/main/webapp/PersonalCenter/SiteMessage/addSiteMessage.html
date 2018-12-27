@@ -1,0 +1,161 @@
+<html>
+    <head>
+        <title>添加代码类型</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style type="text/css">
+        table{
+            font-size: 15px;
+            margin:20px auto;
+            border-radius: 5px;
+        }
+        table th,table td{
+            padding:5px;
+            text-align: center;
+            border: 1px solid #999999;
+        }
+        table tr:hover{
+            background-color: #ccccff;
+        }
+        .numinput:hover{
+            border:2px solid red ;
+        }
+        .submitinput{
+            float: right;
+            font-weight: bold;
+            border-radius: 5px;
+            margin-top: 30px;
+            margin-right: 10%;
+            font-size: 20px;
+            border:1px solid #999999;;
+            background-color: #99ffff;
+            width: 100px;
+            height: 50px;
+        }
+        .submitinput:hover{
+            cursor: pointer;
+            background-color: #ccccff;
+        }
+        .thstyle{
+            /*background-color:#20a0ff;*/
+            text-align: right;
+            /*color: #fff;*/
+            /*border: solid 0px #fff;*/
+            width:30%
+        }
+        </style>
+        <link href="../../css/bootstrap.min14ed.css" rel="stylesheet">
+        <script type="text/javascript" src="../../js/jquery-1.10.2.min.js"></script>
+        <script language="javascript" src="../../js/layer/layer.min.js"></script>
+        <script src="../../js/self_js.js" type="text/javascript"></script>
+        <script type="text/javascript">
+            function parseDomain() {
+                var currURL = location.href;
+                var domain = '';
+                if (currURL.indexOf("http") >= 0) {
+                    if (currURL.indexOf("/", currURL.indexOf("http") + 7) > 0) {
+                        domain = currURL.substring(0, currURL.indexOf("/", currURL
+                                .indexOf("http") + 7));
+                    } else {
+                        domain = currURL;
+                    }
+                }
+                if (typeof domain == 'undefined' || domain.length == 0) {
+                    return '';
+                }
+                if (domain.indexOf(":", 7) > 0) {
+                    domain = domain.substring(0, domain.indexOf(":", 7));
+                }
+                return domain;
+            }
+            function insert(){
+                updateToken();
+                var sendIds = document.getElementById('sendIds').value;
+                var title = document.getElementById('title').value;
+                var content = document.getElementById('content').value;
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/sys/site-msg/add";
+                var data=JSON.stringify({
+                    "sendIds":sendIds,
+                    "title":title,
+                    "content":content
+                });
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    async: false, // 设置同步方式
+                    data: data,
+                    dataType: "json",
+                    contentType:"application/json",
+//                    beforeSend: function(xhr) {
+//                        xhr.setRequestHeader("Authorization");
+//                    },
+//                    headers:{"Authorization":token},
+                    beforeSend: function (XMLHttpRequest) {
+         		XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function () {
+                        alert("系统错误");
+                    },
+                    success: function (data) {
+                        if(data.status===1){
+                            alert("添加成功！！！");
+                            var wz = parent.layer.getFrameIndex(window.name);
+                            parent.location.reload();
+                            parent.layer.close(wz);
+                        }else if(data.status==0){
+                            alert(getErroe(data.error_code));
+                        }
+                    }
+                });
+            }
+            //获取url
+            function getValue(){
+                //首先获取地址
+                var url = window.location.href;
+                //获取传值
+                var arr = url.split("?");
+                //判断是否有传值
+                if(arr.length == 1){
+                        return null;
+                }
+                //获取get传值的个数
+                var value_arr = arr[1].split("&");
+                //循环生成返回的对象
+                var obj = {};
+                for(var i = 0; i < value_arr.length; i++){
+                        var key_val = value_arr[i].split("=");
+                        obj[key_val[0]]=decodeURI(key_val[1]);
+                }
+                return obj;
+            }
+        </script>
+    </head>
+    <body style="background-color: #f3f3f4;">
+        <input type="hidden" id="bigCodeName" name="bigCodeName" value="" />
+        <table width="500px" cellspacing="0" cellpadding="5">
+            <tr>
+                <th class="thstyle">接收人</th>
+                <td><input type="text" id="sendIds" name="sendIds" value="" style="width:200px;" class="form-control" /></td>
+            </tr>
+<!--            <tr id="tableTR">
+            </tr>-->
+            <tr>
+                <th class="thstyle">标题</th>
+                <td><input type="text" id="title" name="title" value="" style="width:200px;" class="form-control" /></td>
+            </tr>
+            <tr>
+                <th class="thstyle">正文</th>
+                <td><input type="text" id="content" name="content" value="" style="width:200px;" class="form-control" /></td>
+            </tr>
+        </table>
+        <script>
+            var wz = parent.layer.getFrameIndex(window.name);
+        </script>
+        <div style="margin-left:330px;">
+            <button class="btn btn-primary" style="width:100px" type="submit" onclick="insert()">提交</button>
+        </div>
+    </body>
+</html>

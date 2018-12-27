@@ -1,0 +1,255 @@
+<html>
+    <head>
+        <title>添加代码类型</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style type="text/css">
+            table{
+                font-size: 15px;
+                margin:20px auto;
+                border-radius: 5px;
+            }
+            table th,table td{
+                padding:5px;
+                text-align: center;
+                border: 1px solid #999999;
+            }
+            table tr:hover{
+                background-color: #ccccff;
+            }
+            .numinput:hover{
+                border:2px solid red ;
+            }
+            .submitinput{
+                float: right;
+                font-weight: bold;
+                border-radius: 5px;
+                margin-top: 30px;
+                margin-right: 10%;
+                font-size: 20px;
+                border:1px solid #999999;;
+                background-color: #99ffff;
+                width: 100px;
+                height: 50px;
+            }
+            .submitinput:hover{
+                cursor: pointer;
+                background-color: #ccccff;
+            }
+
+              .draggable-element {
+                    display: inline-block;
+                    width: 200px;
+                    height: 200px;
+                    background: white;
+                    border: 1px solid rgb(196, 196, 196);
+                    line-height: 200px;
+                    text-align: center;
+                    margin: 10px;
+                    color: rgb(51, 51, 51);
+                    font-size: 30px;
+                    cursor: move;
+              }
+
+              .drag-list {
+                    width: 500px;
+                    margin: 0 auto;
+              }
+
+              .drag-list > li {
+                    list-style: none;
+                    background: rgb(255, 255, 255);
+                    border: 1px solid rgb(196, 196, 196);
+                    margin: 5px 0;
+                    font-size: 24px;
+
+            /*	display: inline-block;
+                    width: 130px;
+                    padding: 6px 6px 6px 12px;
+                    vertical-align: top;*/
+              }
+
+              .drag-list .title {
+                    display: inline-block;
+                    width: 350px;
+                    padding: 6px 6px 6px 12px;
+                    vertical-align: top;
+              }
+
+              .drag-list .drag-area {
+                    display: inline-block;
+                    background: rgb(158, 211, 179);
+                    width: 60px;
+                    height: 40px;
+                    vertical-align: top;
+                    float: right;
+                    cursor: move;
+              }
+        </style>
+        <link href="../css/bootstrap.min14ed.css" rel="stylesheet">
+        <script type="text/javascript" src="../js/jquery-1.10.2.min.js"></script>
+        <script language="javascript" src="../js/layer/layer.min.js"></script>
+        <script src="../js/self_js.js" type="text/javascript"></script>
+        <script src="../js/drag-arrange.js" type="text/javascript"></script>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                var obj = {};
+                obj=getValue();
+                document.getElementById('lotteryType').value=obj['lotteryType'];
+                querySysCode();
+            });
+            function parseDomain() {
+                var currURL = location.href;
+                var domain = '';
+                if (currURL.indexOf("http") >= 0) {
+                    if (currURL.indexOf("/", currURL.indexOf("http") + 7) > 0) {
+                        domain = currURL.substring(0, currURL.indexOf("/", currURL
+                                .indexOf("http") + 7));
+                    } else {
+                        domain = currURL;
+                    }
+                }
+                if (typeof domain == 'undefined' || domain.length == 0) {
+                    return '';
+                }
+                if (domain.indexOf(":", 7) > 0) {
+                    domain = domain.substring(0, domain.indexOf(":", 7));
+                }
+                return domain;
+            }
+            function querySysCode(){
+               updateToken();
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var lotteryType = document.getElementById('lotteryType').value;
+                var smallSeq = $("#smallSeq").attr("id");
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/settingPlayType/queryPlayType";
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    async: false, // 设置同步方式
+                    data: {
+                        lotteryType:lotteryType
+                    },
+                    dataType: "json",
+//                    beforeSend: function(xhr) {
+//                        xhr.setRequestHeader("Authorization");
+//                    },
+//                    headers:{"Authorization":token},
+                    beforeSend: function (XMLHttpRequest) {
+         		XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function () {
+                        alert("系统错误");
+                    },
+                    success: function (data) {
+                        if(data.status==1){
+                            $.each(data.data, function(key, val) { 
+                                $("#" + smallSeq).append("<li style=\"500px;\" ><span class=\"title\" id=\""+val.id+"\">"+val.classification+"</span><span class=\"drag-area\" id=\""+val.id+"\">"+val.seq+"</span></li>"); 
+                            });
+                        }else if(data.status==0){
+                            alert(getErroe(data.error_code));
+                        }
+                    }
+                });
+            }
+            function updateSmallSeq(){
+                updateToken();
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var lotteryType = document.getElementById('lotteryType').value;
+                var allId=getDrag();
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/settingPlayType/updatePlayTypeSeq";
+                $.ajax({
+                    url: url,
+                    type: "PUT",
+                    async: false, // 设置同步方式
+                    data: {
+                        lotteryType:lotteryType,
+                        allId:allId
+                    },
+                    dataType: "json",
+//                    beforeSend: function(xhr) {
+//                        xhr.setRequestHeader("Authorization");
+//                    },
+//                    headers:{"Authorization":token},
+                    beforeSend: function (XMLHttpRequest) {
+         		XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function () {
+                        alert("系统错误");
+                    },
+                    success: function (data) {
+                        if(data.status===1){
+                            alert("修改成功！！！");
+                        }else if(data.status==0){
+                            alert(getErroe(data.error_code));
+                        }
+                    }
+                });
+            }
+            //获取url
+            function getValue(){
+                //首先获取地址
+                var url = window.location.href;
+                //获取传值
+                var arr = url.split("?");
+                //判断是否有传值
+                if(arr.length == 1){
+                        return null;
+                }
+                //获取get传值的个数
+                var value_arr = arr[1].split("&");
+                //循环生成返回的对象
+                var obj = {};
+                for(var i = 0; i < value_arr.length; i++){
+                        var key_val = value_arr[i].split("=");
+                        obj[key_val[0]]=decodeURI(key_val[1]);
+                }
+                return obj;
+            }
+        </script>
+    </head>
+    <body>
+        <input type="hidden" id="lotteryType" name="lotteryType" value="" />
+        <br />
+        <br />
+        <section class="showcase showcase-2">
+          <ul class="drag-list" id="smallSeq">
+              
+          </ul>
+        </section>
+        <br />
+        <br />
+        <br />
+        <div style="margin-left:500px;">
+            <input class="btn btn-primary" type="button" value="提交" onclick="updateSmallSeq()"/>
+        </div>
+
+        <script type="text/javascript">
+          $(function() {
+                  $('.draggable-element').arrangeable();
+                  $('li').arrangeable({dragSelector: '.drag-area'});
+          });
+        function getDrag(){
+               var str = new Array();
+                $("ul li span").each(function () {
+                      str.push($(this).attr("id"));
+                });
+                var strt=uniq(str).join(",");
+                return strt;
+        }  
+        function uniq(array){
+            var temp = []; //一个新的临时数组
+            for(var i = 0; i < array.length; i++){
+                if(temp.indexOf(array[i]) == -1){
+                    temp.push(array[i]);
+                }
+            }
+            return temp;
+        }
+        </script>
+    </body>
+</html>

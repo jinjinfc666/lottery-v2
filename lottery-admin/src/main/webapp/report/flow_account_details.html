@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>彩票后台管理系统</title>
+        <style>
+            .text_time{
+                width: 150px;
+                height: 35px;
+                background: #ffffff;
+            }
+            .thCenter{
+                text-align: center;
+            }
+        </style>
+        <link href="../css/bootstrap.min14ed.css" rel="stylesheet">
+        <link href="../css/font-awesome.min93e3.css" rel="stylesheet">
+        <link href="../css/animate.min.css" rel="stylesheet">
+        <link href="../css/animate.min.css" rel="stylesheet">
+        <link href="../css/style.min862f.css" rel="stylesheet">
+        <script type="text/javascript" src="../js/jquery-1.10.2.min.js"></script>
+        <script src="../js/bootstrap.min.js" type="text/javascript"></script>
+        <script src="../js/plugins/layer/layer.min.js" type="text/javascript"></script>
+        <script src="../js/content.min.js" type="text/javascript"></script>
+        <script src="../js/self_js.js" type="text/javascript"></script>
+        <script language="javascript" src="../js/layer/layer.min.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                queryType();
+                document.getElementById('startTime').value=getNowFormatDate();
+                document.getElementById('endTime').value=getNowFormatDate();
+                searchrecord("search");
+            });
+            function queryType(){
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var selectid = $("#operationType").attr("id");
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/report/userFlowDetail/type";
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    async: false, // 设置同步方式
+                    data: {},
+                    dataType: "json",
+//                    beforeSend: function(xhr) {
+//                        xhr.setRequestHeader("Authorization");
+//                    },
+//                    headers:{"Authorization":token},
+                    beforeSend: function (XMLHttpRequest) {
+         		XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function () {
+                        alert("系统错误");
+                    },
+                    success: function (data) {
+                        if(data.status==1){
+                            $.each(data.data, function(key, val) {  
+                                     $("#" + selectid).append("<option value='"+key+"'>"+val.remark+"</option>");
+                            }) 
+                        }else if(data.status==0){
+                            alert(getErroe(data.error_code));
+                        }
+                    }
+                });
+            }
+            function parseDomain() {
+                var currURL = location.href;
+                var domain = '';
+                if (currURL.indexOf("http") >= 0) {
+                    if (currURL.indexOf("/", currURL.indexOf("http") + 7) > 0) {
+                        domain = currURL.substring(0, currURL.indexOf("/", currURL
+                                .indexOf("http") + 7));
+                    } else {
+                        domain = currURL;
+                    }
+                }
+                if (typeof domain == 'undefined' || domain.length == 0) {
+                    return '';
+                }
+                if (domain.indexOf(":", 7) > 0) {
+                    domain = domain.substring(0, domain.indexOf(":", 7));
+                }
+                return domain;
+            }
+            function searchrecord(str) {
+                var pageIndex=page(str);
+                var tableid = $("#tableTRTD").attr("id");
+                var sumAmount = $("#sumAmount").attr("id");
+                var userName = document.getElementById('userName').value;
+                var amountStart = document.getElementById('amountStart').value;
+                var amountEnd = document.getElementById('amountEnd').value;
+                var operationType = document.getElementById('operationType').value;
+                var startTime = document.getElementById('startTime').value;
+                var endTime = document.getElementById('endTime').value;
+                startTime=startTimeStr(startTime);
+                endTime=endTimeStr(endTime);
+                if((new Date(startTime.replace(/-/g,"\/"))) > (new Date(endTime.replace(/-/g,"\/")))){
+                    alert('开始时间不能大于结束时间');
+                    return false;
+                }
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/report/userFlowDetail";
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    async: false, // 设置同步方式
+                    data: {
+                        userName: userName, 
+                        amountStart:amountStart,
+                        amountEnd:amountEnd,
+                        operationType:operationType,
+                        startTime:startTime,
+                        endTime:endTime,
+                        pageIndex:pageIndex
+                    },
+                    dataType: "json",
+//                    beforeSend: function(xhr) {
+//                        xhr.setRequestHeader("Authorization");
+//                    },
+//                    headers:{"Authorization":token},
+                    beforeSend: function (XMLHttpRequest) {
+         		XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function () {
+                        alert("系统错误");
+                    },
+                    success: function (data) {
+                        if(data.status===1){
+                            document.getElementById('totalNumber').value = data.data.totalNumber;
+                            document.getElementById('totalPages').value = data.data.totalPages;
+                            document.getElementById('pageIndex_button').value = data.data.pageIndex;
+                            $("#" + tableid + "tr").remove();
+                            $("#" + tableid).empty();
+                            $("#" + sumAmount + "tr").remove();
+                            $("#" + sumAmount).empty();
+                            $("#" + sumAmount).append("<tr><th></th><th>变动金额总计："+data.sumAmount+"</th><th></th><th></th><th></th><th></th><th></th></tr>");
+                            $.each(data.data.content, function(key, val) {   
+                                var remark="";
+                                if(val[0].remark!=null&&val[0].remark!=''){
+                                    if(val[0].remark=='in'){
+                                        remark="转入";
+                                    }else if(val[0].remark=='out'){
+                                        remark="转出";
+                                    }else{
+                                        remark =val[0].remark;
+                                    }
+                                }
+                                $("#" + tableid).append("<tr>\n\
+                                <td class=\"thCenter\">"+val[1].userName+"</td>\n\
+                                <td class=\"thCenter\">"+val[0].amount+"</td>\n\
+                                <td class=\"thCenter\">"+val[0].preAmount+"</td>\n\
+                                <td class=\"thCenter\">"+val[0].postAmount+"</td>\n\
+                                <td class=\"thCenter\">"+ConvertJSONDateToJSDateObject(""+val[0].createTime+"")+"</td>\n\
+                                <td class=\"thCenter\">"+val[2].remark+"</td>\n\
+                                <td class=\"thCenter\">"+remark+"</td>\n\
+                                </tr>"); 
+                            });
+                        }else if(data.status==0){
+                            alert(getErroe(data.error_code));
+                        }
+                        
+                    }
+                });
+            }
+            function queryDetails(id){
+                var url = "queryDetails.html?id="+id;
+                $.layer({
+                    type: 2,
+                    title: '查看投注信息',
+                    maxmin: false,
+                    shift: 'top',
+                    shadeClose: false,
+                    area: ['700px', '620px'],
+                    offset: ['50px', ''],
+                    close: function (index) {
+
+                    },
+                    iframe: {src: encodeURI(url)}
+                });
+            }
+            function page(str){
+                var pageIndex=null;
+                var pageIndexOld=document.getElementById('pageIndex_button').value;
+                var totalPages=document.getElementById('totalPages').value;
+                if(str=='button'){
+                    pageIndex=document.getElementById('pageIndex_button').value;
+                }else if(str=='search'){
+                    pageIndex=1;
+                }else if(str=='upPage'){
+                    if(pageIndexOld<=1){
+                        pageIndex=1;
+                    }else{
+                        pageIndex=parseInt(pageIndexOld)-parseInt(1);
+                    }
+                }else if(str=='downPage'){
+                    var total=parseInt(pageIndexOld)+parseInt(1);
+                    if(parseInt(total)>parseInt(totalPages)){
+                        pageIndex=totalPages;
+                    }else{
+                        pageIndex=total;
+                    }
+                }else if(str=='finalPage'){
+                    pageIndex=totalPages;
+                }
+                return pageIndex;
+            }
+            function checkButton(){
+               var pageIndex_button=document.getElementById('pageIndex_button').value;;
+               var totalPages=document.getElementById('totalPages').value;
+               if(parseInt(pageIndex_button)>parseInt(totalPages)){
+                   alert("输入的页数有误！！！");
+                   return false;
+               }else{
+                   searchrecord('button');
+               }
+            }
+        </script>
+        <script type="text/javascript" src="../js/showdate.js"></script>
+    </head>
+    <body class="gray-bg">
+        <br />
+        <div class="row  border-bottom white-bg dashboard-header">
+            <form class="form-horizontal" method="get">
+                <div class="form_box" style="width: 100%;">
+                    <div class="input-group" style="margin-left: 20px;">
+                        用户名：<input type="text" class="form-control" id="userName" name="userName" style="width:150px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        最小金额：<input type="text" class="form-control" id="amountStart" name="amountStart" style="width:150px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        最大金额：<input type="text" class="form-control" id="amountEnd" name="amountEnd" style="width:150px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        流水类型：<select id="operationType" name="operationType" style="width:150px;" class="form-control">
+                            <option value="">--流水类型--</option>
+                        </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        开始时间：<input type="text" id="startTime" placeholder="选择开始时间" onClick="return Calendar('startTime');" class="text_time" name="startTime" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        结束时间：<input type="text" id="endTime" placeholder="选择结束时间" onClick="return Calendar('endTime');" class="text_time" name="endTime" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <span> 
+                            <button type="button" class="btn btn-primary" style="height:32px;" onclick="searchrecord('search')">搜索
+                            </button> 
+                        </span>
+                    </div>
+                </div>
+            </form>
+            </br >
+            </br >
+            </br >
+            <div class="ibox-content">
+                <table class="table table-striped table-bordered table-hover dataTables-example">
+                    <thead>
+                        <tr>
+                            <th class="thCenter">用户名</th>
+                            <th class="thCenter">变动金额</th>
+                            <th class="thCenter">变动前金额</th>
+                            <th class="thCenter">变动后金额</th>
+                            <th class="thCenter">时间</th>
+                            <th class="thCenter">类别</th>
+                            <th class="thCenter">备注</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableTRTD">
+                        
+                    </tbody>
+                    <tfoot id="sumAmount">
+                        
+                    </tfoot>
+                </table>
+<!--                <div class="btn-group" style="float: right; padding-left: 20px">
+                    <button type="button" class="btn btn-white"><i class="fa fa-chevron-left"></i>
+                    </button>
+                    <button class="btn btn-white">1</button>
+                    <button class="btn btn-white  active">2</button>
+                    <button class="btn btn-white">3</button>
+                    <button class="btn btn-white">4</button>
+                    <button type="button" class="btn btn-white"><i class="fa fa-chevron-right"></i>
+                    </button>
+                </div>-->
+                <div class="input-group" style="width: 850px; float: right">
+                    总记录数：<input type="text" class="form-control" value="" id="totalNumber" style="width:50px;" readonly="readonly">
+                    总页数：<input type="text" class="form-control" value="" id="totalPages" style="width:50px;" readonly="readonly">&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" class="btn btn-primary" onclick="searchrecord('search')">首页</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" class="btn btn-primary" onclick="searchrecord('upPage')">上一页</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" class="btn btn-primary" onclick="searchrecord('downPage')">下一页</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" class="btn btn-primary" onclick="searchrecord('finalPage')">尾页</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <input type="text" class="form-control" value="" id="pageIndex_button" style="width:90px;" onkeyup="this.value = this.value.replace(/[^0-9]+/, '');" size="3">
+                        <button type="button" class="btn btn-primary" onclick="return checkButton()">跳到</button>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

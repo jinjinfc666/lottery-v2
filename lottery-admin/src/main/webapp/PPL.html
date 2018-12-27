@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>彩票后台管理系统</title>
+        <style>
+            .text_time{
+                width: 100px;
+                height: 35px;
+                background: #ffffff;	
+            }
+        </style>
+        <link href="css/bootstrap.min14ed.css" rel="stylesheet">
+        <link href="css/font-awesome.min93e3.css" rel="stylesheet">
+        <link href="css/animate.min.css" rel="stylesheet">
+        <link href="css/animate.min.css" rel="stylesheet">
+        <link href="css/style.min862f.css" rel="stylesheet">
+        <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+        <script src="js/bootstrap.min.js" type="text/javascript"></script>
+        <script src="js/plugins/layer/layer.min.js" type="text/javascript"></script>
+        <script src="js/content.min.js" type="text/javascript"></script>
+        <script src="js/self_js.js" type="text/javascript"></script>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                document.getElementById('startTime').value=getNowFormatDate();
+                document.getElementById('endTime').value=tomorrow();
+                queryType();
+            });
+            function change(){
+                queryPlayType();
+            }
+            function queryType(){
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var lotteryType = $("#lotteryType").attr("id");
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/report/loyTstRecord/lotteTypes";
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    async: false, // 设置同步方式
+                    data: {},
+                    dataType: "json",
+//                    beforeSend: function(xhr) {
+//                        xhr.setRequestHeader("Authorization");
+//                    },
+//                    headers:{"Authorization":token},
+                    beforeSend: function (XMLHttpRequest) {
+         		         XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function () {
+                        alert("系统错误");
+                    },
+                    success: function (data) {
+                        if(data.status==1){
+                            $.each(data.data, function(key, val) {  
+                                     $("#" + lotteryType).append("<option value='"+val.codeName+"'>"+val.remark+"</option>");
+                            }) 
+                        }else if(data.status==0){
+                            alert(getErroe(data.error_code));
+                        }
+                    }
+                });
+            }
+            function queryPlayType(){
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var lotteryType = document.getElementById('lotteryType').value;
+                var playTypeid = $("#playTypeid").attr("id");
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/settingPlayType/queryPlayType";
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    async: false, // 设置同步方式
+                    data: {
+                        lotteryType:lotteryType
+                    },
+                    dataType: "json",
+//                    beforeSend: function(xhr) {
+//                        xhr.setRequestHeader("Authorization");
+//                    },
+//                    headers:{"Authorization":token},
+                    beforeSend: function (XMLHttpRequest) {
+         		XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function () {
+                        alert("系统错误");
+                    },
+                    success: function (data) {
+                        if(data.status==1){
+                            $("#" + playTypeid + "option").remove();
+                            $("#" + playTypeid).empty();
+                            $("#" + playTypeid).append("<option value=''>--玩法--</option>");
+                            $.each(data.data, function(key, val) { 
+                                $("#" + playTypeid).append("<option value='"+val.id+"'>"+val.classification+"-----"+val.ptDesc+"</option>");
+                            }) 
+                        }else if(data.status==0){
+                            alert(getErroe(data.error_code));
+                        }
+                    }
+                });
+            }
+            function parseDomain() {
+                var currURL = location.href;
+                var domain = '';
+                if (currURL.indexOf("http") >= 0) {
+                    if (currURL.indexOf("/", currURL.indexOf("http") + 7) > 0) {
+                        domain = currURL.substring(0, currURL.indexOf("/", currURL
+                                .indexOf("http") + 7));
+                    } else {
+                        domain = currURL;
+                    }
+                }
+                if (typeof domain == 'undefined' || domain.length == 0) {
+                    return '';
+                }
+                if (domain.indexOf(":", 7) > 0) {
+                    domain = domain.substring(0, domain.indexOf(":", 7));
+                }
+                return domain;
+            }
+            function searchrecord() {
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var lotteryType = document.getElementById('lotteryType').value;
+                var startTime = document.getElementById('startTime').value;
+                var endTime = document.getElementById('endTime').value;
+                var issueNum = document.getElementById('issueNum').value;
+                var playTypeid = document.getElementById('playTypeid').value;
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/report/PPL";
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    async: false, // 设置同步方式
+                    data: {
+                        codeName:lotteryType,
+                        startTime:startTime,
+                        endTime:endTime,
+                        issueNum:issueNum,
+                        playTypeid:playTypeid
+                    },
+                    dataType: "json",
+//                    beforeSend: function(xhr) {
+//                        xhr.setRequestHeader("Authorization");
+//                    },
+//                    headers:{"Authorization":token},
+                    beforeSend: function (XMLHttpRequest) {
+         		XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function () {
+                        alert("系统错误");
+                    },
+                    success: function (data) {
+                        if(data.status===1){
+                            document.getElementById('freezingFunds').value=data.data[0].freezingFunds;
+                            document.getElementById('freezingRedFunds').value=data.data[0].freezingRedFunds;
+                            document.getElementById('allBalances').value=data.data[0].allBalances;
+                            document.getElementById('allRedBalances').value=data.data[0].allRedBalances;
+                            document.getElementById('recharge').value=data.data[0].recharge;
+                            document.getElementById('withdraw').value=data.data[0].withdraw;
+                            document.getElementById('betting').value=data.data[0].betting;
+                            document.getElementById('cancelAmount').value=data.data[0].cancelAmount;
+                            document.getElementById('winning').value=data.data[0].winning;
+                            document.getElementById('rebate').value=data.data[0].rebate;
+                            document.getElementById('platformProfit').value=data.data[0].platformProfit;
+                        }else if(data.status==0){
+                            alert(getErroe(data.error_code));
+                        }
+                    }
+                });
+            }
+        </script>
+        <script type="text/javascript" src="js/showdate.js"></script>
+    </head>
+    <body class="gray-bg">
+        <br />
+        <div class="row  border-bottom white-bg dashboard-header">
+            <form class="form-horizontal" method="get">
+                    <div class="input-group" style="width: 100%;height: 50px;">
+                        开始时间：<input type="text" id="startTime" placeholder="选择开始时间" onClick="return Calendar('startTime');" class="text_time" name="startTime" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        结束时间：<input type="text" id="endTime" placeholder="选择结束时间" onClick="return Calendar('endTime');" class="text_time" name="endTime" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        彩种：<select id="lotteryType" name="lotteryType" style="width:150px;" class="form-control" onchange="change()">
+                            <option value="">--选择彩种--</option>
+                        </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        期号：<input type="text" class="form-control" id="issueNum" name="issueNum" style="width:150px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        玩法：<select id="playTypeid" name="playTypeid" style="width:200px;" class="form-control">
+                        </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <span>
+                            <button type="button" class="btn btn-primary" style="height:32px;" onclick="searchrecord()">搜索
+                            </button> 
+                        </span>
+                    </div>
+            </form>
+            </br >
+            </br >
+            </br >
+            <div class="ibox-content">
+                <table class="table table-striped table-bordered table-hover dataTables-example">
+                    <thead id="totalTRTD">
+                        <tr>
+                            <th style="color:red;backgroundcolor:red;">主钱包冻结资金</th>
+                            <th><input id="freezingFunds" type="text" disabled="disabled"></th>
+                        </tr>
+                        <tr>
+                            <th style="color:red;backgroundcolor:red;">红包钱包冻结资金</th>
+                            <th><input id="freezingRedFunds" type="text" disabled="disabled"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableTRTD">
+                        <tr>
+                            <td style="color:red;backgroundcolor:red;">主钱包所有余额</td>
+                            <td><input id="allBalances" type="text" disabled="disabled"></td>
+                        </tr>
+                        <tr>
+                            <td style="color:red;backgroundcolor:red;">红包钱包所有余额</td>
+                            <td><input id="allRedBalances" type="text" disabled="disabled"></td>
+                        </tr>
+                        <tr>
+                            <td style="color:red;backgroundcolor:red;">充值</td>
+                            <td><input id="recharge" type="text" disabled="disabled"></td>
+                        </tr>
+                        <tr>
+                            <td style="color:red;backgroundcolor:red;">提现</td>
+                            <td><input id="withdraw" type="text" disabled="disabled"></td>
+                        </tr>
+                        <tr>
+                            <td style="color:red;backgroundcolor:red;">投注</td>
+                            <td><input id="betting" type="text" disabled="disabled"></td>
+                        </tr>
+                        <tr>
+                            <td style="color:red;backgroundcolor:red;">撤单</td>
+                            <td><input id="cancelAmount" type="text" disabled="disabled"></td>
+                        </tr>
+                        <tr>
+                            <td style="color:red;backgroundcolor:red;">中奖</td>
+                            <td><input id="winning" type="text" disabled="disabled"></td>
+                        </tr>
+                        <tr>
+                            <td style="color:red;backgroundcolor:red;">返点</td>
+                            <td><input id="rebate" type="text" disabled="disabled"></td>
+                        </tr>
+                        <tr>
+                            <td style="color:red;backgroundcolor:red;">平台盈亏</td>
+                            <td><input id="platformProfit" type="text" disabled="disabled"></td>
+                        </tr>
+                    </tbody>
+<!--                    <tfoot id="sumAmount">
+                        
+                    </tfoot>-->
+                </table>
+<!--                <div class="btn-group" style="float: right; padding-left: 20px">
+                    <button type="button" class="btn btn-white"><i class="fa fa-chevron-left"></i>
+                    </button>
+                    <button class="btn btn-white">1</button>
+                    <button class="btn btn-white  active">2</button>
+                    <button class="btn btn-white">3</button>
+                    <button class="btn btn-white">4</button>
+                    <button type="button" class="btn btn-white"><i class="fa fa-chevron-right"></i>
+                    </button>
+                </div>-->
+<!--                <div class="input-group" style="width: 450px; float: right">
+                    总记录数：<input type="text" class="form-control" value="" id="totalNumber" style="width:50px;" readonly="readonly">
+                    总页数：<input type="text" class="form-control" value="" id="totalPages" style="width:50px;" readonly="readonly">&nbsp;&nbsp;&nbsp;&nbsp;
+                    <input type="text" class="form-control" value="" id="pageIndex_button" style="width:90px;" onkeyup="this.value = this.value.replace(/[^0-9]+/, '');" size="3">
+                        <button type="button" class="btn btn-primary" onclick="searchrecord('button')">跳到</button>
+                </div>-->
+            </div>
+        </div>
+    </body>
+</html>

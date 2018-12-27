@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.jll</groupId>
+	<artifactId>lottery-parent</artifactId>
+	<version>${revision}</version>
+	<packaging>pom</packaging>
+	<name>lottery parent</name>
+	<description>lottery parent</description>
+	
+	<properties>
+		<revision>2.0.0</revision>
+		<main.basedir>${basedir}</main.basedir>
+		
+		<spring-version>4.3.6.RELEASE</spring-version>
+		<log4j-version>2.8.1</log4j-version>
+		<jackson-version>2.6.3</jackson-version>
+		<redis-version>2.9.0</redis-version>
+		<spring-data-redis-version>1.8.0.RELEASE</spring-data-redis-version>
+		<jetty-version>9.4.2.v20170220</jetty-version>
+		<httpunit-version>1.7.2</httpunit-version>
+		<quartz-version>2.2.1</quartz-version>
+		<java.version>1.8</java.version>
+	</properties>
+	
+	<!-- maven依赖 -->
+    <dependencyManagement>
+		<dependencies>
+			<!-- <dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-parent</artifactId>
+				<version>1.5.9.RELEASE</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-quartz</artifactId>
+				<version>1.5.9.RELEASE</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency> -->
+			
+		</dependencies>
+	</dependencyManagement>
+	
+	<modules>
+		<module>lottery-quartz</module>
+		<!-- Samples are built via the invoker plugin -->
+		<module>lottery-api</module>
+		<!--module>lottery-admin</module-->
+	</modules>
+			
+	
+ </project>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+    <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    <title>login</title>
+    <link rel="stylesheet" type="text/css" href="css/normalize.css" />
+    <link rel="stylesheet" type="text/css" href="css/demo.css" />
+    <style>
+        #thumburlShow{
+            cursor: pointer;
+        }
+    </style>
+    <!--必要样式-->
+    <link rel="stylesheet" type="text/css" href="css/component.css" />
+    <style>
+        .demo-1 .large-header {
+            background-image: url('img/blue.jpg');
+        }
+        
+    </style>
+        
+    <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="js/self_js.js"></script>
+    <script type="text/javascript">
+        function parseDomain() {
+            var currURL = location.href;
+            var domain = '';
+            if (currURL.indexOf("http") >= 0) {
+                if (currURL.indexOf("/", currURL.indexOf("http") + 7) > 0) {
+                    domain = currURL.substring(0, currURL.indexOf("/", currURL
+                            .indexOf("http") + 7));
+                } else {
+                    domain = currURL;
+                }
+            }
+            if (typeof domain == 'undefined' || domain.length == 0) {
+                return '';
+            }
+            if (domain.indexOf(":", 7) > 0) {
+                domain = domain.substring(0, domain.indexOf(":", 7));
+            }
+           return domain;
+        }
+        function update(){
+            updateToken();
+            var access_token=sessionStorage.getItem("access_token");
+            var token="Bearer " + access_token;
+            var oldPWD=document.getElementById('oldPWD').value;
+            var newPWD=document.getElementById('newPWD').value;
+            var checkPWD=document.getElementById('checkPWD').value;
+            
+            if(newPWD==''||checkPWD==''||oldPWD==''){
+                alert("请完善信息！！！");
+                return false;
+            }
+            if(checkPWD!=newPWD){
+                alert("两次密码不一致，请重新输入!!!");
+                return false;
+            }
+            var data=JSON.stringify({
+                    "oldPwd":oldPWD,
+                    "newPwd":newPWD,
+                    "confirmPwd":checkPWD
+            });
+            var domain=parseDomain();
+            var url=domain+"/lottery-api/users/attrs/login-pwd";
+            $.ajax({
+                url: url,
+                type: "POST",
+                async: false, // 设置同步方式
+                data: data,
+                dataType: "json",
+                contentType:"application/json",
+                beforeSend: function (XMLHttpRequest) {
+                    XMLHttpRequest.setRequestHeader("Authorization", token);
+                }, 
+                error: function () {
+                    $.messager.alert('错误', '操作失败！', 'Error');
+                },
+                success: function (data) {
+                    if(data.status===1){
+                        alert("修改成功！！！");
+                        document.getElementById('oldPWD').value =null;
+                        document.getElementById('newPWD').value =null;
+                        document.getElementById('checkPWD').value =null;
+                    }else if(data.status==0){
+                        alert(getErroe(data.error_code));
+                    }
+                }
+            });
+        }
+        document.onkeydown = function (e) {
+            var e = e || event;
+            if (e.keyCode == 13) {
+                update();
+            }
+        }
+    </script>
+    </head>
+    <body>
+        <input type="hidden" id="jsSessionId" name="jsSessionId" />
+        <div class="container demo-1">
+            <div class="content">
+                <div id="large-header" class="large-header">
+                    <canvas id="demo-canvas"></canvas>
+                    <div class="logo_box">
+                        <h3>请定期修改密码，以确保账户的安全</h3>
+                        <form action="#" name="f" method="post">
+                            <div class="input_outer">
+                                <span class="us_uer"></span>
+                                <input name="oldPWD" id="oldPWD" class="text" style="color: #FFFFFF !important" value="" type="text" autocomplete="off" placeholder="请输旧密码">
+                            </div>
+                            <div class="input_outer">
+                                <span class="us_uer"></span>
+                                <input name="newPWD" id="newPWD" class="text" style="color: #FFFFFF !important" type="password" value="" autocomplete="off" placeholder="请输入新密码">
+                            </div>
+                            <div class="input_outer">
+                                <span class="us_uer"></span>
+                                <input name="checkPWD" id="checkPWD" class="text" style="color: #FFFFFF !important; position:absolute; z-index:100;" autocomplete="off" value="" type="password" placeholder="重复新密码">
+                            </div>
+                            <div class="mb2">
+                                <a class="act-but submit" href="javascript:;" onclick="update()" style="color: #FFFFFF">修改密码</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div><!-- /container -->
+        <script src="js/TweenLite.min.js"></script>
+        <script src="js/EasePack.min.js"></script>
+        <script src="js/rAF.js"></script>
+        <script src="js/demo-1.js"></script>
+    </body>
+</html>

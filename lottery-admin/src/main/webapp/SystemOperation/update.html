@@ -1,0 +1,270 @@
+<html>
+    <head>
+        <title>添加代码类型</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style type="text/css">
+        table{
+            font-size: 15px;
+            margin:20px auto;
+            border-radius: 5px;
+        }
+        table th,table td{
+            padding:5px;
+            text-align: center;
+            border: 1px solid #999999;
+        }
+        table tr:hover{
+            background-color: #ccccff;
+        }
+        .numinput:hover{
+            border:2px solid red ;
+        }
+        .submitinput{
+            float: right;
+            font-weight: bold;
+            border-radius: 5px;
+            margin-top: 30px;
+            margin-right: 10%;
+            font-size: 20px;
+            border:1px solid #999999;;
+            background-color: #99ffff;
+            width: 100px;
+            height: 50px;
+        }
+        .submitinput:hover{
+            cursor: pointer;
+            background-color: #ccccff;
+        }
+        </style>
+        <link href="../css/bootstrap.min14ed.css" rel="stylesheet">
+        <script type="text/javascript" src="../js/jquery-1.10.2.min.js"></script>
+        <script language="javascript" src="../js/layer/layer.min.js"></script>
+        <script src="../js/self_js.js" type="text/javascript"></script>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                var obj = {};
+                obj=getValue();
+                document.getElementById('lotteryType').value=obj['lotteryType'];
+                document.getElementById('issueNum').value=obj['issueNum'];
+                document.getElementById('state').value=obj['state'];
+                document.getElementById('endTime').value=obj['endTime'];
+            });
+            function withdrawal(){
+                updateToken();
+                var lotteryType = document.getElementById('lotteryType').value;
+                var issueNum = document.getElementById('issueNum').value;
+                var state = document.getElementById('state').value;
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/sys/oper/issue/"+issueNum+"/disbale";
+                var data=JSON.stringify({
+                    "lottoType":lotteryType
+                });
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    async: false, // 设置同步方式
+                    data:data,
+                    dataType: "json",
+                    contentType:"application/json", 
+//                    beforeSend: function(xhr) {
+//                        xhr.setRequestHeader("Authorization");
+//                    },
+//                    headers:{"Authorization":token},
+                    beforeSend: function (XMLHttpRequest) {
+         		XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function () {
+                        alert("系统错误");
+                    },
+                    success: function (data) {
+                        if(data.status==1){
+                            alert("期次作废成功！！！");
+                        }else if(data.status==0){
+                            alert(getErroe(data.error_code));
+                        }
+                    }
+                });
+            }
+            function ward(){
+                updateToken();
+                var lotteryType = document.getElementById('lotteryType').value;
+                var issueNum = document.getElementById('issueNum').value;
+                var state = document.getElementById('state').value;
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/sys/oper/issue/"+issueNum+"/payout";
+                var data=JSON.stringify({
+                    "lottoType":lotteryType
+                });
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    async: false, // 设置同步方式
+                    data:data,
+                    dataType: "json",
+                    contentType:"application/json", 
+//                    beforeSend: function(xhr) {
+//                        xhr.setRequestHeader("Authorization");
+//                    },
+//                    headers:{"Authorization":token},
+                    beforeSend: function (XMLHttpRequest) {
+         		XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function () {
+                        alert("系统错误");
+                    },
+                    success: function (data) {
+                        if(data.status==1){
+                            alert("派奖成功！！！");
+                        }else if(data.status==0){
+                            alert(getErroe(data.error_code));
+                        }
+                    }
+                });
+            }
+            function reAward(){
+                updateToken();
+                var lotteryType = document.getElementById('lotteryType').value;
+                var issueNum = document.getElementById('issueNum').value;
+                var state = document.getElementById('state').value;
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/sys/oper/issue/"+issueNum+"/re-payout";
+                var data=JSON.stringify({
+                    "lottoType":lotteryType
+                });
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    async: false, // 设置同步方式
+                    data:data,
+                    dataType: "json",
+                    contentType:"application/json", 
+//                    beforeSend: function(xhr) {
+//                        xhr.setRequestHeader("Authorization");
+//                    },
+//                    headers:{"Authorization":token},
+                    beforeSend: function (XMLHttpRequest) {
+         		XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function () {
+                        alert("系统错误");
+                    },
+                    success: function (data) {
+                        if(data.status==1){
+                            alert("重新派奖成功！！！");
+                        }else if(data.status==0){
+                            alert(getErroe(data.error_code));
+                        }
+                    }
+                });
+            }
+            function manualOpening(){
+                var lotteryType = document.getElementById('lotteryType').value;
+                var issueNum = document.getElementById('issueNum').value;
+                var endTime = document.getElementById('endTime').value;
+                var state = document.getElementById('state').value;
+                var date = new Date(endTime.replace(/-/g, '/'));
+                var url = "manualOpening.html?lotteryType="+lotteryType+"&issueNum="+issueNum+"&state="+state;
+                $.layer({
+                    type: 2,
+                    title: '人工开奖',
+                    maxmin: false,
+                    shift: 'top',
+                    shadeClose: false,
+                    area: ['400px', '400px'],
+                    offset: ['50px', ''],
+                    close: function (index) {
+                       
+                    },
+                    iframe: {src: encodeURI(url)}
+                });
+            }
+            function parseDomain() {
+                var currURL = location.href;
+                var domain = '';
+                if (currURL.indexOf("http") >= 0) {
+                    if (currURL.indexOf("/", currURL.indexOf("http") + 7) > 0) {
+                        domain = currURL.substring(0, currURL.indexOf("/", currURL
+                                .indexOf("http") + 7));
+                    } else {
+                        domain = currURL;
+                    }
+                }
+                if (typeof domain == 'undefined' || domain.length == 0) {
+                    return '';
+                }
+                if (domain.indexOf(":", 7) > 0) {
+                    domain = domain.substring(0, domain.indexOf(":", 7));
+                }
+                return domain;
+            }
+            //获取url
+            function getValue(){
+                //首先获取地址
+                var url = window.location.href;
+                //获取传值
+                var arr = url.split("?");
+                //判断是否有传值
+                if(arr.length == 1){
+                        return null;
+                }
+                //获取get传值的个数
+                var value_arr = arr[1].split("&");
+                //循环生成返回的对象
+                var obj = {};
+                for(var i = 0; i < value_arr.length; i++){
+                        var key_val = value_arr[i].split("=");
+                        obj[key_val[0]]=decodeURI(key_val[1]);
+                }
+                return obj;
+            }
+        </script>
+    </head>
+    <body>
+        <input type="hidden" id="issueNum" name="issueNum" value="" />
+        <input type="hidden" id="lotteryType" name="lotteryType" value="" />
+        <input type="hidden" id="state" name="state" value="" />
+        <input type="hidden" id="endTime" name="endTime" value="" />
+        <table width="600px" cellspacing="0" cellpadding="5">
+            <tr>
+                <th style="background-color:#ffcc99">期次作废</th>
+                <td>
+                    <button type="button" class="btn btn-primary" style="height:32px;" onclick="withdrawal()">期次作废</button>
+                </td>
+            </tr>
+            <tr>
+                <th style="background-color:#ffcc99">人工开将</th>
+                <td>
+                    <button type="button" class="btn btn-primary" style="height:32px;" onclick="manualOpening()">人工开奖</button>
+                </td>
+            </tr>
+            <tr>
+                <th style="background-color:#ffcc99">派奖</th>
+                <td>
+                    <button type="button" class="btn btn-primary" style="height:32px;" onclick="ward()">派奖</button>
+                </td>
+            </tr>
+<!--            <tr>
+                <th style="background-color:#ffcc99">撤销派奖</th>
+                <td>
+                    <button type="button" class="btn btn-primary" style="height:32px;" onclick="cancelAward()">撤销派奖</button>
+                </td>
+            </tr>-->
+            <tr>
+                <th style="background-color:#ffcc99">重新派奖</th>
+                <td>
+                    <button type="button" class="btn btn-primary" style="height:32px;" onclick="reAward()">重新派奖</button>
+                </td>
+            </tr>
+        </table>
+        <script>
+            var wz = parent.layer.getFrameIndex(window.name);
+        </script>
+    </body>
+</html>

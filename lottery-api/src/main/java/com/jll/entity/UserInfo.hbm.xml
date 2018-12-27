@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generated 2018-8-14 16:52:58 by Hibernate Tools 5.2.10.Final --><!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="true" default-access="property" default-cascade="none" default-lazy="true">
+    <class catalog="lottery" dynamic-insert="false" dynamic-update="false" mutable="true" name="com.jll.entity.UserInfo" optimistic-lock="version" polymorphism="implicit" select-before-update="false" table="user_info">
+        <id name="id" type="java.lang.Integer">
+            <column name="id"/>
+            <generator class="identity"/>
+        </id>
+        <property generated="never" lazy="false" name="realName" optimistic-lock="true" type="string" unique="false">
+            <column length="30" name="real_name">
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="userName" optimistic-lock="true" type="string" unique="false">
+            <column length="50" name="user_name">
+                <comment>�û�����</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="userId" optimistic-lock="true" type="string" unique="false">
+            <column length="50" name="user_id">
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="loginPwd" optimistic-lock="true" type="string" unique="false">
+            <column length="256" name="login_pwd">
+                <comment>��¼����</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="fundPwd" optimistic-lock="true" type="string" unique="false">
+            <column length="256" name="fund_pwd">
+                <comment>֧������</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="state" optimistic-lock="true" type="java.lang.Integer" unique="false">
+            <column name="state">
+                <comment>�û�״̬:0,����;1,����;2,����</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="level" optimistic-lock="true" type="java.lang.Integer" unique="false">
+            <column name="level">
+                <comment>�û�����,��Ӧ�û��������</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="failLoginCount" optimistic-lock="true" type="java.lang.Integer" unique="false">
+            <column name="fail_login_count">
+                <comment>��½����</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="loginCount" optimistic-lock="true" type="java.lang.Integer" unique="false">
+            <column name="login_count">
+                <comment>��½����</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="unlockTime" optimistic-lock="true" type="timestamp" unique="false">
+            <column length="19" name="unlock_time">
+                <comment>����ʱ��</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="userType" optimistic-lock="true" type="java.lang.Integer" unique="false">
+            <column name="user_type">
+                <comment>�û�����:0,ƽ̨�ͻ�;1,����;2,ϵͳ�û�</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="superior" optimistic-lock="true" type="string" unique="false">
+            <column length="200" name="superior"/>
+        </property>
+        <property generated="never" lazy="false" name="rebate" optimistic-lock="true" type="big_decimal" unique="false">
+            <column name="rebate">
+                <comment>����</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="platRebate" optimistic-lock="true" type="big_decimal" unique="false">
+            <column name="plat_rebate" precision="8">
+                <comment>ƽ̨��������ߴ�����¼��������ҵĵ�</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="phoneNum" optimistic-lock="true" type="string" unique="false">
+            <column length="30" name="phone_num">
+                <comment>�ֻ���</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="qq" optimistic-lock="true" type="string" unique="false">
+            <column length="30" name="qq"/>
+        </property>
+        <property generated="never" lazy="false" name="wechat" optimistic-lock="true" type="string" unique="false">
+            <column length="30" name="wechat"/>
+        </property>
+        <property generated="never" lazy="false" name="email" optimistic-lock="true" type="string" unique="false">
+            <column length="50" name="email"/>
+        </property>
+        <property generated="never" lazy="false" name="isValidPhone" optimistic-lock="true" type="java.lang.Integer" unique="false">
+            <column name="is_valid_phone">
+                <comment>�Ƿ���֤</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="isValidEmail" optimistic-lock="true" type="java.lang.Integer" unique="false">
+            <column name="is_valid_email">
+                <comment>�Ƿ���֤</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="regIp" optimistic-lock="true" type="string" unique="false">
+            <column length="50" name="reg_ip">
+                <comment>IP</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="createTime" optimistic-lock="true" type="timestamp" unique="false">
+            <column length="19" name="create_time"/>
+        </property>
+        <property generated="never" lazy="false" name="creator" optimistic-lock="true" type="java.lang.Integer" unique="false">
+            <column name="creator">
+                <comment>������ Ҳ���Ǵ���</comment>
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

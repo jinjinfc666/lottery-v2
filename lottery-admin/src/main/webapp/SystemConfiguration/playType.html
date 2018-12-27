@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>彩票后台管理系统</title>
+        <style>
+            .text_time{
+                    width: 100px;
+                    height: 35px;
+                    background: #ffffff;	
+            }
+            .thCenter{
+                text-align: center;
+            }
+        </style>
+        <link href="../css/bootstrap.min14ed.css" rel="stylesheet">
+        <link href="../css/font-awesome.min93e3.css" rel="stylesheet">
+        <link href="../css/animate.min.css" rel="stylesheet">
+        <link href="../css/animate.min.css" rel="stylesheet">
+        <link href="../css/style.min862f.css" rel="stylesheet">
+        <script type="text/javascript" src="../js/jquery-1.10.2.min.js"></script>
+        <script src="../js/bootstrap.min.js" type="text/javascript"></script>
+        <script src="../js/plugins/layer/layer.min.js" type="text/javascript"></script>
+        <script src="../js/content.min.js" type="text/javascript"></script>
+        <script src="../js/self_js.js" type="text/javascript"></script>
+        <script type="text/javascript" src="../js/popwin.js"></script>
+        <script language="javascript" src="../js/layer/layer.min.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                queryType();
+                var lotteryType=sessionStorage.getItem("lottery");
+                document.getElementById('lotteryType').value=lotteryType;
+                querySysCode();
+            });
+            function queryType(){
+                updateToken();
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var lotteryType = $("#lotteryType").attr("id");
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/report/loyTstRecord/lotteTypes";
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    async: false, // 设置同步方式
+                    data: {},
+                    dataType: "json",
+//                    beforeSend: function(xhr) {
+//                        xhr.setRequestHeader("Authorization");
+//                    },
+//                    headers:{"Authorization":token},
+                    beforeSend: function (XMLHttpRequest) {
+         		XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function () {
+                        alert("系统错误");
+                    },
+                    success: function (data) {
+                        if(data.status==1){
+                            $.each(data.data, function(key, val) {  
+                                $("#" + lotteryType).append("<option value='"+val.codeName+"'>"+val.remark+"</option>");
+                            }) 
+                        }else if(data.status==0){
+                            alert(getErroe(data.error_code));
+                        }
+                    }
+                });
+            }
+            function querySysCode(){
+               updateToken();
+                var lotteryType = document.getElementById('lotteryType').value;
+                window.sessionStorage.setItem("lottery", lotteryType);
+                var tableid = $("#tableTRTD").attr("id");
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/settingPlayType/queryPlayType";
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    async: false, // 设置同步方式
+                    data: {
+                        lotteryType:lotteryType
+                    },
+                    dataType: "json",
+//                    beforeSend: function(xhr) {
+//                        xhr.setRequestHeader("Authorization");
+//                    },
+//                    headers:{"Authorization":token},
+                    beforeSend: function (XMLHttpRequest) {
+         		XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function () {
+                        alert("系统错误");
+                    },
+                    success: function (data) {
+                        if(data.status==1){
+                            $("#" + tableid + "tr").remove();
+                            $("#" + tableid).empty();
+                            $.each(data.data, function(key, val) { 
+                                $("#" + tableid).append("<tr>\n\
+                                <td class=\"thCenter\">"+val.lotteryType+"</td>\n\
+                                <td class=\"thCenter\" title=\""+val.classification+"\"><a onclick=\"updateBigType('"+val.id+"','"+val.lotteryType+"','"+val.classification+"','"+val.ptName+"','"+val.ptDesc+"')\">"+val.classification+"</a></td>\n\
+                                <td class=\"thCenter\" title=\""+val.ptName+"\">"+val.ptName+"</td>\n\
+                                <td class=\"thCenter\" title=\""+val.ptDesc+"\">"+val.ptDesc+"</td>\n\
+                                <td class=\"thCenter\"><a onclick=\"updateState('"+val.id+"','"+val.lotteryType+"','"+val.state+"')\">"+val.state+"</a></td>\n\
+                                <td class=\"thCenter\"><a onclick=\"updateMulSinFlag('"+val.id+"','"+val.lotteryType+"','"+val.mulSinFlag+"')\">"+val.mulSinFlag+"</a></td>\n\
+                                <td class=\"thCenter\"><a onclick=\"updateIsHidden('"+val.id+"','"+val.lotteryType+"','"+val.isHidden+"')\">"+val.isHidden+"</a></td>\n\
+                                <td class=\"thCenter\">"+val.seq+"</td>\n\
+                                <td class=\"thCenter\">"+ConvertJSONDateToJSDateObject(""+val.createTime+"")+"</td></tr>"); 
+                            });
+                        }else if(data.status==0){
+                            alert(getErroe(data.error_code));
+                        }
+                    }
+                });
+            }
+            function parseDomain() {
+                var currURL = location.href;
+                var domain = '';
+                if (currURL.indexOf("http") >= 0) {
+                    if (currURL.indexOf("/", currURL.indexOf("http") + 7) > 0) {
+                        domain = currURL.substring(0, currURL.indexOf("/", currURL
+                                .indexOf("http") + 7));
+                    } else {
+                        domain = currURL;
+                    }
+                }
+                if (typeof domain == 'undefined' || domain.length == 0) {
+                    return '';
+                }
+                if (domain.indexOf(":", 7) > 0) {
+                    domain = domain.substring(0, domain.indexOf(":", 7));
+                }
+                return domain;
+            }
+            function updateBigType(id,lotteryType,classification,ptName,ptDesc){
+                var url = "playTypeUpdate.html?lotteryType="+lotteryType+"&id="+id+"&classification="+classification+"&ptName="+ptName+"&ptDesc="+ptDesc;
+                $.layer({
+                    type: 2,
+                    title: '修改代码类型',
+                    maxmin: false,
+                    shift: 'top',
+                    shadeClose: false,
+                    area: ['600px', '400px'],
+                    offset: ['50px', ''],
+                    close: function (index) {
+                        
+                    },
+                    iframe: {src: encodeURI(url)}
+                });
+            }
+            function alertwin() {
+                var lotteryType = window.sessionStorage.getItem("lottery");
+                var url = "playTypeAdd.html?lotteryType="+lotteryType;
+                $.layer({
+                    type: 2,
+                    title: '添加玩法',
+                    maxmin: false,
+                    shift: 'top',
+                    shadeClose: false,
+                    area: ['500px', '500px'],
+                    offset: ['50px', ''],
+                    close: function (index) {
+                        
+                    },
+                    iframe: {src: url}
+                });
+            }
+            function updateSeq(){
+                var lotteryType = window.sessionStorage.getItem("lottery");
+                var url = "playTypeUpdateSeq.html?lotteryType="+lotteryType;
+                $.layer({
+                    type: 2,
+                    title: '修改排序',
+                    maxmin: false,
+                    shift: 'top',
+                    shadeClose: false,
+                    area: ['700px', '700px'],
+                    offset: ['', ''],
+                    close: function (index) {
+                        
+                    },
+                    iframe: {src: url}
+                });
+            }
+            function querySysCode1(){
+                updateToken();
+                var lotteryType = window.sessionStorage.getItem("lottery");
+                var tableid = $("#tableTRTD").attr("id");
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/settingPlayType/queryPlayType";
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    async: false, // 设置同步方式
+                    data: {
+                        lotteryType:lotteryType
+                    },
+                    dataType: "json",
+//                    beforeSend: function(xhr) {
+//                        xhr.setRequestHeader("Authorization");
+//                    },
+//                    headers:{"Authorization":token},
+                    beforeSend: function (XMLHttpRequest) {
+         		XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function () {
+                        alert("系统错误");
+                    },
+                    success: function (data) {
+                        if(data.status==1){
+                            $("#" + tableid + "tr").remove();
+                            $("#" + tableid).empty();
+                            var stateNew=null;
+                            var mulSinFlagNew=null;
+                            var isHiddenNew=null;
+                            $.each(data.data, function(key, val) { 
+                                $("#" + tableid).append("<tr>\n\
+                                <td class=\"thCenter\">"+val.lotteryType+"</td>\n\
+                                <td class=\"thCenter\" title=\""+val.classification+"\"><a onclick=\"updateBigType('"+val.id+"','"+val.lotteryType+"','"+val.classification+"','"+val.ptName+"','"+val.ptDesc+"')\">"+val.classification+"</a></td>\n\
+                                <td class=\"thCenter\">"+val.ptName+"</td>\n\
+                                <td class=\"thCenter\">"+val.ptDesc+"</td>\n\
+                                <td class=\"thCenter\"><a onclick=\"updateState('"+val.id+"','"+val.lotteryType+"','"+val.state+"')\">"+val.state+"</a></td>\n\
+                                <td class=\"thCenter\"><a onclick=\"updateMulSinFlag('"+val.id+"','"+val.lotteryType+"','"+val.mulSinFlag+"')\">"+val.mulSinFlag+"</a></td>\n\
+                                <td class=\"thCenter\"><a onclick=\"updateIsHidden('"+val.id+"','"+val.lotteryType+"','"+val.isHidden+"')\">"+val.isHidden+"</a></td>\n\
+                                <td class=\"thCenter\">"+val.seq+"</td>\n\
+                                <td class=\"thCenter\">"+ConvertJSONDateToJSDateObject(""+val.createTime+"")+"</td></tr>"); 
+                            });
+                        }else if(data.status==0){
+                            alert(getErroe(data.error_code));
+                        }
+                    }
+                });
+            }
+            function updateState(id,lotteryType,state){
+                updateToken();
+                var state1=1;
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/settingPlayType/state";
+                $.ajax({
+                    url: url,
+                    type: "PUT",
+                    async: false, // 设置同步方式
+                    data: {
+                        id: id, 
+                        lotteryType:lotteryType,
+                        state: state1
+                    },
+                    dataType: "json",
+//                    beforeSend: function(xhr) {
+//                        xhr.setRequestHeader("Authorization");
+//                    },
+//                    headers:{"Authorization":token},
+                    beforeSend: function (XMLHttpRequest) {
+         		XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function () {
+                        alert("系统错误");
+                    },
+                    success: function (data) {
+                        if(data.status===1){
+                            alert("修改成功");
+                        }else if(data.status==0){
+                            alert(getErroe(data.error_code));
+                        }
+                    }
+                });
+            }
+            function updateMulSinFlag(id,lotteryType,mulSinFlag){
+                updateToken();
+                var mulSinFlag1=1;
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/settingPlayType/mulSinFlag";
+                $.ajax({
+                    url: url,
+                    type: "PUT",
+                    async: false, // 设置同步方式
+                    data: {
+                        id: id, 
+                        lotteryType:lotteryType,
+                        mulSinFlag:mulSinFlag1
+                    },
+                    dataType: "json",
+//                    beforeSend: function(xhr) {
+//                        xhr.setRequestHeader("Authorization");
+//                    },
+//                    headers:{"Authorization":token},
+                    beforeSend: function (XMLHttpRequest) {
+         		XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function () {
+                        alert("系统错误");
+                    },
+                    success: function (data) {
+                        if(data.status===1){
+                            alert("修改成功");
+                        }else if(data.status==0){
+                            alert(getErroe(data.error_code));
+                        }
+                    }
+                });
+            }
+            function updateIsHidden(id,lotteryType,isHidden){
+                updateToken();
+                var isHidden1=1;
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/settingPlayType/isHidden";
+                $.ajax({
+                    url: url,
+                    type: "PUT",
+                    async: false, // 设置同步方式
+                    data: {
+                        id: id, 
+                        lotteryType:lotteryType,
+                        isHidden:isHidden1
+                    },
+                    dataType: "json",
+//                    beforeSend: function(xhr) {
+//                        xhr.setRequestHeader("Authorization");
+//                    },
+//                    headers:{"Authorization":token},
+                    beforeSend: function (XMLHttpRequest) {
+         		XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function () {
+                        alert("系统错误");
+                    },
+                    success: function (data) {
+                        if(data.status===1){
+                            alert("修改成功");
+                            window.location.reload();
+                        }else if(data.status==0){
+                            alert(getErroe(data.error_code));
+                        }
+                    }
+                });
+            }
+        </script>
+        <script type="text/javascript" src="../js/showdate.js"></script>
+    </head>
+    <body class="gray-bg">
+        <br />
+        <div class="row  border-bottom white-bg dashboard-header">
+            <form class="form-horizontal" method="get">
+                <div class="form_box" style="width: 100%;">
+                    <div class="input-group" style="margin-left: 20px; float: left;">
+                        <button type="button" class="btn btn-w-m btn-warning" onclick="alertwin()">添加</button>
+                    </div>
+                    <div class="input-group" style="margin-left: 20px; float: left;">
+                        <button type="button" class="btn btn-w-m btn-warning" onclick="updateSeq()">修改排序</button>
+                    </div>
+                    <div class="input-group" style="margin-left: 20px; float: left;">
+                        彩种：<select id="lotteryType" name="lotteryType" style="width:200px;" class="form-control" onchange="querySysCode()">
+                                <!--<option value="">&#45;&#45;选择彩种&#45;&#45;</option>-->
+                            </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <!--<button type="button" class="btn btn-primary" style="height:32px;" onclick="querySysCode()">搜索</button>--> 
+                    </div>
+                </div>
+            </form>
+            </br >
+            </br >
+            </br >
+            <div class="ibox-content">
+                <table class="table table-striped table-bordered table-hover dataTables-example">
+                    <thead id="totalTRTD">
+                        <tr>
+                            <th class="thCenter">所属彩种</th>
+                            <th class="thCenter">玩法</th>
+                            <th class="thCenter">名称</th>
+                            <th class="thCenter">描述</th>
+                            <th class="thCenter">状态</th>
+                            <th class="thCenter">单式复式</th>
+                            <th class="thCenter">是否隐藏</th>
+                            <th class="thCenter">排序</th>
+                            <th class="thCenter">创建时间</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableTRTD">
+                        
+                    </tbody>
+<!--                    <tfoot id="sumAmount">
+                        
+                    </tfoot>-->
+                </table>
+                
+                
+            </div>
+        </div>
+    </body>
+</html>

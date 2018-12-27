@@ -1,0 +1,581 @@
+<html>
+    <head>
+        <title>添加代码类型</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style type="text/css">
+        table{
+            font-size: 15px;
+            margin:20px auto;
+            border-radius: 5px;
+        }
+        table th,table td{
+            padding:5px;
+            text-align: center;
+            border: 1px solid #999999;
+        }
+        table tr:hover{
+            background-color: #ccccff;
+        }
+        .numinput:hover{
+            border:2px solid red ;
+        }
+        .submitinput{
+            float: right;
+            font-weight: bold;
+            border-radius: 5px;
+            margin-top: 30px;
+            margin-right: 10%;
+            font-size: 20px;
+            border:1px solid #999999;;
+            background-color: #99ffff;
+            width: 100px;
+            height: 50px;
+        }
+        .submitinput:hover{
+            cursor: pointer;
+            background-color: #ccccff;
+        }
+        .thstyle{
+            /*background-color:#20a0ff;*/
+            text-align: right;
+            /*color: #fff;*/
+            /*border: solid 0px #fff;*/
+            width:30%
+        }
+        </style>
+        <link href="../../css/bootstrap.min14ed.css" rel="stylesheet">
+        <script type="text/javascript" src="../../js/jquery-1.10.2.min.js"></script>
+        <script language="javascript" src="../../js/layer/layer.min.js"></script>
+        <script src="../../js/self_js.js" type="text/javascript"></script>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                queryTypeClass();
+                queryPayTypeId();
+                querystate();
+                queryEnableMaxAmount();
+                queryShowType();
+            });
+            function queryShowType(){
+                updateToken();
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var showType = $("#showType").attr("id");
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/pay-types/queryShowType";
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    async: false, // 设置同步方式
+                    data: {},
+                    dataType: "json",
+//                    beforeSend: function(xhr) {
+//                        xhr.setRequestHeader("Authorization");
+//                    },
+//                    headers:{"Authorization":token},
+                    beforeSend: function (XMLHttpRequest) {
+         		XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function () {
+                        alert("系统错误");
+                    },
+                    success: function (data) {
+                        if(data.status==1){
+                            $.each(data.data, function(key, val) {  
+                                $("#" + showType).append("<option value='"+key+"'>"+val+"</option>");
+                            }) 
+                        }else if(data.status==0){
+                            alert(getErroe(data.error_code));
+                        }
+                    }
+                });
+            }
+            function queryTypeClass(){
+                updateToken();
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var typeClass = $("#typeClass").attr("id");
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/pay-types/queryTypeClasspay";
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    async: false, // 设置同步方式
+                    data: {},
+                    dataType: "json",
+//                    beforeSend: function(xhr) {
+//                        xhr.setRequestHeader("Authorization");
+//                    },
+//                    headers:{"Authorization":token},
+                    beforeSend: function (XMLHttpRequest) {
+         		XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function () {
+                        alert("系统错误");
+                    },
+                    success: function (data) {
+                        if(data.status==1){
+                            $.each(data.data, function(key, val) {  
+                                $("#" + typeClass).append("<option value='"+key+"'>"+val+"</option>");
+                            }) 
+                        }else if(data.status==0){
+                            alert(getErroe(data.error_code));
+                        }
+                    }
+                });
+            }
+            function queryPayTypeId(){
+                updateToken();
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var payType = $("#payType").attr("id");
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/pay-types/queryPayTypeId";
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    async: false, // 设置同步方式
+                    data: {},
+                    dataType: "json",
+//                    beforeSend: function(xhr) {
+//                        xhr.setRequestHeader("Authorization");
+//                    },
+//                    headers:{"Authorization":token},
+                    beforeSend: function (XMLHttpRequest) {
+         		XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function () {
+                        alert("系统错误");
+                    },
+                    success: function (data) {
+                        if(data.status==1){
+                            $.each(data.data, function(key, val) {  
+                                     $("#" + payType).append("<option value='"+val.id+","+val.isTp+","+val.platId+"'>"+val.name+"</option>");
+                            }) 
+                        }else if(data.status==0){
+                            alert(getErroe(data.error_code));
+                        }
+                    }
+                });
+            }
+            function querystate(){
+                updateToken();
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var state = $("#state").attr("id");
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/pay-types/queryPayChannelIsOrNo";
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    async: false, // 设置同步方式
+                    data: {},
+                    dataType: "json",
+//                    beforeSend: function(xhr) {
+//                        xhr.setRequestHeader("Authorization");
+//                    },
+//                    headers:{"Authorization":token},
+                    beforeSend: function (XMLHttpRequest) {
+         		XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function () {
+                        alert("系统错误");
+                    },
+                    success: function (data) {
+                        if(data.status==1){
+                            $.each(data.data, function(key, val) {  
+                                     $("#" + state).append("<option value='"+key+"'>"+val+"</option>");
+                            }) 
+                        }else if(data.status==0){
+                            alert(getErroe(data.error_code));
+                        }
+                    }
+                });
+            }
+            function queryEnableMaxAmount(){
+                updateToken();
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var enableMaxAmount = $("#enableMaxAmount").attr("id");
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/pay-types/queryEMA";
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    async: false, // 设置同步方式
+                    data: {},
+                    dataType: "json",
+//                    beforeSend: function(xhr) {
+//                        xhr.setRequestHeader("Authorization");
+//                    },
+//                    headers:{"Authorization":token},
+                    beforeSend: function (XMLHttpRequest) {
+         		XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function () {
+                        alert("系统错误");
+                    },
+                    success: function (data) {
+                        if(data.status==1){
+                            $.each(data.data, function(key, val) {  
+                                     $("#" + enableMaxAmount).append("<option value='"+key+"'>"+val+"</option>");
+                            }) 
+                        }else if(data.status==0){
+                            alert(getErroe(data.error_code));
+                        }
+                    }
+                });
+            }
+            function parseDomain() {
+                var currURL = location.href;
+                var domain = '';
+                if (currURL.indexOf("http") >= 0) {
+                    if (currURL.indexOf("/", currURL.indexOf("http") + 7) > 0) {
+                        domain = currURL.substring(0, currURL.indexOf("/", currURL
+                                .indexOf("http") + 7));
+                    } else {
+                        domain = currURL;
+                    }
+                }
+                if (typeof domain == 'undefined' || domain.length == 0) {
+                    return '';
+                }
+                if (domain.indexOf(":", 7) > 0) {
+                    domain = domain.substring(0, domain.indexOf(":", 7));
+                }
+                return domain;
+            }
+            function insert(){
+                updateToken();
+                var channelName = document.getElementById('channelName').value;
+                var nickName = document.getElementById('nickName').value;
+                var typeClass = document.getElementById('typeClass').value;
+                var payType = document.getElementById('payType').value;
+                var maxAmount = document.getElementById('maxAmount').value;
+                var enableMaxAmount = document.getElementById('enableMaxAmount').value;
+                var state = document.getElementById('state').value;
+                var qrUrlNew = document.getElementById('qrUrlNew').value;
+                var bankAcc = document.getElementById('bankAcc').value;
+                var bankName = document.getElementById('bankName').value;
+                var remark = document.getElementById('remark').value;
+                var payCode = document.getElementById('payCode').value;
+                var showType = document.getElementById('showType').value;
+                var qrUrl="";
+                var aa=payType.split(",");
+                var payTypeId=aa[0];
+//                var payTypeIsTp=aa[1];
+//                var platId=aa[2];
+//                if(payTypeIsTp=='0'&&(qrUrlNew==''||bankAcc==''||bankName=='')){
+//                    alert("参数有误！当充值方式为非第三方时，请必须填写-平台二维码丶平台银行账户丶平台银行开户名");
+//                    return false;
+//                }else if(payTypeIsTp=='1'){
+//                    if(platId=='tly_pay'){
+//                        if(bankAcc==''||bankName==''){
+//                            alert("参数有误!当充值方式为通路云时，请必须填写-平台银行账户丶平台银行开户名");
+//                            return false;
+//                        }
+//                    }else{
+//                        if(qrUrlNew!=''||bankAcc!=''||bankName!=''){
+//                            alert("参数有误!当充值方式为第三方时，请勿填写-平台二维码丶平台银行账户丶平台银行开户名");
+//                            return false;
+//                        }
+//                    }   
+//                }
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var domain=parseDomain();
+                if(qrUrlNew!=''){
+                    qrUrl=domain+"/"+qrUrlNew;
+                }
+                var url=domain+"/lottery-api/pay-types/addPayChannel";
+                var data=JSON.stringify({
+                    "channelName":channelName,
+                    "nickName":nickName,
+                    "typeClass":typeClass,
+                    "payType":payTypeId,
+                    "maxAmount":maxAmount,
+                    "enableMaxAmount":enableMaxAmount,
+                    "state":state,
+                    "qrUrl":qrUrl,
+                    "bankAcc":bankAcc,
+                    "bankName":bankName,
+                    "remark":remark,
+                    "payCode":payCode,
+                    "showType":showType
+                });
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    async: false, // 设置同步方式
+                    data: data,
+                    dataType: "json",
+                    contentType:"application/json",
+//                    beforeSend: function(xhr) {
+//                        xhr.setRequestHeader("Authorization");
+//                    },
+//                    headers:{"Authorization":token},
+                    beforeSend: function (XMLHttpRequest) {
+         		XMLHttpRequest.setRequestHeader("Authorization", token);
+                    }, 
+                    error: function () {
+                        alert("系统错误");
+                    },
+                    success: function (data) {
+                        if(data.status===1){
+                            alert("添加成功！！！");
+                        }else if(data.status==0){
+                            alert(getErroe(data.error_code));
+                        }
+                    }
+                });
+            }
+//            function getObjectURL(node) {
+//                    var imgURL = "";
+//                    try {
+//                        var file = null;
+//                        if (node.files && node.files[0]) {
+//                            file = node.files[0];
+//                        } else if (node.files && node.files.item(0)) {
+//                            file = node.files.item(0);
+//                        }
+//                        //Firefox 因安全性问题已无法直接通过input[file].value 获取完整的文件路径
+//                        try {
+//                            //Firefox7.0
+//                            imgURL = file.getAsDataURL();
+//                            //alert("//Firefox7.0"+imgRUL);
+//                        } catch (e) {
+//                            //Firefox8.0以上
+//                            imgURL = window.URL.createObjectURL(file);
+//                            //alert("//Firefox8.0以上"+imgRUL);
+//                        }
+//                    } catch (e) {      //这里不知道怎么处理了，如果是遨游的话会报这个异常
+//                        //支持html5的浏览器,比如高版本的firefox、chrome、ie10
+//                        if (node.files && node.files[0]) {
+//                            var reader = new FileReader();
+//                            reader.onload = function (e) {
+//                                imgURL = e.target.result;
+//                            };
+//                            reader.readAsDataURL(node.files[0]);
+//                        }
+//                    }
+//                    alert(imgURL);
+//                } 
+//                var obj = document.getElementById("qrUrl");//input file对象 必须用document.get
+//                getObjectURL(obj);//将图片的src变为获取到的路径
+//            function selectImg(){
+//                updateToken();
+//                var filename = document.getElementById('qrUrl').value;
+//                var imgName=filename.substring(filename.lastIndexOf('\\')+1);
+//                document.getElementById('qrUrlNew').value=imgName;
+//                var urlName=imgName;
+////                var filepath=getPath(document.getElementById("qrUrl")); 
+////                alert(filepath);
+////                return false;
+//                var access_token=sessionStorage.getItem("access_token");
+//                var token="Bearer " + access_token;
+//                var domain=parseDomain();
+//                var url=domain+"/lottery-api/pay-types/uploadQRCode";
+//                $.ajax({
+//                    url: url,
+//                    type: "POST",
+//                    async: false, // 设置同步方式
+//                    data: {
+//                        imgName:urlName
+//                    },
+//                    dataType: "json",
+////                    beforeSend: function(xhr) {
+////                        xhr.setRequestHeader("Authorization");
+////                    },
+////                    headers:{"Authorization":token},
+//                    beforeSend: function (XMLHttpRequest) {
+//         		XMLHttpRequest.setRequestHeader("Authorization", token);
+//                    },
+//                    error: function () {
+//                        $.messager.alert('错误', '操作失败！', 'Error');
+//                    },
+//                    success: function (data) {
+//                        if(data.status===1){
+//                            alert("上传成功！！！");
+//                        }else if(data.status==0){
+//                            alert(getErroe(data.error_code));
+//                        }
+//                    }
+//                });
+//            }
+//            function changePage(){
+//                var payType = document.getElementById('payType').value;
+//                var aa=payType.split(",");
+//                var platId=aa[2];
+//                var access_token=sessionStorage.getItem("access_token");
+//                var token="Bearer " + access_token;
+//                var payCode = $("#payCode").attr("id");
+//                var domain=parseDomain();
+//                var url=domain+"/lottery-api/pay-types/queryPayCode";
+//                $.ajax({
+//                    url: url,
+//                    type: "GET",
+//                    async: false, // 设置同步方式
+//                    data: {
+//                        platId:platId
+//                    },
+//                    dataType: "json",
+////                    beforeSend: function(xhr) {
+////                        xhr.setRequestHeader("Authorization");
+////                    },
+////                    headers:{"Authorization":token},
+//                    beforeSend: function (XMLHttpRequest) {
+//         		XMLHttpRequest.setRequestHeader("Authorization", token);
+//                    },
+//                    error: function () {
+//                        $.messager.alert('错误', '操作失败！', 'Error');
+//                    },
+//                    success: function (data) {
+//                        if(data.status==1){
+//                            $("#" + payCode + "tr").remove();
+//                            $("#" + payCode).empty();
+//                            $("#" + payCode).append("<option value=''></option>");
+//                            $.each(data.data, function(key, val) {  
+//                                     $("#" + payCode).append("<option value='"+key+"'>"+val+"</option>");
+//                            }) 
+//                        }else if(data.status==0){
+//                            alert(getErroe(data.error_code));
+//                        }
+//                    }
+//                });
+//            }
+            function ajaxSubmitFile(){
+                var attach = document.getElementById("attach2").value;
+
+                if(attach == undefined || attach == ""){
+                    alert("请选择文件");
+                    return false;
+                }
+                updateToken();
+                var form = new FormData(document.getElementById("uploadFileForm2"));
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/pay-types/uploadQRCode";
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    async: false, // 设置同步方式
+                    data:  form,
+                    dataType: "json",
+                    processData:false,
+                    contentType:false,
+                    beforeSend: function (XMLHttpRequest) {
+         		XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    success: function (data) {
+                        if(data.status===1){
+                            alert("上传成功！！！");
+                            document.getElementById('qrUrlNew').value=data.data;
+                        }else if(data.status==0){
+                            alert(getErroe(data.error_code));
+                        }
+                    },
+                    error: function () {
+                        alert("系统错误");
+                        return false;
+                    },
+                });
+            }
+        </script>
+    </head>
+    <body style="background-color: #f3f3f4;">
+        <table width="600px" cellspacing="0" cellpadding="5">
+            <tr>
+                <th class="thstyle">渠道名称</th>
+                <td><input type="text" id="channelName" name="channelName" value="" maxlength="50" style="width:150px;" class="form-control" /></td>
+            </tr>
+            <tr>
+                <th class="thstyle">别称</th>
+                <td><input type="text" id="nickName" name="nickName" value="" maxlength="50" style="width:150px;" class="form-control" /></td>
+            </tr>
+            <tr>
+                <th class="thstyle">充值方式分类</th>
+                <td>
+                    <select id="typeClass" name="typeClass" style="width:150px;" class="form-control">
+                        <option value=""></option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th class="thstyle">充值方式</th>
+                <td>
+                    <select id="payType" name="payType" style="width:150px;" class="form-control">
+                        <option value=""></option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th class="thstyle">最大充值金额</th>
+                <td><input type="text" id="maxAmount" name="maxAmount" style="width:150px;" class="form-control" onkeyup="value=value.replace(/[^0-9]/g,'')" onpaste="value=value.replace(/[^0-9]/g,'')" oncontextmenu = "value=value.replace(/[^0-9]/g,'')" /></td>
+            </tr>
+            <tr>
+                <th class="thstyle">是否激活最大额限制</th>
+                <td>
+                    <select id="enableMaxAmount" name="enableMaxAmount" style="width:150px;" class="form-control">
+                        <option value=""></option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th class="thstyle">状态</th>
+                <td>
+                    <select id="state" name="state" style="width:150px;" class="form-control">
+                        <option value=""></option>
+                    </select>
+                </td>
+            </tr>
+            <tr id="qrUrlTr">
+                <th class="thstyle">平台二维码</th>
+                <td>
+                    <input type="hidden" id="qrUrlNew" name="qrUrlNew" value="" />
+                    <form id="uploadFileForm2" name="uploadFileForm2" enctype="multipart/form-data" onsubmit="return false" action="##" method="post">
+                        <input type="file" id="attach2" name="attach2" size="25" style="height:30px;" />
+                        <button id="submit_btn2" type="button" class="btn btn-default" onclick="ajaxSubmitFile()">
+                                                               上传文件
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            <tr id="bankAccTr">
+                <th class="thstyle">平台银行账户</th>
+                <td><input type="text" id="bankAcc" name="bankAcc" value="" maxlength="50" style="width:150px;" class="form-control"/></td>
+            </tr>
+            <tr id="bankNameTr">
+                <th class="thstyle">平台银行开户名</th>
+                <td><input type="text" id="bankName" name="bankName" value="" maxlength="50" style="width:150px;" class="form-control"/></td>
+            </tr>
+            <tr>
+                <th class="thstyle">备注</th>
+                <td><input type="text" id="remark" name="remark" value="" maxlength="200" style="width:150px;" class="form-control" /></td>
+            </tr>
+            <tr>
+                <th class="thstyle">支付接口代码</th>
+                <td>
+<!--                    <select id="payCode" name="payCode" style="width:150px;" class="form-control">
+                        <option value=""></option>
+                    </select>-->
+                    <input type="text" id="payCode" name="payCode" value="" maxlength="50" style="width:150px;" class="form-control" />
+                </td>
+            </tr>
+            <tr>
+                <th class="thstyle">跳转方式</th>
+                <td>
+                    <select id="showType" name="showType" style="width:150px;" class="form-control">
+                        <option value=""></option>
+                    </select>
+                </td>
+            </tr>
+        </table>
+        <script>
+            var wz = parent.layer.getFrameIndex(window.name);
+        </script>
+        <div style="margin-left:330px;">
+            <button class="btn btn-primary" type="submit" style="width: 100px;" onclick="insert()">提交</button>
+        </div>
+    </body>
+</html>

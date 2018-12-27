@@ -1,0 +1,288 @@
+<html>
+    <head>
+        <title>添加下级代理</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style type="text/css">
+        table{
+            font-size: 15px;
+            margin:20px auto;
+            border-radius: 5px;
+        }
+        table th,table td{
+            padding:5px;
+            text-align: center;
+            border: 1px solid #999999;
+        }
+        table tr:hover{
+            background-color: #ccccff;
+        }
+        .numinput:hover{
+            border:2px solid red ;
+        }
+        .submitinput{
+            float: right;
+            font-weight: bold;
+            border-radius: 5px;
+            margin-top: 30px;
+            margin-right: 10%;
+            font-size: 20px;
+            border:1px solid #999999;;
+            background-color: #99ffff;
+            width: 100px;
+            height: 50px;
+        }
+        .submitinput:hover{
+            cursor: pointer;
+            background-color: #ccccff;
+        }
+        a{
+           cursor: pointer; 
+        }
+        .login_putin{
+                width:243px;
+                margin: 0 auto;
+                padding: 0 0.8em;
+                line-height: 36px;
+                border: 1px solid #999;
+                -webkit-border-radius:5px;
+                -moz-border-radius: 5px;
+                border-radius: 5px;
+            }
+        </style>
+        <link href="../css/bootstrap.min14ed.css" rel="stylesheet">
+        <script type="text/javascript" src="../js/jquery-1.10.2.min.js"></script>
+        <script language="javascript" src="../js/layer/layer.min.js"></script>
+        <script src="../js/self_js.js" type="text/javascript"></script>
+        <link rel="stylesheet" href="../js/huakuai/main.css">
+        <link rel="stylesheet" href="../js/huakuai/rangeslider.css">
+        <!--<script src="../js/huakuai/jquery.min.js"></script>-->
+        <script src="../js/huakuai/rangeslider.min.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                var obj = {};
+                obj=getValue();
+                document.getElementById('agentId').value=obj['agentId'];
+                document.getElementById('loginPwd').value='111111';
+                document.getElementById('fundPwd').value='111111';
+                getplat();
+                // if(a){
+                changenum();
+            });
+            function getplat(){
+                updateToken();
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/users/querySystemConfiguration";
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    async: false, // 设置同步方式
+                    data: {
+                    },
+                    dataType: "json",
+//                    beforeSend: function(xhr) {
+//                        xhr.setRequestHeader("Authorization");
+//                    },
+//                    headers:{"Authorization":token},
+                    beforeSend: function (XMLHttpRequest) {
+                        XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function () {
+                        alert("系统错误");
+                    },
+                    success: function (data) {
+                        if(data.status=="1"){
+                            document.getElementById("maxPlatRebate").value=data.data.maxPlatRebate;
+                            document.getElementById("startPlat").value=data.data.startPlat;
+                            document.getElementById("endPlat").value=data.data.endPlat;
+                        }else{
+                            alert(getErroe(data.error_code));
+                        }
+                    }
+                });
+            }
+            function parseDomain() {
+                var currURL = location.href;
+                var domain = '';
+                if (currURL.indexOf("http") >= 0) {
+                    if (currURL.indexOf("/", currURL.indexOf("http") + 7) > 0) {
+                        domain = currURL.substring(0, currURL.indexOf("/", currURL
+                                .indexOf("http") + 7));
+                    } else {
+                        domain = currURL;
+                    }
+                }
+                if (typeof domain == 'undefined' || domain.length == 0) {
+                    return '';
+                }
+                if (domain.indexOf(":", 7) > 0) {
+                    domain = domain.substring(0, domain.indexOf(":", 7));
+                }
+                return domain;
+            }
+            function add(){
+                updateToken();
+                var agentId=document.getElementById('agentId').value;
+                var realName=document.getElementById('realName').value;
+                var userName=document.getElementById('userName').value;
+                var userId=document.getElementById('userId').value;
+                var loginPwd=document.getElementById('loginPwd').value;
+                var fundPwd=document.getElementById('fundPwd').value;
+                var platRebate=document.getElementById('platRebate').value;
+                var phoneNum=document.getElementById('phoneNum').value;
+                var qq=document.getElementById('qq').value;
+                var wechat=document.getElementById('wechat').value;
+                var email=document.getElementById('email').value;
+                if(userName==""){
+                    $("#userName1").text("请输入用户名!");
+                    return false;
+                }
+                $("#userName1").text("");
+                if(loginPwd==""){
+                    $("#loginPwd1").text("登录密码不能为空!!!");
+                    return false;
+                }
+                $("#loginPwd1").text("");
+                if(platRebate==""){
+                    $("#platRebate1").text("下级返点不能为空!");
+                    return false;
+                }
+                $("#platRebate1").text("");
+                var domain=parseDomain();
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var url=domain+"/lottery-api/users/agents/"+agentId;
+                var data=JSON.stringify({
+                    "realName": realName,
+                    "userName": userName,
+                    "userId": userId,
+                    "loginPwd": loginPwd,
+                    "fundPwd": fundPwd,
+                    "platRebate": platRebate,
+                    "phoneNum": phoneNum,
+                    "qq": qq,
+                    "wechat": wechat,
+                    "email": email,
+                    "userType":1
+                });
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    async: false, // 设置同步方式
+                    data: data,
+                    dataType: "json",
+                    contentType:"application/json", 
+//                    beforeSend: function(xhr) {
+//                        xhr.setRequestHeader("Authorization");
+//                    },
+//                    headers:{"Authorization":token},
+                    beforeSend: function (XMLHttpRequest) {
+         		XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function () {
+                        alert("系统错误");
+                    },
+                    success: function (data) {
+                        if(data.status===1){
+                            alert("添加成功！！！");
+                            var wz = parent.layer.getFrameIndex(window.name);
+                            parent.location.reload();
+                            parent.layer.close(wz);
+                        }else if(data.status==0){
+                            alert(getErroe(data.error_code));
+                        }       
+                    }
+                });
+            }
+            //获取url
+            function getValue(){
+                //首先获取地址
+                var url = window.location.href;
+                //获取传值
+                var arr = url.split("?");
+                //判断是否有传值
+                if(arr.length == 1){
+                        return null;
+                }
+                //获取get传值的个数
+                var value_arr = arr[1].split("&");
+                //循环生成返回的对象
+                var obj = {};
+                for(var i = 0; i < value_arr.length; i++){
+                        var key_val = value_arr[i].split("=");
+                        obj[key_val[0]]=decodeURI(key_val[1]);
+                }
+                return obj;
+            }
+            function clearNoNum(obj){ 
+                obj.value = obj.value.replace(/[^\d.]/g,"");  //清除“数字”和“.”以外的字符  
+                obj.value = obj.value.replace(/\.{2,}/g,"."); //只保留第一个. 清除多余的  
+                obj.value = obj.value.replace(".","$#$").replace(/\./g,"").replace("$#$","."); 
+//                obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3');//只能输入两个小数  
+                if(obj.value.indexOf(".")< 0 && obj.value !=""){//以上已经过滤，此处控制的是如果没有小数点，首位不能为类似于 01、02的金额 
+                    obj.value= parseFloat(obj.value); 
+                } 
+            }
+        </script>
+    </head>
+    <body>
+        <input type="hidden" id="agentId" name="agentId" value="" />
+        <table width="600px" cellspacing="0" cellpadding="5">
+            <tr>
+                <th style="background-color:#ffcc99">真实姓名：</th>
+                <td>
+                    <input type="text" id="realName" name="realName" value="" placeholder="只能填写中文" onkeyup="value=value.replace(/[^\u4E00-\u9FA5]/g,'')" onbeforepaste="clipboardData.setData('text',clipboardData.getData('text').replace(/[^\u4E00-\u9FA5]/g,''))" style="width:250px;" class="login_putin" />
+                </td>
+            </tr>
+            <tr>
+                <th style="background-color:#ffcc99">用户名：</th>
+                <td>
+                    <input type="text" id="userName" name="userName" value="" placeholder="密码为6-20位的字母或数字组成"  style="width:250px;" class="login_putin" />
+                    <span id="userName1" style="color:red;"></span>
+                </td>
+            </tr>
+            <tr>
+                <th style="background-color:#ffcc99">身份证：</th>
+                <td><input type="text" id="userId" name="userId" value="" style="width:250px;" class="login_putin" /></td>
+            </tr>
+            <tr>
+                <th style="background-color:#ffcc99">登录密码：</th>
+                <td><input type="text" id="loginPwd" name="loginPwd" value="" placeholder="密码为6-15位的字母或数字组成" style="width:250px;" class="login_putin" />
+                <span id="loginPwd1" style="color:red;"></span></td>
+            </tr>
+            <tr>
+                <th style="background-color:#ffcc99">资金密码：</th>
+                <td><input type="text" id="fundPwd" name="fundPwd" value="" placeholder="密码为6-15位的字母或数字组成" style="width:250px;" class="login_putin" /></td>
+            </tr>
+            <tr>
+                <th style="background-color:#ffcc99">下级返点：</th>
+                <td><input type="text" id="platRebate" name="platRebate" value="" placeholder="下级返点不能大于上级的返点" style="width:250px;" class="login_putin" onkeyup="clearNoNum(this)" onkeypress="if(/\.\d\d{3}$/.test(value))event.returnValue=false" />
+                <span id="platRebate1" style="color:red;"></span></td>
+            </tr>
+            <tr>
+                <th style="background-color:#ffcc99">手机号：</th>
+                <td><input type="text" id="phoneNum" name="phoneNum" value="" style="width:250px;" class="login_putin" /></td>
+            </tr>
+            <tr>
+                <th style="background-color:#ffcc99">QQ：</th>
+                <td><input type="text" id="qq" name="qq" value="" style="width:250px;" class="login_putin" /></td>
+            </tr>
+            <tr>
+                <th style="background-color:#ffcc99">微信：</th>
+                <td><input type="text" id="wechat" name="wechat" value="" style="width:250px;" class="login_putin" /></td>
+            </tr>
+            <tr>
+                <th style="background-color:#ffcc99">邮箱：</th>
+                <td><input type="text" id="email" name="email" value="" style="width:250px;" class="login_putin" /></td>
+            </tr>
+        </table>
+        <script>
+            var wz = parent.layer.getFrameIndex(window.name);
+        </script>
+        <div style="margin-left:500px;">
+            <button class="btn btn-primary" type="submit" onclick="add()">提交</button>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>彩票后台管理系统</title>
+        <style>
+            .text_time{
+                    width: 100px;
+                    height: 35px;
+                    background: #ffffff;	
+            }
+            .thCenter{
+                text-align: center;
+            }
+        </style>
+        <link href="../css/bootstrap.min14ed.css" rel="stylesheet">
+        <link href="../css/font-awesome.min93e3.css" rel="stylesheet">
+        <link href="../css/animate.min.css" rel="stylesheet">
+        <link href="../css/style.min862f.css" rel="stylesheet">
+        <script type="text/javascript" src="../js/jquery-1.10.2.min.js"></script>
+        <script src="../js/bootstrap.min.js" type="text/javascript"></script>
+        <script src="../js/plugins/layer/layer.min.js" type="text/javascript"></script>
+        <script src="../js/content.min.js" type="text/javascript"></script>
+        <script src="../js/self_js.js" type="text/javascript"></script>
+        <script language="javascript" src="../js/layer/layer.min.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                queryType();
+                queryState();
+                document.getElementById('startTime').value=getNowFormatDate();
+                document.getElementById('endTime').value=getNowFormatDate();
+//                searchrecord("search");
+            });
+            function queryType(){
+                updateToken();
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var lotteryType = $("#lotteryType").attr("id");
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/report/loyTstRecord/lotteTypes";
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    async: false, // 设置同步方式
+                    data: {},
+                    dataType: "json",
+//                    beforeSend: function(xhr) {
+//                        xhr.setRequestHeader("Authorization");
+//                    },
+//                    headers:{"Authorization":token},
+                    beforeSend: function (XMLHttpRequest) {
+         		XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function () {
+                        alert("系统错误");
+                    },
+                    success: function (data) {
+                        if(data.status==1){
+                            $.each(data.data, function(key, val) {  
+                                $("#" + lotteryType).append("<option value='"+val.codeName+"'>"+val.remark+"</option>");
+                            }) 
+                        }else if(data.status==0){
+                            alert(getErroe(data.error_code));
+                        }
+                    }
+                });
+            }
+            function queryState(){
+                updateToken();
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var state = $("#state").attr("id");
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/issues/getIssuesState";
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    async: false, // 设置同步方式
+                    data: {},
+                    dataType: "json",
+//                    beforeSend: function(xhr) {
+//                        xhr.setRequestHeader("Authorization");
+//                    },
+//                    headers:{"Authorization":token},
+                    beforeSend: function (XMLHttpRequest) {
+         		XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function () {
+                        alert("系统错误");
+                    },
+                    success: function (data) {
+                        if(data.status==1){
+                            $.each(data.data, function(key, val) {  
+                                $("#" + state).append("<option value='"+key+"'>"+val+"</option>");
+                            }) 
+                        }else if(data.status==0){
+                            alert(getErroe(data.error_code));
+                        }
+                    }
+                });
+            }
+            function parseDomain() {
+                var currURL = location.href;
+                var domain = '';
+                if (currURL.indexOf("http") >= 0) {
+                    if (currURL.indexOf("/", currURL.indexOf("http") + 7) > 0) {
+                        domain = currURL.substring(0, currURL.indexOf("/", currURL
+                                .indexOf("http") + 7));
+                    } else {
+                        domain = currURL;
+                    }
+                }
+                if (typeof domain == 'undefined' || domain.length == 0) {
+                    return '';
+                }
+                if (domain.indexOf(":", 7) > 0) {
+                    domain = domain.substring(0, domain.indexOf(":", 7));
+                }
+                return domain;
+            }
+            function searchrecord(str) {
+                updateToken();
+                var pageIndex=page(str);
+                var tableid = $("#tableTRTD").attr("id");
+                var startTime = document.getElementById('startTime').value;
+                var endTime = document.getElementById('endTime').value;
+                var lotteryType = document.getElementById('lotteryType').value;
+                var state = document.getElementById('state').value;
+                var issueNum = document.getElementById('issueNum').value;
+//                if((new Date(endTime.replace(/-/g,"\/"))) > (new Date(today.replace(/-/g,"\/")))){
+//                    alert('结束时间不能大于当前时间');
+//                    return false;
+//                }
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/issues/getIssues";
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    async: false, // 设置同步方式
+                    data: {
+                        lotteryType: lotteryType, 
+                        state:state,
+                        issueNum: issueNum,
+                        startTime:startTime,
+                        endTime:endTime,
+                        pageIndex:pageIndex
+                    },
+                    dataType: "json",
+//                    beforeSend: function(xhr) {
+//                        xhr.setRequestHeader("Authorization");
+//                    },
+//                    headers:{"Authorization":token},
+                    beforeSend: function (XMLHttpRequest) {
+         		XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function () {
+                        alert("系统错误");
+                    },
+                    success: function (data) {
+                        if(data.status===1){
+                            var update=null;
+                            document.getElementById('totalNumber').value = data.data.totalNumber;
+                            document.getElementById('totalPages').value = data.data.totalPages;
+                            document.getElementById('pageIndex_button').value = data.data.pageIndex;
+                            $("#" + tableid + "tr").remove();
+                            $("#" + tableid).empty();
+                            $.each(data.data.content, function(key, val) {  
+                                var arr=val.lotteryType.split("/");
+                                update="不可撤单";
+                                var createTimeNew=val.startTime==null?"":ConvertJSONDateToJSDateObject(""+val.startTime+"");
+                                var updateTimeNew=val.endTime==null?"":ConvertJSONDateToJSDateObject(""+val.endTime+"");
+                                $("#" + tableid).append("<tr>\n\
+                                <td class=\"thCenter\">"+arr[1]+"</td>\n\
+                                <td class=\"thCenter\">"+val.issueNum+"</td>\n\
+                                <td class=\"thCenter\">"+val.retNum+"</td>\n\
+                                <td class=\"thCenter\">"+val.state+"</td>\n\
+                                <td class=\"thCenter\">"+createTimeNew+"</td>\n\
+                                <td class=\"thCenter\">"+updateTimeNew+"</td>\n\
+                                <td class=\"thCenter\">\n\
+                                <button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"withdrawal('"+val.state+"','"+val.issueNum+"','"+arr[0]+"')\">期次作废</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n\
+                                <button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"manualOpening('"+val.state+"','"+arr[0]+"','"+val.issueNum+"','"+updateTimeNew+"')\">人工开奖</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n\
+                                <button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"ward('"+val.state+"','"+arr[0]+"','"+val.issueNum+"')\">派奖</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n\
+                                <button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"reAward('"+val.state+"','"+arr[0]+"','"+val.issueNum+"')\">重新派奖</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n\
+                                </td></tr>"); 
+                            });
+                            // <a helf=\"#\" onclick=\"update('"+val.state+"','"+arr[0]+"','"+val.issueNum+"','"+updateTimeNew+"')\">操作</a>\n\
+                        }else if(data.status==0){
+                            alert(getErroe(data.error_code));
+                        }
+                    }
+                });
+            }
+            function reAward(state,lotteryType,issueNum){
+                updateToken();
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/sys/oper/issue/"+issueNum+"/re-payout";
+                var data=JSON.stringify({
+                    "lottoType":lotteryType
+                });
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    async: false, // 设置同步方式
+                    data:data,
+                    dataType: "json",
+                    contentType:"application/json", 
+//                    beforeSend: function(xhr) {
+//                        xhr.setRequestHeader("Authorization");
+//                    },
+//                    headers:{"Authorization":token},
+                    beforeSend: function (XMLHttpRequest) {
+         		XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function () {
+                        alert("系统错误");
+                    },
+                    success: function (data) {
+                        if(data.status==1){
+                            alert("重新派奖成功！！！");
+                        }else if(data.status==0){
+                            alert(getErroe(data.error_code));
+                        }
+                    }
+                });
+            }
+            
+            function ward(state,lotteryType,issueNum){
+                updateToken();
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/sys/oper/issue/"+issueNum+"/payout";
+                var data=JSON.stringify({
+                    "lottoType":lotteryType
+                });
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    async: false, // 设置同步方式
+                    data:data,
+                    dataType: "json",
+                    contentType:"application/json", 
+//                    beforeSend: function(xhr) {
+//                        xhr.setRequestHeader("Authorization");
+//                    },
+//                    headers:{"Authorization":token},
+                    beforeSend: function (XMLHttpRequest) {
+         		XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function () {
+                        alert("系统错误");
+                    },
+                    success: function (data) {
+                        if(data.status==1){
+                            alert("派奖成功！！！");
+                        }else if(data.status==0){
+                            alert(getErroe(data.error_code));
+                        }
+                    }
+                });
+            }
+            function manualOpening(state,lotteryType,issueNum,endTime){
+//                var lotteryType = document.getElementById('lotteryType').value;
+//                var issueNum = document.getElementById('issueNum').value;
+//                var endTime = document.getElementById('endTime').value;
+//                var state = document.getElementById('state').value;
+                var date = new Date(endTime.replace(/-/g, '/'));
+                var time1 = date.getTime();
+                date.setTime(time1 + 1000 * 60*30);//设置新时间比旧时间多一分钟
+                if(lotteryType=='cqssc'||lotteryType=='gd11x5'||lotteryType=='bjpk10'){
+                    if((new Date()) <= date){
+                        alert("当前无法执行此操作！！！");
+                        return false;
+                    }
+                }
+                var url = "manualOpening.html?lotteryType="+lotteryType+"&issueNum="+issueNum+"&state="+state;
+                $.layer({
+                    type: 2,
+                    title: '人工开奖',
+                    maxmin: false,
+                    shift: 'top',
+                    shadeClose: false,
+                    area: ['400px', '400px'],
+                    offset: ['50px', ''],
+                    close: function (index) {
+                       
+                    },
+                    iframe: {src: encodeURI(url)}
+                });
+            }
+            
+            function withdrawal(state,issueNum,lotteryType){
+//                var lotteryType = document.getElementById('lotteryType').value;
+//                var issueNum = document.getElementById('issueNum').value;
+//                var state = document.getElementById('state').value;
+                updateToken();
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/sys/oper/issue/"+issueNum+"/disbale";
+                var data=JSON.stringify({
+                    "lottoType":lotteryType
+                });
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    async: false, // 设置同步方式
+                    data:data,
+                    dataType: "json",
+                    contentType:"application/json", 
+//                    beforeSend: function(xhr) {
+//                        xhr.setRequestHeader("Authorization");
+//                    },
+//                    headers:{"Authorization":token},
+                    beforeSend: function (XMLHttpRequest) {
+         		XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function () {
+                        alert("系统错误");
+                    },
+                    success: function (data) {
+                        if(data.status==1){
+                            alert("期次作废成功！！！");
+                        }else if(data.status==0){
+                            alert(getErroe(data.error_code));
+                        }
+                    }
+                });
+            }
+            
+            
+            
+            function update(state,lotteryType,issueNum,endTime){
+                var url = "update.html?state="+state+"&lotteryType="+lotteryType+"&issueNum="+issueNum+"&endTime="+endTime;
+                $.layer({
+                    type: 2,
+                    title: '期次人工处理',
+                    maxmin: false,
+                    shift: 'top',
+                    shadeClose: false,
+                    area: ['600px', '600px'],
+                    offset: ['50px', ''],
+                    close: function (index) {
+                    },
+                    iframe: {src: encodeURI(url)}
+                });
+            }
+            function UnifiedWwithdrawal(lotteryType,issueNum){
+               updateToken();
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/sys/oper/issue/"+issueNum+"/disbale";
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var data=JSON.stringify({
+                    "lottoType":lotteryType
+                });
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    async: false, // 设置同步方式
+                    data:data,
+                    dataType: "json",
+                    contentType:"application/json", 
+//                    beforeSend: function(xhr) {
+//                        xhr.setRequestHeader("Authorization");
+//                    },
+//                    headers:{"Authorization":token},
+                    beforeSend: function (XMLHttpRequest) {
+         		XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function () {
+                        alert("系统错误");
+                    },
+                    success: function (data) {
+                        if(data.status==1){
+                            alert("撤单成功！！！");
+                        }else if(data.status==0){
+                            alert(getErroe(data.error_code));
+                        }
+                    }
+                });
+            }
+            function page(str){
+                var pageIndex=null;
+                var pageIndexOld=document.getElementById('pageIndex_button').value;
+                var totalPages=document.getElementById('totalPages').value;
+                if(str=='button'){
+                    pageIndex=document.getElementById('pageIndex_button').value;
+                }else if(str=='search'){
+                    pageIndex=1;
+                }else if(str=='upPage'){
+                    if(pageIndexOld<=1){
+                        pageIndex=1;
+                    }else{
+                        pageIndex=parseInt(pageIndexOld)-parseInt(1);
+                    }
+                }else if(str=='downPage'){
+                    var total=parseInt(pageIndexOld)+parseInt(1);
+                    if(parseInt(total)>parseInt(totalPages)){
+                        pageIndex=totalPages;
+                    }else{
+                        pageIndex=total;
+                    }
+                }else if(str=='finalPage'){
+                    pageIndex=totalPages;
+                }
+                return pageIndex;
+            }
+            function checkButton(){
+               var pageIndex_button=document.getElementById('pageIndex_button').value;;
+               var totalPages=document.getElementById('totalPages').value;
+               if(parseInt(pageIndex_button)>parseInt(totalPages)){
+//                   alert("输入的页数有误！！！");
+                   return false;
+               }else{
+                   searchrecord('button');
+               }
+            }
+        </script>
+        <script type="text/javascript" src="../js/showdate.js"></script>
+    </head>
+    <body class="gray-bg">
+        <br />
+        <div class="row  border-bottom white-bg dashboard-header">
+            <form class="form-horizontal" method="get">
+                <div class="form_box" style="width: 100%;">
+                    <div class="input-group" style="margin-left: 20px;">
+                        彩种：<select id="lotteryType" name="lotteryType" style="width:100px;" class="form-control">
+                            <option value=""></option>
+                        </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        期号：<input type="text" class="form-control" id="issueNum" name="issueNum" style="width:100px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        状态：<select id="state" name="state" style="width:100px;" class="form-control">
+                            <option value=""></option>
+                        </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        开始时间：<input type="text" id="startTime" placeholder="选择开始时间" onClick="return Calendar('startTime');" class="text_time" name="startTime" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        结束时间：<input type="text" id="endTime" placeholder="选择结束时间" onClick="return Calendar('endTime');" class="text_time" name="endTime" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <span> 
+                            <button type="button" class="btn btn-primary" style="height:32px;" onclick="searchrecord('search')">搜索
+                            </button> 
+                        </span>
+                    </div>
+                </div>
+            </form>
+            </br >
+            </br >
+            </br >
+            <div class="ibox-content">
+                <table class="table table-striped table-bordered table-hover dataTables-example">
+                    <thead id="totalTRTD">
+                        <tr>
+                            <th class="thCenter">彩种</th>
+                            <th class="thCenter">期号</th>
+                            <th class="thCenter">开奖号码</th>
+                            <th class="thCenter">状态</th>
+                            <th class="thCenter">开始时间</th>
+                            <th class="thCenter">结束时间</th>
+                            <th class="thCenter">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableTRTD">
+                        
+                    </tbody>
+                </table>
+<!--                <div class="btn-group" style="float: right; padding-left: 20px">
+                    <button type="button" class="btn btn-white"><i class="fa fa-chevron-left"></i>
+                    </button>
+                    <button class="btn btn-white">1</button>
+                    <button class="btn btn-white  active">2</button>
+                    <button class="btn btn-white">3</button>
+                    <button class="btn btn-white">4</button>
+                    <button type="button" class="btn btn-white"><i class="fa fa-chevron-right"></i>
+                    </button>
+                </div>-->
+                <div class="input-group" style="width: 900px; float: right">
+                    总记录数：<input type="text" class="form-control" value="" id="totalNumber" style="width:100px;" readonly="readonly">
+                    总页数：<input type="text" class="form-control" value="" id="totalPages" style="width:50px;" readonly="readonly">&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" class="btn btn-primary" onclick="searchrecord('search')">首页</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" class="btn btn-primary" onclick="searchrecord('upPage')">上一页</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" class="btn btn-primary" onclick="searchrecord('downPage')">下一页</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" class="btn btn-primary" onclick="searchrecord('finalPage')">尾页</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <input type="text" class="form-control" value="" id="pageIndex_button" style="width:90px;" onkeyup="this.value = this.value.replace(/[^0-9]+/, '');" size="3">
+                    <button type="button" class="btn btn-primary" onclick="return checkButton()">跳到</button>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

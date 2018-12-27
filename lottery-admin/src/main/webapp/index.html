@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+            <!--<meta name="renderer" content="webkit" >-->
+            <!--<meta http-equiv="X-UA-Compatible" content="IE=8" />-->
+        <!--<meta name="viewport" content="width=device-width, initial-scale=1">-->
+        <title>login</title>
+        <link rel="stylesheet" type="text/css" href="css/normalize.css" />
+        <link rel="stylesheet" type="text/css" href="css/demo.css" />
+        <style>
+            #thumburlShow{
+                cursor: pointer;
+            }
+        </style>
+        <!--必要样式-->
+        <link rel="stylesheet" type="text/css" href="css/component.css" />
+        <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+        <script type="text/javascript" src="js/self_js.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                getSessionId();
+            });
+            function getVerify(){
+                getSessionId();
+            }
+            function getSessionId(){
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/captchas/query-sesionid";
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    async: false, // 设置同步方式
+                    data: {},
+                    dataType: "json",
+                    error: function () {
+                        alert("获取验证码失败！！！");
+                        return false;
+                    },
+                    success: function (data) {
+                        if(data.status==1){
+                            document.getElementById('jsSessionId').value=data.data.sessionId;
+                            getCaptch();
+                        }else if(data.status==0){
+                            alert(getErroe(data.error_code));
+                        }
+                    }
+                });
+            }
+            function getCaptch(){
+                var domain=parseDomain();
+                var jsSessionId=document.getElementById('jsSessionId').value;
+                // document.getElementById('thumburlShow').src=domain+"/lottery-api/captchas/verification-code-Img;jsessionid="+jsSessionId;
+                var urlcode=domain+"/lottery-api/captchas/verification-code-Img;jsessionid="+jsSessionId;
+                $.ajax({
+                    url: urlcode,
+                    type: "GET",
+                    async: false, // 设置同步方式
+                    data: {},
+                    dataType: "json",
+                    error: function () {
+                    },
+                    success: function (data) {
+                        if(data.status==1) {
+                            $("#thumburlShow").attr("src", "data:image/png;base64,"+data.data);
+                        }else{
+                            alert(getErroe(data.error_code));
+                        }
+                    }
+                });
+            }
+            function parseDomain() {
+                var currURL = location.href;
+                var domain = '';
+                if (currURL.indexOf("http") >= 0) {
+                    if (currURL.indexOf("/", currURL.indexOf("http") + 7) > 0) {
+                        domain = currURL.substring(0, currURL.indexOf("/", currURL
+                                .indexOf("http") + 7));
+                    } else {
+                        domain = currURL;
+                    }
+                }
+                if (typeof domain == 'undefined' || domain.length == 0) {
+                    return '';
+                }
+                if (domain.indexOf(":", 7) > 0) {
+                    domain = domain.substring(0, domain.indexOf(":", 7));
+                }
+               return domain;
+            }
+            function login(){
+                var userName=document.getElementById('userName').value;
+                var loginPwd=document.getElementById('loginPwd').value;
+                var captcha=document.getElementById('captcha').value;
+                var jsSessionId=document.getElementById('jsSessionId').value;
+                if(userName==''||loginPwd==''){
+                    alert("请输入账号和密码！！！");
+                    return false;
+                }
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/oauth/token;jsessionid="+jsSessionId;
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    async: false, // 设置同步方式
+                    data: {
+                        grant_type:"password",
+                        client_id:"lottery-admin",
+                        client_secret:"secret_1",
+                        username:userName,
+                        password:loginPwd,
+                        captcha:captcha
+                    },
+                    dataType: "json",
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        checkError(XMLHttpRequest,textStatus);
+                        getVerify();
+                    },
+                    success: function (data) {
+                        sessionStorage.setItem("access_token",data.access_token);
+                        sessionStorage.setItem("refresh_token",data.refresh_token);
+                        sessionStorage.setItem("startTime",new Date().getTime());
+                        var url = "index_1.html";
+                        window.location.href = url;
+                    }
+                });
+            }
+        </script>
+    </head>
+    <body>
+        <input type="hidden" id="jsSessionId" name="jsSessionId" />
+        <div class="container demo-1">
+            <div class="content">
+                <div id="large-header" class="large-header">
+                    <canvas id="demo-canvas"></canvas>
+                    <div class="logo_box">
+                        <h3>金利来欢迎你</h3>
+                        <form action="#" name="f" method="post">
+                            <div class="input_outer">
+                                <span class="u_user"></span>
+                                <input name="userName" id="userName" class="text" style="color: #FFFFFF !important" autocomplete="off" type="text" placeholder="请输入账户">
+                            </div>
+                            <div class="input_outer">
+                                <span class="us_uer"></span>
+                                <input name="loginPwd" id="loginPwd" class="text" style="color: #FFFFFF !important; position:absolute; z-index:100;" autocomplete="off" value="" type="password" placeholder="请输入密码">
+                            </div>
+                            <div class="input_outer">
+                                <div>
+                                <span class="us_uer"></span>
+                                <input name="captcha" id="captcha" class="text" style="color: #FFFFFF !important; position:absolute; z-index:100;" autocomplete="off" value="" placeholder="请输入验证码"></div>
+                                <div style="float: right;"><img id="thumburlShow" src="" width="120" height="40" onclick="getVerify();"/></div>
+                            </div>
+                              
+                            <div class="mb2">
+                                <a class="act-but submit" href="javascript:;" onclick="login()" style="color: #FFFFFF">登录</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div><!-- /container -->
+        <script src="js/TweenLite.min.js"></script>
+        <script src="js/EasePack.min.js"></script>
+        <script src="js/rAF.js"></script>
+        <script src="js/demo-1.js"></script>
+    </body>
+</html>
