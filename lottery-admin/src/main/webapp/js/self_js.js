@@ -355,3 +355,28 @@ function startTimeStr(startTime){
 function endTimeStr(endTime){
     return endTime+" 23:59:59";
 }
+
+function parseParam(url, paraName) {
+	var parentUrl = url;
+	var userName = "";
+	var usernameIndx = parentUrl.indexOf(paraName);
+	if (usernameIndx < 0) {
+		return "";
+	}
+	usernameIndxEnd = parentUrl.indexOf("&", usernameIndx);
+	if (usernameIndxEnd < 0) {
+		userName = parentUrl.substring(usernameIndx);
+	} else {
+		userName = parentUrl.substring(usernameIndx, usernameIndxEnd);
+	}
+
+	if (typeof userName == "undefined" || userName == "") {
+		return "";
+	}
+
+	userName = userName.split("=")[1];
+	if (typeof userName == "undefined" || userName == "") {
+		return "";
+	}
+	return userName;
+}

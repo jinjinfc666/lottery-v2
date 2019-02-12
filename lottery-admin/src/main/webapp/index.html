@@ -18,6 +18,13 @@
         <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
         <script type="text/javascript" src="js/self_js.js"></script>
         <script type="text/javascript">
+        	
+        	$(document).keypress(function(e) {
+        		if(e.which == 13){
+	        	   $('#loginBtn').click();
+        		}
+        	});
+        	
             $(document).ready(function () {
                 getSessionId();
             });
@@ -152,7 +159,7 @@
                             </div>
                               
                             <div class="mb2">
-                                <a class="act-but submit" href="javascript:;" onclick="login()" style="color: #FFFFFF">登录</a>
+                                <a id="loginBtn" class="act-but submit" href="javascript:;" onclick="login()" style="color: #FFFFFF">登录</a>
                             </div>
                         </form>
                     </div>

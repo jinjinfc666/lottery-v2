@@ -285,7 +285,7 @@
                 var token="Bearer " + access_token;
                 var domain=parseDomain();
                 if(qrUrlNew!=''){
-                    qrUrl=domain+"/"+qrUrlNew;
+                    qrUrl = qrUrlNew;
                 }
                 var url=domain+"/lottery-api/pay-types/addPayChannel";
                 var data=JSON.stringify({

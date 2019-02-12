@@ -56,6 +56,8 @@
                 var obj = {};
                 obj=getValue();
                 queryType();
+                
+                searchrecord(obj.id)
             });
             function searchrecord(id){
                 updateToken();
@@ -98,7 +100,9 @@
             }
             function queryType(){
                 updateToken();
-                var accType=document.getElementById('accType').value;
+                //var accType=document.getElementById('accType').value;
+                var params = getValue();
+                var accType = params.accType;
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
                 var operationType = $("#operationType").attr("id");
@@ -163,7 +167,8 @@
                 var token="Bearer " + access_token;
                 var userId=document.getElementById('userId').value;
                 var amount=document.getElementById('amount').value;
-                var accType=document.getElementById('accType').value;
+                var params = getValue();
+                var accType = params.accType;
                 var operationType=document.getElementById('operationType').value;
                 var domain=parseDomain();
                 var url=domain+"/lottery-api/users/operation/amount";
@@ -226,7 +231,7 @@
         <table width="600px" cellspacing="0" cellpadding="5">
             <tr>
                 <th class="thstyle">用户名：</th>
-                <td><input type="text" id="userName" name="userName" value="" style="width:150px;" class="form-control" readonly /></td>
+                <td><input type="hidden" id="userId" ><input type="text" id="userName" name="userName" value="" style="width:150px;" class="form-control" readonly /></td>
             </tr>
             <tr>
                 <th class="thstyle">余额：</th>
@@ -257,7 +262,7 @@
             var wz = parent.layer.getFrameIndex(window.name);
         </script>
         <div style="margin-left:330px;">
-            <button class="btn btn-primary" style="width: 100px;" type="submit" onclick="insert()">提交</button>
+            <button class="btn btn-primary" style="width: 100px;" type="submit" onclick="update()">提交</button>
         </div>
     </body>
 </html>

@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>彩票后台管理系统</title>
         <style>
             .text_time{
-                width: 150px;
-                height: 35px;
-                background: #ffffff;
+                    width: 100px;
+                    height: 35px;
+                    background: #ffffff;	
             }
             .thCenter{
                 text-align: center;
@@ -16,7 +16,6 @@
         </style>
         <link href="../css/bootstrap.min14ed.css" rel="stylesheet">
         <link href="../css/font-awesome.min93e3.css" rel="stylesheet">
-        <link href="../css/animate.min.css" rel="stylesheet">
         <link href="../css/animate.min.css" rel="stylesheet">
         <link href="../css/style.min862f.css" rel="stylesheet">
         <script type="text/javascript" src="../js/jquery-1.10.2.min.js"></script>
@@ -27,18 +26,26 @@
         <script language="javascript" src="../js/layer/layer.min.js"></script>
         <script type="text/javascript">
             $(document).ready(function () {
+            	var parentUrl = window.location.href;
+
+    			var orderId = parseParam(parentUrl, 'orderId');
+    			if(typeof orderId != 'undefined' && orderId.length != 0){
+    				$('#orderId').val(orderId);
+    			}
+    			
                 queryType();
-                //queryFundType();
-                document.getElementById('startTime').value=getNowFormatDate();
-                document.getElementById('endTime').value=getNowFormatDate();
+                //change();
+                /* document.getElementById('startTime').value=getNowFormatDate();
+                document.getElementById('endTime').value=getNowFormatDate(); */
                 searchrecord("search");
             });
+           
             function queryType(){
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
-                var selectid = $("#operationType").attr("id");
+                var type = $("#type").attr("id");
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/report/userFlowDetail/type";
+                var url=domain+"/lottery-api/report/DWD/DWType";
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -57,8 +64,8 @@
                     },
                     success: function (data) {
                         if(data.status==1){
-                            $.each(data.data, function(key, val) {  
-                                     $("#" + selectid).append("<option value='"+key+"'>"+val.remark+"</option>");
+                            $.each(data.data, function(key, val) {
+                                $("#" + type).append("<option value='"+key+"'>"+val+"</option>");
                             }) 
                         }else if(data.status==0){
                             alert(getErroe(data.error_code));
@@ -66,29 +73,38 @@
                     }
                 });
             }
-            
-            function queryFundType(){
+            function querystate(){
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
-                var selectid = $("#operationType").attr("id");
+                var type=document.getElementById('type').value;
+                var state = $("#state").attr("id");
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/report/userFlowDetail/type";
+                var url=domain+"/lottery-api/report/DWD/DWDState";
                 $.ajax({
                     url: url,
                     type: "GET",
-                    async: false,
-                    data: {},
-                    dataType: "json",
-                    beforeSend: function (XMLHttpRequest) {
-         				XMLHttpRequest.setRequestHeader("Authorization", token);
+                    async: false, // 设置同步方式
+                    data: {
+                         type: type
                     },
-                    error: function (jqXHR,textStatus,errorThrown) {
-                    	alert(getErroe(jqXHR.status));
+                    dataType: "json",
+//                    beforeSend: function(xhr) {
+//                        xhr.setRequestHeader("Authorization");
+//                    },
+//                    headers:{"Authorization":token},
+                    beforeSend: function (XMLHttpRequest) {
+         		XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function () {
+                        alert("系统错误");
                     },
                     success: function (data) {
                         if(data.status==1){
-                            $.each(data.data, function(key, val) {  
-                                     $("#" + selectid).append("<option value='"+key+"'>"+val.remark+"</option>");
+                            $("#" + state + "tr").remove();
+                            $("#" + state).empty();
+                            $("#" + state).append("<option value=''></option>");
+                            $.each(data.data, function(key, val) {
+                                    $("#" + state).append("<option value='"+key+"'>"+val+"</option>");
                             }) 
                         }else if(data.status==0){
                             alert(getErroe(data.error_code));
@@ -96,8 +112,6 @@
                     }
                 });
             }
-            
-            
             function parseDomain() {
                 var currURL = location.href;
                 var domain = '';
@@ -117,61 +131,41 @@
                 }
                 return domain;
             }
-            
-            function showDetails(orderId, operationType){
-            	var url = "";
-            	if(operationType == 'transfer'){
-            		url = 'report/transferDetails.html?v=4.0';
-            	}else if(operationType == 'deposit'){
-            		url = 'report/depositDetails.html?v=4.0';
-            	}else if(operationType == 'withdraw'
-            			|| operationType == 'wd_freeze'
-            			|| operationType == 'wd_unfreeze'){
-            		url = 'report/withdrawDetails.html?v=4.0';
-            	}else if(operationType == 'betting' 
-            			|| operationType == 'rebate'
-            			|| operationType == 'payout'){
-            		url = 'report/lottery_transaction.html?v=4.0';
-            	}
-            	
-            	if(typeof url != 'undefined' && url.length != 0){
-            		url += "&orderId=" + orderId;
-	            	$("#agent_btn", window.parent.document).attr("data-addurl", url);
-	            	$("#agent_btn", window.parent.document).click();            		
-            	}
-            }
-            
             function searchrecord(str) {
                 var pageIndex=page(str);
                 var tableid = $("#tableTRTD").attr("id");
                 var sumAmount = $("#sumAmount").attr("id");
+                var type = 2;
+                var state = document.getElementById('state').value;
                 var userName = document.getElementById('userName').value;
-                var dataItemType = document.getElementById('dataItemType').value;
-                var orderId = document.getElementById('orderId').value;
-                var operationType = document.getElementById('operationType').value;
+                var orderNum = document.getElementById('orderNum').value;
                 var startTime = document.getElementById('startTime').value;
                 var endTime = document.getElementById('endTime').value;
-                startTime=startTimeStr(startTime);
-                endTime=endTimeStr(endTime);
-                if((new Date(startTime.replace(/-/g,"\/"))) > (new Date(endTime.replace(/-/g,"\/")))){
-                    alert('开始时间不能大于结束时间');
-                    return false;
+                if(typeof startTime != 'undefined' && startTime.length != 0){
+	                startTime=startTimeStr(startTime);                	
                 }
-                var access_token = sessionStorage.getItem("access_token");
+                
+                if(typeof endTime != 'undefined' && endTime.length != 0){
+                	endTime=endTimeStr(endTime);
+                }
+                var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/report/userFlowDetail";
+                var url=domain+"/lottery-api/report/DWD";
+                var orderId = $('#orderId').val();
+                
                 $.ajax({
                     url: url,
                     type: "GET",
                     async: false, // 设置同步方式
                     data: {
-                        userName: userName, 
-                        dataItemType:dataItemType,
-                        orderId:orderId,
-                        operationType:operationType,
+                        type: type, 
+                        state: state,
+                        userName:userName,
+                        orderNum:orderNum,
                         startTime:startTime,
                         endTime:endTime,
+                        orderId:orderId,
                         pageIndex:pageIndex
                     },
                     dataType: "json",
@@ -180,109 +174,145 @@
 //                    },
 //                    headers:{"Authorization":token},
                     beforeSend: function (XMLHttpRequest) {
-         				XMLHttpRequest.setRequestHeader("Authorization", token);
+         		XMLHttpRequest.setRequestHeader("Authorization", token);
                     },
                     error: function () {
-                    	if(typeof jqXHR != 'undefined' 
-                    		&& typeof jqXHR.status != 'undefined' 
-                    		&& jqXHR.status == 401){
-	                    	var url = "index.html";
-	                        window.location.href = url;
-                    	}
+                        alert("系统错误");
                     },
                     success: function (data) {
                         if(data.status===1){
+                            var state1=null;
+                            var upstate=null;
                             document.getElementById('totalNumber').value = data.data.totalNumber;
                             document.getElementById('totalPages').value = data.data.totalPages;
                             document.getElementById('pageIndex_button').value = data.data.pageIndex;
                             $("#" + tableid + "tr").remove();
                             $("#" + tableid).empty();
-                            $("#" + sumAmount + "tr").remove();
-                            $("#" + sumAmount).empty();
-                            $("#" + sumAmount).append("<tr><th></th><th>变动金额总计："+data.sumAmount+"</th><th></th><th></th><th></th><th></th><th></th></tr>");
-                            $.each(data.data.content, function(key, val) {  
-                                var remark="";
-                                if(val[0].remark!=null&&val[0].remark!=''){
-                                    if(val[0].remark=='in'){
-                                        remark="转入";
-                                    }else if(val[0].remark=='out'){
-                                        remark="转出";
-                                    }else{
-                                        remark =val[0].remark;
+                            $.each(data.data.content, function(key, val) {
+                                    $("#" + sumAmount + "tr").remove();
+                                    $("#" + sumAmount).empty();
+                                    $("#" + sumAmount).append("<tr><th></th><th>变动金额总计："+data.sumAmount+"</th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th></tr>");
+                                    if(val[0].state==0){
+                                        state="<a onclick=\"updateStateW('"+val[0].orderNum+"')\">等待付款</a>";
+                                    }else if(val[0].state==1){
+                                        state="付款成功";
+                                    }else if(val[0].state==2){
+                                        state="审核不通过";
+                                    }else if(val[0].state==3){
+                                        state="银行故障";
+                                    }else if(val[0].state==4){
+                                        state="账户信息错误";
+                                    }else if(val[0].state==5){
+                                        state="others";
                                     }
-                                }
-                                                                                               
-                                var dataItemTypeDesc = "";
-                                var dataItemType = val[0].dataItemType;
-                                if(typeof dataItemType == 'undefined'
-                            		|| dataItemType == null){
-                                	dataItemType = '';
-                            	}
+                                    var createTimeNew=val[0].createTime==null?"":ConvertJSONDateToJSDateObject(""+val[0].createTime+"");
+                                    var updateTimeNew=val[0].updateTime==null?"":ConvertJSONDateToJSDateObject(""+val[0].updateTime+"");
+                                    var remark="";
+                                    if(val[0].remark!=null){
+                                        remark=val[0].remark;
+                                    }
+                                    $("#" + tableid).append("<tr>\n\
+                                    <td class=\"thCenter\">"+val[0].orderNum+"</td>\n\
+                                    <td class=\"thCenter\">提现</td>\n\
+                                    <td class=\"thCenter\">"+val[1].userName+"</td>\n\
+                                    <td class=\"thCenter\">"+val[1].realName+"</td>\n\
+                                    <td class=\"thCenter\">"+val[3].cardNum+"</td>\n\
+                                    <td class=\"thCenter\">"+val[0].amount+"</td>\n\
+                                    <td class=\"thCenter\">"+val[2].accName+"</td>\n\
+                                    <td class=\"thCenter\">"+createTimeNew+"</td>\n\
+                                    <td class=\"thCenter\">"+updateTimeNew+"</td>\n\
+                                    <td class=\"thCenter\">"+state+"</td>\n\
+                                    <td class=\"thCenter\">"+remark+"</td></tr>");
+                                //}
                                 
-                                if(val[0].dataItemType == 0){
-                                	dataItemTypeDesc = "余额";
-                                }else if(val[0].dataItemType == 1){
-                                	dataItemTypeDesc = "奖金";
-                                }else if(val[0].dataItemType == 2){
-                                	dataItemTypeDesc = "积分";
-                                }else if(val[0].dataItemType == 3){
-                                	dataItemTypeDesc = "冻结资金";
-                                }
-                                
-                                var orderId = val[0].orderId;
-                                var orderDetail = '';
-                                if(typeof orderId == 'undefined'
-                                		|| orderId == null
-                                		|| orderId.length == 0){
-                                	orderId = '';
-                                }else{
-                                	if(val[0].operationType == 'transfer'
-                                			|| val[0].operationType == 'deposit'
-                                			|| val[0].operationType == 'withdraw'
-                                			|| val[0].operationType == 'wd_freeze'
-                                			|| val[0].operationType == 'betting'
-                                			|| val[0].operationType == 'rebate'
-                                			|| val[0].operationType == 'payout'
-                                			|| val[0].operationType == 'wd_unfreeze'){
-                                		
-                                		orderDetail = "<a href='javascript:void(0)' onclick=\"showDetails("+orderId+",'"+val[0].operationType+"')\" >查看详情 </a>";
-                                	}
-                                }
-                                
-                                $("#" + tableid).append("<tr>\n\
-                                <td class=\"thCenter\">"+val[1].userName+"</td>\n\
-                                <td class=\"thCenter\">"+val[0].amount+"</td>\n\
-                                <td class=\"thCenter\">"+val[0].preAmount+"</td>\n\
-                                <td class=\"thCenter\">"+val[0].postAmount+"</td>\n\
-                                <td class=\"thCenter\">"+dataItemTypeDesc+"</td>\n\
-                                <td class=\"thCenter\">"+val[2].remark+"</td>\n\
-                                <td class=\"thCenter\">"+orderId+"</td>\n\
-                                <td class=\"thCenter\">"+ConvertJSONDateToJSDateObject(""+val[0].createTime+"")+"</td>\n\
-                                <td class=\"thCenter\">"+remark+"</td>\n\
-                                <td class=\"thCenter\">"+ orderDetail + "</td>\n\
-                                </tr>"); 
                             });
                         }else if(data.status==0){
                             alert(getErroe(data.error_code));
                         }
-                        
                     }
                 });
             }
-            function queryDetails(id){
-                var url = "queryDetails.html?id="+id;
+            function updateStateW(orderNum){
+                var url = "updateStateWith.html?orderNum="+orderNum;
                 $.layer({
                     type: 2,
-                    title: '查看投注信息',
+                    title: '修改状态',
                     maxmin: false,
                     shift: 'top',
                     shadeClose: false,
-                    area: ['700px', '620px'],
+                    area: ['500px', '300px'],
                     offset: ['50px', ''],
                     close: function (index) {
-
+                       searchrecord("search");
                     },
                     iframe: {src: encodeURI(url)}
+                });
+            }
+            function updateStateSucess(orderNum){
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/payment/order/end";
+                var data=JSON.stringify({
+                        "orderNum":orderNum
+                });
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    async: false, // 设置同步方式
+                    data: data,
+                    dataType: "json",
+                    contentType:"application/json", 
+//                    beforeSend: function(xhr) {
+//                        xhr.setRequestHeader("Authorization");
+//                    },
+//                    headers:{"Authorization":token},
+                    beforeSend: function (XMLHttpRequest) {
+         		XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function () {
+                        alert("系统错误");
+                    },
+                    success: function (data) {
+                        if(data.status===1){
+                            alert("修改成功!!!");
+                        }else if(data.status==0){
+                            alert(getErroe(data.error_code));
+                        }
+                    }
+                });
+            }
+            function updateState(id,state){
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/report/DWD/UpdateDepositState";
+                $.ajax({
+                    url: url,
+                    type: "PUT",
+                    async: false, // 设置同步方式
+                    data: {
+                        id: id, 
+                        state: state
+                    },
+                    dataType: "json",
+//                    beforeSend: function(xhr) {
+//                        xhr.setRequestHeader("Authorization");
+//                    },
+//                    headers:{"Authorization":token},
+                    beforeSend: function (XMLHttpRequest) {
+         		XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function () {
+                        alert("系统错误");
+                    },
+                    success: function (data) {
+                        if(data.status===1){
+                            alert("修改成功!!!");
+                        }else if(data.status==0){
+                            alert(getErroe(data.error_code));
+                        }
+                    }
                 });
             }
             function page(str){
@@ -330,21 +360,16 @@
             <form class="form-horizontal" method="get">
                 <div class="form_box" style="width: 100%;">
                     <div class="input-group" style="margin-left: 20px;">
-                        用户名：<input type="text" class="form-control" id="userName" name="userName" style="width:150px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-                        订单：<input type="text" class="form-control" id="orderId" name="orderId" style="width:150px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;       
-                        流水类型：<select id="operationType" name="operationType" style="width:150px;" class="form-control">
-                            <option value="">--流水类型--</option>
+                        用户名：<input type="text" class="form-control" id="userName" name="userName" style="width:100px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        订单号：<input type="text" class="form-control" id="orderNum" name="orderNum" style="width:100px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        状态：<select id="state" name="state" style="width:100px;" class="form-control">
+                            <option value=""></option>
                         </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        资金类型：<select id="dataItemType" name="dataItemType" style="width:150px;" class="form-control">
-                            <option value="">--资金类型--</option>
-                            <option value="0">余额</option>
-                            <option value="1">奖金</option>
-                            <option value="2">积分</option>
-                            <option value="3">冻结资金</option>
-                        </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      
-                        开始时间：<input type="text" id="startTime" placeholder="选择开始时间" onClick="return Calendar('startTime');" class="text_time" name="startTime" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        结束时间：<input type="text" id="endTime" placeholder="选择结束时间" onClick="return Calendar('endTime');" class="text_time" name="endTime" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                       <!--  最小金额：<input type="text" class="form-control" id="amountStart" name="amountStart" style="width:150px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        最大金额：<input type="text" class="form-control" id="amountEnd" name="amountEnd" style="width:150px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -->
+                        开始时间：<input type="text" id="startTime" placeholder="选择开始时间" onClick="return Calendar('startTime');" class="text_time" name="startTime" readonly/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        结束时间：<input type="text" id="endTime" placeholder="选择结束时间" onClick="return Calendar('endTime');" class="text_time" name="endTime" readonly/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <input type="hidden" class="form-control" id="orderId" name="orderId" style="width:100px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <span> 
                             <button type="button" class="btn btn-primary" style="height:32px;" onclick="searchrecord('search')">搜索
                             </button> 
@@ -357,19 +382,20 @@
             </br >
             <div class="ibox-content">
                 <table class="table table-striped table-bordered table-hover dataTables-example">
-                    <thead>
+                    <thead id="totalTRTD">
                         <tr>
-                            <th class="thCenter">用户名</th>
-                            <th class="thCenter">变动金额</th>
-                            <th class="thCenter">变动前金额</th>
-                            <th class="thCenter">变动后金额</th>
-                            <th class="thCenter">资金类型</th>
-                            <th class="thCenter">流水类型</th>
-                            <th class="thCenter">订单ID</th>
-                            <th class="thCenter">时间</th>
-                            <th class="thCenter">备注</th>
-                            <th class="thCenter">订单详情</th>
-                        </tr>
+		                    <th class=\"thCenter\">交易号</th>
+		                    <th class=\"thCenter\">类别</th>
+		                    <th class=\"thCenter\">用户名</th>
+		                    <th class=\"thCenter\">真实姓名</th>
+		                    <th class=\"thCenter\">用户银行卡</th>
+		                    <th class=\"thCenter\">提现金额</th>
+		                    <th class=\"thCenter\">提现钱包</th>
+		                    <th class=\"thCenter\">时间</th>
+		                    <th class=\"thCenter\">最后更新时间</th>
+		                    <th class=\"thCenter\">状态</th>
+		                    <th class=\"thCenter\">备注</th>
+	                    </tr>
                     </thead>
                     <tbody id="tableTRTD">
                         
@@ -400,8 +426,5 @@
                 </div>
             </div>
         </div>
-        
-        <!-- <div id="agent_div" data-addurl="none" style="display:none" >addurl</div> -->
-        <!-- <div id="agent_div" data-addurl="none">addurl</div> -->
     </body>
 </html>
