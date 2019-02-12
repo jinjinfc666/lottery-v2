@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.hibernate.type.DateType;
 import org.springframework.stereotype.Repository;
@@ -18,7 +20,6 @@ import com.jll.common.utils.DateUtil;
 import com.jll.common.utils.StringUtils;
 import com.jll.dao.DefaultGenericDaoImpl;
 import com.jll.dao.PageBean;
-import com.jll.entity.SiteMessage;
 import com.jll.entity.UserInfo;
 
 @Repository
@@ -83,23 +84,23 @@ public class UserInfoDaoImpl extends DefaultGenericDaoImpl<UserInfo> implements 
 		sql.append("select count(*) from UserInfo ");
 		
 		if(!StringUtils.isBlank(user.getUserName())) {
-			condition.append(" userName = ? and ");
+			condition.append(" userName = ? or ");
 			params.add(user.getUserName());
 		}
 		
 		if(!StringUtils.isBlank(user.getEmail())) {
-			condition.append(" email = ? and ");
+			condition.append(" email = ? or ");
 			params.add(user.getEmail());
 		}
 		
 		if(!StringUtils.isBlank(user.getPhoneNum())) {
-			condition.append(" phoneNum = ? and ");
+			condition.append(" phoneNum = ? or ");
 			params.add(user.getPhoneNum());
 		}
 		
 		if(condition.length() > 0) {
 			condition.insert(0, " where ");
-			int indx = condition.lastIndexOf(" and ");
+			int indx = condition.lastIndexOf(" or ");
 			condition.replace(indx, condition.length(), "");
 			
 			logger.debug("condition ::::" + condition.toString());
@@ -222,12 +223,18 @@ public class UserInfoDaoImpl extends DefaultGenericDaoImpl<UserInfo> implements 
 	}
 	//点击代理查询下一级代理
 	@Override
-	public PageBean queryAgentByAgent(Integer id,String startTime,String endTime,Integer pageSize,Integer pageIndex) {
+	public PageBean queryAgentByAgent(Integer id,String startTime,String endTime,Integer pageSize,Integer pageIndex, String sonUserName) {
 		Map<String,Object> map=new HashMap<String,Object>();
 		String timeSql="";
 		if(!StringUtils.isBlank(startTime)&&!StringUtils.isBlank(endTime)) {
 			timeSql=" and create_time >=:startTime and create_time <=:endTime";
 		}
+		
+		if(!StringUtils.isBlank(sonUserName)) {
+			timeSql += " and user_name=:sonUserName";
+			map.put("sonUserName", sonUserName);
+		}
+		
 		Integer userType=Constants.UserType.SYS_ADMIN.getCode();
 		Integer userTypea=Constants.UserType.DEMO_PLAYER.getCode();
 		Integer userTypeb=Constants.UserType.GENERAL_AGENCY.getCode();
@@ -239,8 +246,11 @@ public class UserInfoDaoImpl extends DefaultGenericDaoImpl<UserInfo> implements 
 	    if(!StringUtils.isBlank(startTime)&&!StringUtils.isBlank(endTime)) {
 			Date beginDate = DateUtil.fmtYmdHisToDate(startTime);
 		    Date endDate = DateUtil.fmtYmdHisToDate(endTime);
-			map.put("startTime", beginDate);
-			map.put("endTime", endDate);
+		    
+		    java.sql.Date bDate = new java.sql.Date(beginDate.getTime());
+		    java.sql.Date eDate = new java.sql.Date(endDate.getTime());
+			map.put("startTime", startTime);
+			map.put("endTime", endTime);
 		}
 	    PageBean<UserInfo> page=new PageBean();
 		page.setPageIndex(pageIndex);
@@ -260,7 +270,7 @@ public class UserInfoDaoImpl extends DefaultGenericDaoImpl<UserInfo> implements 
 	
 	@Override
 	public PageBean<UserInfo> queryAllUserInfoByPage(PageBean<UserInfo> reqPage) {
-		String sql = "from UserInfo";
+		String sql = "from UserInfo order by id";
 		List<Object> params = new ArrayList<>();
 		
 		return this.queryByPagination(reqPage, sql, params, UserInfo.class);
@@ -315,10 +325,27 @@ public class UserInfoDaoImpl extends DefaultGenericDaoImpl<UserInfo> implements 
 	@Override
 	public long queryUserBankCount(Integer userId) {
 		String sql="select count(*) from UserBankCard where userId=:userId and state=:state";
-		Query query = getSessionFactory().getCurrentSession().createQuery(sql);
-	    query.setParameter("userId", userId);
-	    query.setParameter("state", Constants.BankCardState.ENABLED.getCode());
-	    long count = ((Number)query.iterate().next()).longValue();
+		Session session = null;
+		boolean needClose = false;
+		long count = 0;
+				
+		try {
+			session = getSessionFactory().getCurrentSession();			
+		}catch(HibernateException ex) {
+			session = getSessionFactory().openSession();
+			needClose = true;
+		}finally {
+			
+			Query query = session.createQuery(sql);
+			query.setParameter("userId", userId);
+			query.setParameter("state", Constants.BankCardState.ENABLED.getCode());
+			count = ((Number)query.iterate().next()).longValue();
+			
+			if(needClose && session != null && session.isOpen()) {
+				session.close();
+			}
+		}
+	    
 	    return count;
 	}
 

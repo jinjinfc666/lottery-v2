@@ -71,6 +71,7 @@ public class PromoController {
 			@RequestBody Promo po) {
 		return promoService.processAccedeToPromo(po);
 	}
+	
 	//判断用户是否有参加活动的资格
 	@ApiComment("User isOrOk accede promo")
 	@RequestMapping(value="/qualification-Screening", method = { RequestMethod.POST}, produces=MediaType.APPLICATION_JSON_VALUE)

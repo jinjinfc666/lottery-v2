@@ -25,6 +25,7 @@ import com.jll.common.constants.Constants;
 import com.jll.common.constants.Constants.OrderDelayState;
 import com.jll.common.constants.Constants.OrderState;
 import com.jll.common.http.HttpRemoteStub;
+import com.jll.common.threadpool.ThreadParam;
 import com.jll.common.utils.DateUtil;
 import com.jll.entity.Issue;
 import com.jll.entity.OrderInfo;
@@ -71,22 +72,22 @@ public class Gd11In5ServiceImpl extends DefaultLottoTypeServiceImpl
 	
 	@Override
 	public List<Issue> makeAPlan() {
-		//10:00-22:00（72期）10分钟一期，22:00-02:00（48期）5分钟一期
+		//10:10-23:10（39期）20分钟一期
 		List<Issue> issues = new ArrayList<>();
-		int maxAmount = 84;
+		int maxAmount = 42;
 		Calendar calendar = Calendar.getInstance();
 		Date today = new Date();
 		today = DateUtil.addMinutes(today, 10);
 		calendar.setTime(today);
 		
 		calendar.set(Calendar.HOUR_OF_DAY, 9);
-		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.MINUTE, 10);
 		calendar.set(Calendar.SECOND, 0);
 		calendar.set(Calendar.MILLISECOND, 0);
 		for(int i = 0; i < maxAmount; i++) {
 			Issue issue = new Issue();
 			issue.setStartTime(calendar.getTime());
-			calendar.add(Calendar.MINUTE, 10);
+			calendar.add(Calendar.MINUTE, 20);
 			issue.setEndTime(calendar.getTime());
 			issue.setIssueNum(generateLottoNumber(i + 1, today));
 			issue.setLotteryType(lotteryType);
@@ -136,8 +137,8 @@ public class Gd11In5ServiceImpl extends DefaultLottoTypeServiceImpl
 		SysCode sysCode = cacheServ.getSysCode(codeTypeName, codeName);
 		String winningNum = null;
 		Issue issue = null;
-		int maxCounter = 3600;
-		int currCounter = 0;
+		long maxCounter = 15 * 60 * 1000;
+		long currCounter = 0;
 		
 		lottoTypeAndIssueNum = ((String)message).split("\\|");
 		lottoType = lottoTypeAndIssueNum[0];
@@ -183,24 +184,8 @@ public class Gd11In5ServiceImpl extends DefaultLottoTypeServiceImpl
 						if(result.get("responseBody") != null) {
 							response = (String)result.get("responseBody");
 							if(response.contains(issueNum.replace("-", ""))) {
-								if(response.contains("code")) {//360
-									winningNum = parse360API(response);
-									if(StringUtils.isBlank(winningNum)) {
-										result = HttpRemoteStub.synGet(new URI(tempUrl), null, null);
-										if(result != null && result.size() > 0) {
-											if(result.get("responseBody") != null) {
-												response = (String)result.get("responseBody");
-												if(response.contains(issueNum.replace("-", ""))) {
-													if(response.contains("code")) {//360
-														winningNum = parse360API(response);
-													}
-												}
-											}
-										}
-									}
-									
-								}else if(response.contains("winningNumber")) {//网易
-									winningNum = parse163API(response);
+								if(response.contains("preDrawCode")) {//网易
+									winningNum = parse168(response, "20"+ issueNum.replace("-", ""), "10006");
 								}
 								
 								if(!StringUtils.isBlank(winningNum)) {
@@ -214,7 +199,7 @@ public class Gd11In5ServiceImpl extends DefaultLottoTypeServiceImpl
 									
 									//inform the progress to payout
 									cacheServ.publishMessage(Constants.TOPIC_PAY_OUT, message);
-									return;								
+									return;
 								}
 							}
 						}
@@ -224,7 +209,7 @@ public class Gd11In5ServiceImpl extends DefaultLottoTypeServiceImpl
 				}
 			}
 			
-			currCounter++;
+			currCounter = new Date().getTime() - ((Date)ThreadParam.get()).getTime();
 			
 			try {
 				Thread.sleep(1000);
@@ -273,6 +258,55 @@ public class Gd11In5ServiceImpl extends DefaultLottoTypeServiceImpl
 				winningNumMap = (Map)retItems.get(0);
 				String winningNumber = (String)winningNumMap.get("code");
 				return winningNumber;
+			}
+			
+		} catch (JsonParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	private String parse168(String response, String issueNum, String lottoType) {
+		ObjectMapper mapper = new ObjectMapper();
+		Map  winningNumMap = null;
+		Map responseMap = null;
+		Map resultMap = null;
+		Map dataMap = null;
+		List retItems = null;
+		try {
+			responseMap = mapper.readValue(response, Map.class);
+			resultMap = (Map)responseMap.get("result");
+			retItems = (List)resultMap.get("data");
+			
+			//resultMap = (Map)responseMap.get("result");
+			//retItems = (List)responseMap.get("data");
+			if(retItems == null || retItems.size() == 0) {
+				return null;
+			}
+			
+			for(Object temp : retItems) {
+				winningNumMap = (Map)temp;
+				String winningNumber = (String)winningNumMap.get("preDrawCode");
+				Object winningIssueNumObj = winningNumMap.get("preDrawIssue");
+				String winningIssueNum = null;
+				if(winningIssueNumObj instanceof Long) {
+					winningIssueNum = Long.toString((Long)winningIssueNumObj);
+				}else if(winningIssueNumObj instanceof Integer) {
+					winningIssueNum = Integer.toString((Integer)winningIssueNumObj);
+				}
+				Integer lottoType_ = (Integer)winningNumMap.get("lotCode");
+				if(issueNum.equals(winningIssueNum)
+						&& lottoType.equals(String.valueOf(lottoType_))) {
+					return winningNumber;
+				}
 			}
 			
 		} catch (JsonParseException e) {

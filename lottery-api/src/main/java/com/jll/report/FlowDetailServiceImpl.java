@@ -23,17 +23,18 @@ public class FlowDetailServiceImpl implements FlowDetailService {
 	@Override
 	public Map<String,Object> queryUserAccountDetails(Map<String, Object> ret) {
 		String userName=(String)ret.get("userName");
-		Float amountStart=(Float)ret.get("amountStart");
-		Float amountEnd=(Float)ret.get("amountEnd");
+		Integer dataItemType = (Integer)ret.get("dataItemType");
 		String operationType=(String)ret.get("operationType");
 		String startTime=(String) ret.get("startTime");
 		String endTime=(String) ret.get("endTime");
 		Integer pageIndex=(Integer) ret.get("pageIndex");
 		Integer pageSize=(Integer) ret.get("pageSize");
+		Integer orderId = (Integer) ret.get("orderId");
+		
 		String codeTypeName=Constants.SysCodeTypes.FLOW_TYPES.getCode();
 		SysCode sysCode=cacheRedisService.getSysCode(codeTypeName,codeTypeName);
 		Integer codeTypeNameId=sysCode.getId();
-		return flowDetailDao.queryUserAccountDetails(codeTypeNameId,userName,amountStart,amountEnd,operationType,startTime,endTime,pageIndex,pageSize);
+		return flowDetailDao.queryUserAccountDetails(codeTypeNameId,userName,dataItemType,operationType,startTime,endTime,pageIndex,pageSize,orderId);
 	}
 	//代理的转账记录查询  
 	@Override

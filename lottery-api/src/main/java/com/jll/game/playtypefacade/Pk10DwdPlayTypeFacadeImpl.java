@@ -84,6 +84,7 @@ public class Pk10DwdPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		Float betAmount = 0F;
 		Float maxWinAmount = 0F;
 		String[] betNumSet = null;
+		int winBetTotal = 0;
 		
 		betNumSet = betNum.split(";");
 		for(String subBetNum : betNumSet) {
@@ -92,6 +93,8 @@ public class Pk10DwdPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 			for(String singleBit : singleBits) {
 				int len = singleBit.length() / 2;
 				singleAmount += MathUtil.combination(1, len);
+				
+				winBetTotal++;
 			}
 			
 			betTotal += singleAmount;
@@ -99,7 +102,16 @@ public class Pk10DwdPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		
 		betAmount = MathUtil.multiply(betTotal, times, Float.class);
 		betAmount = MathUtil.multiply(betAmount, monUnit, Float.class);
-		maxWinAmount = MathUtil.multiply(betAmount, singleBettingPrize.floatValue(), Float.class);
+		
+		maxWinAmount = MathUtil.multiply(winBetTotal, 
+				times, 
+				Float.class);
+		maxWinAmount = MathUtil.multiply(maxWinAmount, 
+				monUnit, 
+				Float.class);
+		maxWinAmount = MathUtil.multiply(maxWinAmount, 
+				singleBettingPrize.floatValue(), 
+				Float.class);
 		
 		ret.put("playType", playType);
 		ret.put("betAmount", betAmount);

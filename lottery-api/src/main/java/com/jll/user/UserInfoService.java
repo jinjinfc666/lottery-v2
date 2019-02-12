@@ -10,6 +10,7 @@ import com.jll.dao.PageBean;
 import com.jll.dao.PageQueryDao;
 import com.jll.entity.SiteMessFeedback;
 import com.jll.entity.SiteMessage;
+import com.jll.entity.TbUser;
 import com.jll.entity.UserAccount;
 import com.jll.entity.UserAccountDetails;
 import com.jll.entity.UserBankCard;
@@ -74,7 +75,7 @@ public interface UserInfoService
 	 *		   Message.status.SUCCESS or
 	 *         Message.Error
 	 */
-	void regUser(UserInfo user,HttpServletRequest request);
+	void regUser(UserInfo user, String reqIP);
 
 	/**
 	 * query the general agency which is unique in the system
@@ -116,13 +117,19 @@ public interface UserInfoService
 	//查询总代下面的所有一级代理
 	List<UserInfo> queryAllAgent();
 	//点击代理查询下一级代理
-	Map<String,Object> queryAgentByAgent(Integer id,String startTime,String endTime,Integer pageIndex);
+	Map<String,Object> queryAgentByAgent(Integer id,String startTime,String endTime,Integer pageIndex, String userName);
 	Map<String,Object> queryAgentByAgentHou(Integer id,String startTime,String endTime);
 	//通过id查看这个用户是否存在
 	boolean isOrNoUserInfo(Integer id);
 	
 	Float calPrizePattern(UserInfo user, String lottoType);
 	
+	/**
+	 * 计算平台点数
+	 * @param prizePattern  奖金模式
+	 * @return
+	 */
+	Double calPlatformRebate(Integer prizePattern);
 	
 	Map<String, Object> processUserRedWalletAmountTransfer(int bankId, double amount, String passoword);
 	Map<String, Object> saveUpdateDirectOperationUserAmount(UserAccountDetails dtl);
@@ -138,7 +145,7 @@ public interface UserInfoService
 	
 	Map<String,Object> getUserNameById(Integer userId);
 	
-	Map<String, Object> saveRandomDemoUserInfo(HttpServletRequest request);
+	Map<String, Object> saveRandomDemoUserInfo(String reqIP);
 	
 	Map<String, Object> updateDemoUserDisableLogin();
 	
@@ -157,4 +164,8 @@ public interface UserInfoService
 			Integer pageSize, 
 			UserInfo sender, 
 			Map<String, Object> params);
+	
+	PageBean<UserInfo> queryUserInfoByPagination(PageBean<UserInfo> page);
+	
+	void migrateUser(UserInfo user, Map<String, Object> extraParams);
 }

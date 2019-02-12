@@ -77,14 +77,29 @@ public class EleIn5QszuxZlPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl  
 		int betTotal = 1;
 		Float betAmount = 0F;
 		Float maxWinAmount = 0F;
-		
+		int winBetTotal = 0;
 		
 		int len = betNum.length() / 2;
 		betTotal = (int)(MathUtil.combination(3, len));
 		
+		if(betTotal > 1) {
+			winBetTotal = 1;
+		}else {
+			winBetTotal = betTotal;
+		}
+		
 		betAmount = MathUtil.multiply(betTotal, times, Float.class);
 		betAmount = MathUtil.multiply(betAmount, monUnit, Float.class);
-		maxWinAmount = MathUtil.multiply(betAmount, singleBettingPrize.floatValue(), Float.class);
+		
+		maxWinAmount = MathUtil.multiply(winBetTotal, 
+				times, 
+				Float.class);
+		maxWinAmount = MathUtil.multiply(maxWinAmount, 
+				monUnit, 
+				Float.class);
+		maxWinAmount = MathUtil.multiply(maxWinAmount, 
+				singleBettingPrize.floatValue(), 
+				Float.class);
 		
 		ret.put("playType", playType);
 		ret.put("betAmount", betAmount);
@@ -184,10 +199,14 @@ public class EleIn5QszuxZlPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl  
 		BigDecimal winCount = new BigDecimal(6);
 		BigDecimal totalCount = null;
 		Double tempVal = Double.parseDouble(Long.toString(MathUtil.combination(1, 11)));
+		Double tempVal1 = Double.parseDouble(Long.toString(MathUtil.combination(1, 10)));
+		Double tempVal2 = Double.parseDouble(Long.toString(MathUtil.combination(1, 9)));
 		
-		tempVal = Math.pow(tempVal, 3);
+		tempVal = MathUtil.multiply(tempVal, tempVal1, Double.class);
+		tempVal = MathUtil.multiply(tempVal, tempVal2, Double.class);
+		
 		totalCount = new BigDecimal(tempVal);
-		winningRate = winCount.divide(totalCount, 4, BigDecimal.ROUND_HALF_UP);
+		winningRate = winCount.divide(totalCount,5, BigDecimal.ROUND_HALF_UP);
 		return winningRate;
 	}
 	

@@ -227,7 +227,7 @@ public class ZszxPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		
 		tempVal = Math.pow(tempVal, 3);
 		totalCount = new BigDecimal(tempVal);
-		winningRate = winCount.divide(totalCount, 4, BigDecimal.ROUND_HALF_UP);
+		winningRate = winCount.divide(totalCount, 5, BigDecimal.ROUND_HALF_UP);
 		return winningRate;
 	}
 

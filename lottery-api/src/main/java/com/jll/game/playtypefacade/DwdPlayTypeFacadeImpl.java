@@ -76,17 +76,41 @@ public class DwdPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		Float prizePattern = userServ.calPrizePattern(user, lottoType);
 		BigDecimal winningRate = calWinningRate();
 		BigDecimal singleBettingPrize = calSingleBettingPrize(prizePattern, winningRate);
-		int betTotal = 1;
+		int betTotal = 0;
 		Float betAmount = 0F;
 		Float maxWinAmount = 0F;
+		String[] betNumSet = null;
+		int singleBetTotal = 1;
+		int winBetTotal = 0;
+				
+		betNumSet = betNum.split(";");
+		for(String singleBetNum : betNumSet) {
+			String[] betNumBits = singleBetNum.split(",");
+			
+			singleBetTotal = 0;
+			for(String betNumBit : betNumBits) {
+				int len = betNumBit.length();
+				singleBetTotal += MathUtil.combination(1, len);
+				winBetTotal++;
+			}
+			
+			betTotal += singleBetTotal;
+			
+		}
 		
-		betNum = betNum.replaceAll(",", "");
-		int len = betNum.length();
-		betTotal = (int)MathUtil.combination(1, len);
 		
 		betAmount = MathUtil.multiply(betTotal, times, Float.class);
 		betAmount = MathUtil.multiply(betAmount, monUnit, Float.class);
-		maxWinAmount = MathUtil.multiply(betAmount, singleBettingPrize.floatValue(), Float.class);
+		
+		maxWinAmount = MathUtil.multiply(winBetTotal, 
+				times, 
+				Float.class);
+		maxWinAmount = MathUtil.multiply(maxWinAmount, 
+				monUnit, 
+				Float.class);
+		maxWinAmount = MathUtil.multiply(maxWinAmount, 
+				singleBettingPrize.floatValue(), 
+				Float.class);
 		
 		ret.put("playType", playType);
 		ret.put("betAmount", betAmount);

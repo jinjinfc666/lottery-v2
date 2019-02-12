@@ -55,10 +55,19 @@ public class LotteryCenterServiceImpl implements LotteryCenterService
 	UserInfoService userServ;
 	
 	@Override
-	public synchronized void makeAPlan() {
+	public void makeAPlan() {
 		String keyLock = Constants.KEY_LOCK_MAKING_PLAN;
+		Date lockStart = null;
+		Date lockEnd = null;
+		
+		logger.debug(String.format("Thread ID %s try to make plan  , waitting for locker ", 
+				Thread.currentThread().getId()));
 		//加互斥锁，防止多进程同步执行
 		if(cacheServ.lock(keyLock, keyLock, Constants.LOCK_MAKING_PLAN_EXPIRED)) {
+			lockStart = new Date();
+			
+			logger.debug(String.format("Thread ID %s try to make plan, successfully obtain locker ", 
+					Thread.currentThread().getId()));
 			try {
 				if(StringUtils.isBlank(lotteryTypeImpl)) {
 					return ;
@@ -79,6 +88,13 @@ public class LotteryCenterServiceImpl implements LotteryCenterService
 					
 					String lotteryType = lotteryTypeServ.getLotteryType();
 					boolean isPlanExisting = isPlanExisting(lotteryType);
+					
+					logger.debug(String.format("Thread ID %s ,plans of %s is exisitng? %s", 
+							Thread.currentThread().getId(),
+							lotteryType,
+							isPlanExisting
+							));
+					
 					if(isPlanExisting) {
 						continue;
 					}
@@ -98,9 +114,14 @@ public class LotteryCenterServiceImpl implements LotteryCenterService
 					}
 				}
 			}finally {
-			
+				lockEnd = new Date();
+				logger.debug(String.format("Thread ID %s release locker , consume %s ms", 
+						Thread.currentThread().getId(),
+						lockEnd.getTime() - lockStart.getTime()));
 				cacheServ.releaseLock(keyLock);
 			}
+		}else {
+			logger.debug(String.format("Thread ID %s try to make plan, but failed to obtain locker ", Thread.currentThread().getId()));
 		}
 		
 	}
@@ -116,7 +137,6 @@ public class LotteryCenterServiceImpl implements LotteryCenterService
 		}
 		String cacheKey = lotteryType;
 		List<Issue> issues = cacheServ.getPlan(cacheKey);
-		Date nowTime = new Date();
 		Issue currIssue = null;
 		BulletinBoard bulletinBoard = cacheServ.getBulletinBoard(lotteryType);
 		
@@ -175,32 +195,55 @@ public class LotteryCenterServiceImpl implements LotteryCenterService
 	 * 定时遍历期次，修改状态
 	 */
 	@Override
-	public synchronized void exeScheduleIssue() {
+	public void exeScheduleIssue() {
 		String keyLock = Constants.KEY_LOCK_SCHEDULE_ISSUE;
+		Date startTime = null;
+		Date endTime = null;
+		Date lockStart = null;
+		Date lockEnd = null;
+		
+		logger.debug(String.format("Thread ID %s try to exe schedule issue , waitting for locker ", 
+				Thread.currentThread().getId()));
 		//加互斥锁，防止多进程同步执行
 		if(cacheServ.lock(keyLock, keyLock, Constants.LOCK_SCHEDULE_ISSUE_EXPIRED)) {
+			lockStart = new Date();
+			logger.debug(String.format("Thread ID %s exe schedule issue , successfully obtain locker ", 
+					Thread.currentThread().getId()));
+			
 			try {
-				//logger.debug(String.format("It's ready to process schedule....."));
-				Map<String, SysCode> lottoTypes = cacheServ.getSysCode(Constants.SysCodeTypes.LOTTERY_TYPES.getCode());
-				if(lottoTypes == null || lottoTypes.size() == 0) {
-					return ;
+				String[] impls = lotteryTypeImpl.split(",");
+				if(impls == null || impls.length == 0) {
+					return;
 				}
-				//logger.debug(String.format("current lotto type count %s ", lottoTypes.size()));
-				Iterator<String> ite = lottoTypes.keySet().iterator();
-				while(ite.hasNext()) {
-					String key = ite.next();
-					SysCode sysCode = lottoTypes.get(key);
-					//logger.debug(String.format("current lotto type  %s ", key));
-					if(key.equals(Constants.LottoType.MMC.getCode())) {
+				
+				for(String impl : impls) {
+					LotteryTypeService lotteryTypeServ = LotteryTypeFactory.getInstance().createLotteryType(impl);
+					if(lotteryTypeServ == null 
+							|| lotteryTypeServ.getLotteryType()
+							.equals(Constants.LottoType.MMC.getCode())) {
 						continue;
 					}
-					if(sysCode.getIsCodeType().intValue() == Constants.SysCodeTypesFlag.code_val.getCode()) {
-						dealBulletinBoard(sysCode);
-					}
-				}			
+					startTime = new Date();
+					Map<String, SysCode> lottoTypes = cacheServ.getSysCode(Constants.SysCodeTypes.LOTTERY_TYPES.getCode());
+					endTime = new Date();
+					logger.debug(String.format("Consumed %s ms to obtain lotoTypes  %s", 
+							endTime.getTime() - startTime.getTime(),
+							lotteryTypeServ.getLotteryType()));					
+										
+					SysCode sysCode = lottoTypes.get(lotteryTypeServ.getLotteryType());
+					
+					dealBulletinBoard(sysCode);
+				}
 			}finally {
+				lockEnd = new Date();
+				logger.debug(String.format("Thread ID %s release locker , consume %s ms", 
+						Thread.currentThread().getId(),
+						lockEnd.getTime() - lockStart.getTime()
+						));
 				cacheServ.releaseLock(keyLock);
 			}
+		}else {
+			logger.debug(String.format("Thread ID %s try  exe schedule issue , but failed to obtain locker ", Thread.currentThread().getId()));
 		}
 	}
 
@@ -208,12 +251,44 @@ public class LotteryCenterServiceImpl implements LotteryCenterService
 		Issue currIssue = null;
 		boolean isChanged = false;
 		Map<String, Object> ret = null;
+		Date startTime;
+		Date endTime;
+		List<Issue> plans = null;
 		
-		boolean isMoved = initBulletinBoard(lottoType);
+		startTime = new Date();
+		BulletinBoard bulletinBoard = initBulletinBoard(lottoType);
+		endTime = new Date();
+		
+		logger.debug(String.format("Consumed %s ms to initBulletinBoard", 
+				endTime.getTime() - startTime.getTime()));
+		
+		startTime = new Date();
+		plans = cacheServ.getPlan(lottoType.getCodeName());
+		endTime = new Date();
+		
+		logger.debug(String.format("Consumed %s ms to getPlan, totally %s", 
+				endTime.getTime() - startTime.getTime(),
+				plans == null?0 : plans.size()
+				));
+		
+		startTime = new Date();
+		boolean isMoved = hasMoved(lottoType, bulletinBoard, plans);
+		endTime = new Date();
+		
+		logger.debug(String.format("Consumed %s ms to hasMoved", 
+				endTime.getTime() - startTime.getTime()));
+		
 		if(isMoved) {
 			return ;
 		}
-		ret = changeIssueState(lottoType.getCodeName());
+		
+		startTime = new Date();
+		ret = changeIssueState(lottoType.getCodeName(), bulletinBoard, plans);
+		endTime = new Date();
+		
+		logger.debug(String.format("Consumed %s ms to changeIssueState", 
+				endTime.getTime() - startTime.getTime()));
+		
 		if(ret == null) {
 			return ;
 		}
@@ -232,9 +307,33 @@ public class LotteryCenterServiceImpl implements LotteryCenterService
 		}
 	}
 
-	private Map<String, Object> changeIssueState(String lottoType) {
+	private BulletinBoard initBulletinBoard(SysCode lottoType) {
+		Date startTime = null;
+		Date endTime = null;
+		
+		
+		startTime = new Date();
+		BulletinBoard bulletinBoard = cacheServ.getBulletinBoard(lottoType.getCodeName());
+		
+		endTime = new Date();
+		logger.debug(String.format("Consumed %s ms to obtain bulletinBoard", 
+				endTime.getTime() - startTime.getTime()));
+		
+		if(bulletinBoard == null) {
+			bulletinBoard = new BulletinBoard();
+			
+			startTime = new Date();
+			cacheServ.setBulletinBoard(lottoType.getCodeName(), bulletinBoard);
+			endTime = new Date();
+			logger.debug(String.format("Consumed %s ms to set bulletinBoard", 
+					endTime.getTime() - startTime.getTime()));
+		}
+		
+		return bulletinBoard;
+	}
+
+	private Map<String, Object> changeIssueState(String lottoType, BulletinBoard bulletinBoard, List<Issue> issues) {
 		Map<String, Object> ret = new HashMap<>();
-		BulletinBoard bulletinBoard = cacheServ.getBulletinBoard(lottoType);
 		Issue currIssue = null;
 		Date currTime = new Date();
 		Date startTime = null;
@@ -249,9 +348,7 @@ public class LotteryCenterServiceImpl implements LotteryCenterService
 		if(lottoAttri == null) {
 			return null;
 		}
-		if(bulletinBoard == null) {
-			return null;
-		}
+		
 		currIssue = bulletinBoard.getCurrIssue();
 
 		if(currIssue == null) {
@@ -266,7 +363,7 @@ public class LotteryCenterServiceImpl implements LotteryCenterService
 		
 		state = currIssue.getState();
 		//TODO 
-		/*logger.debug(String.format("lotto Type  %s   issue number %s   Issue Id %s", 
+		logger.debug(String.format("lotto Type  %s   issue number %s   Issue Id %s", 
 				lottoType, 
 				currIssue.getIssueNum(), 
 				currIssue.getId()));
@@ -275,7 +372,7 @@ public class LotteryCenterServiceImpl implements LotteryCenterService
 		logger.debug(startTime.getTime()+"------------startTime---------------");
 		
 		logger.debug(endBettingTime.getTime()+"------------endBettingTime---------------");
-		logger.debug(currTime.getTime()+"------------currTime---------------");*/
+		logger.debug(currTime.getTime()+"------------currTime---------------");
 		
 		if(state == Constants.IssueState.BETTING.getCode()
 				&& endBettingTime.getTime() <= currTime.getTime()) {
@@ -294,7 +391,7 @@ public class LotteryCenterServiceImpl implements LotteryCenterService
 		
 		state = currIssue.getState();
 		//TODO 
-		//logger.debug(state + "-----------current state------------");
+		logger.debug(state + "-----------current state------------");
 		
 		if(hasChanged) {
 			if(state == Constants.IssueState.END_ISSUE.getCode()) {
@@ -308,7 +405,7 @@ public class LotteryCenterServiceImpl implements LotteryCenterService
 			logger.debug(state + "-----------current state------------");
 			logger.debug(String.format("issue number %s   Issue Id %s", currIssue.getIssueNum(), currIssue.getId()));*/
 			
-			cacheServ.updatePlan(lottoType, currIssue);
+			cacheServ.updatePlan(lottoType, issues, currIssue);
 			
 			cacheServ.setBulletinBoard(lottoType, bulletinBoard);
 			logger.debug("-----------Save Issue------------");
@@ -320,31 +417,54 @@ public class LotteryCenterServiceImpl implements LotteryCenterService
 		return ret;
 	}
 
-	private Issue moveToNext(Issue currIssue, String lotteryType) {
+	private Issue moveToNext(BulletinBoard bulletinBoard, String lotteryType, List<Issue> plans) {
 		Issue nextIssue = null;
 		Integer indx = 0;
-		List<Issue> plans = cacheServ.getPlan(lotteryType);
-		BulletinBoard bulletinBoard = cacheServ.getBulletinBoard(lotteryType);
-						
+		Date startTime = new Date();
+		Date endTime = null;
+		//List<Issue> plans = cacheServ.getPlan(lotteryType);
+		endTime = new Date();
+		logger.debug(String.format("Consumed %s ms to getPlan", 
+					endTime.getTime() - startTime.getTime()));
+		 
+		Issue currIssue = bulletinBoard.getCurrIssue();
 		if(plans == null || plans.size() == 0) {
 			return null;
 		}
 		
+		startTime = new Date();
 		indx = getIndexOfNextIssue(currIssue, plans);
+		endTime = new Date();
+		logger.debug(String.format("Consumed %s ms to getIndexOfNextIssue", 
+					endTime.getTime() - startTime.getTime()));
+		
 		if(indx == null) {
 			return null;
 		}
 		
+		startTime = new Date();
 		nextIssue = plans.get(indx);
 		nextIssue.setState(Constants.IssueState.BETTING.getCode());
-		cacheServ.updatePlan(lotteryType, nextIssue);
-		logger.debug(String.format("next issue %s   , type %s", 
+		cacheServ.updatePlan(lotteryType, plans, nextIssue);
+		endTime = new Date();
+		logger.debug(String.format("Consumed %s ms to updatePlan", 
+					endTime.getTime() - startTime.getTime()));
+		
+		/*logger.debug(String.format("next issue %s   , type %s", 
 				nextIssue.getIssueNum(), 
-				nextIssue.getLotteryType()));
+				nextIssue.getLotteryType()));*/
+		startTime = new Date();
 		bulletinBoard.setCurrIssue(nextIssue);
 		cacheServ.setBulletinBoard(lotteryType, bulletinBoard);
+		endTime = new Date();
+		logger.debug(String.format("Consumed %s ms to setBulletinBoard", 
+					endTime.getTime() - startTime.getTime()));
 		
+		startTime = new Date();
 		issueServ.saveIssue(nextIssue);
+		endTime = new Date();
+		logger.debug(String.format("Consumed %s ms to saveIssue", 
+					endTime.getTime() - startTime.getTime()));
 		
 		return nextIssue;
 	}
@@ -372,7 +492,7 @@ public class LotteryCenterServiceImpl implements LotteryCenterService
 		return null;
 	}
 	
-	private Integer getIndexOfIssue(Issue currIssue, List<Issue> plans) {
+	/*private Integer getIndexOfIssue(Issue currIssue, List<Issue> plans) {
 		int indx = 0;
 		
 		if(currIssue == null || plans == null || plans.size() == 0) {
@@ -388,29 +508,22 @@ public class LotteryCenterServiceImpl implements LotteryCenterService
 		}
 		
 		return null;
-	}
+	}*/
 
-	private boolean initBulletinBoard(SysCode lottoType) {
-		BulletinBoard bulletinBoard = cacheServ.getBulletinBoard(lottoType.getCodeName());
-		if(bulletinBoard == null) {
-			bulletinBoard = new BulletinBoard();
-			cacheServ.setBulletinBoard(lottoType.getCodeName(), bulletinBoard);
-		}
+	private boolean hasMoved(SysCode lottoType, BulletinBoard bulletinBoard, List<Issue> plans) {
+		Date startTime = null;
+		Date endTime = null;
 		
-		Issue issue = moveToNext(bulletinBoard.getCurrIssue(), lottoType.getCodeName());
-		
+		startTime = new Date();
+		Issue issue = moveToNext(bulletinBoard,  lottoType.getCodeName(), plans);
+		endTime = new Date();
+		logger.debug(String.format("Consumed %s ms to moveToNext", 
+				endTime.getTime() - startTime.getTime()));
 		if(issue == null) {
 			return false;
 		}
 		
 		return true;
-		
-		/*if(!hasMoreIssue(lottoType.getCodeName())) {
-			bulletinBoard.setCurrIssue(null);
-			cacheServ.setBulletinBoard(lottoType.getCodeName(), bulletinBoard);
-		}else {
-			moveToNext(bulletinBoard.getCurrIssue(), lottoType.getCodeName());
-		}*/
 	}
 
 	@Override

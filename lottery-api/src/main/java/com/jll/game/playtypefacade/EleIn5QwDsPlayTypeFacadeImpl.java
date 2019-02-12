@@ -79,22 +79,54 @@ public class EleIn5QwDsPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		Integer playType = (Integer)params.get("playType");
 		String lottoType = (String)params.get("lottoType");
 		Float prizePattern = userServ.calPrizePattern(user, lottoType);
-		BigDecimal winningRate = calWinningRate(0);
-		BigDecimal singleBettingPrize = calSingleBettingPrize(prizePattern, winningRate);
+		BigDecimal winningRate = null;
+		BigDecimal singleBettingPrize = new BigDecimal("0");
 		String[] betNumSet = null;
-		int betTotal = 1;
+		int betTotal = 0;
 		Float betAmount = 0F;
 		Float maxWinAmount = 0F;
+		int winBetTotal = 0;
+		int maxWinBetTotal = 1;
 		
 		betNumSet = betNum.split(";");
 		for(String subBetNum : betNumSet) {
 			int len = subBetNum.length() / 2;
-			betTotal *= MathUtil.combination(1, len);
+			betTotal += MathUtil.combination(1, len);
+			
+			Map<String, String> tempBits = splitBetNum(subBetNum);
+						
+			Iterator<String> ite = tempBits.keySet().iterator();
+			while(ite.hasNext()) {
+				String key = ite.next();
+				Integer oddCounter = Integer.parseInt(key) - 1;
+				winningRate = calWinningRate(oddCounter);
+				BigDecimal tempsingleBettingPrize = calSingleBettingPrize(prizePattern, winningRate);
+				
+				if(tempsingleBettingPrize.compareTo(singleBettingPrize) == 1) {
+					singleBettingPrize = tempsingleBettingPrize;
+				}
+			}
 		}
+		
+		if(betTotal > maxWinBetTotal) {
+			winBetTotal = maxWinBetTotal;
+		}else {
+			winBetTotal = betTotal;
+		}
+		
 		
 		betAmount = MathUtil.multiply(betTotal, times, Float.class);
 		betAmount = MathUtil.multiply(betAmount, monUnit, Float.class);
-		maxWinAmount = MathUtil.multiply(betAmount, singleBettingPrize.floatValue(), Float.class);
+		
+		maxWinAmount = MathUtil.multiply(winBetTotal, 
+				times, 
+				Float.class);
+		maxWinAmount = MathUtil.multiply(maxWinAmount, 
+				monUnit, 
+				Float.class);
+		maxWinAmount = MathUtil.multiply(maxWinAmount, 
+				singleBettingPrize.floatValue(), 
+				Float.class);
 		
 		ret.put("playType", playType);
 		ret.put("betAmount", betAmount);

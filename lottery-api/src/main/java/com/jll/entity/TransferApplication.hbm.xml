@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generated 2018-8-14 16:52:58 by Hibernate Tools 5.2.10.Final --><!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="true" default-access="property" default-cascade="none" default-lazy="true">
+    <class catalog="lottery" dynamic-insert="false" dynamic-update="false" mutable="true" name="com.jll.entity.TransferApplication" optimistic-lock="version" polymorphism="implicit" select-before-update="false" table="transfer_application">
+        <id name="id" type="java.lang.Integer">
+            <column name="id"/>
+            <generator class="identity"/>
+        </id>
+        <property generated="never" lazy="false" name="orderNum" optimistic-lock="true" type="string" unique="false">
+            <column length="50" name="order_num">
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="sourceUser" optimistic-lock="true" type="java.lang.Integer" unique="false">
+            <column name="source_user">
+                <comment>�û�id</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="sourceWalletId" optimistic-lock="true" type="java.lang.Integer" unique="false">
+            <column name="source_wallet_id">
+                <comment>�û�id</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="dstUser" optimistic-lock="true" type="java.lang.Integer" unique="false">
+            <column name="dst_user">
+                <comment>�û�id</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="dstWalletId" optimistic-lock="true" type="java.lang.Integer" unique="false">
+            <column name="dst_wallet_id">
+                <comment>�û�id</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="amount" optimistic-lock="true" type="java.lang.Double" unique="false">
+            <column name="amount" precision="8">
+                <comment>���ֽ��</comment>
+            </column>
+        </property>
+        
+        <property generated="never" lazy="false" name="state" optimistic-lock="true" type="java.lang.Integer" unique="false">
+            <column name="state">
+                <comment>����״̬:0,�ȴ�����;1,����ɹ�,2,��˲�ͨ��;3,���й���;4,�˻���Ϣ����;5.others</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="createTime" optimistic-lock="true" type="timestamp" unique="false">
+            <column length="19" name="create_time">
+                <comment>����ʱ��</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="updateTime" optimistic-lock="true" type="timestamp" unique="false">
+            <column length="19" name="update_time">
+                <comment>����ʱ��</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="creator" optimistic-lock="true" type="java.lang.Integer" unique="false">
+            <column name="creator">
+                <comment>ƽ̨����Ա</comment>
+            </column>
+        </property>        
+    </class>
+</hibernate-mapping>

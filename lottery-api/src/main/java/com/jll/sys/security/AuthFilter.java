@@ -66,10 +66,12 @@ public class AuthFilter extends ClientCredentialsTokenEndpointFilter {
 			type=0;
 			ipLong=Long.toString(IpUtils.ipToLong(ip));
 		}
-		long count=ipBlackListService.queryByIp(ipLong,type);
+		
+		//TODO 暂时注销,方便测试2019-01-04
+		/*long count=ipBlackListService.queryByIp(ipLong,type);
 		if(count>0) {
 			throw new CusAuthenticationException(Message.Error.ERROR_LOGIN_ILLEGAL_USER_NO_LOGIN.getCode());
-		}
+		}*/
 		
 		if(StringUtils.isBlank(grantType)) {
 			throw new CusAuthenticationException(Message.Error.ERROR_COMMON_NO_PERMISSION.getCode());

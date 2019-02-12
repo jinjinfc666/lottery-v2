@@ -116,7 +116,7 @@ public class PageQuery {
 			if (totalcount <= 0) {
 				return page;
 			}
-			System.out.println(sql);
+			//System.out.println(sql);
 			List l1 = supserDao.excuteHqlForQuery(sql,cls,paramsList,pageIndex,size);
 			page = queryForPagenation(l1, pageIndex, size, totalcount);
 		}catch (Exception e) {

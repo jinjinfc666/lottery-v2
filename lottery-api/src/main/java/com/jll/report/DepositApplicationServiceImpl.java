@@ -104,6 +104,7 @@ public class DepositApplicationServiceImpl implements DepositApplicationService 
 		UserAccount mainAcc = (UserAccount) supserDao.findByName(UserAccount.class, "userId",dbDep.getUserId(), "accType", WalletType.MAIN_WALLET.getCode()).get(0);
 		
 		UserAccountDetails accDtal1 = userAccountDetailsService.initCreidrRecord(dbDep.getUserId(), mainAcc, mainAcc.getBalance().doubleValue(), dep.getAmount(), Constants.AccOperationType.DEPOSIT.getCode(),dbDep.getId(),"");
+		accDtal1.setDataItemType(Constants.DataItemType.BALANCE.getCode());
 		mainAcc.setBalance(accDtal1.getPostAmount());
 		supserDao.save(accDtal1);
 		supserDao.update(mainAcc);

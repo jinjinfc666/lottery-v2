@@ -38,6 +38,11 @@
                 <comment>�˻��������ͣ���Ӧϵͳ����</comment>
             </column>
         </property>
+        <property generated="never" lazy="false" name="dataItemType" optimistic-lock="true" type="java.lang.Integer" unique="false">
+            <column name="data_item_type">
+                <comment>账户变动数据类型,0:余额;1:奖金;2,积分;3,冻结资金</comment>
+            </column>
+        </property>
         <property generated="never" lazy="false" name="createTime" optimistic-lock="true" type="timestamp" unique="false">
             <column length="19" name="create_time"/>
         </property>

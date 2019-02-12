@@ -3,6 +3,7 @@ package com.jll.sys.siteMsg;
 import java.util.List;
 import java.util.Map;
 
+import com.jll.dao.PageBean;
 import com.jll.dao.PageQueryDao;
 import com.jll.entity.SiteMessFeedback;
 import com.jll.entity.SiteMessage;
@@ -18,4 +19,5 @@ public interface SysSiteMsgDao
 	List<?> querySiteMessFeedback(Integer mesId);
 	List<?> querySiteMessageById(Integer id);
 	Map<String, Object> querySiteMessageB(Map<String, Object> params);
+	public PageBean<SiteMessage> querySentSiteMessage(Map<String, String> params);
 }

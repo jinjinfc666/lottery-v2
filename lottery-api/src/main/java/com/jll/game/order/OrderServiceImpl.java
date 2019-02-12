@@ -246,7 +246,7 @@ public class OrderServiceImpl implements OrderService
 				walletId,				
 				wallet.getState()));
 		if(wallet != null 
-				&& wallet.getUserId() == user.getId() 
+				&& wallet.getUserId().intValue() == user.getId().intValue()
 				&& wallet.getState().intValue() == Constants.WalletState.NORMAL.getCode()) {
 			return true;
 		}

@@ -92,9 +92,9 @@ public class HttpRemoteStub {
             
             
 		} catch (ClientProtocolException e) {
-			
+			e.printStackTrace();
 		} catch (IOException e) {
-			
+			e.printStackTrace();
 		}finally {
 			if(response != null) {
 				try {

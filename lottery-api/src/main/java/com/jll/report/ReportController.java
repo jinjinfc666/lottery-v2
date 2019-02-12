@@ -70,36 +70,40 @@ public class ReportController {
 	 */
 	@RequestMapping(value={"/userFlowDetail"}, method={RequestMethod.GET}, produces={"application/json"})
 	public Map<String, Object> queryUserAccountDetails(@RequestParam(name = "userName", required = false) String userName,
-			  @RequestParam(name = "amountStart", required = false) Float amountStart,
-			  @RequestParam(name = "amountEnd", required = false) Float amountEnd,
+			  @RequestParam(name = "dataItemType", required = false) Integer dataItemType,
+			  @RequestParam(name = "orderId", required = false) Integer orderId,
 			  @RequestParam(name = "operationType", required = false) String operationType,
-			  @RequestParam(name = "startTime", required = true) String startTime,
-			  @RequestParam(name = "endTime", required = true) String endTime,
+			  @RequestParam(name = "startTime", required = false) String startTime,
+			  @RequestParam(name = "endTime", required = false) String endTime,
 			  @RequestParam(name = "pageIndex", required = true) Integer pageIndex,//当前请求页
 			  HttpServletRequest request) {
 		Map<String, Object> ret = new HashMap<>();
 		Map<String, Object> map = new HashMap<>();
-		if(StringUtils.isBlank(startTime)||StringUtils.isBlank(endTime)) {
+		
+		/*if(StringUtils.isBlank(startTime)||StringUtils.isBlank(endTime)) {
+			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_ERROR_PARAMS.getCode());
+			ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_ERROR_PARAMS.getErrorMes());
+	    	return ret;
+		}*/
+		
+		if((!StringUtils.isBlank(startTime) && !DateUtil.isValidDate(startTime))
+				|| (!StringUtils.isBlank(endTime) && !DateUtil.isValidDate(endTime))) {
 			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
 			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_ERROR_PARAMS.getCode());
 			ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_ERROR_PARAMS.getErrorMes());
 	    	return ret;
 		}
-		if(!DateUtil.isValidDate(startTime)||!DateUtil.isValidDate(endTime)) {
-			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
-			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_ERROR_PARAMS.getCode());
-			ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_ERROR_PARAMS.getErrorMes());
-	    	return ret;
-		}
+		
 		Integer pageSize=Constants.Pagination.SUM_NUMBER.getCode();
 		ret.put("pageSize", pageSize);
 		ret.put("pageIndex", pageIndex);
 		ret.put("userName", userName);
-		ret.put("amountStart", amountStart);
-		ret.put("amountEnd", amountEnd);
+		ret.put("dataItemType", dataItemType);
 		ret.put("operationType", operationType);
 		ret.put("startTime", startTime);
 		ret.put("endTime", endTime);
+		ret.put("orderId", orderId);
 		try {
 			map= flowDetailService.queryUserAccountDetails(ret);
 			logger.debug(map+"------------------------------queryUserAccountDetails--------------------------------------");
@@ -162,21 +166,23 @@ public class ReportController {
 			  @RequestParam(name = "zhTrasactionNum", required = false) String zhTrasactionNum,//追号编号
 			  @RequestParam(name = "state", required = false) Integer state,//0,等待派奖;1,赢;2,输;3,用户取消订单;4,系统取消订单
 			  @RequestParam(name = "terminalType", required = false) Integer terminalType,//来源   0,pc端;1,手机端
-			  @RequestParam(name = "startTime", required = true) String startTime,//时间 String
-			  @RequestParam(name = "endTime", required = true) String endTime,//时间 String
+			  @RequestParam(name = "startTime", required = false) String startTime,//时间 String
+			  @RequestParam(name = "endTime", required = false) String endTime,//时间 String
 			  @RequestParam(name = "issueNum", required = false) String issueNum,//期号  String
 			  @RequestParam(name = "userName", required = false) String userName,
 			  @RequestParam(name = "orderNum", required = false) String orderNum,//订单号 String
+			  @RequestParam(name = "orderId", required = false) Integer orderId,//订单号Id
 			  @RequestParam(name = "pageIndex", required = true) Integer pageIndex,//当前请求页
 			  HttpServletRequest request) {
 		Map<String, Object> ret = new HashMap<>();
-		if(StringUtils.isBlank(startTime)||StringUtils.isBlank(endTime)) {
+		/*if(StringUtils.isBlank(startTime)||StringUtils.isBlank(endTime)) {
 			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
 			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_ERROR_PARAMS.getCode());
 			ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_ERROR_PARAMS.getErrorMes());
 	    	return ret;
-		}
-		if(!DateUtil.isValidDate(startTime)||!DateUtil.isValidDate(endTime)) {
+		}*/
+		if((!StringUtils.isBlank(startTime) && !DateUtil.isValidDate(startTime))
+				|| (!StringUtils.isBlank(endTime) && !DateUtil.isValidDate(endTime))) {
 			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
 			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_ERROR_PARAMS.getCode());
 			ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_ERROR_PARAMS.getErrorMes());
@@ -195,6 +201,7 @@ public class ReportController {
 		ret.put("issueNum", issueNum);   
 		ret.put("userName", userName);
 		ret.put("orderNum", orderNum);
+		ret.put("orderId", orderId);
 		logger.debug(ret+"------------------------------queryLoyTst--------------------------------------");
 		try {
 			PageBean list = loyTstService.queryLoyTst(ret);
@@ -331,17 +338,19 @@ public class ReportController {
 			  @RequestParam(name = "amountEnd", required = false) Float amountEnd,
 			  @RequestParam(name = "startTime", required = true) String startTime,//时间 String
 			  @RequestParam(name = "endTime", required = true) String endTime,//时间 String
+			  @RequestParam(name = "orderId", required = false) Integer orderId,//订单号Id
 			  @RequestParam(name = "pageIndex", required = true) Integer pageIndex,//当前请求页
 			  HttpServletRequest request) {
 		Map<String, Object> ret = new HashMap<>();
 		Map<String, Object> map = new HashMap<>();
-		if(StringUtils.isBlank(startTime)||StringUtils.isBlank(endTime)||StringUtils.isBlank(type)) {
+		/*if(StringUtils.isBlank(startTime)||StringUtils.isBlank(endTime)||StringUtils.isBlank(type)) {
 			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
 			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_ERROR_PARAMS.getCode());
 			ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_ERROR_PARAMS.getErrorMes());
 	    	return ret;
-		}
-		if(!DateUtil.isValidDate(startTime)||!DateUtil.isValidDate(endTime)) {
+		}*/
+		if((!StringUtils.isBlank(startTime) && !DateUtil.isValidDate(startTime))
+				|| (!StringUtils.isBlank(endTime) && !DateUtil.isValidDate(endTime))) {
 			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
 			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_ERROR_PARAMS.getCode());
 			ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_ERROR_PARAMS.getErrorMes());
@@ -358,6 +367,7 @@ public class ReportController {
 		ret.put("amountEnd", amountEnd);
 		ret.put("startTime", startTime);   
 		ret.put("endTime", endTime);
+		ret.put("orderId", orderId);
 		logger.debug(ret+"------------------------------queryDWD--------------------------------------");
 		try {
 			map = dWDetailsService.queryDetails(ret);

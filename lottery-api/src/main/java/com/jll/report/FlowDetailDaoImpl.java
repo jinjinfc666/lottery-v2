@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.NoResultException;
+import javax.persistence.TemporalType;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.query.Query;
@@ -24,8 +25,18 @@ import com.jll.entity.UserAccountDetails;
 
 @Repository
 public class FlowDetailDaoImpl extends DefaultGenericDaoImpl<UserAccountDetails> implements FlowDetailDao {
+	
 	@Override
-	public Map<String,Object> queryUserAccountDetails(Integer codeTypeNameId,String userName,Float amountStart,Float amountEnd,String operationType,String startTime,String endTime,Integer pageIndex,Integer pageSize) {
+	public Map<String,Object> queryUserAccountDetails(Integer codeTypeNameId,
+														String userName,
+														Integer dataItemType,
+														String operationType,
+														String startTime,
+														String endTime,
+														Integer pageIndex,
+														Integer pageSize,
+														Integer orderId) {
+		
 		String userNameSql="";
 		String amountStartSql="";
 		String amountEndSql="";
@@ -37,14 +48,18 @@ public class FlowDetailDaoImpl extends DefaultGenericDaoImpl<UserAccountDetails>
 			userNameSql=" and b.userName=:userName";
 			map.put("userName", userName);
 		}
-		if(amountStart!=null) {
-			amountStartSql=" and a.amount>=:amountStart";
-			map.put("amountStart", amountStart);
+		
+		if(dataItemType != null) {
+			amountStartSql = " and a.dataItemType = :dataItemType";
+			map.put("dataItemType", dataItemType);
 		}
-		if(amountEnd!=null) {
-			amountEndSql=" and a.amount<=:amountEnd";
-			map.put("amountEnd", amountEnd);
+		
+		if(orderId != null && orderId.intValue() > 0) {
+			amountEndSql=" and a.orderId =:orderId";
+			map.put("orderId", orderId);
 		}
+		
+		
 		if(!StringUtils.isBlank(operationType)) {
 			operationTypeSql=" and a.operationType in(:operationType)";
 			String[] strarr = operationType.split(",");
@@ -61,7 +76,7 @@ public class FlowDetailDaoImpl extends DefaultGenericDaoImpl<UserAccountDetails>
 			map.put("endTime", endDate);
 		}
 		map.put("userType", Constants.UserType.DEMO_PLAYER.getCode());
-		String sql="from UserAccountDetails a,UserInfo b,SysCode c where a.userId=b.id and a.operationType=c.codeName and c.codeType=:codeTypeNameId and b.userType!=:userType "+userNameSql+amountStartSql+amountEndSql+operationTypeSql+timeSql+" order by a.id desc";
+		String sql="from UserAccountDetails a,UserInfo b,SysCode c,UserAccount ua where a.userId=b.id and a.operationType=c.codeName and a.walletId = ua.id and c.codeType=:codeTypeNameId and b.userType!=:userType "+userNameSql+amountStartSql+amountEndSql+operationTypeSql+timeSql+" order by a.id desc";
 		String sql1="select coalesce(SUM(a.amount),0) from UserAccountDetails a,UserInfo b,SysCode c where a.userId=b.id and a.operationType=c.codeName and c.codeType=:codeTypeNameId and b.userType!=:userType "+userNameSql+amountStartSql+amountEndSql+operationTypeSql+timeSql+" order by a.id desc";
 		
 		Query<?> query1 = getSessionFactory().getCurrentSession().createQuery(sql1);
@@ -104,13 +119,14 @@ public class FlowDetailDaoImpl extends DefaultGenericDaoImpl<UserAccountDetails>
 		if(list!=null&&list.size()>0) {
 			String sql="from UserAccountDetails a,UserInfo b where a.userId=b.id and a.operationType=:operationType and a.orderId in(:listId) and a.createTime>=:startTime and a.createTime<=:endTime";
 			Query<?> query=getSessionFactory().getCurrentSession().createQuery(sql);
-			query.setParameterList("listId", list);
+			query.setParameterList("listId", list.toArray());
 			query.setParameter("operationType", Constants.AccOperationType.TRANSFER.getCode());
 		    Date beginDate = DateUtil.fmtYmdHisToDate(startTime);
 		    Date endDate = DateUtil.fmtYmdHisToDate(endTime);
-		    query.setParameter("startTime", beginDate,DateType.INSTANCE);
-		    query.setParameter("endTime", endDate,DateType.INSTANCE);
+		    query.setParameter("startTime", beginDate,TemporalType.DATE);
+		    query.setParameter("endTime", endDate,TemporalType.DATE);
 		    listData=query.list();
+		    
 		    map.put("data", listData);
 			return map;
 		}

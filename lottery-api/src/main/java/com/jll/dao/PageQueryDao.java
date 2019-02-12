@@ -73,7 +73,8 @@ public class PageQueryDao {
 
 
 	public Integer getPageIndex() {
-		if(null == pageSize){
+		if(null == pageIndex
+				|| pageIndex.intValue() == 0){
 			return DEFAULT_PAGE_INDEX;
 		}
 		return pageIndex;
@@ -86,7 +87,8 @@ public class PageQueryDao {
 
 
 	public Integer getPageSize() {
-		if(null == pageSize){
+		if(null == pageSize
+				|| pageSize.intValue() == 0){
 			return DEFAULT_PAGE_SIZE;
 		}
 		return pageSize;

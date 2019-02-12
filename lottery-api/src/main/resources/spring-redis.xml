@@ -10,6 +10,7 @@
 	
 	<bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">
 		<property name="maxIdle" value="${redis.maxIdle}" />
+		<property name="maxTotal" value="${redis.maxTotal}" />
 		<property name="testOnBorrow" value="${redis.testOnBorrow}" />
 	</bean>
 
@@ -31,6 +32,16 @@
 	
 	<bean id="stringRedisSerializer" class="org.springframework.data.redis.serializer.StringRedisSerializer" />
 	
+	<!-- bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+         
+        <property name="corePoolSize" value="50" />
+        
+        <property name="maxPoolSize" value="200" />
+        
+        <property name="queueCapacity" value="5000 />
+        <property name="keepAliveSeconds" value="300" />
+    </bean> -->
+
 	<redis:listener-container>
         <redis:listener ref="winningNumberListenerImpl" serializer="stringRedisSerializer" method="handleMessage" topic="winning_number"/>
         <redis:listener ref="payoutListenerImpl" serializer="stringRedisSerializer" method="handleMessage" topic="pay_out"/>

@@ -87,13 +87,30 @@ public class Pk10QszxPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		int betTotal = 0;
 		Float betAmount = 0F;
 		Float maxWinAmount = 0F;
+		int winBetTotal = 0;
 		
 		betTotal = calBetTotal(betNum);
 		
-		betAmount = MathUtil.multiply(betTotal, times, Float.class);
-		betAmount = MathUtil.multiply(betAmount, monUnit.floatValue(), Float.class);
-		maxWinAmount = MathUtil.multiply(betAmount, singleBettingPrize.floatValue(), Float.class);
+		if(betTotal > 1) {
+			winBetTotal = 1;
+		}else {
+			winBetTotal = betTotal;
+		}
 		
+		betAmount = MathUtil.multiply(betTotal, times, Float.class);
+		betAmount = MathUtil.multiply(betAmount, monUnit, Float.class);
+		
+		maxWinAmount = MathUtil.multiply(winBetTotal, 
+				times, 
+				Float.class);
+		maxWinAmount = MathUtil.multiply(maxWinAmount, 
+				monUnit, 
+				Float.class);
+		maxWinAmount = MathUtil.multiply(maxWinAmount, 
+				singleBettingPrize.floatValue(), 
+				Float.class);
+		
+				
 		ret.put("playType", playType);
 		ret.put("betAmount", betAmount);
 		ret.put("maxWinAmount", maxWinAmount);

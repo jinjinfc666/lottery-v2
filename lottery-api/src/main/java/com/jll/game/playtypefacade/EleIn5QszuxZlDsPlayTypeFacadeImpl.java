@@ -204,10 +204,14 @@ public class EleIn5QszuxZlDsPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl
 		BigDecimal winCount = new BigDecimal(6);
 		BigDecimal totalCount = null;
 		Double tempVal = Double.parseDouble(Long.toString(MathUtil.combination(1, 11)));
+		Double tempVal1 = Double.parseDouble(Long.toString(MathUtil.combination(1, 10)));
+		Double tempVal2 = Double.parseDouble(Long.toString(MathUtil.combination(1, 9)));
 		
-		tempVal = Math.pow(tempVal, 3);
+		tempVal = MathUtil.multiply(tempVal, tempVal1, Double.class);
+		tempVal = MathUtil.multiply(tempVal, tempVal2, Double.class);
+		
 		totalCount = new BigDecimal(tempVal);
-		winningRate = winCount.divide(totalCount, 4, BigDecimal.ROUND_HALF_UP);
+		winningRate = winCount.divide(totalCount,5, BigDecimal.ROUND_HALF_UP);
 		return winningRate;
 	}
 	

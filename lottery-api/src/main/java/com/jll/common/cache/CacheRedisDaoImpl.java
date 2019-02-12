@@ -45,7 +45,7 @@ public class CacheRedisDaoImpl  extends AbstractBaseRedisDao implements CacheRed
 		List<Issue> newContent = new ArrayList<>();
 		CacheObject<List<Issue>> cache = new CacheObject<>();
 		Date lastDay = new Date();
-		lastDay = DateUtil.addDay(lastDay, -1);
+		lastDay = DateUtil.addHours(lastDay, -1);
 		if(preContent != null
 				&& preContent.size() > 0) {
 			for(Issue issue : preContent) {
@@ -75,16 +75,18 @@ public class CacheRedisDaoImpl  extends AbstractBaseRedisDao implements CacheRed
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public void upatePlan(String cacheKey, Issue issue) {
+	public void upatePlan(String cacheKey, List<Issue> issues, Issue issue) {
 		List<Issue> content = null;
-		CacheObject<List<Issue>> cache = this.get(cacheKey);
+		CacheObject<List<Issue>> cache = new CacheObject<>();
+		/*CacheObject<List<Issue>> cache = this.get(cacheKey);
 		if(cache == null 
 				|| cache.getContent() == null 
 				|| cache.getContent().size() == 0) {
 			return ;
-		}
+		}*/
 		
-		content = cache.getContent();
+		//content = cache.getContent();
+		content = issues;
 		for(int i = 0; i< content.size(); i++) {
 			Issue temp = content.get(i);
 			if(temp.getId().intValue() == issue.getId().intValue()) {

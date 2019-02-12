@@ -48,6 +48,7 @@ import com.jll.sys.siteMsg.SysSiteMsgService;
 import com.jll.tp.EmailService;
 import com.jll.tp.SMSService;
 import com.jll.user.bank.UserBankCardService;
+import com.jll.user.wallet.WalletService;
 import com.terran4j.commons.api2doc.annotations.Api2Doc;
 import com.terran4j.commons.api2doc.annotations.ApiComment;
 
@@ -88,6 +89,112 @@ public class UserController {
 	@Value("${sys_captcha_code_expired_time}")
 	private int captchaCodeExpiredTime;
 	
+	@Resource
+	CacheRedisService cacheServ;
+	
+	@Resource
+	WalletService walletServ;
+	
+	/**
+	 * 
+	 * 用户可以通过登录页面自行注册
+	 * @param request   
+	 */
+	@RequestMapping(value="/self/players", method = { RequestMethod.POST }, produces=MediaType.APPLICATION_JSON_VALUE)
+	@LogsInfo(logType=StringUtils.OPE_LOG_REG_USER)
+	public Map<String, Object> selfRegUser(@RequestBody UserInfo user,
+			HttpServletRequest request) {
+		Map<String, Object> resp = new HashMap<String, Object>();
+		String reqIp = request.getRemoteHost();
+		//Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		UserInfo superior = null;
+		boolean isExisting = false;
+		
+		/*if(auth == null) {
+			resp.put(Message.KEY_STATUS, Message.status.FAILED);
+			resp.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_ERROR_LOGIN.getCode());
+			resp.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_ERROR_LOGIN.getErrorMes());
+			return resp;
+		}*/
+		
+		try {
+			superior = userInfoService.getUserById(Integer.parseInt(user.getSuperior()));
+			
+			if(superior == null) {
+				throw new Exception("No superior!");
+			}
+		}catch(Exception ex) {
+			resp.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+			resp.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_USER_INVALID_USER_NAME.getCode());
+			resp.put(Message.KEY_ERROR_MES, Message.Error.ERROR_USER_INVALID_USER_NAME.getErrorMes());
+			return resp;
+		}		
+		
+		user.setSuperior(superior.getId()+","+superior.getSuperior());
+		if(user.getUserType()==null) {
+			resp.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+			resp.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_ERROR_PARAMS.getCode());
+			resp.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_ERROR_PARAMS.getErrorMes());
+			return resp;
+		}
+		
+		if(user.getPlatRebate() == null) {
+			user.setPlatRebate(superior.getPlatRebate().subtract(new BigDecimal("0.01")));
+		}
+		
+		
+		String ret = userInfoService.validUserInfo(user, superior);
+		if(StringUtils.isBlank(ret)) {
+			resp.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+			resp.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_OTHERS.getCode());
+			resp.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_OTHERS.getErrorMes());
+			return resp;
+		}
+		
+		if(!Integer.toString(Message.status.SUCCESS.getCode()).equals(ret)) {
+			resp.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+			resp.put(Message.KEY_ERROR_CODE, ret);
+			resp.put(Message.KEY_ERROR_MES, Message.Error.getErrorByCode(ret).getErrorMes());
+			return resp;
+		}
+		
+		if(StringUtils.isBlank(user.getFundPwd())) {
+			user.setFundPwd(user.getLoginPwd());
+		}
+		
+		try {
+			isExisting = userInfoService.isUserExisting(user);
+		}catch(Exception ex) {
+			resp.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+			resp.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_OTHERS.getCode());
+			resp.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_OTHERS.getErrorMes());
+			return resp;
+		}
+		
+		if(isExisting) {
+			resp.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+			resp.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_USER_EXISTING.getCode());
+			resp.put(Message.KEY_ERROR_MES, Message.Error.ERROR_USER_EXISTING.getErrorMes());
+			return resp;
+		}		
+		
+		
+		
+		user.setRebate(superior.getPlatRebate().subtract(user.getPlatRebate()));
+		try {
+			userInfoService.regUser(user, reqIp);
+		}catch(Exception ex) {
+			resp.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+			resp.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_USER_FAILED_REGISTER.getCode());
+			resp.put(Message.KEY_ERROR_MES, Message.Error.ERROR_USER_FAILED_REGISTER.getErrorMes());
+			return resp;
+		}
+				
+		resp.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
+		return resp;
+	}
+	
+	
 	
 	/**
 	 * register the user who can login front-end web application
@@ -99,6 +206,7 @@ public class UserController {
 	public Map<String, Object> regUser(@RequestBody UserInfo user,HttpServletRequest request) {
 		Map<String, Object> resp = new HashMap<String, Object>();
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String reqIp = request.getRemoteHost();
 		UserInfo superior = null;
 		boolean isExisting = false;
 		
@@ -166,7 +274,7 @@ public class UserController {
 		
 		user.setRebate(superior.getPlatRebate().subtract(user.getPlatRebate()));
 		try {
-			userInfoService.regUser(user,request);
+			userInfoService.regUser(user, reqIp);
 		}catch(Exception ex) {
 			resp.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
 			resp.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_USER_FAILED_REGISTER.getCode());
@@ -179,10 +287,117 @@ public class UserController {
 	}
 	
 	
+	/**
+	 * 
+	 * 代理修改用户信息
+	 * @param request   给前台代理注册用户或者下级代理
+	 */
+	@RequestMapping(value="/players", method = { RequestMethod.PUT }, produces=MediaType.APPLICATION_JSON_VALUE)
+	@LogsInfo(logType=StringUtils.OPE_LOG_REG_USER)
+	public Map<String, Object> modifyUser(@RequestBody UserInfo user,HttpServletRequest request) {
+		Map<String, Object> resp = new HashMap<String, Object>();
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		UserInfo superior = null;
+		boolean isExisting = false;
+		UserInfo existingUser = null;
+		
+		if(auth == null) {
+			resp.put(Message.KEY_STATUS, Message.status.FAILED);
+			resp.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_ERROR_LOGIN.getCode());
+			resp.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_ERROR_LOGIN.getErrorMes());
+			return resp;
+		}
+		
+		if(StringUtils.isBlank(user.getUserName())) {
+			resp.put(Message.KEY_STATUS, Message.status.FAILED);
+			resp.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_ERROR_LOGIN.getCode());
+			resp.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_ERROR_LOGIN.getErrorMes());
+			return resp;
+		}
+		
+		try {
+			superior = userInfoService.getUserByUserName(auth.getName());
+			existingUser = userInfoService.getUserByUserName(user.getUserName());
+			if(superior == null) {
+				throw new Exception("No superior!");
+			}
+			
+			if(existingUser == null) {
+				throw new Exception("No User!");
+			}
+		}catch(Exception ex) {
+			resp.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+			resp.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_USER_INVALID_USER_NAME.getCode());
+			resp.put(Message.KEY_ERROR_MES, Message.Error.ERROR_USER_INVALID_USER_NAME.getErrorMes());
+			return resp;
+		}		
+				
+		try {
+			isExisting = userInfoService.isUserExisting(user);
+		}catch(Exception ex) {
+			resp.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+			resp.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_OTHERS.getCode());
+			resp.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_OTHERS.getErrorMes());
+			return resp;
+		}
+		
+		if(!isExisting) {
+			resp.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+			resp.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_USER_NO_VALID_USER.getCode());
+			resp.put(Message.KEY_ERROR_MES, Message.Error.ERROR_USER_NO_VALID_USER.getErrorMes());
+			return resp;
+		}		
+		
+		if(user.getPlatRebate() != null
+				&& user.getPlatRebate().floatValue() != existingUser.getPlatRebate().floatValue()
+				&& (user.getPlatRebate().floatValue() > superior.getPlatRebate().floatValue()
+				|| user.getPlatRebate().floatValue() < 0)) {
+			
+			resp.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+			resp.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_USER_NO_VALID_USER.getCode());
+			resp.put(Message.KEY_ERROR_MES, Message.Error.ERROR_USER_NO_VALID_USER.getErrorMes());
+			return resp;
+		}
+		
+		if(user.getPlatRebate() != null
+				&& user.getPlatRebate().floatValue() != existingUser.getPlatRebate().floatValue()) {	
+			existingUser.setPlatRebate(user.getPlatRebate());
+			existingUser.setRebate(superior.getPlatRebate().subtract(user.getPlatRebate()));
+		}
+		
+		if(!StringUtils.isBlank(user.getEmail())
+				&& !user.getEmail().equals(existingUser.getEmail())) {
+			existingUser.setEmail(user.getEmail());
+		}
+		
+		if(!StringUtils.isBlank(user.getQq())
+				&& !user.getQq().equals(existingUser.getQq())) {
+			existingUser.setQq(user.getQq());
+		}		
+		
+		if(!StringUtils.isBlank(user.getWechat())
+				&& !user.getWechat().equals(existingUser.getWechat())) {
+			existingUser.setWechat(user.getWechat());
+		}
+		
+		try {
+			userInfoService.updateUser(existingUser);
+		}catch(Exception ex) {
+			resp.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+			resp.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_USER_FAILED_REGISTER.getCode());
+			resp.put(Message.KEY_ERROR_MES, Message.Error.ERROR_USER_FAILED_REGISTER.getErrorMes());
+			return resp;
+		}
+				
+		resp.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
+		return resp;
+	}
+	
 	
 	@RequestMapping(value="/demo-players", method = { RequestMethod.GET }, produces=MediaType.APPLICATION_JSON_VALUE)
 	public Map<String, Object> regDemoUser(HttpServletRequest request) {
-		return userInfoService.saveRandomDemoUserInfo(request);
+		String reqIp = request.getRemoteHost();
+		return userInfoService.saveRandomDemoUserInfo(reqIp);
 	}
 	
 	/**
@@ -196,7 +411,7 @@ public class UserController {
 			@RequestBody UserInfo user,
 			HttpServletRequest request) {
 		Map<String, Object> resp = new HashMap<String, Object>();
-				
+		String reqIp = request.getRemoteHost();
 		
 		UserInfo generalAgency = userInfoService.getUserById(agentId);
 		if(generalAgency == null) {
@@ -248,8 +463,10 @@ public class UserController {
 		}		
 		
 		user.setRebate(generalAgency.getPlatRebate().subtract(user.getPlatRebate()));
+		
+		
 		try {
-			userInfoService.regUser(user,request);
+			userInfoService.regUser(user,reqIp);
 		}catch(Exception ex) {
 			resp.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
 			resp.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_USER_FAILED_REGISTER.getCode());
@@ -323,6 +540,7 @@ public class UserController {
 	@RequestMapping(value="/sys-users", method = { RequestMethod.POST }, consumes = MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
 	public Map<String, Object> regSysUser(@RequestBody UserInfo user,HttpServletRequest request) {
 		Map<String, Object> resp = new HashMap<String, Object>();
+		String reqIp = request.getRemoteHost();
 		
 		user.setUserType(UserType.SYS_ADMIN.getCode());
 		String ret = userInfoService.validUserInfo(user, null);
@@ -350,7 +568,7 @@ public class UserController {
 		}		
 		
 		try {
-			userInfoService.regUser(user,request);
+			userInfoService.regUser(user,reqIp);
 		}catch(Exception ex) {
 			resp.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
 			resp.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_USER_FAILED_REGISTER.getCode());
@@ -821,9 +1039,14 @@ public class UserController {
 	}
 	
 	@ApiComment("Get User Site Message lists")
-	@RequestMapping(value="/site-msg/lists", method = { RequestMethod.POST}, produces=MediaType.APPLICATION_JSON_VALUE)
-	public Map<String, Object> getUserSiteMessageLists(@RequestBody Map<String, String> params) {
-		return sysSiteMsgService.getUserSiteMessageLists(params);
+	@RequestMapping(value="/site-msg/lists/{category}", method = { RequestMethod.POST}, produces=MediaType.APPLICATION_JSON_VALUE)
+	public Map<String, Object> getUserSiteMessageLists(@PathVariable int category,
+			@RequestBody Map<String, String> params) {
+		if(Constants.SiteMsgCategory.CAT_SENT.getCode() == category) {
+			return sysSiteMsgService.querySentSiteMessageLists(params);
+		}else {
+			return sysSiteMsgService.getUserSiteMessageLists(params);			
+		}
 	}
 	@ApiComment("Update User Read Site Message")
 	@RequestMapping(value="/site-msg/read", method = { RequestMethod.POST}, produces=MediaType.APPLICATION_JSON_VALUE)
@@ -834,7 +1057,7 @@ public class UserController {
 	@ApiComment("Show Site Message History Feedback")
 	@RequestMapping(value="/site-msg/{msgId}/history-feedback", method = { RequestMethod.GET}, produces=MediaType.APPLICATION_JSON_VALUE)
 	public Map<String, Object> showSiteMessageFeedback(@PathVariable("msgId") Integer msgId) {
-		return sysSiteMsgService.showSiteMessageFeedbackTop(msgId);
+		return sysSiteMsgService.updateShowSiteMessageFeedbackTop(msgId);
 	}
 	
 	@ApiComment("Feedback Site Message ")
@@ -1075,6 +1298,8 @@ public class UserController {
 	@RequestMapping(value="/exchange-point", method = { RequestMethod.POST}, produces=MediaType.APPLICATION_JSON_VALUE)
 	public Map<String, Object> exchangePoint(@RequestBody Map<String, String> params) {
 		double amount = Utils.toDouble(params.get("amount"));
+		double walletId = Utils.toDouble(params.get("walletId"));
+		
 		return userInfoService.processExchangePoint(amount);
 	}
 	
@@ -1094,14 +1319,59 @@ public class UserController {
 	 * @param passoword 提款密码
 	 * @return
 	 */
-	
     @ApiComment("User Withdraw apply")
 	@RequestMapping(value="/withdraw/apply", method = { RequestMethod.POST}, produces=MediaType.APPLICATION_JSON_VALUE)
 	public Map<String, Object> userWithdrawApply(@RequestBody Map<String, String> params) {
-		int bankId = Utils.toInteger(params.get("bankId"));
-		String passoword = Utils.toString(params.get("password"));
-		double amount = Utils.toDouble(params.get("amount"));
-		return userInfoService.saveUpdateUserWithdrawApply(bankId, amount,passoword);
+    	int bettingBlockTimes = 3000;
+		int bettingBlockCounter = 0;
+		String keyLock = Constants.KEY_LOCK_WITHDRAW_APPLY;
+		Map<String, Object> ret = new HashMap<String, Object>();
+		UserAccount userAccount = null;
+		Integer accType = null;
+		
+    	while (bettingBlockCounter < bettingBlockTimes) {
+			logger.debug(
+					String.format("Thread Id %s    loker  %s   entering", 
+							Thread.currentThread().getId(), 
+							keyLock));
+			
+			if (cacheServ.lock(keyLock, keyLock, Constants.LOCK_WITHDRAW_APPLY_EXPIRED)) {
+				int walletId = Integer.parseInt(params.get("walletId"));
+				int bankId = Utils.toInteger(params.get("bankId"));
+				String passoword = Utils.toString(params.get("password"));
+				double amount = Utils.toDouble(params.get("amount"));
+				
+				userAccount = walletServ.queryById(walletId);
+				if(userAccount == null) {
+					ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+					ret.put(Message.KEY_ERROR_CODE, 
+							Message.Error.ERROR_COMMON_ERROR_PARAMS.getCode());
+					ret.put(Message.KEY_ERROR_MES,
+							Message.Error.ERROR_COMMON_ERROR_PARAMS.getErrorMes());
+					return ret;
+				}
+				
+				accType = userAccount.getAccType();
+				if(accType == Constants.WalletType.MAIN_WALLET.getCode()) {
+					return userInfoService.saveUpdateUserWithdrawApply(bankId, amount,passoword);					
+				}else {
+					return userInfoService.processUserRedWalletAmountTransfer(bankId, amount,passoword);
+				}
+			}
+			
+			bettingBlockCounter++;
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
+    	
+    	ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+		ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_OTHERS.getCode());
+		ret.put(Message.KEY_ERROR_MES,Message.Error.ERROR_COMMON_OTHERS.getErrorMes());
+		return ret;
 	}
     
     
@@ -1190,6 +1460,7 @@ public class UserController {
 			@RequestParam(name = "startTime", required = false) String startTime,
 			@RequestParam(name = "endTime", required = false) String endTime,
 			@RequestParam(name = "pageIndex", required = true) Integer pageIndex,
+			@RequestParam(name = "userName", required = false) String sonUserName,
 			  HttpServletRequest request) {
 		Map<String, Object> ret = new HashMap<>();
 		if((!StringUtils.isBlank(startTime)&&StringUtils.isBlank(endTime))||(StringUtils.isBlank(startTime)&&!StringUtils.isBlank(endTime))) {
@@ -1213,7 +1484,7 @@ public class UserController {
 			id=userInfo.getId();
 		}
 		try {
-			Map<String,Object> map=userInfoService.queryAgentByAgent(id,startTime,endTime,pageIndex);
+			Map<String,Object> map=userInfoService.queryAgentByAgent(id,startTime,endTime,pageIndex, sonUserName);
 			return map;
 		}catch(Exception e){
 			ret.clear();

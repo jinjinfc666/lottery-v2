@@ -73,6 +73,7 @@ public class BdwHsPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		int betTotal = 1;
 		Float betAmount = 0F;
 		Float maxWinAmount = 0F;
+		int winBetTotal = 0;
 		
 		betNumSet = betNum.split(",");
 		for(String subBetNum : betNumSet) {
@@ -80,9 +81,24 @@ public class BdwHsPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 			betTotal *= MathUtil.combination(1, len);
 		}
 		
+		if(betTotal > 3) {
+			winBetTotal = 3;
+		}else {
+			winBetTotal = betTotal;
+		}
+		
 		betAmount = MathUtil.multiply(betTotal, times, Float.class);
 		betAmount = MathUtil.multiply(betAmount, monUnit, Float.class);
-		maxWinAmount = MathUtil.multiply(betAmount, singleBettingPrize.floatValue(), Float.class);
+		
+		maxWinAmount = MathUtil.multiply(winBetTotal, 
+				times, 
+				Float.class);
+		maxWinAmount = MathUtil.multiply(maxWinAmount, 
+				monUnit, 
+				Float.class);
+		maxWinAmount = MathUtil.multiply(maxWinAmount, 
+				singleBettingPrize.floatValue(), 
+				Float.class);
 		
 		ret.put("playType", playType);
 		ret.put("betAmount", betAmount);

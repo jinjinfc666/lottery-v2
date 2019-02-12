@@ -25,14 +25,24 @@ public class UserAccountDetailsDaoImpl extends DefaultGenericDaoImpl<UserAccount
 
 	@Override
 	public double getUserOperAmountTotal(int userId,int walletId, String operationType, Date start, Date end) {
-		String sql = "select sum(amount) from UserAccountDetails where userId=? and walletId=? and operationType=? and createTime >= ? and createTime < ?";
+		StringBuffer sql = new StringBuffer();
 		List<Object> params = new ArrayList<>();
 		params.add(userId);
 		params.add(walletId);
 		params.add(operationType);
-		params.add(start);
-		params.add(end);
-		 Query<Double> query = getSessionFactory().getCurrentSession().createQuery(sql, Double.class);
+		
+		sql.append("select sum(amount) from UserAccountDetails where userId=? and walletId=? and operationType=?");
+		if(start != null) {
+			sql.append(" and createTime >= ?");
+			params.add(start);			
+		}
+		
+		if(end != null) {
+			sql.append(" and createTime < ?");
+			params.add(end);
+		}
+		
+		Query<Double> query = getSessionFactory().getCurrentSession().createQuery(sql.toString(), Double.class);
 	    if(params != null) {
 	    	int indx = 0;
 	    	for(Object para : params) {
@@ -41,7 +51,8 @@ public class UserAccountDetailsDaoImpl extends DefaultGenericDaoImpl<UserAccount
 	    		indx++;
 	    	}
 	    }
-		 return Utils.toDouble(query.getSingleResult());
+	    
+		return Utils.toDouble(query.getSingleResult());
 	}
 
 

@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jll.common.cache.CacheRedisService;
+import com.jll.common.constants.Constants;
 import com.jll.common.constants.Constants.AccOperationType;
 import com.jll.common.constants.Constants.PromoMultipleType;
 import com.jll.common.constants.Constants.PromoValueType;
@@ -162,6 +163,7 @@ public class PromoServiceImpl implements PromoService
 			dbAcc.setBalance(addDtl.getPostAmount());
 		}
 		addDtl.setPostAmount(Double.valueOf(BigDecimalUtil.add(addDtl.getAmount(),addDtl.getPreAmount())));
+		addDtl.setDataItemType(Constants.DataItemType.BALANCE.getCode());
 		supserDao.save(addDtl);
 		supserDao.update(dbAcc);
 		PromoClaim addCla= new PromoClaim();
@@ -299,7 +301,7 @@ public class PromoServiceImpl implements PromoService
 	public Map<String, Object> getUserPromoLists(PageQueryDao page) {
 		Map<String, Object> ret = new HashMap<String, Object>(); 
 		DetachedCriteria criteria = DetachedCriteria.forClass(Promo.class);
-		criteria.add(Restrictions.le("expiredTime",new Date()));
+		criteria.add(Restrictions.gt("expiredTime",new Date()));
 		ret.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
 		ret.put(Message.KEY_DATA,PageQuery.queryForPagenation(supserDao.getHibernateTemplate(), criteria, page.getPageIndex(), page.getPageSize()));
 		return ret;
@@ -353,6 +355,7 @@ public class PromoServiceImpl implements PromoService
 			addDtl.setPostAmount(Double.valueOf(BigDecimalUtil.add(addDtl.getAmount(),addDtl.getPreAmount())));
 			addDtl.setWalletId(dbAcc.getId());
 			addDtl.setOperationType(AccOperationType.ACTIVITY_GIFT_RED.getCode());
+			addDtl.setDataItemType(Constants.DataItemType.BALANCE.getCode());
 			supserDao.save(addDtl);
 			dbAcc.setBalance(addDtl.getPostAmount());
 			supserDao.update(dbAcc);
@@ -386,6 +389,7 @@ public class PromoServiceImpl implements PromoService
 		addDtl.setPostAmount(Double.valueOf(BigDecimalUtil.add(addDtl.getAmount(),addDtl.getPreAmount())));
 		addDtl.setWalletId(dbAcc.getId());
 		addDtl.setOperationType(AccOperationType.DAILY_SIGN_IN.getCode());
+		addDtl.setDataItemType(Constants.DataItemType.REWARD_POINTS.getCode());
 		supserDao.save(addDtl);
 		dbAcc.setRewardPoints(new BigDecimal(addDtl.getPostAmount()).longValue());
 		supserDao.update(dbAcc);

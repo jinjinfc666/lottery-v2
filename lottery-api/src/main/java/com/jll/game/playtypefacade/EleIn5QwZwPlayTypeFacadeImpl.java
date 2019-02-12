@@ -96,22 +96,50 @@ public class EleIn5QwZwPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		Integer playType = (Integer)params.get("playType");
 		String lottoType = (String)params.get("lottoType");
 		Float prizePattern = userServ.calPrizePattern(user, lottoType);
-		BigDecimal winningRate = calWinningRate(3);
-		BigDecimal singleBettingPrize = calSingleBettingPrize(prizePattern, winningRate);
+		BigDecimal winningRate = null;
+		BigDecimal singleBettingPrize = null;
 		String[] betNumSet = null;
 		int betTotal = 1;
 		Float betAmount = 0F;
 		Float maxWinAmount = 0F;
+		int winBetTotal = 0;
+		int maxWinBetTotal = 1;
 		
 		betNumSet = betNum.split(";");
 		for(String subBetNum : betNumSet) {
 			int len = subBetNum.length() / 2;
 			betTotal *= MathUtil.combination(1, len);
+			
+			Map<String,String> tempBits = splitBetNum(subBetNum);
+			Iterator<String> ite = tempBits.keySet().iterator();
+			while(ite.hasNext()) {
+				String key = ite.next();
+				
+				winningRate = calWinningRate(Integer.parseInt(key));
+				singleBettingPrize = calSingleBettingPrize(prizePattern, winningRate);				
+			}
+			
 		}
 		
+		if(betTotal > maxWinBetTotal) {
+			winBetTotal = maxWinBetTotal;
+		}else {
+			winBetTotal = betTotal;
+		}
+		
+		
 		betAmount = MathUtil.multiply(betTotal, times, Float.class);
-		betAmount = MathUtil.multiply(betAmount, monUnit.floatValue(), Float.class);
-		maxWinAmount = MathUtil.multiply(betAmount, singleBettingPrize.floatValue(), Float.class);
+		betAmount = MathUtil.multiply(betAmount, monUnit, Float.class);
+		
+		maxWinAmount = MathUtil.multiply(winBetTotal, 
+				times, 
+				Float.class);
+		maxWinAmount = MathUtil.multiply(maxWinAmount, 
+				monUnit, 
+				Float.class);
+		maxWinAmount = MathUtil.multiply(maxWinAmount, 
+				singleBettingPrize.floatValue(), 
+				Float.class);
 		
 		ret.put("playType", playType);
 		ret.put("betAmount", betAmount);
@@ -147,10 +175,7 @@ public class EleIn5QwZwPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 			}
 			
 			Map<String, String> tempBits = splitBetNum(betNumTemp);
-			if(tempBits.size() == 0
-					|| tempBits.size() > 7
-					|| !Utils.validateEleIn5Num(betNumTemp)
-					|| tempBits.size() != (betNumTemp.length() / 2)) {
+			if(tempBits.size() != 1) {
 				return false;
 			}
 			

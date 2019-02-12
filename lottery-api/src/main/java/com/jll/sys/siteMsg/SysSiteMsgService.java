@@ -15,6 +15,14 @@ public interface SysSiteMsgService
 	Map<String, Object> getSiteMessageLists(String userName, PageQueryDao page);
 	Map<String, Object> getUserSiteMessageLists(Map<String, String> params);
 	Map<String, Object> updateUserSiteMessageRead(Map<String, String> params);
-	Map<String, Object> showSiteMessageFeedbackTop(Integer msgId);
+	Map<String, Object> updateShowSiteMessageFeedbackTop(Integer msgId);
 	Map<String, Object> getUserSiteMessageListsB(Map<String, Object> params);
+	
+	/**
+	 * 查询已发送站内信
+	 * @param userName
+	 * @param page
+	 * @return
+	 */
+	Map<String, Object> querySentSiteMessageLists(Map<String, String> params);
 }

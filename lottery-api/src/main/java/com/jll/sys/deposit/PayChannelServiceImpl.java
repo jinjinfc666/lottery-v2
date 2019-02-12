@@ -45,7 +45,6 @@ public class PayChannelServiceImpl implements PayChannelService
 		String payCode=payChannel.getPayCode();
 		Integer showType=payChannel.getShowType();
 		if(StringUtils.isBlank(channelName)
-				||StringUtils.isBlank(nickName)
 				||StringUtils.isBlank(typeClass)
 				||payType==null||maxAmount==null||enableMaxAmount==null ||state==null ||showType==null)
 		{

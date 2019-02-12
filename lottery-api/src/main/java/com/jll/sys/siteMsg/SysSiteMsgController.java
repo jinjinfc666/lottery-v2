@@ -38,6 +38,11 @@ public class SysSiteMsgController {
 	SysSiteMsgService sysSiteMsgService;
 	
 	
+	/**
+	 * @param category  从
+	 * @param params
+	 * @return
+	 */
 	@ApiComment("Get Site Msg Lists")
 	@RequestMapping(value="/lists", method = { RequestMethod.POST}, produces=MediaType.APPLICATION_JSON_VALUE)
 	public Map<String, Object> list(@RequestBody Map<String, String> params) {

@@ -632,7 +632,7 @@ public class DepositController {
 			  HttpServletResponse response) {
 		Map<String, Object> ret = new HashMap<>();
 		try {
-			Map<String,Object> map=fTPService.springUpload(request,response);
+			Map<String,Object> map = fTPService.springUpload(request,response);
 			if(map==null) {
 				ret.clear();
 				ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());

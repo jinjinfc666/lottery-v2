@@ -78,19 +78,28 @@ public class EleIn5QszxPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		int betTotal = 1;
 		Float betAmount = 0F;
 		Float maxWinAmount = 0F;
+		int winBetTotal = 0;
 		
-		/*betNumSet = betNum.split(",");*/
-		/*for(String subBetNum : betNumSet) {
-			int len = subBetNum.length() / 2;
-			betTotal *= MathUtil.combination(1, len);  
-			
-			List<Map<String, String>> totalNum = parseBetNumber(subBetNum);
-		}*/
 		
 		betTotal = calBetTotal(betNum);
+		if(betTotal > 1) {
+			winBetTotal = 1;
+		}else {
+			winBetTotal = betTotal;
+		}
+		
 		betAmount = MathUtil.multiply(betTotal, times, Float.class);
 		betAmount = MathUtil.multiply(betAmount, monUnit, Float.class);
-		maxWinAmount = MathUtil.multiply(betAmount, singleBettingPrize.floatValue(), Float.class);
+		
+		maxWinAmount = MathUtil.multiply(winBetTotal, 
+				times, 
+				Float.class);
+		maxWinAmount = MathUtil.multiply(maxWinAmount, 
+				monUnit, 
+				Float.class);
+		maxWinAmount = MathUtil.multiply(maxWinAmount, 
+				singleBettingPrize.floatValue(), 
+				Float.class);
 		
 		ret.put("playType", playType);
 		ret.put("betAmount", betAmount);
@@ -238,7 +247,7 @@ public class EleIn5QszxPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		tempVal = MathUtil.multiply(tempVal, tempVal2, Double.class);
 		
 		totalCount = new BigDecimal(tempVal);
-		winningRate = winCount.divide(totalCount,3, BigDecimal.ROUND_HALF_UP);
+		winningRate = winCount.divide(totalCount,5, BigDecimal.ROUND_HALF_UP);
 		return winningRate;
 	}
 	

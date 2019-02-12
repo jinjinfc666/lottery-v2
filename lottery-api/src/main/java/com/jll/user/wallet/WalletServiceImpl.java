@@ -164,4 +164,9 @@ public class WalletServiceImpl implements WalletService
 		UserAccount wallet = walletDao.queryUserAccountByUserAndWalletId(id, walletType);
 		return wallet;
 	}
+
+	@Override
+	public void createWallet(UserAccount wallet) {
+		walletDao.createWallet(wallet);
+	}
 }

@@ -222,7 +222,7 @@ public class EleIn5Rx4DsPlayTypeFacadeImpl  extends DefaultPlayTypeFacadeImpl {
 		Double tempVal2 = Double.parseDouble(Long.toString(MathUtil.arrangement(4, 4)));
 		
 		tempVal1 = MathUtil.multiply(tempVal1, tempVal2, Double.class);
-		tempVal = MathUtil.divide(tempVal, tempVal1, 4);
+		tempVal = MathUtil.divide(tempVal, tempVal1, 5);
 		winningRate = new BigDecimal(tempVal);
 		return winningRate;
 	}

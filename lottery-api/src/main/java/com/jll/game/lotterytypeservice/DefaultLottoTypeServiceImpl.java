@@ -280,7 +280,9 @@ public abstract class DefaultLottoTypeServiceImpl implements LotteryTypeService
 		if(bulletinBoard == null 
 				|| bulletinBoard.getCurrIssue() == null) {
 			try {
-				Thread.sleep(30000);
+				if(!Constants.LottoType.MMC.getCode().equals(lottoType)) {
+					Thread.sleep(30000);
+				}
 				
 				bulletinBoard = cacheServ.getBulletinBoard(lottoType);
 			} catch (InterruptedException e) {

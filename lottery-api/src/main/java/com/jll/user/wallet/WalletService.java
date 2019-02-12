@@ -18,6 +18,8 @@ public interface WalletService
 
 	void updateWallet(UserAccount wallet);
 
+	void createWallet(UserAccount wallet);
+	
 	UserAccount queryById(int walletId);
 
 	/*UserAccount queryByUser(UserInfo user);*/
@@ -37,4 +39,6 @@ public interface WalletService
 	Map<String, Object> queryUserAccount();
 
 	UserAccount queryUserAccount(Integer id, Integer walletType);
+	
+	
 }

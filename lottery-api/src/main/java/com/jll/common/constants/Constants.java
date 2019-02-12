@@ -78,23 +78,43 @@ public class Constants {
 	
 	public final static String KEY_LOCK_PAY_OUT = "lock_pay_out_{lottoType}_{issue}";
 	
+	public final static String KEY_LOCK_WITHDRAW_APPLY = "lock_withdraw_apply";
+	
 	public final static Integer LOCK_BETTING_EXPIRED = 5;
 	
 	public final static Integer LOCK_CACHE_STATISTIC_EXPIRED = 300;
 	
-	public final static Integer LOCK_MAKING_PLAN_EXPIRED = 30;
+	public final static Integer LOCK_MAKING_PLAN_EXPIRED = 600;
 	
-	public final static Integer LOCK_SCHEDULE_ISSUE_EXPIRED = 30;
+	public final static Integer LOCK_SCHEDULE_ISSUE_EXPIRED = 60;
 	
 	public final static Integer LOCK_WINNING_NUMBER_EXPIRED = 30;
 	
 	public final static Integer LOCK_PAY_OUT_EXPIRED = 30;
 	
 	public final static Integer LOCK_STATISTIC_EXPIRED = 60;
+	
+	public final static Integer LOCK_WITHDRAW_APPLY_EXPIRED = 30;
+	
 	//再给总代添加下级代理时需要填写的superior
 	public final static Integer VAL_SUPERIOR = 0;
 	
 	public final static String KEY_SITE_MSG_RECEIVER = "receiver";
+	
+	public final static String KEY_PRIZE_TEMPLATE_MIN_TEMPLATE = "minT";
+	
+	public final static String KEY_PRIZE_TEMPLATE_MAX_TEMPLATE = "maxT";
+	
+	public final static String KEY_PRIZE_TEMPLATE_MIN_REBATE = "minR";
+	
+	public final static String KEY_PRIZE_TEMPLATE_MAX_REBATE = "maxR";
+	
+	public final static String KEY_PRIZE_TEMPLATE_CURR_TEMPLATE = "currT";
+	
+	public final static String KEY_PRIZE_TEMPLATE_CURR_REBATE = "currR";
+	
+	
+	
 	
 	public static enum DepositOrderState{
 		
@@ -153,12 +173,52 @@ public class Constants {
 		
 	}
 	
+	
+	public static enum TransferOrderState{
+		FAILED(0,"失败"),
+		SUCCESS(1,"成功");
+		
+		private int code;
+		private String value;
+		
+		private TransferOrderState(int code, String value) {
+			this.code = code;
+			this.value = value;
+		}
+		public int getCode() {
+			return code;
+		}
+		public void setCode(int code) {
+			this.code = code;
+		}
+		public String getValue() {
+			return value;
+		}
+		public void setValue(String value) {
+			this.value = value;
+		}
+		
+		public static TransferOrderState getValueByCode(int code) {
+			TransferOrderState[] walletTypes = TransferOrderState.values();
+			for(TransferOrderState walletType: walletTypes) {
+				if(walletType.getCode() == code) {
+					return walletType;
+				}
+			}
+			return null;
+		}
+		
+	}
+	
+	
 	public static enum WithdrawConif{
 		
 		MIN_WITHDRAWAL_AMT("min_withdrawal_amt","最低提款金额"),
 		MAX_WITHDRAWAL_AMT("max_withdrawal_amt","最高提款金额"),
 		DAY_COUNT("day_count","每日可提款次数"),
-		RED_PACKET_WALLET_RATE("red_packet_wallet_rate","红包余额转主钱包的流水倍数");
+		RED_PACKET_WALLET_RATE("red_packet_wallet_rate","红包余额转主钱包的流水倍数"),
+		//在上次提款之后的投注金额/充值金额 的占比
+		COMSUPTION_RATE("comsuption_rate","投注金额/充值金额");
 		private String code;
 		private String value;
 		
@@ -2431,5 +2491,29 @@ public class Constants {
 			return code;
 		}
 		
+	}
+	
+	//站内信分类
+	public static enum SiteMsgCategory {
+		CAT_SENT(0, "已发送"), 
+		CAT_UNREAD(1, "未读"), 
+		CAT_READ(2, "已阅读");
+
+		private int code;
+		private String desc;
+
+		private SiteMsgCategory(int code, String desc) {
+			this.code = code;
+			this.desc = desc;
+		}
+
+		public int getCode() {
+			return code;
+		}
+
+		public String getDesc() {
+			return desc;
+		}
+
 	}
 }

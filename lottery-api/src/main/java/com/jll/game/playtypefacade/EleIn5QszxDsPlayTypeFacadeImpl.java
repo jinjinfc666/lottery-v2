@@ -241,7 +241,7 @@ public class EleIn5QszxDsPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		tempVal = MathUtil.multiply(tempVal, tempVal2, Double.class);
 		
 		totalCount = new BigDecimal(tempVal);
-		winningRate = winCount.divide(totalCount,3, BigDecimal.ROUND_HALF_UP);
+		winningRate = winCount.divide(totalCount,5, BigDecimal.ROUND_HALF_UP);
 		return winningRate;
 	}
 	

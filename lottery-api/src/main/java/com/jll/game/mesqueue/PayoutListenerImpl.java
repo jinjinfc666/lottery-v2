@@ -1,6 +1,7 @@
 package com.jll.game.mesqueue;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.annotation.Resource;
 
@@ -36,6 +37,12 @@ public class PayoutListenerImpl implements MessageDelegateListener {
 	
 	@Override
 	public void handleMessage(Serializable message) {
+		logger.debug(String.format("Thread ID %s try to process winning number, thread pool queue size %s, active thread count %s", 
+				Thread.currentThread().getId(),
+				ThreadPoolManager.getInstance().getTotalTaskSize(),
+				ThreadPoolManager.getInstance().getActiveThreads()
+				));
+		
 		ThreadPoolManager.getInstance().exeThread(new Runnable() {
 
 			@Override
@@ -45,7 +52,8 @@ public class PayoutListenerImpl implements MessageDelegateListener {
 				String lottoType = null;
 				String issueNum = null;
 				String keyLock = Constants.KEY_LOCK_PAY_OUT;
-				
+				Date lockStart = null;
+				Date lockEnd = null;
 				
 				lottoTypeAndIssueNum = ((String)message).split("\\|");
 				lottoType = lottoTypeAndIssueNum[0];
@@ -64,7 +72,13 @@ public class PayoutListenerImpl implements MessageDelegateListener {
 				keyLock = keyLock.replace("{lottoType}", lottoType);
 				keyLock = keyLock.replace("{issue}", issueNum);
 				
+				logger.debug(String.format("Thread ID %s try to process winning number, waitting for locker ", 
+						Thread.currentThread().getId()));
+				
 				if(cacheServ.lock(keyLock, keyLock, Constants.LOCK_PAY_OUT_EXPIRED)) {
+					lockStart = new Date();
+					logger.debug(String.format("Thread ID %s exe schedule issue , successfully obtain locker ", 
+							Thread.currentThread().getId()));
 					try {
 						String[] impls = lotteryTypeImpl.split(",");
 						if(impls == null || impls.length == 0) {
@@ -80,6 +94,11 @@ public class PayoutListenerImpl implements MessageDelegateListener {
 							}
 						}
 					}finally {
+						lockEnd = new Date();
+						logger.debug(String.format("Thread ID %s release locker , consume %s ms", 
+								Thread.currentThread().getId(),
+								lockEnd.getTime() - lockStart.getTime()
+								));
 						cacheServ.releaseLock(keyLock);
 					}
 				}

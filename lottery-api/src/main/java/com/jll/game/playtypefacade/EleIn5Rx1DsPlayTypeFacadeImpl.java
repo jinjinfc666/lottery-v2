@@ -214,7 +214,7 @@ public class EleIn5Rx1DsPlayTypeFacadeImpl  extends DefaultPlayTypeFacadeImpl {
 		Double tempVal = Double.parseDouble(Long.toString(MathUtil.arrangement(1, 5)));
 		Double tempVal1 = Double.parseDouble(Long.toString(MathUtil.combination(1, 11)));
 		
-		tempVal = MathUtil.divide(tempVal, tempVal1, 4);
+		tempVal = MathUtil.divide(tempVal, tempVal1, 5);
 		/*totalCount = new BigDecimal(tempVal);
 		winningRate = winCount.divide(totalCount, 4, BigDecimal.ROUND_HALF_UP);*/
 		winningRate = new BigDecimal(tempVal);

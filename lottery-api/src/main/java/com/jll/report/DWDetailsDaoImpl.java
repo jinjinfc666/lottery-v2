@@ -32,7 +32,11 @@ import com.jll.entity.DepositApplication;
 public class DWDetailsDaoImpl extends DefaultGenericDaoImpl<DepositApplication> implements DWDetailsDao {
 	private Logger logger = Logger.getLogger(DWDetailsDaoImpl.class);
 	@Override
-	public Map<String,Object> queryDetails(String type,Integer state,String userName,String orderNum,Float amountStart,Float amountEnd,String startTime,String endTime,Integer pageIndex,Integer pageSize){
+	public Map<String,Object> queryDetails(String type,Integer state,
+			String userName,String orderNum,
+			Float amountStart,Float amountEnd,
+			String startTime,String endTime,
+			Integer orderId,Integer pageIndex,Integer pageSize){
 		String stateSql="";
 		String userNameSql="";
 		String orderNumSql="";
@@ -52,6 +56,11 @@ public class DWDetailsDaoImpl extends DefaultGenericDaoImpl<DepositApplication> 
 			orderNumSql=" and a.orderNum=:orderNum ";
 			map.put("orderNum", orderNum);
 		}
+		if(orderId != null) {
+			orderNumSql += " and a.id=:orderId ";
+			map.put("orderId", orderId);
+		}
+		
 		if(amountStart!=null) {
 			amountStartSql=" and a.amount>=:amountStart ";
 			map.put("amountStart", amountStart);

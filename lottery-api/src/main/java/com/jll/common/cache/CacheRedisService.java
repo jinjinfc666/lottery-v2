@@ -183,7 +183,7 @@ public interface CacheRedisService {
 
 	void setMMCIssueCount(Date currTime, int i);
 
-	void updatePlan(String lottoType, Issue issue);
+	void updatePlan(String lottoType, List<Issue> issues, Issue issue);
 	//存储图片验证码
 	void setSessionIdCaptcha(String keyCaptcha, String value);
 	//获取图片验证码

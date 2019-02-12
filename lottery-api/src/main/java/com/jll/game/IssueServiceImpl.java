@@ -211,6 +211,7 @@ public class IssueServiceImpl implements IssueService
 						}
 						//收回返点
 						UserAccountDetails addDtail = userAccountDetailsService.initCreidrRecord(qAcc.getUserId(),qAcc, qAcc.getBalance().doubleValue(), -qDtl.getAmount().doubleValue(), AccOperationType.CANCEL_REBATE.getCode(),order.getId(),"");
+						addDtail.setDataItemType(Constants.DataItemType.BALANCE.getCode());
 						dtlLists.add(addDtail);
 						qAcc.setBalance(addDtail.getPostAmount());
 					}
@@ -227,6 +228,7 @@ public class IssueServiceImpl implements IssueService
 					List<UserAccountDetails> ret = supserDao.findByCriteria(criteria);
 					double prize = Utils.toDouble(ret.get(0).getAmount());
 					UserAccountDetails addDtail = userAccountDetailsService.initCreidrRecord(curAcc.getUserId(),curAcc, curAcc.getBalance().doubleValue(), prize, AccOperationType.REFUND.getCode(),order.getId(),"");
+					addDtail.setDataItemType(Constants.DataItemType.BALANCE.getCode());
 					dtlLists.add(addDtail);
 					curAcc.setBalance(addDtail.getPostAmount());
 				}
@@ -242,6 +244,7 @@ public class IssueServiceImpl implements IssueService
 					List<UserAccountDetails> ret = supserDao.findByCriteria(criteria);
 					double prize = Utils.toDouble(ret.get(0).getAmount());
 					UserAccountDetails addDtail = userAccountDetailsService.initCreidrRecord(curAcc.getUserId(),curAcc, curAcc.getBalance().doubleValue(), -prize, AccOperationType.RECOVERY_PAYOUT.getCode(),order.getId(),"");
+					addDtail.setDataItemType(Constants.DataItemType.BALANCE.getCode());
 					dtlLists.add(addDtail);
 					curAcc.setBalance(addDtail.getPostAmount());
 				}

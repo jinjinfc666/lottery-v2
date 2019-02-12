@@ -38,7 +38,6 @@ import com.jll.game.playtypefacade.PlayTypeFactory;
 import com.jll.sysSettings.syscode.SysCodeService;
 import com.jll.user.UserInfoService;
 import com.jll.user.wallet.WalletService;
-import com.sun.mail.handlers.message_rfc822;
 import com.terran4j.commons.api2doc.annotations.Api2Doc;
 import com.terran4j.commons.api2doc.annotations.ApiComment;
 
@@ -507,6 +506,100 @@ public class LotteryCenterController {
 		resp.put(Message.KEY_DATA, retPreProcess);
 		return resp;
 	}
+	
+	/**
+	 * @param currT  当前奖金模式 1700-2000
+	 * @param currR  当前用户平台点数
+	 * @param superior  上级用户ID
+	 * @return
+	 */
+	@RequestMapping(value="/prize-templates", method = { RequestMethod.GET }, produces=MediaType.APPLICATION_JSON_VALUE)
+	public Map<String, Object> queryPrizeTemplate(@RequestParam(name = "currT", required = false) Integer currT,
+			@RequestParam(name = "currR", required = false) Float currR,
+			@RequestParam(name = "superior", required = false) Integer superior){
+		Map<String, Object> resp = new HashMap<>();
+		Map<String, Object> data = new HashMap<>();
+		UserInfo user = null;
+		Float maxT = null;
+		Float maxR = null;
+		Integer minT = null;
+		Float minR = new Float(0.0);
+		String keyRunTimeArg = Constants.SysCodeTypes.SYS_RUNTIME_ARGUMENT.getCode();
+		String keyPrizeRange = Constants.SysRuntimeArgument.LOTTO_PRIZE_RATE.getCode();
+		SysCode prizeRange = cacheServ.getSysCode(keyRunTimeArg, keyPrizeRange);
+		String[] prizeRanges = prizeRange.getCodeVal().split(",");
+		
+		
+		
+		if(superior != null) {
+			user = userServ.getUserById(superior);
+			if(user == null) {
+				resp.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+				resp.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_USER_NO_VALID_USER.getCode());
+				resp.put(Message.KEY_ERROR_MES, Message.Error.ERROR_USER_NO_VALID_USER.getErrorMes());
+				return resp;
+			}
+			
+		}else {
+			user = userServ.getCurLoginInfo();
+		}
+		
+		if(user.getUserType().intValue() != Constants.UserType.AGENCY.getCode()
+				&& user.getUserType().intValue() != Constants.UserType.GENERAL_AGENCY.getCode()) {
+			resp.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+			resp.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_USER_INVALID_USER_TYPE.getCode());
+			resp.put(Message.KEY_ERROR_MES, Message.Error.ERROR_USER_INVALID_USER_TYPE.getErrorMes());
+			return resp;
+		}
+		
+		maxT = userServ.calPrizePattern(user, null);		
+		minT = Integer.valueOf(prizeRanges[0]);
+		maxR = user.getPlatRebate().floatValue();
+		
+		if(currR != null) {
+			if(currR.floatValue() > maxR) {
+				resp.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+				resp.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_ERROR_PARAMS.getCode());
+				resp.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_ERROR_PARAMS.getErrorMes());
+				return resp;
+			}
+		}
+		
+		if(currT != null) {
+			currT = currT/2;
+			if(currT.floatValue() > maxT) {
+				resp.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+				resp.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_ERROR_PARAMS.getCode());
+				resp.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_ERROR_PARAMS.getErrorMes());
+				return resp;
+			}
+		}		
+		
+		if(currT != null) {
+			currR = userServ.calPlatformRebate(currT).floatValue();
+		}else if(currR != null){
+			UserInfo user_ = new UserInfo();
+			user_.setPlatRebate(new BigDecimal(currR));
+			Float currT_ = userServ.calPrizePattern(user_, null);
+			currT = currT_.intValue();
+		}else {
+			currR = minR;
+			currT = minT;
+		}
+		
+		data.put(Constants.KEY_PRIZE_TEMPLATE_MIN_TEMPLATE, minT*2);
+		data.put(Constants.KEY_PRIZE_TEMPLATE_MAX_TEMPLATE, maxT.intValue()*2);
+		data.put(Constants.KEY_PRIZE_TEMPLATE_MIN_REBATE, minR);
+		data.put(Constants.KEY_PRIZE_TEMPLATE_MAX_REBATE, maxR);
+		data.put(Constants.KEY_PRIZE_TEMPLATE_CURR_TEMPLATE, currT*2);
+		data.put(Constants.KEY_PRIZE_TEMPLATE_CURR_REBATE, currR);
+		
+		resp.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
+		resp.put(Message.KEY_DATA, data);
+		return resp;
+	}
+	
+	
 	//未结算的注单  (只给30期)前端只传彩种，默认查询state为0的数据显示给前端
 	@RequestMapping(value="/{lottery-type}/unsettled-bet", method = { RequestMethod.GET }, produces=MediaType.APPLICATION_JSON_VALUE)
 	public Map<String, Object> queryUnsettledBet(@PathVariable(name = "lottery-type", required = true) String lotteryType){

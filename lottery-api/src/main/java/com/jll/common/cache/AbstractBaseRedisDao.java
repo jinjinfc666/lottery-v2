@@ -244,6 +244,11 @@ public abstract class AbstractBaseRedisDao implements GenericDaoIf<CacheObject>{
 					
 					if(ret && entity.getExpired() != null && entity.getExpired().intValue() != 0) {
 						redisTemplate.expire(key, entity.getExpired().intValue(), TimeUnit.SECONDS);
+					}else {
+						Long expiredTime = redisTemplate.getExpire(key);
+						if(expiredTime == -1) {
+							redisTemplate.delete(key);
+						}
 					}
 					
 					//ret = true;

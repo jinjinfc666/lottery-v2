@@ -288,6 +288,7 @@ public class PaymentServiceImpl  implements PaymentService
 				data.put(Message.KEY_DATA_QR_CODE, pcInfo.getQrUrl());
 			}else if(pcInfo.getShowType().intValue() == Constants.PayChannelShowType.BANK_ACC.getCode()) {
 				data.put(Message.KEY_DATA_BANK_ACC, pcInfo.getBankAcc());
+				data.put(Message.KEY_DATA_BANK_NAME, pcInfo.getBankName());
 				data.put(Message.KEY_REMAKE, Utils.produce6DigitsCaptchaCode());
 			}
 			ret.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());

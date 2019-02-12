@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jll.common.cache.CacheRedisService;
 import com.jll.common.constants.Constants;
 import com.jll.common.http.HttpRemoteStub;
+import com.jll.common.threadpool.ThreadParam;
 import com.jll.common.utils.DateUtil;
 import com.jll.entity.Issue;
 import com.jll.entity.SysCode;
@@ -62,33 +63,52 @@ public class CqsscServiceImpl extends DefaultLottoTypeServiceImpl
 	
 	@Override
 	public List<Issue> makeAPlan() {
-		//10:00-22:00（72期）10分钟一期，22:00-02:00（48期）5分钟一期
+		//00:30-03:10（9期）20分钟一期，07:30-23:30（48期）20分钟一期
 		List<Issue> issues = new ArrayList<>();
-		int maxAmount = 120;
+		int maxAmount = 59;
 		Calendar calendar = Calendar.getInstance();
 		
 		Date today = new Date();
 		today = DateUtil.addMinutes(today, 10);
 		calendar.setTime(today);
 		calendar.set(Calendar.HOUR_OF_DAY, 0);
-		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.MINUTE, 10);
 		calendar.set(Calendar.SECOND, 0);
 		calendar.set(Calendar.MILLISECOND, 0);
 		for(int i = 0; i < maxAmount; i++) {
-			if(i < 24
-					||(96 <= i && i < 120)) {
-				Issue issue = new Issue();
+			if(i == 0) {
+				calendar.setTime(today);
+				calendar.set(Calendar.HOUR_OF_DAY, 0);
+				calendar.set(Calendar.MINUTE, 10);
+				calendar.set(Calendar.SECOND, 0);
+				calendar.set(Calendar.MILLISECOND, 0);
+				
+				/*Issue issue = new Issue();
 				issue.setStartTime(calendar.getTime());
-				calendar.add(Calendar.MINUTE, 5);
+				calendar.add(Calendar.MINUTE, 20);
 				issue.setEndTime(calendar.getTime());
 				issue.setIssueNum(generateLottoNumber(i + 1, today));
 				issue.setLotteryType(lotteryType);
 				issue.setState(Constants.IssueState.INIT.getCode());
 				
-				issues.add(issue);
+				issues.add(issue);*/
 				
-			}else if(i == 24) {
-				calendar.add(Calendar.HOUR_OF_DAY, 8);
+			}else if(i == 9) {
+				calendar.set(Calendar.HOUR_OF_DAY, 7);
+				calendar.set(Calendar.MINUTE, 10);
+				calendar.set(Calendar.SECOND, 0);
+				calendar.set(Calendar.MILLISECOND, 0);
+				
+				/*Issue issue = new Issue();
+				issue.setStartTime(calendar.getTime());
+				calendar.add(Calendar.MINUTE, 10);
+				issue.setEndTime(calendar.getTime());
+				issue.setIssueNum(generateLottoNumber(i + 1, today));
+				issue.setLotteryType(lotteryType);
+				issue.setState(Constants.IssueState.INIT.getCode());
+				
+				issues.add(issue);*/
+			}/*else if(10 < i){
 				Issue issue = new Issue();
 				issue.setStartTime(calendar.getTime());
 				calendar.add(Calendar.MINUTE, 10);
@@ -98,17 +118,17 @@ public class CqsscServiceImpl extends DefaultLottoTypeServiceImpl
 				issue.setState(Constants.IssueState.INIT.getCode());
 				
 				issues.add(issue);
-			}else if(24 < i && i < 96){
-				Issue issue = new Issue();
-				issue.setStartTime(calendar.getTime());
-				calendar.add(Calendar.MINUTE, 10);
-				issue.setEndTime(calendar.getTime());
-				issue.setIssueNum(generateLottoNumber(i + 1, today));
-				issue.setLotteryType(lotteryType);
-				issue.setState(Constants.IssueState.INIT.getCode());
-				
-				issues.add(issue);
-			}
+			}*/
+			
+			Issue issue = new Issue();
+			issue.setStartTime(calendar.getTime());
+			calendar.add(Calendar.MINUTE, 20);
+			issue.setEndTime(calendar.getTime());
+			issue.setIssueNum(generateLottoNumber(i + 1, today));
+			issue.setLotteryType(lotteryType);
+			issue.setState(Constants.IssueState.INIT.getCode());
+			
+			issues.add(issue);
 		}
 		
 		try {
@@ -153,8 +173,8 @@ public class CqsscServiceImpl extends DefaultLottoTypeServiceImpl
 		SysCode sysCode = cacheServ.getSysCode(codeTypeName, codeName);
 		String winningNum = null;
 		Issue issue = null;
-		int maxCounter = 1800;
-		int currCounter = 0;
+		long maxCounter = 15 * 60 * 1000;
+		long currCounter = 0;
 		
 		lottoTypeAndIssueNum = ((String)message).split("\\|");
 		lottoType = lottoTypeAndIssueNum[0];
@@ -199,13 +219,18 @@ public class CqsscServiceImpl extends DefaultLottoTypeServiceImpl
 						if(result.get("responseBody") != null) {
 							response = (String)result.get("responseBody");
 							if(response.contains(issueNum.replace("-", ""))) {
-								if(response.contains("code")) {//360
+								if(response.contains("preDrawCode")) {//网易
+									winningNum = parse168(response, "20"+ issueNum.replace("-", ""), "10002");
+								}
+								
+								/*if(response.contains("code")) {//360
 									winningNum = parse360API(response);
 								}else if(response.contains("winningNumber")) {//网易
 									winningNum = parse163API(response);
 								}else if(response.contains("result")) {
-									winningNum = parse168(response, "20"+ issueNum.replace("-", ""));
-								}
+									//winningNum = parse168(response, "20"+ issueNum.replace("-", ""));
+									winningNum = parse168(response, "20"+ issueNum.replace("-", ""), "10002");
+								}*/
 							}
 						}
 					}
@@ -228,7 +253,12 @@ public class CqsscServiceImpl extends DefaultLottoTypeServiceImpl
 				}
 			}
 			
-			currCounter++;
+			logger.debug(String.format("Thread ID %s loop counter %s", 
+					Thread.currentThread().getId(),
+					currCounter
+					));
+			
+			currCounter = new Date().getTime() - ((Date)ThreadParam.get()).getTime();
 			
 			try {
 				Thread.sleep(1000);
@@ -318,6 +348,55 @@ public class CqsscServiceImpl extends DefaultLottoTypeServiceImpl
 				Long winningIssueNum = (Long)winningNumMap.get("preDrawIssue");
 				
 				if(issueNum.equals(String.valueOf(winningIssueNum))) {
+					return winningNumber;
+				}
+			}
+			
+		} catch (JsonParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	private String parse168(String response, String issueNum, String lottoType) {
+		ObjectMapper mapper = new ObjectMapper();
+		Map  winningNumMap = null;
+		Map responseMap = null;
+		Map resultMap = null;
+		Map dataMap = null;
+		List retItems = null;
+		try {
+			responseMap = mapper.readValue(response, Map.class);
+			resultMap = (Map)responseMap.get("result");
+			retItems = (List)resultMap.get("data");
+			
+			//resultMap = (Map)responseMap.get("result");
+			//retItems = (List)responseMap.get("data");
+			if(retItems == null || retItems.size() == 0) {
+				return null;
+			}
+			
+			for(Object temp : retItems) {
+				winningNumMap = (Map)temp;
+				String winningNumber = (String)winningNumMap.get("preDrawCode");
+				Object winningIssueNumObj = winningNumMap.get("preDrawIssue");
+				String winningIssueNum = null;
+				if(winningIssueNumObj instanceof Long) {
+					winningIssueNum = Long.toString((Long)winningIssueNumObj);
+				}else if(winningIssueNumObj instanceof Integer) {
+					winningIssueNum = Integer.toString((Integer)winningIssueNumObj);
+				}
+				Integer lottoType_ = (Integer)winningNumMap.get("lotCode");
+				if(issueNum.equals(winningIssueNum)
+						&& lottoType.equals(String.valueOf(lottoType_))) {
 					return winningNumber;
 				}
 			}

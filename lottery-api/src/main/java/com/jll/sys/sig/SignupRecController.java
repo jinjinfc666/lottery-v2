@@ -1,5 +1,7 @@
 package com.jll.sys.sig;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -14,15 +16,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.jll.common.cache.CacheRedisService;
 import com.jll.common.constants.Constants;
 import com.jll.common.constants.Message;
 import com.jll.common.utils.DateUtil;
-import com.jll.common.utils.StringUtils;
+import com.jll.common.utils.MathUtil;
 import com.jll.entity.SignupRec;
+import com.jll.entity.SysCode;
 import com.jll.entity.UserAccount;
+import com.jll.entity.UserAccountDetails;
 import com.jll.entity.UserInfo;
 import com.jll.user.UserInfoService;
 import com.jll.user.account.UserAccountService;
+import com.jll.user.details.UserAccountDetailsService;
 import com.terran4j.commons.api2doc.annotations.Api2Doc;
 import com.terran4j.commons.api2doc.annotations.ApiComment;
 
@@ -39,10 +45,21 @@ public class SignupRecController {
 	UserInfoService userInfoService;
 	@Resource
 	UserAccountService userAccountService;
+	
+	@Resource
+	CacheRedisService cacheServ;
+	
+	@Resource
+	UserAccountDetailsService accDetailsServ;
+	
 	//通过用户名(false)或时间去查询(true)
 	@RequestMapping(value={"/sgnupRecSave"}, method={RequestMethod.POST}, produces={"application/json"})
 	public Map<String, Object> sgnupRecSave() {
 		Map<String, Object> ret = new HashMap<>();
+		String opeType = Constants.AccOperationType.DAILY_SIGN_IN.getCode();
+		String sysCodeType = Constants.SysCodeTypes.FLOW_TYPES.getCode();
+		Map<String, SysCode> accOpetioans = cacheServ.getSysCode(sysCodeType);
+		
 		try {
 			UserInfo user=userInfoService.getCurLoginInfo();
 			if(null == user){
@@ -63,10 +80,29 @@ public class SignupRecController {
 			signupRec.setCreateTime(new Date());
 			signupRec.setRewardPoints(Constants.SignupRecClass.SIGN_IN_INTEGRATION.getCode());
 			signupRecService.saveSignupRec(signupRec);
+			
 			UserAccount userAccount=userAccountService.getUserAccount(user.getId());
+			UserAccountDetails accountDetail = new UserAccountDetails();
+			accountDetail.setAmount(new Float(Constants.SignupRecClass.SIGN_IN_INTEGRATION.getCode()));
+			accountDetail.setCreateTime(new Date());
+			accountDetail.setDataItemType(Constants.DataItemType.REWARD_POINTS.getCode());
+			SysCode rewardPointCode = accOpetioans.get(opeType);
+			accountDetail.setOperationType(rewardPointCode.getCodeName());
+			accountDetail.setDataItemType(Constants.DataItemType.REWARD_POINTS.getCode());
+			//accountDetail.setOrderId(orderId);
+			accountDetail.setPostAmount(MathUtil.add(userAccount.getRewardPoints(), 
+					Constants.SignupRecClass.SIGN_IN_INTEGRATION.getCode(),
+					Double.class));
+			accountDetail.setPreAmount(userAccount.getRewardPoints().doubleValue());
+			//accountDetail.setRemark(remark);
+			accountDetail.setUserId(user.getId());
+			accountDetail.setWalletId(Constants.WalletType.RED_PACKET_WALLET.getCode());
+			accDetailsServ.saveAccDetails(accountDetail);
+			
 			Long rewardPoints=userAccount.getRewardPoints();
 			userAccount.setRewardPoints(rewardPoints+Constants.SignupRecClass.SIGN_IN_INTEGRATION.getCode());
 			userAccountService.saveUserAccount(userAccount);
+			
 			ret.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
 			return ret;
 		}catch(Exception e){
@@ -141,6 +177,9 @@ public class SignupRecController {
 	@RequestMapping(value={"/sgnupRecNowMonthRecord"}, method={RequestMethod.GET}, produces={"application/json"})
 	public Map<String, Object> sgnupRecNowMonthRecord() {
 		Map<String, Object> ret = new HashMap<>();
+		List<Integer> datas = new ArrayList<>();
+		SimpleDateFormat format = new SimpleDateFormat("dd");
+		
 		try {
 			UserInfo user=userInfoService.getCurLoginInfo();
 			if(null == user){
@@ -151,7 +190,12 @@ public class SignupRecController {
 			}
 			Integer userId=user.getId();
 			List<SignupRec> list=signupRecService.queryNowMonthRecord(userId);
-			ret.put(Message.KEY_DATA, list);
+			if(list != null && list.size() > 0) {
+				for(SignupRec rec : list) {
+					datas.add(Integer.parseInt(format.format(rec.getCreateTime())));
+				}				
+			}
+			ret.put(Message.KEY_DATA, datas);
 			ret.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
 			return ret;
 		}catch(Exception e){

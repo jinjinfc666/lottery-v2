@@ -189,16 +189,6 @@ public class EleIn5Q2zuxDsPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl  
 	 */
 	@Override
 	public BigDecimal calWinningRate() {
-		/*BigDecimal winningRate = null;
-		BigDecimal winCount = new BigDecimal(6);
-		BigDecimal totalCount = null;
-		Double tempVal = Double.parseDouble(Long.toString(MathUtil.combination(1, 11)));
-		
-		tempVal = Math.pow(tempVal, 3);
-		totalCount = new BigDecimal(tempVal);
-		winningRate = winCount.divide(totalCount, 4, BigDecimal.ROUND_HALF_UP);
-		return winningRate;*/
-		
 		BigDecimal winningRate = null;
 		BigDecimal winCount = new BigDecimal(2);
 		BigDecimal totalCount = null;
@@ -207,8 +197,9 @@ public class EleIn5Q2zuxDsPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl  
 		
 		tempVal = MathUtil.multiply(tempVal, tempVal1, Double.class);
 		totalCount = new BigDecimal(tempVal);
-		winningRate = winCount.divide(totalCount, 4, BigDecimal.ROUND_HALF_UP);
+		winningRate = winCount.divide(totalCount, 5, BigDecimal.ROUND_HALF_UP);
 		return winningRate;
+		
 	}
 	
 	private Map<String, String> splitBetNum(String temp) {

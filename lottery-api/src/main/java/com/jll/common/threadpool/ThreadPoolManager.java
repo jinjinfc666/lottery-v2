@@ -16,8 +16,9 @@ public class ThreadPoolManager {
 	
 	private ExecutorService executorService;
 	
+	
 	private ThreadPoolManager() {
-		executorService = Executors.newFixedThreadPool(20);
+		executorService = Executors.newFixedThreadPool(30);
 	}
 	
 	public static ThreadPoolManager getInstance() {
@@ -29,7 +30,6 @@ public class ThreadPoolManager {
 	}
 	
 	public void exeThread(Runnable task) {
-		logger.debug(String.format("try to run thread pool %s", ""));
 		executorService.execute(task);
 	}
 	
@@ -41,7 +41,12 @@ public class ThreadPoolManager {
 	
 	public int getPoolSize() {
 		int count = ((ThreadPoolExecutor)executorService).getPoolSize();
-		
+		((ThreadPoolExecutor)executorService).getTaskCount();
+		return count;
+	}
+	
+	public long getTotalTaskSize() {
+		long count = ((ThreadPoolExecutor)executorService).getTaskCount();
 		return count;
 	}
 }

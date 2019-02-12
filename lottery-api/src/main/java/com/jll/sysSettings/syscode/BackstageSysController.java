@@ -1,9 +1,7 @@
 package com.jll.sysSettings.syscode;
 
-import java.sql.Date;
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -14,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.type.DateType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -1434,7 +1431,20 @@ public class BackstageSysController {
 		try {
 			Map<String,SysCode> sysCodeMaps=cacheRedisService.getSysCode(bigCodeName);
 ////			Map<Integer,SysCode> sysCodeMaps1=new HashMap<Integer, SysCode>();
-			Map<String,SysCode> sysCodeMaps2=new HashMap<String, SysCode>();
+			Map<String,SysCode> sysCodeMaps2 = new TreeMap<>(new Comparator<String>() {
+						@Override
+						public int compare(String o1, String o2) {
+							SysCode bank1 = sysCodeMaps.get(o1);
+							SysCode bank2 = sysCodeMaps.get(o2);
+							
+							if(bank1.getSeq() > bank2.getSeq()) {
+								return 1;
+							}else {
+								return -1;
+							}
+						}
+			});
+			
 			for(String key:sysCodeMaps.keySet()) {
 				SysCode sysCode=sysCodeMaps.get(key);
 				if(sysCode.getState()==1&&sysCode.getCodeType()!=null) {

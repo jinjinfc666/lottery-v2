@@ -1,6 +1,7 @@
 package com.jll.sys.siteMsg;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,9 +16,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jll.common.constants.Constants.SiteMessageReadType;
+import com.jll.common.constants.Constants;
 import com.jll.common.constants.Message;
+import com.jll.common.utils.DateUtil;
 import com.jll.common.utils.PageQuery;
 import com.jll.common.utils.StringUtils;
+import com.jll.dao.PageBean;
 import com.jll.dao.PageQueryDao;
 import com.jll.dao.SupserDao;
 import com.jll.entity.SiteMessFeedback;
@@ -86,6 +90,11 @@ public class SysSiteMsgServiceImpl implements SysSiteMsgService
 				supserDao.update(dbMsg);
 			}
 		}
+		
+		if(retList == null) {
+			 retList = new ArrayList<>();
+		}
+		
 		ret.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
 		ret.put(Message.KEY_DATA,dbMsg);
 		ret.put(Message.KEY_REMAKE,retList);
@@ -136,7 +145,7 @@ public class SysSiteMsgServiceImpl implements SysSiteMsgService
 		return ret;
 	}
 	@Override
-	public Map<String, Object> showSiteMessageFeedbackTop(Integer msgId) {
+	public Map<String, Object> updateShowSiteMessageFeedbackTop(Integer msgId) {
 		Map<String, Object> ret = new HashMap<String, Object>();
 		UserInfo dbInfo = userInfoService.getCurLoginInfo();
 		List<?> dbMsg = sysSiteMsgDao.querySiteMessageById(msgId);
@@ -148,6 +157,13 @@ public class SysSiteMsgServiceImpl implements SysSiteMsgService
 			return ret;
 		}
 		List<?> retList=sysSiteMsgDao.querySiteMessFeedback(msgId);
+		
+		SiteMessage sMsg = (SiteMessage)((Object[])dbMsg.get(0))[0];
+		if(sMsg.getCreator().intValue() != dbInfo.getId().intValue() 
+				&& sMsg.getIsRead().intValue() == Constants.SiteMessageReadType.UN_READING.getCode()) {
+			sMsg.setIsRead(Constants.SiteMessageReadType.READING.getCode());
+			sysSiteMsgDao.save(sMsg);
+		}
 		ret.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
 		ret.put(Message.KEY_DATA,dbMsg);
 		ret.put(Message.KEY_REMAKE,retList);
@@ -157,5 +173,37 @@ public class SysSiteMsgServiceImpl implements SysSiteMsgService
 	@Override
 	public Map<String, Object> getUserSiteMessageListsB(Map<String, Object> params) {
 		return sysSiteMsgDao.querySiteMessageB(params);
+	}
+
+	@Override
+	public Map<String, Object> querySentSiteMessageLists(Map<String, String> params) {
+		String startTime=(String)params.get("startTime");
+		String endTime=(String)params.get("endTime");
+		Map<String, Object> ret = new HashMap<String, Object>();
+		UserInfo dbInfo = userInfoService.getCurLoginInfo();
+		
+		if(!StringUtils.isBlank(startTime)&&!StringUtils.isBlank(endTime)) {
+			if(!DateUtil.isValidDate(startTime)||!DateUtil.isValidDate(endTime)) {
+				ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+				ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_ERROR_PARAMS.getCode());
+				ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_ERROR_PARAMS.getErrorMes());
+		    	return ret;
+			}
+		}
+		
+		if(null == dbInfo){
+			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_USER_NO_VALID_USER.getCode());
+			ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_USER_NO_VALID_USER.getErrorMes());
+			return ret;
+		}
+		
+		params.put("userId", dbInfo.getId().toString());
+		
+		PageBean<SiteMessage> page = sysSiteMsgDao.querySentSiteMessage(params);
+		
+		ret.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
+		ret.put(Message.KEY_DATA, page);
+		return ret;
 	}
 }

@@ -61,6 +61,7 @@ public class DepositOrderServiceImpl implements DepositOrderService
 		addDtl.setPostAmount(Double.valueOf(BigDecimalUtil.add(addDtl.getPreAmount(),addDtl.getAmount())));
 		addDtl.setWalletId(mainAcc.getId());
 		addDtl.setOperationType(Constants.AccOperationType.DEPOSIT.getCode());
+		addDtl.setDataItemType(Constants.DataItemType.BALANCE.getCode());
 		addDtl.setOrderId(depositOrder.getId());
 		supserDao.save(addDtl);
 		mainAcc.setBalance(addDtl.getPostAmount());

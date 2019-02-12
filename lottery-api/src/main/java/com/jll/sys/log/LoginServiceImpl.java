@@ -28,8 +28,8 @@ import com.jll.user.UserInfoDao;
 public class LoginServiceImpl implements LoginService
 {
 	private Logger logger = Logger.getLogger(LoginServiceImpl.class);
-	@Autowired 
-    HttpServletRequest request;
+	/*@Autowired 
+    HttpServletRequest request;*/
 	@Resource
 	LoginDao loginDao;
 	@Resource
@@ -41,7 +41,7 @@ public class LoginServiceImpl implements LoginService
 	//登录失败后的操作
 	@Override
 	public void updateFailLogin(String userName) {
-		String ip=request.getRemoteHost();
+		/*String ip=request.getRemoteHost();
 		UserInfo userInfo=userInfoDao.getUserByUserName(userName);
 		//登陆日志
 		SysLogin sysLogin=new SysLogin();
@@ -76,12 +76,12 @@ public class LoginServiceImpl implements LoginService
 				userInfo.setState(state);
 			}
 			loginDao.saveUpdate(userInfo);
-		}
+		}*/
 	}
 	//登录成功后的操作
 	@Override
 	public void updateSuccessLogin(String userName) {
-		String ip=request.getRemoteHost();
+		/*String ip=request.getRemoteHost();
 		Integer state=0;
 		UserInfo userInfo=userInfoDao.getUserByUserName(userName);
 		//登陆日志StartTime
@@ -104,7 +104,7 @@ public class LoginServiceImpl implements LoginService
 		Date date=null;
 		userInfo.setUnlockTime(date);
 		userInfo.setState(state);
-		loginDao.saveUpdate(userInfo);
+		loginDao.saveUpdate(userInfo);*/
 	}
 	
 }

@@ -1,12 +1,15 @@
 package com.jll.dao;
 
 import java.sql.Date;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.TemporalType;
+
 import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.hibernate.type.DateType;
@@ -31,7 +34,20 @@ public class DefaultGenericDaoImpl<T> extends HibernateDaoSupport implements Gen
 	@Override
 	public void saveOrUpdate(T entity) {
 		logger.debug(String.format("Try to save the entity...", ""));
-		getSessionFactory().getCurrentSession().saveOrUpdate(entity);
+		Session session = null;
+		boolean needClosed = false;
+		try {
+			session = getSessionFactory().getCurrentSession();
+		}catch(HibernateException ex) {
+			session = getSessionFactory().openSession();
+			needClosed = true;
+		}
+		
+		session.saveOrUpdate(entity);
+		
+		if(needClosed && session!= null && session.isOpen()) {
+			session.close();
+		}
 	}
 
 	@Override
@@ -42,25 +58,54 @@ public class DefaultGenericDaoImpl<T> extends HibernateDaoSupport implements Gen
 	@Override
 	public List<T> query(String HQL, List<Object> params, Class<T> clazz) {
 		String sql = HQL;
+		Session session = null;
+		boolean needClose = false;
+		Query<T> query = null;
+		List<T> ret = null;
 		
-	    Query<T> query = getSessionFactory().getCurrentSession().createQuery(sql, clazz);
-
-	    if(params != null) {
-	    	int indx = 0;
-	    	for(Object para : params) {
-	    		query.setParameter(indx, para);
-	    		
-	    		indx++;
-	    	}
-	    }
-	    return query.list();
+		try {
+			session = getSessionFactory().getCurrentSession();
+		}catch(HibernateException ex) {
+			session = getSessionFactory().openSession();
+			needClose = true;
+		}
+		
+		query = session.createQuery(sql, clazz);
+		
+		if(params != null) {
+			int indx = 0;
+			for(Object para : params) {
+				query.setParameter(indx, para);
+				
+				indx++;
+			}
+		}
+		
+		ret = query.list();
+		if(needClose && session.isOpen()) {
+			session.close();
+		}
+		
+		return ret;
+		
 	}
 
 	@Override
 	public long queryCount(String HQL, List<Object> params) {
 		String sql = HQL;
+		Session session = null;
+		boolean needClose = false;
+		Query<Long>  query = null;
+		Long ret = null;
 		
-	    Query<Long> query = getSessionFactory().getCurrentSession().createQuery(sql, Long.class);
+		try {
+			session = getSessionFactory().getCurrentSession();
+		}catch(HibernateException ex) {
+			session = getSessionFactory().openSession();
+			needClose = true;
+		}
+		
+	    query = session.createQuery(sql, Long.class);
 
 	    if(params != null) {
 	    	int indx = 0;
@@ -71,7 +116,12 @@ public class DefaultGenericDaoImpl<T> extends HibernateDaoSupport implements Gen
 	    	}
 	    }
 	    
-	    return query.getSingleResult();
+	    ret = query.getSingleResult();
+	    if(needClose && session.isOpen()) {
+			session.close();
+		}
+	    
+	    return ret;
 	}
 
 	@Override
@@ -157,7 +207,9 @@ public class DefaultGenericDaoImpl<T> extends HibernateDaoSupport implements Gen
 	public PageBean queryByPagination(PageBean page, String HQL, Map<String,Object> params) {
 		PageBean ret = new PageBean();
 		List<?> content = null;
+		int entityNameStartInd = 0;
 		String sql = HQL;
+		StringBuffer sqlCount = new StringBuffer("select count(*) ");
 		Long totalPages =  null;
 		Long totalNumber=null;
 		Integer pageIndex = page.getPageIndex();
@@ -165,7 +217,14 @@ public class DefaultGenericDaoImpl<T> extends HibernateDaoSupport implements Gen
 		Query  query=null;
 		query= getSessionFactory().getCurrentSession().createQuery(sql);
 	    
-	    totalNumber =  queryCount(HQL, params);
+		entityNameStartInd = HQL.indexOf("from");
+	    if(entityNameStartInd < 0) {
+	    	entityNameStartInd = HQL.indexOf("FROM");
+	    }
+	    
+	    sqlCount.append(HQL.substring(entityNameStartInd));
+	    
+	    totalNumber =  queryCount(sqlCount.toString(), params);
 	    
 	    if(totalNumber % pageSize == 0) {
 	    	totalPages = totalNumber / pageSize;
@@ -177,7 +236,7 @@ public class DefaultGenericDaoImpl<T> extends HibernateDaoSupport implements Gen
             for (String string : keySet) {  
                 Object obj = params.get(string);  
             	if(obj instanceof Date){  
-                	query.setParameter(string, (Date)obj,DateType.INSTANCE); //query.setParameter(string, (Date)obj,DateType.INSTANCE);   此方法为setDate的替代方法 
+                	query.setParameter(string, (Date)obj,TemporalType.DATE); //query.setParameter(string, (Date)obj,DateType.INSTANCE);   此方法为setDate的替代方法 
                 }else if(obj instanceof Object[]){  
                     query.setParameterList(string, (Object[])obj);  
                 }else{  
@@ -206,14 +265,15 @@ public class DefaultGenericDaoImpl<T> extends HibernateDaoSupport implements Gen
 	public long queryCount(String HQL, Map<String,Object> params) {
 		String sql = HQL;
 		
-	    Query query = getSessionFactory().getCurrentSession().createQuery(sql);
+	    Query<Long> query = getSessionFactory().getCurrentSession().createQuery(sql, Long.class);
 
 	    if(params != null) {
 	    	Set<String> keySet = params.keySet();  
             for (String string : keySet) {  
                 Object obj = params.get(string);  
             	if(obj instanceof Date){  
-                	query.setParameter(string, (Date)obj,DateType.INSTANCE); //query.setParameter(string, (Date)obj,DateType.INSTANCE);   此方法为setDate的替代方法 
+                	//query.setParameter(string, (Date)obj,DateType.INSTANCE); 
+            		query.setParameter(string, (Date)obj, TemporalType.DATE);
                 }else if(obj instanceof Object[]){  
                     query.setParameterList(string, (Object[])obj);  
                 }else{  
@@ -221,8 +281,8 @@ public class DefaultGenericDaoImpl<T> extends HibernateDaoSupport implements Gen
                 }  
             }
 	    }
-	    List<?> list=query.list();
-	    return list.size();
+	    //List<?> list=query.list();
+	    return  query.getSingleResult();
 	}
 	//通过sql查询
 	@Override
@@ -299,7 +359,7 @@ public class DefaultGenericDaoImpl<T> extends HibernateDaoSupport implements Gen
             for (String string : keySet) {  
                 Object obj = params.get(string);  
             	if(obj instanceof Date){  
-                	query.setParameter(string, (Date)obj,DateType.INSTANCE); //query.setParameter(string, (Date)obj,DateType.INSTANCE);   此方法为setDate的替代方法 
+                	query.setParameter(string, (Date)obj, TemporalType.DATE); //query.setParameter(string, (Date)obj,DateType.INSTANCE);   此方法为setDate的替代方法 
                 }else if(obj instanceof Object[]){  
                     query.setParameterList(string, (Object[])obj);  
                 }else{  
@@ -335,7 +395,7 @@ public class DefaultGenericDaoImpl<T> extends HibernateDaoSupport implements Gen
             for (String string : keySet) {  
                 Object obj = params.get(string);  
             	if(obj instanceof Date){  
-                	query.setParameter(string, (Date)obj,DateType.INSTANCE); //query.setParameter(string, (Date)obj,DateType.INSTANCE);   此方法为setDate的替代方法 
+                	query.setParameter(string, (Date)obj, TemporalType.DATE); //query.setParameter(string, (Date)obj,DateType.INSTANCE);   此方法为setDate的替代方法 
                 }else if(obj instanceof Object[]){  
                     query.setParameterList(string, (Object[])obj);  
                 }else{  

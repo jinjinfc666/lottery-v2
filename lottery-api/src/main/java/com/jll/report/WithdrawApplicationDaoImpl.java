@@ -94,6 +94,40 @@ public class WithdrawApplicationDaoImpl extends DefaultGenericDaoImpl<WithdrawAp
 	
 	}
 
+	@Override
+	public WithdrawApplication queryUserWithdrawAmountTotal(Integer userId, Integer walletId,
+			WithdrawOrderState orderState) {
+		StringBuffer sql = new StringBuffer();
+		List<Object> params = new ArrayList<>();
+		List<WithdrawApplication> dep = null;
+		
+		sql.append("from WithdrawApplication where 1=1");
+		if(userId != null) {
+			sql.append(" and userId=?");
+			params.add(userId);
+		}
+		
+		if(walletId != null) {
+			sql.append(" and walletId=?");
+			params.add(walletId);
+		}
+		
+		if(orderState != null) {
+			sql.append(" and state=?");
+			params.add(orderState.getCode());
+		}
+		
+		sql.append(" order by createTime desc");
+		/*Query<WithdrawApplication> query = currentSession().createQuery(sql.toString(), 
+				WithdrawApplication.class);*/
+		dep = query(sql.toString(), params, WithdrawApplication.class);
+		
+		if(dep == null || dep.size() == 0) {
+			return null;
+		}
+		
+		return dep.get(0);
+	}
 	
 }
 

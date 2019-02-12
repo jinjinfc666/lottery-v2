@@ -26,9 +26,10 @@ public class DWDetailsServiceImpl implements DWDetailsService {
 		Float amountEnd=(Float) ret.get("amountEnd");
 		String startTime=(String) ret.get("startTime");
 		String endTime=(String) ret.get("endTime");
+		Integer orderId = (Integer) ret.get("orderId");
 		Integer pageIndex=(Integer) ret.get("pageIndex");
 		Integer pageSize=(Integer) ret.get("pageSize");
-		return dWDetailsDao.queryDetails(type,state,userName,orderNum,amountStart,amountEnd,startTime,endTime,pageIndex,pageSize);
+		return dWDetailsDao.queryDetails(type,state,userName,orderNum,amountStart,amountEnd,startTime,endTime,orderId, pageIndex,pageSize);
 	}
 //	@Override
 //	public List<?> queryDWDetails(Map<String, Object> ret) {

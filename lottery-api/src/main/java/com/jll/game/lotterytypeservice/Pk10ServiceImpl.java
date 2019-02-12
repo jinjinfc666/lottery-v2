@@ -24,6 +24,8 @@ import com.jll.common.constants.Constants;
 import com.jll.common.constants.Constants.OrderDelayState;
 import com.jll.common.constants.Constants.OrderState;
 import com.jll.common.http.HttpRemoteStub;
+import com.jll.common.threadpool.ThreadParam;
+import com.jll.common.threadpool.ThreadPoolManager;
 import com.jll.common.utils.DateUtil;
 import com.jll.common.utils.sequence.GenSequenceService;
 import com.jll.entity.GenSequence;
@@ -74,9 +76,9 @@ public class Pk10ServiceImpl extends DefaultLottoTypeServiceImpl
 	
 	@Override
 	public List<Issue> makeAPlan() {
-		//09:00-23:00（179期）5分钟一期，
+		//09:30-00:10（45期）20分钟一期，
 		List<Issue> issues = new ArrayList<>();
-		int maxAmount = 179;
+		int maxAmount = 44;
 		Calendar calendar = Calendar.getInstance();
 		GenSequence pk10Seq = seqServ.queryPK10SeqVal();
 		Long seqVal = pk10Seq.getSeqVal().longValue();
@@ -87,7 +89,7 @@ public class Pk10ServiceImpl extends DefaultLottoTypeServiceImpl
 		calendar.setTime(today);
 		
 		calendar.set(Calendar.HOUR_OF_DAY, 9);
-		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.MINUTE, 10);
 		calendar.set(Calendar.SECOND, 0);
 		calendar.set(Calendar.MILLISECOND, 0);
 		
@@ -100,7 +102,7 @@ public class Pk10ServiceImpl extends DefaultLottoTypeServiceImpl
 			pk10Seq.setSeqVal(seqVal);
 			Issue issue = new Issue();
 			issue.setStartTime(calendar.getTime());
-			calendar.add(Calendar.MINUTE, 5);
+			calendar.add(Calendar.MINUTE, 20);
 			issue.setEndTime(calendar.getTime());
 			issue.setIssueNum(String.valueOf(pk10Seq.getSeqVal().longValue()));
 			issue.setLotteryType(lotteryType);
@@ -125,6 +127,10 @@ public class Pk10ServiceImpl extends DefaultLottoTypeServiceImpl
 	
 	@Override
 	public void queryWinningNum(String message) {
+		logger.debug(String.format("Thread ID %s try to process winning number, receive message %s", 
+				Thread.currentThread().getId(),
+				(String)message));
+		
 		String[] lottoTypeAndIssueNum = null;
 		String lottoType = null;
 		String issueNum = null;
@@ -136,8 +142,12 @@ public class Pk10ServiceImpl extends DefaultLottoTypeServiceImpl
 		SysCode sysCode = cacheServ.getSysCode(codeTypeName, codeName);
 		String winningNum = null;
 		Issue issue = null;
-		int maxCounter = 3600;
-		int currCounter = 0;
+		long maxCounter = 15 * 60 * 1000;
+		long currCounter = 0;
+		Date lockStart = new Date();
+		Date lockEnd = null;
+		
+		
 		
 		lottoTypeAndIssueNum = ((String)message).split("\\|");
 		lottoType = lottoTypeAndIssueNum[0];
@@ -173,18 +183,29 @@ public class Pk10ServiceImpl extends DefaultLottoTypeServiceImpl
 		
 		urls = sysCode.getCodeVal().split(",");
 		while(currCounter < maxCounter) {
+			lockStart = new Date();
 			for(String url : urls) {
 				url = url.replace("{issue_id}", issueNum.replace("-", ""));
 				
 				try {
+					Date tempStart = new Date();
 					result = HttpRemoteStub.synGet(new URI(url), null, null);
+					Date tempEnd = new Date();
+					logger.debug(String.format("Thread ID %s , consume %s ms, URL  %s,\r\n response \r\n %s", 
+							Thread.currentThread().getId(),
+							tempEnd.getTime() - tempStart.getTime(),
+							url,
+							result
+							));
+					
 					
 					if(result != null && result.size() > 0) {
 						if(result.get("responseBody") != null) {
 							response = (String)result.get("responseBody");
 							//if(response.contains(issueNum.replace("-", ""))) {
 								if(response.contains("preDrawCode")) {
-									winningNum = parseHuiling(response, issueNum);
+									//winningNum = parseHuiling(response, issueNum);
+									winningNum = parse168(response, issueNum, "10001");
 								}else if(response.contains("openNum")) {
 									winningNum = parseCp8033(response, issueNum);
 								}
@@ -210,7 +231,14 @@ public class Pk10ServiceImpl extends DefaultLottoTypeServiceImpl
 				}
 			}
 			
-			currCounter++;
+			lockEnd = new Date();
+			logger.debug(String.format("Thread ID %s  consume %s ms,  loop counter %s", 
+					Thread.currentThread().getId(),
+					lockEnd.getTime() - lockStart.getTime(),
+					currCounter
+					));
+						
+			currCounter = new Date().getTime() - ((Date)ThreadParam.get()).getTime();
 			
 			try {
 				Thread.sleep(1000);
@@ -327,6 +355,55 @@ public class Pk10ServiceImpl extends DefaultLottoTypeServiceImpl
 				Integer winningIssueNum = (Integer)winningNumMap.get("preDrawIssue");
 				
 				if(issueNum.equals(String.valueOf(winningIssueNum))) {
+					return winningNumber;
+				}
+			}
+			
+		} catch (JsonParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	private String parse168(String response, String issueNum, String lottoType) {
+		ObjectMapper mapper = new ObjectMapper();
+		Map  winningNumMap = null;
+		Map responseMap = null;
+		Map resultMap = null;
+		Map dataMap = null;
+		List retItems = null;
+		try {
+			responseMap = mapper.readValue(response, Map.class);
+			resultMap = (Map)responseMap.get("result");
+			retItems = (List)resultMap.get("data");
+			
+			//resultMap = (Map)responseMap.get("result");
+			//retItems = (List)responseMap.get("data");
+			if(retItems == null || retItems.size() == 0) {
+				return null;
+			}
+			
+			for(Object temp : retItems) {
+				winningNumMap = (Map)temp;
+				String winningNumber = (String)winningNumMap.get("preDrawCode");
+				Object winningIssueNumObj = winningNumMap.get("preDrawIssue");
+				String winningIssueNum = null;
+				if(winningIssueNumObj instanceof Long) {
+					winningIssueNum = Long.toString((Long)winningIssueNumObj);
+				}else if(winningIssueNumObj instanceof Integer) {
+					winningIssueNum = Integer.toString((Integer)winningIssueNumObj);
+				}
+				Integer lottoType_ = (Integer)winningNumMap.get("lotCode");
+				if(issueNum.equals(winningIssueNum)
+						&& lottoType.equals(String.valueOf(lottoType_))) {
 					return winningNumber;
 				}
 			}

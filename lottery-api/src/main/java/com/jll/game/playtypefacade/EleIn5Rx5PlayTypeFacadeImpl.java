@@ -82,6 +82,8 @@ public class EleIn5Rx5PlayTypeFacadeImpl  extends DefaultPlayTypeFacadeImpl {
 		int betTotal = 1;
 		Float betAmount = 0F;
 		Float maxWinAmount = 0F;
+		int winBetTotal = 0;
+		int maxWinBetTotal = 0;
 		
 		betNumSet = betNum.split(";");
 		for(String subBetNum : betNumSet) {
@@ -89,9 +91,25 @@ public class EleIn5Rx5PlayTypeFacadeImpl  extends DefaultPlayTypeFacadeImpl {
 			betTotal *= MathUtil.combination(5, len);
 		}
 		
+		maxWinBetTotal =  (int)MathUtil.combination(5, 5);
+		if(betTotal > maxWinBetTotal) {
+			winBetTotal = maxWinBetTotal;
+		}else {
+			winBetTotal = betTotal;
+		}
+		
 		betAmount = MathUtil.multiply(betTotal, times, Float.class);
 		betAmount = MathUtil.multiply(betAmount, monUnit, Float.class);
-		maxWinAmount = MathUtil.multiply(betAmount, singleBettingPrize.floatValue(), Float.class);
+		
+		maxWinAmount = MathUtil.multiply(winBetTotal, 
+				times, 
+				Float.class);
+		maxWinAmount = MathUtil.multiply(maxWinAmount, 
+				monUnit, 
+				Float.class);
+		maxWinAmount = MathUtil.multiply(maxWinAmount, 
+				singleBettingPrize.floatValue(), 
+				Float.class);
 		
 		ret.put("playType", playType);
 		ret.put("betAmount", betAmount);

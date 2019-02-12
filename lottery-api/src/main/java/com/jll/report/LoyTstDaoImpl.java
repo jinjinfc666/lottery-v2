@@ -39,7 +39,7 @@ import com.jll.entity.UserAccountDetails;
 public class LoyTstDaoImpl extends DefaultGenericDaoImpl<OrderInfo> implements LoyTstDao {
 	private Logger logger = Logger.getLogger(LoyTstDaoImpl.class);
 	@Override
-	public PageBean queryLoyTst(Integer codeTypeNameId,String lotteryType,Integer isZh,String zhTrasactionNum,Integer state,Integer terminalType,String startTime,String endTime,String issueNum,String userName,String orderNum,Integer pageIndex,Integer pageSize) {
+	public PageBean queryLoyTst(Integer codeTypeNameId,String lotteryType,Integer isZh,String zhTrasactionNum,Integer state,Integer terminalType,String startTime,String endTime,String issueNum,String userName,String orderNum,Integer orderId,Integer pageIndex,Integer pageSize) {
 		String lotteryTypeSql="";
 		String isZhSql="";
 		String zhTrasactionNumSql="";
@@ -89,6 +89,13 @@ public class LoyTstDaoImpl extends DefaultGenericDaoImpl<OrderInfo> implements L
 			orderNumSql=" and a.orderNum=:orderNum";
 			map.put("orderNum", orderNum);
 		}
+		
+		if(orderId != null
+				&& orderId.intValue() != 0) {
+			orderNumSql += " and a.id=:orderId";
+			map.put("orderId", orderId);
+		}
+		
 		String betting=Constants.AccOperationType.BETTING.getCode();
 //		String sql="from OrderInfo a,UserInfo b,UserAccountDetails c,Issue d,SysCode e,PlayType f where a.userId=b.id and a.issueId=d.id and a.id=c.orderId and d.lotteryType=e.codeName and e.codeType=:codeTypeNameId and a.playType=f.id and c.operationType=:betting "+lotteryTypeSql+isZhSql+stateSql+terminalTypeSql+timeSql+issueNumSql+userNameSql+orderNumSql+" group by a.id order by a.id desc";
 		String sql="from OrderInfo a,UserInfo b,Issue c,SysCode d,PlayType e,UserAccount f where a.userId=b.id and a.issueId=c.id and a.playType=e.id and a.walletId=f.id and c.lotteryType=d.codeName and d.codeType=:codeTypeNameId and b.userType!=:userType "+lotteryTypeSql+isZhSql+zhTrasactionNumSql+stateSql+terminalTypeSql+timeSql+issueNumSql+userNameSql+orderNumSql+" order by a.id desc";

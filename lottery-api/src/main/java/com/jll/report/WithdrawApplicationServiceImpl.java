@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jll.common.constants.Constants;
+import com.jll.common.constants.Constants.WithdrawOrderState;
 import com.jll.common.constants.Message;
 import com.jll.entity.DepositApplication;
 import com.jll.entity.WithdrawApplication;
@@ -69,6 +70,11 @@ public class WithdrawApplicationServiceImpl implements WithdrawApplicationServic
 	@Override
 	public double getUserWithdrawAmountTotal(int userId, int walletId,Date start, Date end) {
 		return withdrawApplicationDao.getUserWithdrawAmountTotal(userId, walletId,start, end);
+	}
+
+	@Override
+	public WithdrawApplication queryLastWithdrawApplication(Integer userId, Integer walletId, WithdrawOrderState status) {
+		return withdrawApplicationDao.queryUserWithdrawAmountTotal(userId, walletId, status);
 	}
 
 	

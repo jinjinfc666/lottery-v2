@@ -9,24 +9,18 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
 import com.jll.common.constants.Constants;
 import com.jll.common.constants.Message;
-import com.jll.common.constants.Constants.UserType;
 import com.jll.common.utils.DateUtil;
-import com.jll.common.utils.PageQuery;
-import com.jll.common.utils.PagenationUtil;
 import com.jll.common.utils.StringUtils;
 import com.jll.dao.DefaultGenericDaoImpl;
 import com.jll.dao.PageBean;
 import com.jll.dao.PageQueryDao;
-import com.jll.entity.SiteMessFeedback;
 import com.jll.entity.SiteMessage;
-import com.jll.entity.UserBankCard;
 import com.jll.entity.UserInfo;
 import com.jll.user.UserInfoDao;
 
@@ -80,8 +74,11 @@ public class SysSiteMsgDaoImpl extends DefaultGenericDaoImpl<SiteMessage> implem
 			timeSql=" and a.createTime>=:startTime and a.createTime<:endTime ";
 			Date beginDate = DateUtil.fmtYmdHisToDate(startTime);
 		    Date endDate = DateUtil.fmtYmdHisToDate(endTime);
-		    map.put("startTime", beginDate);
-		    map.put("endTime", endDate);
+		    
+		    java.sql.Date bDate = new java.sql.Date(beginDate.getTime());
+		    java.sql.Date eDate = new java.sql.Date(endDate.getTime());
+		    map.put("startTime", bDate);
+		    map.put("endTime", eDate);
 		}
 		String sql="";
 		sql="from SiteMessage a,UserInfo b where a.creator=b.id and a.receiver =:receiver "+isReadSql+timeSql+" ORDER BY a.id DESC";
@@ -218,5 +215,52 @@ public class SysSiteMsgDaoImpl extends DefaultGenericDaoImpl<SiteMessage> implem
 		map.put("data", pageBean);
 		map.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
 		return map;
+	}
+	@Override
+	public PageBean<SiteMessage> querySentSiteMessage(Map<String, String> params) {
+		Map<String, Object> parmsList = new HashMap<>();
+		//String userName=(String)params.get("userId");
+		Integer userId= Integer.parseInt(params.get("userId"));
+		StringBuffer sql = new StringBuffer();
+		/*if(!StringUtils.isBlank(userName)) {
+			UserInfo user = userDao.getUserByUserName(userName);
+			if(null == user){
+				return null;
+			}
+			userId=user.getId();
+		}*/
+		Integer pageIndex=Integer.parseInt(params.get("pageIndex").toString());
+		Integer pageSize=Constants.Pagination.SUM_NUMBER.getCode();
+		
+		sql.append("from SiteMessage a,UserInfo b where a.creator = b.id ");
+		if(userId!=null) {
+			sql.append(" and a.creator =:creator ");
+			parmsList.put("creator", userId);
+		}
+		String startTime=(String)params.get("startTime");
+		String endTime=(String)params.get("endTime");
+		//String timeSql="";
+		if(!StringUtils.isBlank(startTime)&&!StringUtils.isBlank(endTime)) {			
+			sql.append(" and a.createTime >=:startTime and a.createTime <=:endTime ");
+			Date beginDate = DateUtil.fmtYmdHisToDate(startTime);
+		    Date endDate = DateUtil.fmtYmdHisToDate(endTime);
+		    
+		    java.sql.Date bDate = new java.sql.Date(beginDate.getTime());
+		    java.sql.Date eDate = new java.sql.Date(endDate.getTime());
+		    parmsList.put("startTime", bDate);
+		    parmsList.put("endTime", eDate);
+		}
+		
+		sql.append(" ORDER BY a.id DESC");
+		//String sql="";
+		//sql="from SiteMessage a,UserInfo b where a.receiver=b.id  "+sql+isReadSql+timeSql+" ORDER BY a.id DESC";
+		PageBean page=new PageBean();
+		page.setPageIndex(pageIndex);
+		page.setPageSize(pageSize);
+		PageBean pageBean = queryByPagination(page, sql.toString(), parmsList);
+		/*map.clear();
+		map.put("data", pageBean);
+		map.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());*/
+		return pageBean;
 	}
 }

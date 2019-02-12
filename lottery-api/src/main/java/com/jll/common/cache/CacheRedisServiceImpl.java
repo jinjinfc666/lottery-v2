@@ -72,7 +72,7 @@ public class CacheRedisServiceImpl implements CacheRedisService
 	PlayTypeService playTypeServ;
 	
 	@Override
-	public void setCaptchaCode(String captchaCode, int captchaCodeExpiredTime) {
+	public synchronized void setCaptchaCode(String captchaCode, int captchaCodeExpiredTime) {
 		CacheObject<String> cacheObj = new CacheObject<String>();
 		cacheObj.setContent(captchaCode);
 		cacheObj.setExpired(captchaCodeExpiredTime);
@@ -86,7 +86,7 @@ public class CacheRedisServiceImpl implements CacheRedisService
 	}
 
 	@Override
-	public void setPlan(String lotteryType, List<Issue> issues) {
+	public synchronized void setPlan(String lotteryType, List<Issue> issues) {
 		String cacheKey = Constants.KEY_PRE_PLAN + lotteryType;
 		
 		cacheDao.setPlan(cacheKey, issues);
@@ -100,7 +100,11 @@ public class CacheRedisServiceImpl implements CacheRedisService
 		return cacheDao.getPlan(cacheKey);
 	}
 
-
+	@Override
+	public synchronized void updatePlan(String lottoType, List<Issue> issues, Issue issue) {
+		String cacheKey = Constants.KEY_PRE_PLAN + lottoType;
+		cacheDao.upatePlan(cacheKey, issues, issue);
+	}
 
 	@Override
 	public boolean isPlanExisting(String lotteryType) {
@@ -140,7 +144,7 @@ public class CacheRedisServiceImpl implements CacheRedisService
 	}
 
 	@Override
-	public synchronized void setBulletinBoard(String lottoType, BulletinBoard bulletinBoard) {
+	public void setBulletinBoard(String lottoType, BulletinBoard bulletinBoard) {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(Constants.KEY_PRE_BULLETINBOARD).append("_").append(lottoType);
 		
@@ -162,7 +166,7 @@ public class CacheRedisServiceImpl implements CacheRedisService
 
 	}
 	@Override
-	public void setSysCode(String codeTypeName, List<SysCode> sysCodes) {
+	public synchronized void setSysCode(String codeTypeName, List<SysCode> sysCodes) {
 		CacheObject<Map<String, SysCode>> cacheObj = new CacheObject<>();
 		Map<String, SysCode> sysCodesTemp = new HashMap<>();
 		for(SysCode sysCode : sysCodes) {
@@ -187,7 +191,7 @@ public class CacheRedisServiceImpl implements CacheRedisService
 	}
 
 	@Override
-	public void setSysCode(String codeTypeName, SysCode sysCode) {
+	public synchronized void setSysCode(String codeTypeName, SysCode sysCode) {
 		//CacheObject<Map<String, SysCode>> cacheObj = new CacheObject<>();asdad
 		CacheObject<Map<String, SysCode>> cacheObject=cacheDao.getSysCode(codeTypeName);
 		Map<String, SysCode> sysCodesTemp=null;
@@ -222,7 +226,7 @@ public class CacheRedisServiceImpl implements CacheRedisService
 		return playTypes;
 	}
 	@Override
-	public void setPlayType(String lotteryType, List<PlayType> playTypes) {
+	public synchronized void setPlayType(String lotteryType, List<PlayType> playTypes) {
 		String cacheKey = Constants.KEY_PLAY_TYPE + lotteryType;
 		CacheObject<List<PlayType>> cache = new CacheObject<>();
 		cache.setContent(playTypes);
@@ -455,7 +459,7 @@ public class CacheRedisServiceImpl implements CacheRedisService
 		}
 		return null;
 	}
-	public void publishMessage(String channel, Serializable mes) {
+	public synchronized void publishMessage(String channel, Serializable mes) {
 		logger.debug(String.format("publish message %s to %s", mes, channel));//"publish message to notify the module to obtain the winning number!!!" + mes);
 		cacheDao.publishMessage(channel, mes);
 	}
@@ -473,7 +477,7 @@ public class CacheRedisServiceImpl implements CacheRedisService
 		return cacheDao.getIpBlackList(codeTypeName, codeName);
 	}
 	@Override
-	public void setIpBlackList(String codeTypeName, IpBlackList ipBlackList) {
+	public synchronized void setIpBlackList(String codeTypeName, IpBlackList ipBlackList) {
 		CacheObject<Map<Integer, IpBlackList>> cacheObject=cacheDao.getIpBlackList(codeTypeName);
 		Map<Integer, IpBlackList> ipBlackListTemp=null;
 		if(cacheObject==null) {
@@ -488,7 +492,7 @@ public class CacheRedisServiceImpl implements CacheRedisService
 		cacheDao.setIpBlackList(cacheObject);
 	}
 	@Override
-	public void setIpBlackList(String codeTypeName, List<IpBlackList> ipBlackLists) {
+	public synchronized void setIpBlackList(String codeTypeName, List<IpBlackList> ipBlackLists) {
 		CacheObject<Map<Integer, IpBlackList>> cacheObj = new CacheObject<>();
 		Map<Integer, IpBlackList> ipBlackListTemp = new HashMap<>();
 		for(IpBlackList ipBlackList : ipBlackLists) {
@@ -502,7 +506,7 @@ public class CacheRedisServiceImpl implements CacheRedisService
 	}
 
 	@Override
-	public void deleteIpBlackList(String codeTypeName, Integer codeName) {
+	public synchronized void deleteIpBlackList(String codeTypeName, Integer codeName) {
 		cacheDao.deleteIpBlackList(codeTypeName, codeName);
 	}
 
@@ -594,7 +598,7 @@ public class CacheRedisServiceImpl implements CacheRedisService
 	}
 
 	@Override
-	public void setPayType(String codeTypeName, List<PayType> payTypes) {
+	public synchronized void setPayType(String codeTypeName, List<PayType> payTypes) {
 		CacheObject<List<PayType>> cache = new CacheObject<>();
 		cache.setContent(payTypes);
 		cache.setKey(codeTypeName);
@@ -618,7 +622,7 @@ public class CacheRedisServiceImpl implements CacheRedisService
 	}
 
 	@Override
-	public void setPayChannel(String codeName, PayChannel payChannel) {
+	public synchronized void setPayChannel(String codeName, PayChannel payChannel) {
 		CacheObject<Map<Integer, PayChannel>> cacheObject=cacheDao.getPayChannel(codeName);
 		Map<Integer, PayChannel> payChannelTemp=null;
 		if(cacheObject==null) {
@@ -634,7 +638,7 @@ public class CacheRedisServiceImpl implements CacheRedisService
 	}
 
 	@Override
-	public void setPayChannel(String codeName, List<PayChannel> payChannelLists) {
+	public synchronized void setPayChannel(String codeName, List<PayChannel> payChannelLists) {
 		CacheObject<Map<Integer, PayChannel>> cacheObj = new CacheObject<>();
 		Map<Integer, PayChannel> payChannelTemp = new HashMap<>();
 		for(PayChannel payChannel : payChannelLists) {
@@ -694,7 +698,7 @@ public class CacheRedisServiceImpl implements CacheRedisService
 	}
 
 	@Override
-	public void setPlatStat(String lotteryType, Map<String, Object> items) {
+	public synchronized void setPlatStat(String lotteryType, Map<String, Object> items) {
 		SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
 		Date currDay = new Date();
 		String currDayStr = format.format(currDay);
@@ -745,7 +749,7 @@ public class CacheRedisServiceImpl implements CacheRedisService
 	}
 
 	@Override
-	public void setMMCIssueCount(Date currTime, int i) {
+	public synchronized void setMMCIssueCount(Date currTime, int i) {
 		SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
 		Date currDay = new Date();
 		String currDayStr = format.format(currDay);
@@ -764,14 +768,10 @@ public class CacheRedisServiceImpl implements CacheRedisService
 		cacheDao.setMMCIssueCount(cacheObj);
 	}
 
-	@Override
-	public void updatePlan(String lottoType, Issue issue) {
-		String cacheKey = Constants.KEY_PRE_PLAN + lottoType;
-		cacheDao.upatePlan(cacheKey, issue);
-	}
+	
 	//存储图片验证码
 	@Override
-	public void setSessionIdCaptcha(String keyCaptcha, String value) {
+	public synchronized void setSessionIdCaptcha(String keyCaptcha, String value) {
 		String key=Constants.Captcha.CAPTCHA.getCode();
 		CacheObject<Map<String,String>> cacheObject=cacheDao.getSessionIdCaptcha(key);
 		Map<String,String> map=null;
@@ -802,7 +802,7 @@ public class CacheRedisServiceImpl implements CacheRedisService
 	}
 	//删除缓存中的图片验证码
 	@Override
-	public void deleteSessionIdCaptcha(String keyCaptcha) {
+	public synchronized void deleteSessionIdCaptcha(String keyCaptcha) {
 		String key=Constants.Captcha.CAPTCHA.getCode();
 		cacheDao.deleteSessionIdCaptcha(key, keyCaptcha);
 	}

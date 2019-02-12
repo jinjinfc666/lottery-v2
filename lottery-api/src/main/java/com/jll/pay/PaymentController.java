@@ -108,7 +108,8 @@ public class PaymentController
 			  info.setAmount(Utils.toDouble(repParams.get("amount")).floatValue());
 			  ret= paymentService.payOrderToSystem(userInfo.getId(),info,params);
 		  }
-		  if(null != ((Map<String, Object>)ret.get("data")).get("isRedirect")){
+		  if(ret.get("data") != null 
+				  && null != ((Map<String, Object>)ret.get("data")).get("isRedirect")){
 			  try {
 				response.sendRedirect(((Map<String, Object>)ret.get("data")).get("redirect").toString());
 			} catch (Exception e) {
