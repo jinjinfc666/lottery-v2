@@ -168,4 +168,6 @@ public interface UserInfoService
 	PageBean<UserInfo> queryUserInfoByPagination(PageBean<UserInfo> page);
 	
 	void migrateUser(UserInfo user, Map<String, Object> extraParams);
+	
+	UserInfo querySuperior(UserInfo user);
 }

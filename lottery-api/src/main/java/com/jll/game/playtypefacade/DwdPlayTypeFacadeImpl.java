@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -23,6 +24,8 @@ public class DwdPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 	private Logger logger = Logger.getLogger(QszxPlayTypeFacadeImpl.class);
 	
 	protected String playTypeDesc = "dwd|定位胆/dwdfs";
+	
+	private String betNumOptions = "0,1,2,3,4,5,6,7,8,9";
 	
 	@Override
 	public boolean isMatchWinningNum(Issue issue, OrderInfo order) {
@@ -131,6 +134,7 @@ public class DwdPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 	public boolean validBetNum(OrderInfo order) {
 		String betNum = null;
 		String[] betNumMul = null;
+		Integer blankBitCount = 0;
 		
 		betNum = order.getBetNum();
 		
@@ -145,20 +149,37 @@ public class DwdPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 				return false;
 			}
 			
-			String[] betNumTempSet = betNumTemp.split(",");
+			String[] betNumTempSet = splitBit(betNumTemp, 1);
 			
-			if(betNumTempSet.length > 5) {
+			if(betNumTempSet.length != 5) {
 				return false;
 			}
 			
 			for(String betNumTempBit : betNumTempSet) {
 				if(StringUtils.isBlank(betNumTempBit)) {
+					blankBitCount++;
 					continue;
 				}
 				
-				if(betNumTempBit.length() > 10) {
+				Map<String, String> tempBits = splitBetNum(betNumTempBit);
+				if(tempBits.size() == 0
+						|| tempBits.size() > 10
+						|| tempBits.size() != betNumTempBit.length()) {
 					return false;
 				}
+				
+				Iterator<String> ite = tempBits.keySet().iterator();
+				while(ite.hasNext()) {
+					String key = ite.next();
+					if(!betNumOptions.contains(key)) {
+						return false;
+					}
+				}
+				
+			}
+			
+			if(blankBitCount == 5) {
+				return false;
 			}
 		}
 				
@@ -355,5 +376,22 @@ public class DwdPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		}
 		
 		return retList.toArray(new String[0]);
+	}
+	
+	private Map<String, String> splitBetNum(String temp) {
+		Map<String, String> bits = new HashMap<String, String>();
+		/*int len = temp.length();
+		
+		if(len % 2 != 0) {
+			return bits;
+		}*/
+		
+		for(int i = 0; i < temp.length();) {
+			String bit = temp.substring(i, i + 1);
+			bits.put(bit, bit);
+			i += 1;
+		}
+		
+		return bits;
 	}
 }

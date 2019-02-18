@@ -2077,18 +2077,18 @@ public class UserInfoServiceImpl implements UserInfoService
 		Double rpBal = (Double)extraParams.get("activitymoney");
 		Integer userId = null;
 		
-		user.setLoginPwd(encoder.encode(user.getLoginPwd()));
-		
-		if(user.getUserType() != UserType.SYS_ADMIN.getCode()) {
-			user.setFundPwd(encoder.encode(user.getFundPwd()));
-		}
-		user.setIsValidEmail(EmailValidState.UNVERIFIED.getCode());
-		user.setIsValidPhone(PhoneValidState.UNVERIFIED.getCode());
-		user.setLoginCount(0);
-		user.setLevel(UserLevel.LEVEL_0.getCode());
 		
 		boolean isExisting = userDao.isUserExisting(user);
 		if(!isExisting) {
+			user.setLoginPwd(encoder.encode(user.getLoginPwd()));
+			
+			if(user.getUserType() != UserType.SYS_ADMIN.getCode()) {
+				user.setFundPwd(encoder.encode(user.getFundPwd()));
+			}
+			user.setIsValidEmail(EmailValidState.UNVERIFIED.getCode());
+			user.setIsValidPhone(PhoneValidState.UNVERIFIED.getCode());
+			user.setLoginCount(0);
+			user.setLevel(UserLevel.LEVEL_0.getCode());
 			//return;
 			userDao.saveUser(user);
 			userId = user.getId();
@@ -2120,17 +2120,16 @@ public class UserInfoServiceImpl implements UserInfoService
 			
 			
 		}else {
-			user = userDao.getUserByUserName(user.getUserName());
-			userId = user.getId();
+			UserInfo user_ = userDao.getUserByUserName(user.getUserName());
+			userId = user_.getId();			
+			
+			user_.setPlatRebate(user.getPlatRebate());
+			//user_.setRebate(user.getRebate());
+			userDao.saveUser(user_);
 			
 			mainWallet = walletServ.queryUserAccount(userId, WalletType.MAIN_WALLET.getCode());
 			redPacketWallet = walletServ.queryUserAccount(userId, WalletType.RED_PACKET_WALLET.getCode());
 		}
-		
-		//userId = user.getId();
-		
-		
-		
 		
 		mainWallet.setAccName(WalletType.MAIN_WALLET.getDesc());
 		mainWallet.setAccType(WalletType.MAIN_WALLET.getCode());
@@ -2173,5 +2172,24 @@ public class UserInfoServiceImpl implements UserInfoService
 		genSeqServ.saveSeq(seq);
 		
 		return seq.getSeqVal();
+	}
+
+	@Override
+	public UserInfo querySuperior(UserInfo user) {
+		UserInfo superior = null;
+		String[] superiorIds = null;
+		
+		String superiorStr = user.getSuperior();
+		
+		if(superiorStr == null) {
+			return superior;
+		}
+		
+		superiorIds = superiorStr.split(",");
+		if(superiorIds != null && superiorIds.length > 0) {
+			superior = getUserById(Integer.parseInt(superiorIds[0]));
+		}
+		
+		return superior;
 	}
 }

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generated 2018-8-14 16:52:58 by Hibernate Tools 5.2.10.Final --><!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="true" default-access="property" default-cascade="none" default-lazy="true">
+    <class catalog="lottery" dynamic-insert="false" dynamic-update="false" mutable="true" name="com.jll.entity.TrgUserAccountDetails" optimistic-lock="version" polymorphism="implicit" select-before-update="false" table="tmp_user_account_details">
+        <id name="id" type="java.lang.Integer">
+            <column name="id"/>
+            <generator class="identity"/>
+        </id>
+        <property generated="never" lazy="false" name="userId" optimistic-lock="true" type="java.lang.Integer" unique="false">
+            <column name="user_id"/>
+        </property>
+        <property generated="never" lazy="false" name="amount" optimistic-lock="true" type="java.lang.Float" unique="false">
+            <column name="amount" precision="8">
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="preAmount" optimistic-lock="true" type="java.lang.Double" unique="false">
+            <column name="pre_amount" precision="8">
+                <comment>�䶯ǰ���</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="postAmount" optimistic-lock="true" type="java.lang.Double" unique="false">
+            <column name="post_amount" precision="11">
+                <comment>�䶯����</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="walletId" optimistic-lock="true" type="java.lang.Integer" unique="false">
+            <column name="wallet_id">
+                <comment>�û��˻�id</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="orderId" optimistic-lock="true" type="java.lang.Integer" unique="false">
+            <column name="order_id">
+                <comment>�����Դ�ڳ�ֵ��������������룬��Ҫ��д</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="operationType" optimistic-lock="true" type="string" unique="false">
+            <column length="30" name="operation_type">
+                <comment>�˻��������ͣ���Ӧϵͳ����</comment>
+            </column>
+        </property>
+        <!-- <property generated="never" lazy="false" name="dataItemType" optimistic-lock="true" type="java.lang.Integer" unique="false">
+            <column name="data_item_type">
+                <comment>账户变动数据类型,0:余额;1:奖金;2,积分;3,冻结资金</comment>
+            </column>
+        </property> -->
+        <property generated="never" lazy="false" name="createTime" optimistic-lock="true" type="timestamp" unique="false">
+            <column length="19" name="create_time"/>
+        </property>
+        <property generated="never" lazy="false" name="inTime" optimistic-lock="true" type="timestamp" unique="false">
+            <column length="19" name="in_time"/>
+        </property>
+        <property generated="never" lazy="false" name="remark" optimistic-lock="true" type="text" unique="false">
+            <column name="remark">
+                <comment>�˻��������ͣ���Ӧϵͳ����</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="flag" optimistic-lock="true" type="java.lang.Integer" unique="false">
+            <column name="flag">
+                <comment>�����Դ�ڳ�ֵ��������������룬��Ҫ��д</comment>
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

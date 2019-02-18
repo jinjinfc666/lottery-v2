@@ -62,73 +62,329 @@ public class TReportDaoImpl extends DefaultGenericDaoImpl<TeamPlReport> implemen
 	}
 	//查找下级代理
 	@Override
-	public Map<String,Object> queryNextTeamAll(String startTime, String endTime, String userName) {
-		Map<String,Object> map=new HashMap<String,Object>();
-		String sql = "from UserInfo where userName = :userName";
-	    Query<UserInfo> query = getSessionFactory().getCurrentSession().createQuery(sql,UserInfo.class);
-	    query.setParameter("userName", userName);
-	    List<UserInfo> list = query.list();
-	    
-	    if(list == null || list.size() == 0) {
-	    	return map;
-	    }
-	    
-	    Integer id=list.get(0).getId();
-	    String sql1="select a.user_name from(select *,FIND_IN_SET(:id,superior) as aa from user_info)a where a.aa=1";
-	    Query<?> query1 = getSessionFactory().getCurrentSession().createNativeQuery(sql1);
-	    query1.setParameter("id", id);
-	    List<?> userNameList=query1.list();
-	    if(userNameList==null||userNameList.size()<=0) {
-	    	map.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
-			map.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_USER_NO_AGENCY.getCode());
-			map.put(Message.KEY_ERROR_MES, Message.Error.ERROR_USER_NO_AGENCY.getErrorMes());
-			return map;
-	    }
-	    String sql2="select user_name,SUM(deposit) as deposit,SUM(withdrawal) as withdrawal,SUM(transfer) as transfer ,SUM(transfer_out) as transfer_out,SUM(deduction) as deduction,SUM(consumption) as consumption,SUM(cancel_amount) as cancel_amount,SUM(return_prize) as return_prize,SUM(rebate) as rebate,SUM(recharge_member) as recharge_member,SUM(new_members) as new_members,SUM(profit) as profit,user_type from team_pl_report where user_name in(:userNameList)  and create_time>=:startTime and create_time<=:endTime GROUP BY user_name,user_type";
-	    Query<?> query2=getSessionFactory().getCurrentSession().createNativeQuery(sql2);
-	    query2.setParameterList("userNameList", userNameList);
+	public Map<String,Object> queryNextTeamAll(String startTime, String endTime, UserInfo user) {
+		Map<String,Object> map = new HashMap<String,Object>();
+		TeamPlReport selfProfit = querySelfProfit(startTime, endTime, user);
+		List<TeamPlReport> nextAgencyLevelProfit = queryAgencyNextLevelProfit(startTime, endTime, user);
+		List<TeamPlReport> nextUserLevelProfit = queryUserNextLevelProfit(startTime, endTime, user);
+		
+		if(nextAgencyLevelProfit == null) {
+			nextAgencyLevelProfit = new ArrayList<>();
+		}
+		
+		
+		if(nextUserLevelProfit != null && nextUserLevelProfit.size() > 0) {
+			/*for(TeamPlReport report : nextUserLevelProfit) {
+				nextAgencyLevelProfit.add(0, report);
+			}*/
+			for(int i = nextUserLevelProfit.size() - 1;i >= 0; i--) {
+				nextAgencyLevelProfit.add(0, nextUserLevelProfit.get(i));
+			}
+		}
+		
+		if(selfProfit != null) {
+			nextAgencyLevelProfit.add(0, selfProfit);
+		}
+		
+		map.put("data", nextAgencyLevelProfit);
+		map.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
+		return map;
+	}
+	
+	private List<TeamPlReport> queryAgencyNextLevelProfit(String startTime, String endTime, UserInfo user) {
+		Integer id = user.getId();
+		StringBuffer sqlBuffer = new StringBuffer();
+		PageBean<Object[]> page = new PageBean<>();
+		List<Object> params = new ArrayList<>();
+		
+		page.setPageIndex(0);
+		page.setPageSize(100000);		
+		
+		sqlBuffer.append("select CONCAT('|------',userInfo.user_name) user_name, t.* from ")
+		.append("(")
+		.append("select ")
+		.append("user_id,")
+		.append("SUM(deposit) as deposit,")
+		.append("SUM(withdrawal) as withdrawal, ")
+		.append("SUM(transfer) as transfer ,")
+		.append("SUM(transfer_out) as transfer_out,")
+		.append("SUM(deduction) as deduction,")
+		.append("SUM(consumption) as consumption,")
+		.append("SUM(cancel_amount) as cancel_amount,")
+		.append("SUM(return_prize) as return_prize,")
+		.append("SUM(rebate) as rebate,")
+		.append("SUM(recharge_member) as recharge_member,")
+		.append("SUM(new_members) as new_members,")
+		.append("SUM(profit) as profit ")
+		//.append("user_type ")
+		.append("from team_pl_report ")
+		.append("where user_id in (select id from user_info where FIND_IN_SET(?,superior) = 1 and user_type = 1) and user_type = 1 ")
+		//.append(" or ")
+		//.append("(user_id in (select id from user_info where FIND_IN_SET(?,superior) = 1 and user_type = 0) and user_type = 0) ")
+		//.append(" or ")
+		//.append("(user_id = ? and user_type = 0)) ")
+		.append("and create_time >= ? and create_time <= ? ")
+		.append("group by user_id ")
+		
+		.append(")t ")
+		.append("left join ")
+		.append("user_info userInfo on t.user_id = userInfo.id ")
+		.append("order by t.user_id ");
+		
+	    params.add(id);
+	    /*params.add(id);
+	    params.add(id);*/
 	    Date beginDate = DateUtil.fmtYmdToDate(startTime);
 	    Date endDate = DateUtil.fmtYmdToDate(endTime);
-	    query2.setParameter("startTime", beginDate,DateType.INSTANCE);
-	    query2.setParameter("endTime", endDate,DateType.INSTANCE);
+	    params.add(beginDate);
+	    params.add(endDate);
+	    
     	List<?> memberPlReportList=null;
-    	memberPlReportList=query2.list();
+    	
+    	memberPlReportList = queryNativeSQL(sqlBuffer.toString(), params);
 	    Iterator<?> it=memberPlReportList.iterator();
 	    List<TeamPlReport> listRecord=new ArrayList<TeamPlReport>();
 		while(it.hasNext()) {
 			TeamPlReport m=new TeamPlReport();
 			Object[] obj=(Object[]) it.next();
 			m.setUserName((String)obj[0]);
-			BigDecimal bd1 = (BigDecimal) obj[1];
+			BigDecimal bd1 = (BigDecimal) obj[2];
 			m.setDeposit(bd1);
-			BigDecimal bd2 = (BigDecimal) obj[2];
+			BigDecimal bd2 = (BigDecimal) obj[3];
 			m.setWithdrawal(bd2);
-			BigDecimal bd3 = (BigDecimal) obj[3];
+			BigDecimal bd3 = (BigDecimal) obj[4];
 			m.setTransfer(bd3);
-			BigDecimal bd4 = (BigDecimal) obj[4];
+			BigDecimal bd4 = (BigDecimal) obj[5];
 			m.setTransferOut(bd4);
-			BigDecimal bd5 = (BigDecimal) obj[5];
+			BigDecimal bd5 = (BigDecimal) obj[6];
 			m.setDeduction(bd5);
-			BigDecimal bd6 = (BigDecimal) obj[6];
+			BigDecimal bd6 = (BigDecimal) obj[7];
 			m.setConsumption(bd6);
-			BigDecimal bd7 = (BigDecimal) obj[7];
+			BigDecimal bd7 = (BigDecimal) obj[8];
 			m.setCancelAmount(bd7);
-			BigDecimal bd8 = (BigDecimal) obj[8];
+			BigDecimal bd8 = (BigDecimal) obj[9];
 			m.setReturnPrize(bd8);
-			BigDecimal bd9 = (BigDecimal) obj[9];
+			BigDecimal bd9 = (BigDecimal) obj[10];
 			m.setRebate(bd9);
-			BigDecimal bd10=(BigDecimal)obj[10];
-			m.setRechargeMember((Integer)bd10.intValue());
-			BigDecimal bd11=(BigDecimal)obj[11];
-			m.setNewMembers((Integer)bd11.intValue());
-			BigDecimal bd12 = (BigDecimal) obj[12];
+			BigDecimal bd10=(BigDecimal)obj[11];
+			//bd10 = bd10 == null?null:bd10;
+			m.setRechargeMember(bd10 == null?null:bd10.intValue());
+			BigDecimal bd11=(BigDecimal)obj[12];
+			//bd11 = bd11 == null?null:bd11;
+			m.setNewMembers(bd11 == null?null:bd11.intValue());
+			BigDecimal bd12 = (BigDecimal) obj[13];
 			m.setProfit(bd12);
-			m.setUserType((Integer)obj[13]);
+			//m.setUserType((Integer)obj[14]);
 		    listRecord.add(m);
 		}
-		map.put("data", listRecord);
-		map.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
-		return map;
+		return listRecord;
+	}
+	
+	
+	private TeamPlReport querySelfProfit(String startTime, String endTime, UserInfo user) {
+		Integer id = user.getId();
+		StringBuffer sqlBuffer = new StringBuffer();
+		PageBean<Object[]> page = new PageBean<>();
+		List<Object> params = new ArrayList<>();
+		List<TeamPlReport> listRecord = new ArrayList<TeamPlReport>();
+		List<?> memberPlReportList=null;
+		
+		page.setPageIndex(0);
+		page.setPageSize(100000);		
+		
+		sqlBuffer.append("select userInfo.user_name, t.* from ")
+		.append("(")
+		.append("select ")
+		.append("user_id,")
+		.append("SUM(deposit) as deposit,")
+		.append("SUM(withdrawal) as withdrawal, ")
+		.append("SUM(transfer) as transfer ,")
+		.append("SUM(transfer_out) as transfer_out,")
+		.append("SUM(deduction) as deduction,")
+		.append("SUM(consumption) as consumption,")
+		.append("SUM(cancel_amount) as cancel_amount,")
+		.append("SUM(return_prize) as return_prize,")
+		.append("SUM(rebate) as rebate,")
+		.append("SUM(recharge_member) as recharge_member,")
+		.append("SUM(new_members) as new_members,")
+		.append("SUM(profit) as profit,")
+		.append("user_type ")
+		.append("from team_pl_report ")
+		.append("where 1=1 ")
+		.append("and user_type = 1 and user_id = ? ")
+		.append("and create_time >= ? and create_time <= ? ")
+		//.append("group by user_id ")
+		//.append("order by user_id ")
+		.append(")t ")
+		.append("left join ")
+		.append("user_info userInfo on t.user_id = userInfo.id");
+		
+	    params.add(id);
+	    //params.add(id);
+	    Date beginDate = DateUtil.fmtYmdToDate(startTime);
+	    Date endDate = DateUtil.fmtYmdToDate(endTime);
+	    params.add(beginDate);
+	    params.add(endDate);    	
+    	
+    	memberPlReportList = queryNativeSQL(sqlBuffer.toString(), params);
+	    Iterator<?> it=memberPlReportList.iterator();
+	    
+		while(it.hasNext()) {
+			TeamPlReport m=new TeamPlReport();
+			Object[] obj=(Object[]) it.next();
+			m.setUserName((String)obj[0]);
+			BigDecimal bd1 = (BigDecimal) obj[2];
+			m.setDeposit(bd1);
+			BigDecimal bd2 = (BigDecimal) obj[3];
+			m.setWithdrawal(bd2);
+			BigDecimal bd3 = (BigDecimal) obj[4];
+			m.setTransfer(bd3);
+			BigDecimal bd4 = (BigDecimal) obj[5];
+			m.setTransferOut(bd4);
+			BigDecimal bd5 = (BigDecimal) obj[6];
+			m.setDeduction(bd5);
+			BigDecimal bd6 = (BigDecimal) obj[7];
+			m.setConsumption(bd6);
+			BigDecimal bd7 = (BigDecimal) obj[8];
+			m.setCancelAmount(bd7);
+			BigDecimal bd8 = (BigDecimal) obj[9];
+			m.setReturnPrize(bd8);
+			BigDecimal bd9 = (BigDecimal) obj[10];
+			m.setRebate(bd9);
+			BigDecimal bd10=(BigDecimal)obj[11];
+			//bd10 = bd10 == null?null:bd10;
+			m.setRechargeMember(bd10 == null?null:bd10.intValue());
+			BigDecimal bd11=(BigDecimal)obj[12];
+			//bd11 = bd11 == null?null:bd11;
+			m.setNewMembers(bd11 == null?null:bd11.intValue());
+			BigDecimal bd12 = (BigDecimal) obj[13];
+			m.setProfit(bd12);
+			m.setUserType((Integer)obj[14]);
+		    listRecord.add(m);
+		}
+		
+		if(listRecord != null && listRecord.size() > 0) {
+			return listRecord.get(0);
+		}
+		
+		return null;
+	}
+	
+	private List<TeamPlReport> queryUserNextLevelProfit(String startTime, String endTime, UserInfo user) {
+		Integer id = user.getId();
+		StringBuffer sqlBuffer = new StringBuffer();
+		PageBean<Object[]> page = new PageBean<>();
+		List<Object> params = new ArrayList<>();
+		
+		page.setPageIndex(0);
+		page.setPageSize(100000);		
+		
+		sqlBuffer.append("select CONCAT('|------',userInfo.user_name) user_name, t.* from ")
+		.append("(")
+		.append("select ")
+		.append("user_id,")
+		.append("SUM(deposit) as deposit,")
+		.append("SUM(withdrawal) as withdrawal, ")
+		.append("SUM(transfer) as transfer ,")
+		.append("SUM(transfer_out) as transfer_out,")
+		.append("SUM(deduction) as deduction,")
+		.append("SUM(consumption) as consumption,")
+		.append("SUM(cancel_amount) as cancel_amount,")
+		.append("SUM(return_prize) as return_prize,")
+		.append("SUM(rebate) as rebate,")
+		.append("SUM(recharge_member) as recharge_member,")
+		.append("SUM(new_members) as new_members,")
+		.append("SUM(profit)*(-1) as profit ")
+		.append("from team_pl_report ")
+		.append("where ( ")
+		.append("(user_id in (select id from user_info where FIND_IN_SET(?,superior) = 1 and user_type = 0) and user_type = 0) ")
+		.append(" or ")
+		.append("(user_id = ? and user_type = 0) ")
+		.append(") ")
+		.append("and create_time >= ? and create_time <= ? ")
+		.append("group by user_id ")
+		
+		.append(")t ")
+		.append("left join ")
+		.append("user_info userInfo on t.user_id = userInfo.id ")
+		.append("order by t.user_id ");
+		
+	    params.add(id);
+	    params.add(id);
+	    //params.add(id);
+	    Date beginDate = DateUtil.fmtYmdToDate(startTime);
+	    Date endDate = DateUtil.fmtYmdToDate(endTime);
+	    params.add(beginDate);
+	    params.add(endDate);
+	    
+    	List<?> memberPlReportList=null;
+    	
+    	memberPlReportList = queryNativeSQL(sqlBuffer.toString(), params);
+	    Iterator<?> it=memberPlReportList.iterator();
+	    List<TeamPlReport> listRecord=new ArrayList<TeamPlReport>();
+		while(it.hasNext()) {
+			TeamPlReport m=new TeamPlReport();
+			Object[] obj=(Object[]) it.next();
+			m.setUserName((String)obj[0]);
+			BigDecimal bd1 = (BigDecimal) obj[2];
+			m.setDeposit(bd1);
+			BigDecimal bd2 = (BigDecimal) obj[3];
+			m.setWithdrawal(bd2);
+			BigDecimal bd3 = (BigDecimal) obj[4];
+			m.setTransfer(bd3);
+			BigDecimal bd4 = (BigDecimal) obj[5];
+			m.setTransferOut(bd4);
+			BigDecimal bd5 = (BigDecimal) obj[6];
+			m.setDeduction(bd5);
+			BigDecimal bd6 = (BigDecimal) obj[7];
+			m.setConsumption(bd6);
+			BigDecimal bd7 = (BigDecimal) obj[8];
+			m.setCancelAmount(bd7);
+			BigDecimal bd8 = (BigDecimal) obj[9];
+			m.setReturnPrize(bd8);
+			BigDecimal bd9 = (BigDecimal) obj[10];
+			m.setRebate(bd9);
+			BigDecimal bd10=(BigDecimal)obj[11];
+			//bd10 = bd10 == null?null:bd10;
+			m.setRechargeMember(bd10 == null?null:bd10.intValue());
+			BigDecimal bd11=(BigDecimal)obj[12];
+			//bd11 = bd11 == null?null:bd11;
+			m.setNewMembers(bd11 == null?null:bd11.intValue());
+			BigDecimal bd12 = (BigDecimal) obj[13];
+			m.setProfit(bd12);
+			//m.setUserType((Integer)obj[14]);
+		    listRecord.add(m);
+		}
+		return listRecord;
+	}
+	
+	
+	
+	@Override
+	public void saveOrUpdateProfit(TeamPlReport profit) {
+		this.saveOrUpdate(profit);
+	}
+	
+	@Override
+	public TeamPlReport queryProfitByUser(Integer userId, Date createTime, Integer userType) {
+		String sql = "from TeamPlReport t where t.userId=? and t.createTime=? and t.userType=?";
+		List<Object> params = new ArrayList<>();
+		TeamPlReport profit = null;
+		List<TeamPlReport> profits = null;
+		
+		params.add(userId);
+		params.add(createTime);
+		params.add(userType);
+		
+		profits = query(sql, params, TeamPlReport.class);
+		
+		if(profits == null || profits.size() == 0) {
+			return profit;
+		}
+		
+		profit = profits.get(0);
+		
+		return profit;
 	}
 }
 

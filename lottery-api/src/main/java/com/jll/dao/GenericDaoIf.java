@@ -52,6 +52,10 @@ public interface GenericDaoIf<T> {
 	 */
 	List<T> query(String HQL, List<Object> params, Class<T> clazz);
 	
+	<K> List<K> queryObjectArray(String HQL, List<Object> params, Class<K> clazz);
+	
+	List<Object[]> queryNativeSQL(String sql, List<Object> params);
+	
 	PageBean<T> queryByPagination(PageBean<T> page, String HQL, List<Object> params, Class<T> clazz);
 	
 	/**

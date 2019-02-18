@@ -541,7 +541,7 @@ public class IssueServiceImpl implements IssueService
 			return ;
 		}
 		
-		while(page.getPageIndex() < page.getTotalPages()) {
+		while((page.getPageIndex() - 1) < page.getTotalPages()) {
 			orders = page.getContent();
 			
 			for(OrderInfo order : orders) {

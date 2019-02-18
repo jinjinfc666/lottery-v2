@@ -1,6 +1,8 @@
 package com.jll.dao;
 
-import java.sql.Date;
+import java.math.BigInteger;
+import java.util.Date;
+//import java.sql.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -12,7 +14,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
-import org.hibernate.type.DateType;
 import org.hibernate.type.TimestampType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
@@ -90,6 +91,40 @@ public class DefaultGenericDaoImpl<T> extends HibernateDaoSupport implements Gen
 		
 	}
 
+	public <K> List<K> queryObjectArray(String HQL, List<Object> params, Class<K> clazz) {
+		String sql = HQL;
+		Session session = null;
+		boolean needClose = false;
+		Query<K> query = null;
+		List<K> ret = null;
+		
+		try {
+			session = getSessionFactory().getCurrentSession();
+		}catch(HibernateException ex) {
+			session = getSessionFactory().openSession();
+			needClose = true;
+		}
+		
+		query = session.createQuery(sql, clazz);
+		
+		if(params != null) {
+			int indx = 0;
+			for(Object para : params) {
+				query.setParameter(indx, para);
+				
+				indx++;
+			}
+		}
+		
+		ret = query.list();
+		if(needClose && session.isOpen()) {
+			session.close();
+		}
+		
+		return ret;
+		
+	}
+	
 	@Override
 	public long queryCount(String HQL, List<Object> params) {
 		String sql = HQL;
@@ -154,15 +189,15 @@ public class DefaultGenericDaoImpl<T> extends HibernateDaoSupport implements Gen
 		Integer pageIndex = page.getPageIndex();
 		Integer pageSize = page.getPageSize();
 		
-		if(pageIndex == null || pageIndex.intValue() < 0) {
-			pageIndex = 0;
+		if(pageIndex == null || pageIndex.intValue() < 1) {
+			pageIndex = 1;
 		}
 		
 		if(pageSize == null || pageSize <= 0) {
 			pageSize = 20;
 		}
 		
-		Integer startPosition = pageIndex * pageSize;
+		Integer startPosition = (pageIndex - 1) * pageSize;
 	    Query<T> query = getSessionFactory().getCurrentSession().createQuery(sql, clazz);
 
 	    entityNameStartInd = HQL.indexOf("from");
@@ -178,7 +213,8 @@ public class DefaultGenericDaoImpl<T> extends HibernateDaoSupport implements Gen
 	    }else {
 	    	totalPages = totalNum / pageSize + 1; 
 	    }
-	    if(pageIndex.intValue() > (totalPages.intValue() - 1)) {
+	    
+	    if(pageIndex.intValue() > totalPages.intValue()) {
 			return page;
 		}
 	    
@@ -214,7 +250,20 @@ public class DefaultGenericDaoImpl<T> extends HibernateDaoSupport implements Gen
 		Long totalNumber=null;
 		Integer pageIndex = page.getPageIndex();
 		Integer pageSize = page.getPageSize();
-		Query  query=null;
+		Query  query = null;
+		Integer startPosition = null;
+		
+		if(pageIndex == null || pageIndex.intValue() < 1) {
+			pageIndex = 1;
+		}
+		
+		if(pageSize == null || pageSize <= 0) {
+			pageSize = 20;
+		}
+		
+		startPosition = (pageIndex -1) * pageSize;
+		
+		
 		query= getSessionFactory().getCurrentSession().createQuery(sql);
 	    
 		entityNameStartInd = HQL.indexOf("from");
@@ -246,7 +295,8 @@ public class DefaultGenericDaoImpl<T> extends HibernateDaoSupport implements Gen
 	    }
 	    
 
-		Integer startPosition = pageIndex==1 ? 0 : pageIndex*pageSize-pageSize;
+		//Integer startPosition = pageIndex==1 ? 0 : pageIndex*pageSize-pageSize;
+	    //Integer startPosition = pageIndex*pageSize;
 	    
 	    
 	    query.setFirstResult(startPosition);
@@ -284,32 +334,59 @@ public class DefaultGenericDaoImpl<T> extends HibernateDaoSupport implements Gen
 	    //List<?> list=query.list();
 	    return  query.getSingleResult();
 	}
+	
 	//通过sql查询
+	@SuppressWarnings("rawtypes")
 	@Override
 	public PageBean queryBySqlPagination(PageBean page, String SQL, Map<String,Object> params) {
 		PageBean ret = new PageBean();
 		List<?> content = null;
+		int entityNameStartInd = 0;
 		String sql = SQL;
+		StringBuffer sqlCount = new StringBuffer("select count(*) ");
 		Long totalPages =  null;
 		Long totalNumber=null;
 		Integer pageIndex = page.getPageIndex();
 		Integer pageSize = page.getPageSize();
-	    Query query = getSessionFactory().getCurrentSession().createNativeQuery(sql);
+	    Query query = null;
+	    Integer startPosition = null;
+		
+		if(pageIndex == null || pageIndex.intValue() < 1) {
+			pageIndex = 1;
+		}
+		
+		if(pageSize == null || pageSize <= 0) {
+			pageSize = 20;
+		}
+		
+		startPosition = (pageIndex -1) * pageSize;
+		
+		query = getSessionFactory().getCurrentSession().createNativeQuery(sql);
+			    
+	    entityNameStartInd = sql.indexOf("from");
+	    if(entityNameStartInd < 0) {
+	    	entityNameStartInd = sql.indexOf("FROM");
+	    }
+	    
+	    if(entityNameStartInd > 0) {
+	    	sqlCount.append(sql.substring(entityNameStartInd));	
+	    }
 	    
 	    
-	    totalNumber =  querySqlCount(SQL, params);
+	    totalNumber =  querySqlCount(sqlCount.toString(), params);
 	    
 	    if(totalNumber % pageSize == 0) {
 	    	totalPages = totalNumber / pageSize;
 	    }else {
 	    	totalPages = totalNumber / pageSize + 1; 
 	    }
+	    
 	    if(params != null) {
 	    	Set<String> keySet = params.keySet();  
             for (String string : keySet) {  
                 Object obj = params.get(string);  
             	if(obj instanceof Date){  
-                	query.setParameter(string, (Date)obj,DateType.INSTANCE); //query.setParameter(string, (Date)obj,DateType.INSTANCE);   此方法为setDate的替代方法 
+                	query.setParameter(string, (Date)obj,TemporalType.DATE); //query.setParameter(string, (Date)obj,DateType.INSTANCE);   此方法为setDate的替代方法 
                 }else if(obj instanceof Object[]){  
                     query.setParameterList(string, (Object[])obj);  
                 }else{  
@@ -317,10 +394,6 @@ public class DefaultGenericDaoImpl<T> extends HibernateDaoSupport implements Gen
                 }  
             }
 	    }
-	    
-
-		Integer startPosition = pageIndex==1 ? 0 : pageIndex*pageSize-pageSize;
-	    
 	    
 	    query.setFirstResult(startPosition);
 	    query.setMaxResults(pageSize);
@@ -334,7 +407,7 @@ public class DefaultGenericDaoImpl<T> extends HibernateDaoSupport implements Gen
 	    
 		return ret;
 	}
-	//通过sql+clazz查询
+	
 	@Override
 	public PageBean<T> queryBySqlClazzPagination(PageBean<T> page, String SQL, Map<String,Object> params,Class<T> clazz) {
 		PageBean<T> ret = new PageBean<>();
@@ -387,6 +460,7 @@ public class DefaultGenericDaoImpl<T> extends HibernateDaoSupport implements Gen
 	@Override
 	public long querySqlCount(String HQL, Map<String,Object> params) {
 		String sql = HQL;
+		long ret = 0L;
 		
 	    Query query = getSessionFactory().getCurrentSession().createNativeQuery(sql);
 
@@ -403,10 +477,12 @@ public class DefaultGenericDaoImpl<T> extends HibernateDaoSupport implements Gen
                 }  
             }
 	    }
-	    List<?> list=query.list();
 	    
-	    return list.size();
+	    Object result = query.getSingleResult();
+	    ret = result == null?0L:((BigInteger)result).longValue();
+	    return ret;
 	}
+	
 	//时分秒的时间查询
 	@Override
 	public PageBean queryByTimePagination(PageBean page, String HQL, Map<String,Object> params) {
@@ -478,6 +554,40 @@ public class DefaultGenericDaoImpl<T> extends HibernateDaoSupport implements Gen
 	    }
 	    List<?> list=query.list();
 	    return list.size();
+	}
+
+	@Override
+	public List<Object[]> queryNativeSQL(String sql, List<Object> params) {
+		//String sql = HQL;
+		Session session = null;
+		boolean needClose = false;
+		Query<Object[]> query = null;
+		List<Object[]> ret = null;
+		
+		try {
+			session = getSessionFactory().getCurrentSession();
+		}catch(HibernateException ex) {
+			session = getSessionFactory().openSession();
+			needClose = true;
+		}
+		
+		query = session.createNativeQuery(sql);
+		
+		if(params != null) {
+			int indx = 1;
+			for(Object para : params) {
+				query.setParameter(indx, para);
+				
+				indx++;
+			}
+		}
+		
+		ret = query.list();
+		if(needClose && session.isOpen()) {
+			session.close();
+		}
+		
+		return ret;		
 	}
 	
 	

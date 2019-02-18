@@ -367,6 +367,18 @@ public class CacheRedisDaoImpl  extends AbstractBaseRedisDao implements CacheRed
 		return 0;
 	}
 
+	@Override
+	public List<Object[]> queryNativeSQL(String sql, List<Object> params) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <K> List<K> queryObjectArray(String HQL, List<Object> params, Class<K> clazz) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	/*@Override
 	public boolean lock(CacheObject entity) {
 		return lock(entity);

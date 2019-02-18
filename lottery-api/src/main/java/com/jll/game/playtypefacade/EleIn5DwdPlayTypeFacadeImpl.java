@@ -133,6 +133,7 @@ public class EleIn5DwdPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 	public boolean validBetNum(OrderInfo order) {
 		String betNum = null;
 		String[] betNumMul = null;
+		Integer blankBitCount = 0;
 		
 		betNum = order.getBetNum();
 		
@@ -149,12 +150,13 @@ public class EleIn5DwdPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 			
 			String[] betNumTempSet = splitBit(betNumTemp, 1);
 			
-			if(betNumTempSet.length > 3) {
+			if(betNumTempSet.length != 3) {
 				return false;
 			}
 			
 			for(String betNumTempBit : betNumTempSet) {
 				if(StringUtils.isBlank(betNumTempBit)) {
+					blankBitCount++;
 					continue;
 				}
 				
@@ -165,6 +167,10 @@ public class EleIn5DwdPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 						|| tempBits.size() != (betNumTempBit.length() / 2)) {
 					return false;
 				}
+			}
+			
+			if(blankBitCount == 3) {
+				return false;
 			}
 		}
 				

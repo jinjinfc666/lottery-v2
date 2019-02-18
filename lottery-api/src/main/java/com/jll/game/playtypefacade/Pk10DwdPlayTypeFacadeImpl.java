@@ -132,6 +132,7 @@ public class Pk10DwdPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 	public boolean validBetNum(OrderInfo order) {
 		String betNum = null;
 		String[] betNumMul = null;
+		Integer blankBitCount = 0;
 		
 		betNum = order.getBetNum();
 		
@@ -148,12 +149,13 @@ public class Pk10DwdPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 			
 			String[] betNumTempSet = splitBit(betNumTemp, 1);
 			
-			if(betNumTempSet.length > 10) {
+			if(betNumTempSet.length != 10) {
 				return false;
 			}
 			
 			for(String betNumTempBit : betNumTempSet) {
 				if(StringUtils.isBlank(betNumTempBit)) {
+					blankBitCount++;
 					continue;
 				}
 				
@@ -172,6 +174,10 @@ public class Pk10DwdPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 					}
 				}
 				
+			}
+			
+			if(blankBitCount == 10) {
+				return false;
 			}
 		}
 				

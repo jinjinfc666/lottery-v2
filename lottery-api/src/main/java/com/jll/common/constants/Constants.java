@@ -80,6 +80,8 @@ public class Constants {
 	
 	public final static String KEY_LOCK_WITHDRAW_APPLY = "lock_withdraw_apply";
 	
+	public final static String KEY_LOCK_STAT_PROFIT = "lock_profit";
+	
 	public final static Integer LOCK_BETTING_EXPIRED = 5;
 	
 	public final static Integer LOCK_CACHE_STATISTIC_EXPIRED = 300;
@@ -95,6 +97,8 @@ public class Constants {
 	public final static Integer LOCK_STATISTIC_EXPIRED = 60;
 	
 	public final static Integer LOCK_WITHDRAW_APPLY_EXPIRED = 30;
+	
+	public final static Integer LOCK_STAT_PROFIT = 600;
 	
 	//再给总代添加下级代理时需要填写的superior
 	public final static Integer VAL_SUPERIOR = 0;
@@ -2514,6 +2518,28 @@ public class Constants {
 		public String getDesc() {
 			return desc;
 		}
+
+	}
+	
+	public static enum TrgUserAccDetailsFlag {
+		HANDLED(1, "已处理"), 
+		pending(0, "未处理");
+
+			private int code;
+			private String desc;
+
+			private TrgUserAccDetailsFlag(int code, String desc) {
+				this.code = code;
+				this.desc = desc;
+			}
+
+			public int getCode() {
+				return code;
+			}
+
+			public String getDesc() {
+				return desc;
+			}
 
 	}
 }

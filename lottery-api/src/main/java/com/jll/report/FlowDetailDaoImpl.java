@@ -114,23 +114,20 @@ public class FlowDetailDaoImpl extends DefaultGenericDaoImpl<UserAccountDetails>
 	@Override
 	public Map<String, Object> queryAgentTransfer(Integer agentId, String startTime, String endTime) {
 		Map<String, Object> map=new HashMap<String, Object>();
-		List<?> list=queryAgentId(agentId);
-		List<?> listData=null;
-		if(list!=null&&list.size()>0) {
-			String sql="from UserAccountDetails a,UserInfo b where a.userId=b.id and a.operationType=:operationType and a.orderId in(:listId) and a.createTime>=:startTime and a.createTime<=:endTime";
-			Query<?> query=getSessionFactory().getCurrentSession().createQuery(sql);
-			query.setParameterList("listId", list.toArray());
-			query.setParameter("operationType", Constants.AccOperationType.TRANSFER.getCode());
-		    Date beginDate = DateUtil.fmtYmdHisToDate(startTime);
-		    Date endDate = DateUtil.fmtYmdHisToDate(endTime);
-		    query.setParameter("startTime", beginDate,TemporalType.DATE);
-		    query.setParameter("endTime", endDate,TemporalType.DATE);
-		    listData=query.list();
-		    
-		    map.put("data", listData);
-			return map;
-		}
-		map.put("data", listData);
+		List<Object[]> listData = null;
+		List<Object> params = new ArrayList<>();
+		String sql="from UserAccountDetails a left join UserInfo b on a.userId=b.id where  a.userId=? and a.operationType=? and a.createTime>=? and a.createTime<=?";
+		Date beginDate = DateUtil.fmtYmdHisToDate(startTime);
+		Date endDate = DateUtil.fmtYmdHisToDate(endTime);
+		
+		params.add(agentId);
+		params.add(Constants.AccOperationType.TRANSFER.getCode());
+	    params.add(beginDate);
+	    params.add(endDate);
+	    
+	    listData = queryObjectArray(sql, params, Object[].class);
+	    
+	    map.put("data", listData);
 		return map;
 	}
 	//查询

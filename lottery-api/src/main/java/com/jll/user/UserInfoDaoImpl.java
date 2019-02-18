@@ -224,38 +224,46 @@ public class UserInfoDaoImpl extends DefaultGenericDaoImpl<UserInfo> implements 
 	//点击代理查询下一级代理
 	@Override
 	public PageBean queryAgentByAgent(Integer id,String startTime,String endTime,Integer pageSize,Integer pageIndex, String sonUserName) {
-		Map<String,Object> map=new HashMap<String,Object>();
+		//Map<String,Object> map=new HashMap<String,Object>();
+		List<Object> params = new ArrayList<>();
+		
 		String timeSql="";
+		
 		if(!StringUtils.isBlank(startTime)&&!StringUtils.isBlank(endTime)) {
-			timeSql=" and create_time >=:startTime and create_time <=:endTime";
+			timeSql=" and createTime >=? and createTime <=? ";
+			
 		}
 		
 		if(!StringUtils.isBlank(sonUserName)) {
-			timeSql += " and user_name=:sonUserName";
-			map.put("sonUserName", sonUserName);
+			timeSql += " and userName=? ";
+			params.add(sonUserName);
 		}
 		
 		Integer userType=Constants.UserType.SYS_ADMIN.getCode();
 		Integer userTypea=Constants.UserType.DEMO_PLAYER.getCode();
 		Integer userTypeb=Constants.UserType.GENERAL_AGENCY.getCode();
-		String sql="select * from(select *,FIND_IN_SET(:id,superior) as aa from user_info where user_type !=:userType and user_type !=:userTypea and user_type !=:userTypeb "+timeSql+")a where a.aa=1";
-		map.put("id", id);
-		map.put("userType", userType);
-		map.put("userTypea", userTypea);
-		map.put("userTypeb", userTypeb);
+		//String sql="select * from (select *,FIND_IN_SET(?,superior) as aa from user_info where user_type !=? and user_type !=? and user_type !=? "+timeSql+")a where a.aa=1";
+		String sql="from UserInfo where userType !=? and userType !=? and userType !=? "+timeSql+" and FIND_IN_SET(?,superior) = 1";
+		
+		params.add(userType);
+		params.add(userTypea);
+		params.add(userTypeb);
+		
 	    if(!StringUtils.isBlank(startTime)&&!StringUtils.isBlank(endTime)) {
 			Date beginDate = DateUtil.fmtYmdHisToDate(startTime);
 		    Date endDate = DateUtil.fmtYmdHisToDate(endTime);
 		    
-		    java.sql.Date bDate = new java.sql.Date(beginDate.getTime());
-		    java.sql.Date eDate = new java.sql.Date(endDate.getTime());
-			map.put("startTime", startTime);
-			map.put("endTime", endTime);
+		    /*java.sql.Date bDate = new java.sql.Date(beginDate.getTime());
+		    java.sql.Date eDate = new java.sql.Date(endDate.getTime());*/
+	    	params.add(beginDate);
+	    	params.add(endDate);
 		}
-	    PageBean<UserInfo> page=new PageBean();
+	    params.add(id);
+	    
+	    PageBean<UserInfo> page= new PageBean<>();
 		page.setPageIndex(pageIndex);
 		page.setPageSize(pageSize);
-		PageBean<UserInfo> pageBean=queryBySqlClazzPagination(page,sql,map,UserInfo.class);
+		PageBean<UserInfo> pageBean = queryByPagination(page, sql, params, UserInfo.class); //queryBySqlClazzPagination(page,sql,map,UserInfo.class);
 		return pageBean;
 	} 
 	//查询总代
