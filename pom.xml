@@ -52,6 +52,7 @@
 		<!-- Samples are built via the invoker plugin -->
 		<module>lottery-api</module>
 		<module>lottery-admin</module>
+		<module>lottery-ui-smp</module>
 	</modules>
 			
 	

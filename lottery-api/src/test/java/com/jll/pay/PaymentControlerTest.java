@@ -78,9 +78,9 @@ public class PaymentControlerTest extends ControllerJunitBase {
 	
 
 	
-	public void ItestPayOrderToSystem_online_bank() throws Exception {
+	public void testPayOrderToSystem_online_bank() throws Exception {
 		String userName = "test001";
-		String pwd = "test001";
+		String pwd = "111111";
 		String clientId = "lottery-client";
 		String token = null;
 		ObjectMapper mapper = new ObjectMapper();
@@ -90,7 +90,7 @@ public class PaymentControlerTest extends ControllerJunitBase {
 		//node.putPOJO("payerName", "test001");
 		//node.putPOJO("payCardNumber", "222222222222");
 		//node.putPOJO("payType", "3");
-		node.putPOJO("payChannel", "74");
+		node.putPOJO("payChannel", "1");
 		node.putPOJO("amount", "10");
 		
 		
@@ -442,7 +442,7 @@ public class PaymentControlerTest extends ControllerJunitBase {
 	}
 	
 	
-	public void testWithdraw_success() throws Exception {
+	public void ItestWithdraw_success() throws Exception {
 		String userName = "test001";
 		String pwd = "test001";
 		String clientId = "lottery-client";
@@ -531,13 +531,66 @@ public class PaymentControlerTest extends ControllerJunitBase {
 	}
 	
 	
-	public void logout(String token) throws Exception {
+	/**
+	 * 测试试玩用户充值   
+	 * @throws Exception
+	 */
+	public void ItestPayLoading_allowed() throws Exception {
+		Map demoPlayer = createDemoPlayer();
+		String userName = (String)demoPlayer.get("userName");
+		String pwd = (String)demoPlayer.get("default_password");
+		String clientId = "lottery-client";
+		//String server = "http://110.92.64.70/lottery-api";
+		String server = "http://localhost:8080";
+		String token = null;
+		ObjectMapper mapper = new ObjectMapper();
+		ByteArrayInputStream bis = null;
+
+		ObjectNode node = mapper.createObjectNode();
+		node.putPOJO("payType", 1);
+		node.putPOJO("payChannel", 73);
+		node.putPOJO("amount", 10);
+									
+		System.out.println(mapper.writeValueAsString(node));
+		bis = new ByteArrayInputStream(mapper.writeValueAsBytes(node));
+		//{"payType":1,"payChannel":73,"amount":10}
+		WebRequest request = new PostMethodWebRequest(server+"/payment/pay-loading", 
+				bis,
+				MediaType.APPLICATION_JSON_VALUE);
+		WebConversation wc = new WebConversation();
+		HttpUnitOptions.setScriptingEnabled(false);
+		
+		token = queryToken(userName, pwd, clientId);
+		request.setHeaderField("Authorization", "bearer " + token);
+
+		WebResponse response = wc.getResponse(request);
+
+		int status = response.getResponseCode();
+
+		Assert.assertEquals(HttpServletResponse.SC_OK, status);
+		String result = response.getText();
+
+		Map<String, Object> retItems = null;
+
+		retItems = mapper.readValue(result, HashMap.class);
+
+		Assert.assertNotNull(retItems);
+
+		Assert.assertEquals(Message.status.FAILED.getCode(), retItems.get(Message.KEY_STATUS));
+
+		Assert.assertEquals(Message.Error.ERROR_DEMO_USER_DISABLE_FUN.getCode(), retItems.get(Message.KEY_ERROR_CODE));
+		
+		Thread.sleep(20000);
+	}
+	
+	
+	public Map<String, Object> createDemoPlayer() throws Exception {
+		Map data = null;
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			WebRequest request = new GetMethodWebRequest("http://localhost:8080/security/logout");
+			WebRequest request = new GetMethodWebRequest(
+					"http://localhost:8080/users/demo-players");
 			WebConversation wc = new WebConversation();
-
-			request.setHeaderField("Authorization", "bearer " + token);
 
 			WebResponse response = wc.sendRequest(request);
 
@@ -554,9 +607,14 @@ public class PaymentControlerTest extends ControllerJunitBase {
 
 			Assert.assertEquals(Message.status.SUCCESS.getCode(), retItems.get(Message.KEY_STATUS));
 
-			Thread.sleep(10000);
-		} catch (Exception ex) {
-			throw ex;
+			data = (Map) retItems.get("data");
+
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
 		}
+
+		return data;
 	}
 }

@@ -406,5 +406,88 @@ public class UserInfoDaoImpl extends DefaultGenericDaoImpl<UserInfo> implements 
 			PageBean<UserInfo> page) {
 		return queryByPagination(page, sql, page.getParams(), UserInfo.class);
 	}
+
+	@Override
+	public Map<String, Object> queryAllAgentSMByAdmin(Integer searchType , String userName, String startTime, String endTime, Integer pageIndex,
+			Integer pageSize) {
+		Map<String,Object> map=new HashMap<String,Object>();
+		Integer generalAgency = Constants.UserType.GENERAL_AGENCY.getCode();
+		Integer smAgency = Constants.UserType.SM_AGENCY.getCode();
+		Integer smUser = Constants.UserType.SM_PLAYER.getCode();
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("from UserInfo where 1 = 1");
+		if(!StringUtils.isBlank(userName)) {
+			//查用户
+			if(searchType.intValue() == 0) {
+				buffer.append(" and (userType =:generalAgency or userType =:smAgency or userType =:smUser) and userName=:userName ");
+				map.put("generalAgency", generalAgency);
+				map.put("smAgency", smAgency);
+				map.put("userName", userName);
+				map.put("smUser", smUser);
+			}else {//查下级
+				UserInfo superior = getUserByUserName(userName);
+				if(superior != null) {
+					buffer.append(" and (userType =:generalAgency or userType =:smAgency or userType =:smUser)  and FIND_IN_SET(:superior,superior) = 1");
+					map.put("superior", superior.getId());
+					map.put("generalAgency", generalAgency);
+					map.put("smAgency", smAgency);
+					map.put("smUser", smUser);
+				}
+			}
+		}else {
+			buffer.append(" and userType =:generalAgency ");
+			map.put("generalAgency", generalAgency);
+		}
+		if(!StringUtils.isBlank(startTime)&&!StringUtils.isBlank(endTime)) {
+			buffer.append(" and createTime>=:startTime and createTime < :endTime ");
+			Date beginDate = DateUtil.fmtYmdHisToDate(startTime);
+		    Date endDate = DateUtil.fmtYmdHisToDate(endTime);
+			map.put("startTime", beginDate);
+			map.put("endTime", endDate);
+		}
+		
+		buffer.append(" order by createTime desc");
+		
+		PageBean page=new PageBean();
+		page.setPageIndex(pageIndex);
+		page.setPageSize(pageSize);
+		PageBean pageBean=queryByPagination(page,buffer.toString(),map);
+		map.clear();
+		map.put("data", pageBean);
+		return map;
+	}
+
+	@Override
+	public Map<String, Object> queryAllAgentSMByAgency(Integer superior, String userName, String startTime, String endTime,
+			Integer pageIndex, Integer pageSize) {
+		Map<String,Object> map=new HashMap<String,Object>();
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("from UserInfo where 1 = 1 ");
+		if(!StringUtils.isBlank(userName)) {
+			buffer.append(" and FIND_IN_SET(:superior,superior) > 0 and userName=:userName ");
+			map.put("superior", superior);
+			map.put("userName", userName);
+		}else {
+			buffer.append(" and FIND_IN_SET(:superior,superior) = 1 ");
+			map.put("superior", superior);
+		}
+		if(!StringUtils.isBlank(startTime)&&!StringUtils.isBlank(endTime)) {
+			buffer.append(" and createTime>=:startTime and createTime < :endTime ");
+			Date beginDate = DateUtil.fmtYmdHisToDate(startTime);
+		    Date endDate = DateUtil.fmtYmdHisToDate(endTime);
+			map.put("startTime", beginDate);
+			map.put("endTime", endDate);
+		}
+		
+		buffer.append(" order by createTime desc");
+		
+		PageBean page=new PageBean();
+		page.setPageIndex(pageIndex);
+		page.setPageSize(pageSize);
+		PageBean pageBean=queryByPagination(page,buffer.toString(),map);
+		map.clear();
+		map.put("data", pageBean);
+		return map;
+	}
   
 }

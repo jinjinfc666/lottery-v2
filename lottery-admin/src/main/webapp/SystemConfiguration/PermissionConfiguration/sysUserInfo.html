@@ -55,8 +55,13 @@
                     beforeSend: function (XMLHttpRequest) {
          		XMLHttpRequest.setRequestHeader("Authorization", token);
                     },
-                    error: function () {
-                        alert("系统错误");
+                    error: function (jqXHR,textStatus,errorThrown) {
+                        if(typeof jqXHR != 'undefined' 
+                        		&& typeof jqXHR.status != 'undefined' 
+                        		&& jqXHR.status == 401){
+                        	var url = "index.html";
+                            window.location.href = url;
+                        }
                     },
                     success: function (data) {
                         if(data.status==1){
@@ -78,6 +83,24 @@
                                 <button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"updateUserPW('"+val.id+"')\">修改用户密码</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n\
                                 </td></tr>"); 
                             });
+                            
+                            if(data.data.pageIndex == 0){
+	                            $('#btn_main').attr("disabled",true);
+	                            $('#btn_previous').attr("disabled",true);
+                            }else{
+                            	$('#btn_main').attr("disabled",false);
+                            	$('#btn_previous').attr("disabled",false);
+                            }
+                                                        
+                            if(data.data.pageIndex == (data.data.totalPages - 1)){
+	                            $('#btn_last').attr("disabled",true);
+	                            
+	                            $('#btn_next').attr("disabled",true);
+                            }else{
+                            	$('#btn_last').attr("disabled",false);
+                            	$('#btn_next').attr("disabled",false);
+                            }
+                            
                         }else if(data.status==0){
                             alert(getErroe(data.error_code));
                         }
@@ -209,10 +232,10 @@
                 if(str=='button'){
                     pageIndex=document.getElementById('pageIndex_button').value;
                 }else if(str=='search'){
-                    pageIndex=1;
+                    pageIndex=0;
                 }else if(str=='upPage'){
-                    if(pageIndexOld<=1){
-                        pageIndex=1;
+                    if(pageIndexOld <= 1){
+                        pageIndex = 0;
                     }else{
                         pageIndex=parseInt(pageIndexOld)-parseInt(1);
                     }
@@ -282,12 +305,12 @@
                         <button type="button" class="btn btn-primary" onclick="searchre('button')">跳到</button>
                 </div>-->
                 <div class="input-group" style="width: 850px; float: right">
-                    总记录数：<input type="text" class="form-control" value="" id="totalNumber" style="width:50px;" readonly="readonly">
-                    总页数：<input type="text" class="form-control" value="" id="totalPages" style="width:50px;" readonly="readonly">&nbsp;&nbsp;&nbsp;&nbsp;
-                    <button type="button" class="btn btn-primary" onclick="searchre('search')">首页</button>&nbsp;&nbsp;&nbsp;&nbsp;
-                    <button type="button" class="btn btn-primary" onclick="searchre('upPage')">上一页</button>&nbsp;&nbsp;&nbsp;&nbsp;
-                    <button type="button" class="btn btn-primary" onclick="searchre('downPage')">下一页</button>&nbsp;&nbsp;&nbsp;&nbsp;
-                    <button type="button" class="btn btn-primary" onclick="searchre('finalPage')">尾页</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                      总记录数：<input type="text" class="form-control" value="" id="totalNumber" style="width:50px;" readonly="readonly">
+                   	 总页数：<input type="text" class="form-control" value="" id="totalPages" style="width:50px;" readonly="readonly">&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button id="btn_main" type="button" class="btn btn-primary" onclick="searchre('search')">首页</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button id="btn_previous" type="button" class="btn btn-primary" onclick="searchre('upPage')">上一页</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button id="btn_next" type="button" class="btn btn-primary" onclick="searchre('downPage')">下一页</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button id="btn_last" type="button" class="btn btn-primary" onclick="searchre('finalPage')">尾页</button>&nbsp;&nbsp;&nbsp;&nbsp;
                     <input type="text" class="form-control" value="" id="pageIndex_button" style="width:90px;" onkeyup="this.value = this.value.replace(/[^0-9]+/, '');" size="3">
                         <button type="button" class="btn btn-primary" onclick="return checkButton()">跳到</button>
                 </div>

@@ -142,8 +142,9 @@ public class ControllerJunitBase extends ServletTestCase {
 	
 	protected String queryToken(String userName, String pwd, String clientId) {
 		String token = null;
-		//String server = "http://110.92.64.70/lottery-api";
-		String server = "http://localhost:8080/";
+		//String server = "http://miss369.com/lottery-api";
+		//String server = "http://localhost:8080/";
+		String server = "http://localhost/lottery-api";
 		String tokenURL = server + "/oauth/token";
 		String sessionId = querySessionId(server);
 		
@@ -189,6 +190,58 @@ public class ControllerJunitBase extends ServletTestCase {
 		
 		return token;
 	}
+	
+	protected String queryRefreshToken(String userName, String pwd, String clientId) {
+		String token = null;
+		//String server = "http://110.92.64.70/lottery-api";
+		String server = "http://localhost:8080/";
+		String tokenURL = server + "/oauth/token";
+		String sessionId = querySessionId(server);
+		
+		String captcha = null;
+		ObjectMapper mapper = new ObjectMapper();
+		
+		if(StringUtils.isBlank(sessionId)) {
+			return null;
+		}
+		
+		tokenURL += ";jsessionid=" + sessionId;
+		captcha = queryCaptcha(server, sessionId);
+		try {
+			WebRequest request = new PostMethodWebRequest(tokenURL);
+			WebConversation wc = new WebConversation();
+			
+			request.setParameter("grant_type", "password");
+			request.setParameter("client_id", clientId);
+			request.setParameter("client_secret", "secret_1");
+			request.setParameter("username", userName);
+			request.setParameter("password", pwd);
+			request.setParameter("captcha", captcha);
+			//request.setParameter("jsessionid", sessionId);
+			WebResponse response = wc.sendRequest(request);
+			
+			int  status = response.getResponseCode();
+			
+			Assert.assertEquals(HttpServletResponse.SC_OK, status);
+			String result = response.getText();
+			
+			Map<String, Object> retItems = null;
+			
+			retItems = mapper.readValue(result, HashMap.class);
+			
+			Assert.assertNotNull(retItems);
+
+			Assert.assertNotNull(retItems.get("refresh_token"));
+			
+			token = (String)retItems.get("refresh_token");
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		
+		return token;
+	}
+	
+	
 	
 	private String querySessionId(String server) {
 		String sessionId = null;

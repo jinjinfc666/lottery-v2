@@ -9,5 +9,8 @@ import com.jll.dao.PageBean;
 
 public interface LoyTstService {
 	PageBean queryLoyTst(Map<String,Object> ret);
+	
+	PageBean queryBettingRecBrief(Map<String,Object> ret);
+	
 	public List<?> queryDetails(Integer id);
 }

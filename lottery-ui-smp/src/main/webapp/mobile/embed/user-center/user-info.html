@@ -1,0 +1,149 @@
+<!-- 
+
+不需要頁面的頭部
+以及底部
+
+ -->
+
+<header class="header_normal" ng-controller="authCtrl">
+	<a href="javascript:void(0);" data-back="" class="back_link" ng-click="goBack()">
+		<span class="icon icon_arrow_back"></span>
+	</a>
+	<h1>个人资料</h1>
+</header>
+
+<div id="page_content" class="flex_1">
+		<div class="page_content_wrap no_padding user_profile_content">
+			<div class="page_content_tip">完善资料后就可以领取体验金啦！</div>
+			<div class="layout_form">
+				<div class="form_field_warp">
+					<div class="form_field">
+						<span class="form_field_label">真实姓名</span>
+						<div class="form_field_input">
+
+							<input class="j-accountName" id="j-accountName" readonly="">
+
+
+						</div>
+					</div>
+					<div class="form_field">
+						<span class="form_field_label">手机号码</span>
+						<div class="form_field_input">
+							<input type="text" class="j-mobilenum" readonly="">
+						</div>
+					</div>
+					<div class="form_field date_picker ">
+						<span class="form_field_label">电子邮件</span>
+						<div class="form_field_input">
+
+
+							<input type="text" placeholder="电子邮件" id="j-email">
+
+						</div>
+					</div>
+					<div class="form_field date_picker ">
+						<span class="form_field_label">Q Q</span>
+						<div class="form_field_input">
+
+
+
+							<input class="u_input j-qq" id="j-qq" placeholder="548*****">
+
+
+
+						</div>
+					</div>
+					<div class="form_field date_picker">
+						<span class="form_field_label">出生日期</span>
+						<div class="form_field_input">
+
+
+							<input class="date_picker_value" type="text"
+								placeholder="请选择出生日期"> <input class="date_picker_real"
+								type="date" id="j-birth_date">
+
+
+						</div>
+					</div>
+				</div>
+				<div class="form_tip text_align_left">
+					请注意，检测如有同ip同姓名，或银行卡已被使用时，将 无法领取体验金，感谢您的理解。</div>
+			</div>
+			<div class="btn_wrap">
+				<input type="submit" class="btn btn01 j-completeUserInfo" value="保存">
+			</div>
+
+			<br>
+			<div id="phone-validat-div"
+				style="padding-left: 15px; padding-right: 15px;">
+				<a href="javascript:void(0);" class="btn btn01 a_validate_phone">手机验证</a>
+				<div id="d-reverse-sms" class="user_center_nav_content_step">
+					<div
+						class="layout_icon_text_button display_flex_h flex_align_center">
+						<div class="icon_wrap">
+							<img src="images/icons/icon_send_message.png" width="84"
+								height="45">
+						</div>
+						<div class="flex_1">
+							<p>
+								请使用注册时填写的手机，发送短信“<span class="j-smsCode"></span>”到<span
+									class="j-smsNum"></span>，发送成功<span class="text_red">15</span>秒后，点击验证
+							</p>
+						</div>
+					</div>
+					<div class="btn_wrap no_padding">
+						<a href="javascript:void(0);" class="btn btn01 j-reverse-sms-btn">验证</a>
+					</div>
+				</div>
+
+				<div id="d-sms" class="user_center_nav_content_step">
+					<div
+						class="layout_icon_text_button display_flex_h flex_align_center">
+						<div class="icon_wrap">
+							<img src="images/icons/icon_send_message.png" width="84"
+								height="45">
+						</div>
+						<div class="flex_1">
+							<p>点击获取验证码，系统将向您的注册手机号发送一个验证码</p>
+							<div class="layout_form">
+								<div class=" form_field">
+									<span class="form_field_label">验证码:</span>
+									<div class="form_field_input">
+										<input type="text" id="phonesmscode" placeholder="验证码"
+											maxlength="6">
+									</div>
+								</div>
+								<div></div>
+							</div>
+							<div class="btn_wrap no_padding">
+								<a href="javascript:void(0);" class="btn btn04 j-requetsms">获取验证码</a>
+							</div>
+						</div>
+					</div>
+					<div id="captcha-target"
+						style="margin: 50px auto 30px; width: 320px;"></div>
+					<div class="btn_wrap no_padding">
+						<a href="javascript:void(0);" class="btn btn01 j-sms-btn">验证</a>
+					</div>
+				</div>
+			</div>
+
+		</div>
+		<div class="page_content_wrap user_profile_content">
+			<div
+				class="sec_box bank_card_list normal_padding box_border_box j-bankCardList">
+				<h2>银行卡资料</h2>
+				<div class="bank_card_item bankImg03">
+					<div class="bank_card_info">
+						<h3>工商银行</h3>
+						<img class="space" src="images/bg/bg06.png">
+						<p class="bank_card_num">**** **** **** 1629</p>
+						<p class="bank_name">昊*</p>
+					</div>
+				</div>
+				<div class="bank_card_item add_card j-addBankCard">
+					<span class="add_text text_red">+ 添加银行卡</span>
+				</div>
+			</div>
+		</div>
+	</div>

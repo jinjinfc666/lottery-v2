@@ -13,6 +13,7 @@ import org.junit.Assert;
 import com.ehome.test.ServiceJunitBase;
 import com.jll.common.constants.Constants;
 import com.jll.common.utils.DateUtil;
+import com.jll.common.utils.MathUtil;
 import com.jll.entity.Issue;
 import com.jll.entity.OrderInfo;
 import com.jll.entity.UserInfo;
@@ -27,7 +28,7 @@ public class EleIn5QwZwPlayTypeFacadeImplTest extends ServiceJunitBase{
 	@Resource
 	PlayTypeFacade playTypeFacade;
 	
-	final String facadeName = "qwx|趣味型/qwczw|趣味猜中位/fs-ds";
+	final String facadeName = "qwx|趣味型/qwczw|趣味猜中位/fs";
 	
 	@Override
 	protected void setUp() throws Exception {
@@ -171,28 +172,73 @@ public class EleIn5QwZwPlayTypeFacadeImplTest extends ServiceJunitBase{
 		ret = playTypeFacade.validBetNum(order);
 		Assert.assertFalse(ret);
 		
+		betNum = "06050403";
+		order = new OrderInfo();
+		
+		order.setBetNum(betNum);
+		
+		ret = playTypeFacade.validBetNum(order);
+		Assert.assertFalse(ret);
+		
 	}
 	
-/*	public void testValidBetNum_valid_betnum_(){
-		String betNum = "0102";
-		for(int i = 3; i < 12; i++) {
-			if(i < 10) {
-				betNum += "0" + Integer.toString(i);				
-			}else {
-				betNum += Integer.toString(i);			
-			}
-			OrderInfo order = new OrderInfo();
-			
-			order.setBetNum(betNum);
-			
-			boolean ret = playTypeFacade.validBetNum(order);
-			Assert.assertTrue(ret);
-			
-			betNum = "0102";
-		}
+	public void ItestValidBetNum_valid_betnum_(){
+		String betNum = "03";
+		OrderInfo order = new OrderInfo();
 		
-	}*/
-	
+		order.setBetNum(betNum);
+		
+		boolean ret = playTypeFacade.validBetNum(order);
+		Assert.assertTrue(ret);
+		
+		betNum = "04";
+		order = new OrderInfo();
+		
+		order.setBetNum(betNum);
+		
+		ret = playTypeFacade.validBetNum(order);
+		Assert.assertTrue(ret);
+		
+		betNum = "05";
+		order = new OrderInfo();
+		
+		order.setBetNum(betNum);
+		
+		ret = playTypeFacade.validBetNum(order);
+		Assert.assertTrue(ret);
+		
+		betNum = "06";
+		order = new OrderInfo();
+		
+		order.setBetNum(betNum);
+		
+		ret = playTypeFacade.validBetNum(order);
+		Assert.assertTrue(ret);
+		
+		betNum = "07";
+		order = new OrderInfo();
+		
+		order.setBetNum(betNum);
+		
+		ret = playTypeFacade.validBetNum(order);
+		Assert.assertTrue(ret);
+		
+		betNum = "08";
+		order = new OrderInfo();
+		
+		order.setBetNum(betNum);
+		
+		ret = playTypeFacade.validBetNum(order);
+		Assert.assertTrue(ret);
+		
+		betNum = "09";
+		order = new OrderInfo();
+		
+		order.setBetNum(betNum);
+		
+		ret = playTypeFacade.validBetNum(order);
+		Assert.assertTrue(ret);
+	}	
 
 	public void ItestObtainSampleBetNumber(){
 		int counter = 0;
@@ -249,7 +295,7 @@ public class EleIn5QwZwPlayTypeFacadeImplTest extends ServiceJunitBase{
 	
 	public void ItestPreProcessNumber(){
 		Map<String, Object> params = new HashMap<>();
-		String betNum = "04";
+		String betNum = "03";
 		Integer times = 1;
 		Float monUnit = 1.0F;
 		Integer playType = 1;
@@ -257,11 +303,13 @@ public class EleIn5QwZwPlayTypeFacadeImplTest extends ServiceJunitBase{
 				
 		UserInfo user = new UserInfo();
 		user.setId(14);
-		user.setPlatRebate(new BigDecimal(5.0F));
+		user.setPlatRebate(new BigDecimal(14.0F));
 		
 		Float betAmount = null;
 		Integer betTotal = null;
-		
+		Float maxWinAmount = null;
+		Float maxWinAmountCompare = null;
+		BigDecimal singleBettingPrize = null;
 		
 		params.put("betNum", betNum);
 		params.put("times", times);
@@ -271,19 +319,300 @@ public class EleIn5QwZwPlayTypeFacadeImplTest extends ServiceJunitBase{
 		
 		Map<String, Object> ret = playTypeFacade.preProcessNumber(params, user);
 		
-		Assert.assertNotNull(ret);
+		betAmount = (Float)ret.get("betAmount");
+		betTotal = (Integer)ret.get("betTotal");
+		maxWinAmount = (Float)ret.get("maxWinAmount");
+		singleBettingPrize = (BigDecimal)ret.get("singleBettingPrize");
+		Assert.assertTrue(new BigDecimal(betAmount).compareTo(new BigDecimal(1.0F)) == 0);
+		Assert.assertTrue(betTotal == 1);
+		
+		maxWinAmountCompare = MathUtil.multiply(1, 
+				times, 
+				Float.class);
+		maxWinAmountCompare = MathUtil.multiply(maxWinAmountCompare, 
+				monUnit, 
+				Float.class);
+		maxWinAmountCompare = MathUtil.multiply(maxWinAmountCompare, 
+				singleBettingPrize.floatValue(), 
+				Float.class);
+		
+		Assert.assertTrue(new BigDecimal(maxWinAmount).compareTo(new BigDecimal(maxWinAmountCompare)) == 0);
+		
+		
+		params = new HashMap<>();
+		betNum = "04";
+		times = 1;
+		monUnit = 1.0F;
+		playType = 1;
+		lottoType = "gd11x5";
+				
+		user = new UserInfo();
+		user.setId(14);
+		user.setPlatRebate(new BigDecimal(14.0F));
+		
+		betAmount = null;
+		betTotal = null;
+		maxWinAmount = null;
+		maxWinAmountCompare = null;
+		singleBettingPrize = null;
+		
+		params.put("betNum", betNum);
+		params.put("times", times);
+		params.put("monUnit", monUnit);
+		params.put("playType", playType);
+		params.put("lottoType", lottoType);
+		
+		ret = playTypeFacade.preProcessNumber(params, user);
 		
 		betAmount = (Float)ret.get("betAmount");
 		betTotal = (Integer)ret.get("betTotal");
-		
-		Assert.assertTrue(betAmount == 1);
+		maxWinAmount = (Float)ret.get("maxWinAmount");
+		singleBettingPrize = (BigDecimal)ret.get("singleBettingPrize");
+		Assert.assertTrue(new BigDecimal(betAmount).compareTo(new BigDecimal(1.0F)) == 0);
 		Assert.assertTrue(betTotal == 1);
 		
+		maxWinAmountCompare = MathUtil.multiply(1, 
+				times, 
+				Float.class);
+		maxWinAmountCompare = MathUtil.multiply(maxWinAmountCompare, 
+				monUnit, 
+				Float.class);
+		maxWinAmountCompare = MathUtil.multiply(maxWinAmountCompare, 
+				singleBettingPrize.floatValue(), 
+				Float.class);
+		
+		Assert.assertTrue(new BigDecimal(maxWinAmount).compareTo(new BigDecimal(maxWinAmountCompare)) == 0);
+		
+		
+		params = new HashMap<>();
+		betNum = "05";
+		times = 1;
+		monUnit = 1.0F;
+		playType = 1;
+		lottoType = "gd11x5";
+				
+		user = new UserInfo();
+		user.setId(14);
+		user.setPlatRebate(new BigDecimal(14.0F));
+		
+		betAmount = null;
+		betTotal = null;
+		maxWinAmount = null;
+		maxWinAmountCompare = null;
+		singleBettingPrize = null;
+		
+		params.put("betNum", betNum);
+		params.put("times", times);
+		params.put("monUnit", monUnit);
+		params.put("playType", playType);
+		params.put("lottoType", lottoType);
+		
+		ret = playTypeFacade.preProcessNumber(params, user);
+		
+		betAmount = (Float)ret.get("betAmount");
+		betTotal = (Integer)ret.get("betTotal");
+		maxWinAmount = (Float)ret.get("maxWinAmount");
+		singleBettingPrize = (BigDecimal)ret.get("singleBettingPrize");
+		Assert.assertTrue(new BigDecimal(betAmount).compareTo(new BigDecimal(1.0F)) == 0);
+		Assert.assertTrue(betTotal == 1);
+		
+		maxWinAmountCompare = MathUtil.multiply(1, 
+				times, 
+				Float.class);
+		maxWinAmountCompare = MathUtil.multiply(maxWinAmountCompare, 
+				monUnit, 
+				Float.class);
+		maxWinAmountCompare = MathUtil.multiply(maxWinAmountCompare, 
+				singleBettingPrize.floatValue(), 
+				Float.class);
+		
+		Assert.assertTrue(new BigDecimal(maxWinAmount).compareTo(new BigDecimal(maxWinAmountCompare)) == 0);	
+		
+		params = new HashMap<>();
+		betNum = "06";
+		times = 1;
+		monUnit = 1.0F;
+		playType = 1;
+		lottoType = "gd11x5";
+				
+		user = new UserInfo();
+		user.setId(14);
+		user.setPlatRebate(new BigDecimal(14.0F));
+		
+		betAmount = null;
+		betTotal = null;
+		maxWinAmount = null;
+		maxWinAmountCompare = null;
+		singleBettingPrize = null;
+		
+		params.put("betNum", betNum);
+		params.put("times", times);
+		params.put("monUnit", monUnit);
+		params.put("playType", playType);
+		params.put("lottoType", lottoType);
+		
+		ret = playTypeFacade.preProcessNumber(params, user);
+		
+		betAmount = (Float)ret.get("betAmount");
+		betTotal = (Integer)ret.get("betTotal");
+		maxWinAmount = (Float)ret.get("maxWinAmount");
+		singleBettingPrize = (BigDecimal)ret.get("singleBettingPrize");
+		Assert.assertTrue(new BigDecimal(betAmount).compareTo(new BigDecimal(1.0F)) == 0);
+		Assert.assertTrue(betTotal == 1);
+		
+		maxWinAmountCompare = MathUtil.multiply(1, 
+				times, 
+				Float.class);
+		maxWinAmountCompare = MathUtil.multiply(maxWinAmountCompare, 
+				monUnit, 
+				Float.class);
+		maxWinAmountCompare = MathUtil.multiply(maxWinAmountCompare, 
+				singleBettingPrize.floatValue(), 
+				Float.class);
+		
+		Assert.assertTrue(new BigDecimal(maxWinAmount).compareTo(new BigDecimal(maxWinAmountCompare)) == 0);	
+		
+		params = new HashMap<>();
+		betNum = "07";
+		times = 1;
+		monUnit = 1.0F;
+		playType = 1;
+		lottoType = "gd11x5";
+				
+		user = new UserInfo();
+		user.setId(14);
+		user.setPlatRebate(new BigDecimal(14.0F));
+		
+		betAmount = null;
+		betTotal = null;
+		maxWinAmount = null;
+		maxWinAmountCompare = null;
+		singleBettingPrize = null;
+		
+		params.put("betNum", betNum);
+		params.put("times", times);
+		params.put("monUnit", monUnit);
+		params.put("playType", playType);
+		params.put("lottoType", lottoType);
+		
+		ret = playTypeFacade.preProcessNumber(params, user);
+		
+		betAmount = (Float)ret.get("betAmount");
+		betTotal = (Integer)ret.get("betTotal");
+		maxWinAmount = (Float)ret.get("maxWinAmount");
+		singleBettingPrize = (BigDecimal)ret.get("singleBettingPrize");
+		Assert.assertTrue(new BigDecimal(betAmount).compareTo(new BigDecimal(1.0F)) == 0);
+		Assert.assertTrue(betTotal == 1);
+		
+		maxWinAmountCompare = MathUtil.multiply(1, 
+				times, 
+				Float.class);
+		maxWinAmountCompare = MathUtil.multiply(maxWinAmountCompare, 
+				monUnit, 
+				Float.class);
+		maxWinAmountCompare = MathUtil.multiply(maxWinAmountCompare, 
+				singleBettingPrize.floatValue(), 
+				Float.class);
+		
+		Assert.assertTrue(new BigDecimal(maxWinAmount).compareTo(new BigDecimal(maxWinAmountCompare)) == 0);	
+		
+		
+		params = new HashMap<>();
+		betNum = "08";
+		times = 1;
+		monUnit = 1.0F;
+		playType = 1;
+		lottoType = "gd11x5";
+				
+		user = new UserInfo();
+		user.setId(14);
+		user.setPlatRebate(new BigDecimal(14.0F));
+		
+		betAmount = null;
+		betTotal = null;
+		maxWinAmount = null;
+		maxWinAmountCompare = null;
+		singleBettingPrize = null;
+		
+		params.put("betNum", betNum);
+		params.put("times", times);
+		params.put("monUnit", monUnit);
+		params.put("playType", playType);
+		params.put("lottoType", lottoType);
+		
+		ret = playTypeFacade.preProcessNumber(params, user);
+		
+		betAmount = (Float)ret.get("betAmount");
+		betTotal = (Integer)ret.get("betTotal");
+		maxWinAmount = (Float)ret.get("maxWinAmount");
+		singleBettingPrize = (BigDecimal)ret.get("singleBettingPrize");
+		Assert.assertTrue(new BigDecimal(betAmount).compareTo(new BigDecimal(1.0F)) == 0);
+		Assert.assertTrue(betTotal == 1);
+		
+		maxWinAmountCompare = MathUtil.multiply(1, 
+				times, 
+				Float.class);
+		maxWinAmountCompare = MathUtil.multiply(maxWinAmountCompare, 
+				monUnit, 
+				Float.class);
+		maxWinAmountCompare = MathUtil.multiply(maxWinAmountCompare, 
+				singleBettingPrize.floatValue(), 
+				Float.class);
+		
+		Assert.assertTrue(new BigDecimal(maxWinAmount).compareTo(new BigDecimal(maxWinAmountCompare)) == 0);	
+		
+		
+		
+		params = new HashMap<>();
+		betNum = "09";
+		times = 1;
+		monUnit = 1.0F;
+		playType = 1;
+		lottoType = "gd11x5";
+				
+		user = new UserInfo();
+		user.setId(14);
+		user.setPlatRebate(new BigDecimal(14.0F));
+		
+		betAmount = null;
+		betTotal = null;
+		maxWinAmount = null;
+		maxWinAmountCompare = null;
+		singleBettingPrize = null;
+		
+		params.put("betNum", betNum);
+		params.put("times", times);
+		params.put("monUnit", monUnit);
+		params.put("playType", playType);
+		params.put("lottoType", lottoType);
+		
+		ret = playTypeFacade.preProcessNumber(params, user);
+		
+		betAmount = (Float)ret.get("betAmount");
+		betTotal = (Integer)ret.get("betTotal");
+		maxWinAmount = (Float)ret.get("maxWinAmount");
+		singleBettingPrize = (BigDecimal)ret.get("singleBettingPrize");
+		Assert.assertTrue(new BigDecimal(betAmount).compareTo(new BigDecimal(1.0F)) == 0);
+		Assert.assertTrue(betTotal == 1);
+		
+		maxWinAmountCompare = MathUtil.multiply(1, 
+				times, 
+				Float.class);
+		maxWinAmountCompare = MathUtil.multiply(maxWinAmountCompare, 
+				monUnit, 
+				Float.class);
+		maxWinAmountCompare = MathUtil.multiply(maxWinAmountCompare, 
+				singleBettingPrize.floatValue(), 
+				Float.class);
+		
+		Assert.assertTrue(new BigDecimal(maxWinAmount).compareTo(new BigDecimal(maxWinAmountCompare)) == 0);	
 	}
+	
+	
 	
 	public void testCalPrize_03(){
 		String winningNum = "06,02,01,03,04";
-		String betNum = "07090308";
+		String betNum = "03";
 		Map<String, Object> ret;
 		BigDecimal prize = null;
 		
@@ -305,148 +634,16 @@ public class EleIn5QwZwPlayTypeFacadeImplTest extends ServiceJunitBase{
 		user.setId(14);
 		user.setUserName("test001");
 		user.setUserType(Constants.UserType.PLAYER.getCode());
-		user.setPlatRebate(new BigDecimal(5.0F));
+		user.setPlatRebate(new BigDecimal(14.0F));
 		ret = playTypeFacade.calPrize(issue, order, user);
 		prize = new BigDecimal((Float)ret.get(Constants.KEY_WIN_AMOUNT));
 		Assert.assertNotNull(prize);
 				
-		Assert.assertTrue(prize.compareTo(new BigDecimal(15.4050998687744140625F)) == 0);
-	}
-	
-	public void testCalPrize_04(){
-		String winningNum = "06,02,07,03,04";
-		String betNum = "07090304";
-		Map<String, Object> ret;
-		BigDecimal prize = null;
-		
-		Issue issue = new Issue();
-		issue.setRetNum(winningNum);
+		Assert.assertTrue(prize.compareTo(new BigDecimal(16.5375F)) == 0);
 		
 		
-		OrderInfo order = new OrderInfo();
-		order.setIssueId(issue.getId());
-		order.setBetNum(betNum);
-		//hszux|后三组选|zsfs--组三复式
-		order.setPlayType(13);
-		order.setTimes(1);
-		order.setIsZh(0);
-		order.setPattern(new BigDecimal(1));
-		
-		
-		UserInfo user = new UserInfo();
-		user.setId(14);
-		user.setUserName("test001");
-		user.setUserType(Constants.UserType.PLAYER.getCode());
-		user.setPlatRebate(new BigDecimal(5.0F));
-		ret = playTypeFacade.calPrize(issue, order, user);
-		prize = new BigDecimal((Float)ret.get(Constants.KEY_WIN_AMOUNT));
-		Assert.assertNotNull(prize);
-				
-		Assert.assertTrue(prize.compareTo(new BigDecimal(6.84420013427734375F)) == 0);
-	}
-	
-	public void testCalPrize_05(){
-		String winningNum = "06,02,07,03,05";
-		String betNum = "07090305";
-		Map<String, Object> ret;
-		BigDecimal prize = null;
-		
-		Issue issue = new Issue();
-		issue.setRetNum(winningNum);
-		
-		
-		OrderInfo order = new OrderInfo();
-		order.setIssueId(issue.getId());
-		order.setBetNum(betNum);
-		//hszux|后三组选|zsfs--组三复式
-		order.setPlayType(13);
-		order.setTimes(1);
-		order.setIsZh(0);
-		order.setPattern(new BigDecimal(1));
-		
-		
-		UserInfo user = new UserInfo();
-		user.setId(14);
-		user.setUserName("test001");
-		user.setUserType(Constants.UserType.PLAYER.getCode());
-		user.setPlatRebate(new BigDecimal(5.0F));
-		ret = playTypeFacade.calPrize(issue, order, user);
-		prize = new BigDecimal((Float)ret.get(Constants.KEY_WIN_AMOUNT));
-		Assert.assertNotNull(prize);
-				
-		Assert.assertTrue(prize.compareTo(new BigDecimal(4.792399883270263671875F)) == 0);
-	}
-	
-	public void testCalPrize_06(){
-		String winningNum = "06,02,07,03,08";
-		String betNum = "07090306";
-		Map<String, Object> ret;
-		BigDecimal prize = null;
-		
-		Issue issue = new Issue();
-		issue.setRetNum(winningNum);
-		
-		
-		OrderInfo order = new OrderInfo();
-		order.setIssueId(issue.getId());
-		order.setBetNum(betNum);
-		//hszux|后三组选|zsfs--组三复式
-		order.setPlayType(13);
-		order.setTimes(1);
-		order.setIsZh(0);
-		order.setPattern(new BigDecimal(1));
-		
-		
-		UserInfo user = new UserInfo();
-		user.setId(14);
-		user.setUserName("test001");
-		user.setUserType(Constants.UserType.PLAYER.getCode());
-		user.setPlatRebate(new BigDecimal(5.0F));
-		ret = playTypeFacade.calPrize(issue, order, user);
-		prize = new BigDecimal((Float)ret.get(Constants.KEY_WIN_AMOUNT));
-		Assert.assertNotNull(prize);
-				
-		Assert.assertTrue(prize.compareTo(new BigDecimal(4.311999797821044921875F)) == 0);
-	}
-	
-	
-	public void testCalPrize_07(){
-		String winningNum = "08,02,07,03,09";
-		String betNum = "07090306";
-		Map<String, Object> ret;
-		BigDecimal prize = null;
-		
-		Issue issue = new Issue();
-		issue.setRetNum(winningNum);
-		
-		
-		OrderInfo order = new OrderInfo();
-		order.setIssueId(issue.getId());
-		order.setBetNum(betNum);
-		//hszux|后三组选|zsfs--组三复式
-		order.setPlayType(13);
-		order.setTimes(1);
-		order.setIsZh(0);
-		order.setPattern(new BigDecimal(1));
-		
-		
-		UserInfo user = new UserInfo();
-		user.setId(14);
-		user.setUserName("test001");
-		user.setUserType(Constants.UserType.PLAYER.getCode());
-		user.setPlatRebate(new BigDecimal(5.0F));
-		ret = playTypeFacade.calPrize(issue, order, user);
-		prize = new BigDecimal((Float)ret.get(Constants.KEY_WIN_AMOUNT));
-		Assert.assertNotNull(prize);
-				
-		Assert.assertTrue(prize.compareTo(new BigDecimal(4.792399883270263671875F)) == 0);
-		
-		
-		winningNum = "08,10,06,04,07";
-		betNum = "06040907";
-		
-		prize = null;
-		
+		winningNum = "06,02,07,03,04";
+		betNum = "04";		
 		issue = new Issue();
 		issue.setRetNum(winningNum);
 		
@@ -465,26 +662,21 @@ public class EleIn5QwZwPlayTypeFacadeImplTest extends ServiceJunitBase{
 		user.setId(14);
 		user.setUserName("test001");
 		user.setUserType(Constants.UserType.PLAYER.getCode());
-		user.setPlatRebate(new BigDecimal(5.0F));
+		user.setPlatRebate(new BigDecimal(14.0F));
 		ret = playTypeFacade.calPrize(issue, order, user);
 		prize = new BigDecimal((Float)ret.get(Constants.KEY_WIN_AMOUNT));
 		Assert.assertNotNull(prize);
 				
-		Assert.assertTrue(prize.compareTo(new BigDecimal(4.792399883270263671875F)) == 0);
+		Assert.assertTrue(prize.compareTo(new BigDecimal(7.3473F)) == 0);
 		
-	}
-	
-	public void testCalPrize_08(){
-		String winningNum = "08,02,07,10,09";
-		String betNum = "07090308";
-		Map<String, Object> ret;
-		BigDecimal prize = null;
 		
-		Issue issue = new Issue();
+		winningNum = "06,02,07,03,05";
+		betNum = "05";		
+		issue = new Issue();
 		issue.setRetNum(winningNum);
 		
 		
-		OrderInfo order = new OrderInfo();
+		order = new OrderInfo();
 		order.setIssueId(issue.getId());
 		order.setBetNum(betNum);
 		//hszux|后三组选|zsfs--组三复式
@@ -494,29 +686,25 @@ public class EleIn5QwZwPlayTypeFacadeImplTest extends ServiceJunitBase{
 		order.setPattern(new BigDecimal(1));
 		
 		
-		UserInfo user = new UserInfo();
+		user = new UserInfo();
 		user.setId(14);
 		user.setUserName("test001");
 		user.setUserType(Constants.UserType.PLAYER.getCode());
-		user.setPlatRebate(new BigDecimal(5.0F));
+		user.setPlatRebate(new BigDecimal(14.0F));
 		ret = playTypeFacade.calPrize(issue, order, user);
 		prize = new BigDecimal((Float)ret.get(Constants.KEY_WIN_AMOUNT));
 		Assert.assertNotNull(prize);
 				
-		Assert.assertTrue(prize.compareTo(new BigDecimal(6.84420013427734375F)) == 0);
-	}
-	
-	public void testCalPrize_09(){
-		String winningNum = "10,11,07,08,09";
-		String betNum = "07090308";
-		Map<String, Object> ret;
-		BigDecimal prize = null;
+		Assert.assertTrue(prize.compareTo(new BigDecimal(5.1446F)) == 0);
 		
-		Issue issue = new Issue();
+		
+		winningNum = "06,02,07,03,08";
+		betNum = "06";		
+		issue = new Issue();
 		issue.setRetNum(winningNum);
 		
 		
-		OrderInfo order = new OrderInfo();
+		order = new OrderInfo();
 		order.setIssueId(issue.getId());
 		order.setBetNum(betNum);
 		//hszux|后三组选|zsfs--组三复式
@@ -526,15 +714,108 @@ public class EleIn5QwZwPlayTypeFacadeImplTest extends ServiceJunitBase{
 		order.setPattern(new BigDecimal(1));
 		
 		
-		UserInfo user = new UserInfo();
+		user = new UserInfo();
 		user.setId(14);
 		user.setUserName("test001");
 		user.setUserType(Constants.UserType.PLAYER.getCode());
-		user.setPlatRebate(new BigDecimal(5.0F));
+		user.setPlatRebate(new BigDecimal(14.0F));
 		ret = playTypeFacade.calPrize(issue, order, user);
 		prize = new BigDecimal((Float)ret.get(Constants.KEY_WIN_AMOUNT));
 		Assert.assertNotNull(prize);
 				
-		Assert.assertTrue(prize.compareTo(new BigDecimal(15.4050998687744140625F)) == 0);
+		Assert.assertTrue(prize.compareTo(new BigDecimal(4.629F)) == 0);
+		
+		
+		
+		
+		winningNum = "08,02,07,03,09";
+		betNum = "07";		
+		issue = new Issue();
+		issue.setRetNum(winningNum);
+		
+		
+		order = new OrderInfo();
+		order.setIssueId(issue.getId());
+		order.setBetNum(betNum);
+		//hszux|后三组选|zsfs--组三复式
+		order.setPlayType(13);
+		order.setTimes(1);
+		order.setIsZh(0);
+		order.setPattern(new BigDecimal(1));
+		
+		
+		user = new UserInfo();
+		user.setId(14);
+		user.setUserName("test001");
+		user.setUserType(Constants.UserType.PLAYER.getCode());
+		user.setPlatRebate(new BigDecimal(14.0F));
+		ret = playTypeFacade.calPrize(issue, order, user);
+		prize = new BigDecimal((Float)ret.get(Constants.KEY_WIN_AMOUNT));
+		Assert.assertNotNull(prize);
+				
+		Assert.assertTrue(prize.compareTo(new BigDecimal(5.1446F)) == 0);
+		
+		
+		
+		
+		winningNum = "08,02,07,10,09";
+		betNum = "08";		
+		issue = new Issue();
+		issue.setRetNum(winningNum);
+		
+		
+		order = new OrderInfo();
+		order.setIssueId(issue.getId());
+		order.setBetNum(betNum);
+		//hszux|后三组选|zsfs--组三复式
+		order.setPlayType(13);
+		order.setTimes(1);
+		order.setIsZh(0);
+		order.setPattern(new BigDecimal(1));
+		
+		
+		user = new UserInfo();
+		user.setId(14);
+		user.setUserName("test001");
+		user.setUserType(Constants.UserType.PLAYER.getCode());
+		user.setPlatRebate(new BigDecimal(14.0F));
+		ret = playTypeFacade.calPrize(issue, order, user);
+		prize = new BigDecimal((Float)ret.get(Constants.KEY_WIN_AMOUNT));
+		Assert.assertNotNull(prize);
+				
+		Assert.assertTrue(prize.compareTo(new BigDecimal(7.3473F)) == 0);
+		
+		
+		
+		
+		
+		
+		winningNum = "10,11,07,08,09";
+		betNum = "09";		
+		issue = new Issue();
+		issue.setRetNum(winningNum);
+		
+		
+		order = new OrderInfo();
+		order.setIssueId(issue.getId());
+		order.setBetNum(betNum);
+		//hszux|后三组选|zsfs--组三复式
+		order.setPlayType(13);
+		order.setTimes(1);
+		order.setIsZh(0);
+		order.setPattern(new BigDecimal(1));
+		
+		
+		user = new UserInfo();
+		user.setId(14);
+		user.setUserName("test001");
+		user.setUserType(Constants.UserType.PLAYER.getCode());
+		user.setPlatRebate(new BigDecimal(14.0F));
+		ret = playTypeFacade.calPrize(issue, order, user);
+		prize = new BigDecimal((Float)ret.get(Constants.KEY_WIN_AMOUNT));
+		Assert.assertNotNull(prize);
+				
+		Assert.assertTrue(prize.compareTo(new BigDecimal(16.5375F)) == 0);
 	}
+	
 }

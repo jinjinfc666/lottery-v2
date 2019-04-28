@@ -29,5 +29,8 @@ public interface IssueDao
 	//近期注单--------------会查询出近30个订单
 	Map<String,Object> queryNear(String lotteryType,Integer codeTypeNameId,Integer userId);
 	//未结算的注单 --------------会查询出近30个订单
-	Map<String,Object> queryUnsettlement(String lotteryType,Integer codeTypeNameId,Integer userId);	
+	Map<String,Object> queryUnsettlement(String lotteryType,Integer codeTypeNameId,Integer userId);
+
+	Map<String, Object> queryRecentBetBrief(String lotteryType, String startTime, String endTime, Integer pageIndex,
+			Integer pageSize);	
 }

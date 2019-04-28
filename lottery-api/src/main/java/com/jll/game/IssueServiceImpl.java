@@ -589,7 +589,8 @@ public class IssueServiceImpl implements IssueService
 		if(wallet.getAccType().intValue() != Constants.WalletType.RED_PACKET_WALLET.getCode()
 				&& UserType.DEMO_PLAYER.getCode() != user.getUserType().intValue()
 				&& order.getState().intValue() != Constants.OrderState.RE_PAYOUT.getCode()){
-			rebate(issue, user, order);
+			//TODO 暂时取消反水
+			//rebate(issue, user, order);
 		}
 		
 		boolean isMatch = isMatchWinningNum(issue, order);
@@ -748,6 +749,14 @@ public class IssueServiceImpl implements IssueService
 	private void rebate(Issue issue, UserInfo user, OrderInfo order) {
 		String superior = user.getSuperior();
 		BigDecimal prize = null;
+		//BigDecimal selfPrize = null;
+		if(UserType.SM_PLAYER.getCode() == user.getUserType().intValue()){
+			prize = calSelfRebate(user, order);
+			addUserAccountDetails(order, user, issue, prize, 
+					Constants.AccOperationType.REBATE);
+			
+			modifyBal(order, user, prize);
+		}
 		
 		if(StringUtils.isBlank(superior) || "0".equals(superior)) {
 			return ;
@@ -781,6 +790,18 @@ public class IssueServiceImpl implements IssueService
 		rebate = betAmount.multiply(rebateRate);
 		return rebate;
 	}
+	
+	private BigDecimal calSelfRebate(UserInfo user, OrderInfo order) {
+		BigDecimal rebate = null;
+		BigDecimal rebateRate = user.getPlatRebate();
+		rebateRate = rebateRate.multiply(new BigDecimal(0.01F));
+		BigDecimal betAmount = new BigDecimal(order.getBetAmount());
+		
+		rebate = betAmount.multiply(rebateRate);
+		return rebate;
+	}
+	
+	
 	//近期注单--------------会查询出近30个订单
 	@Override
 	public Map<String, Object> queryNear(String lotteryType, String userName) {
@@ -832,6 +853,14 @@ public class IssueServiceImpl implements IssueService
 		orderInfoServ.saveOrder(orderInfo);
 		ret.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
 		return ret;
+	}
+
+	@Override
+	public Map<String, Object> queryRecentBetBrief(String lotteryType, String startTime, String endTime,
+			Integer pageIndex, Integer pageSize) {
+		String codeTypeName=Constants.SysCodeTypes.LOTTERY_TYPES.getCode();
+		Map<String, SysCode> sysCodes=cacheServ.getSysCode(codeTypeName);
+		return issueDao.queryRecentBetBrief(lotteryType,startTime, endTime, pageIndex, pageSize);
 	}
 	
 }

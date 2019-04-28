@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>彩票后台管理系统</title>
+        <style>
+            .text_time{
+                    width: 100px;
+                    height: 35px;
+                    background: #ffffff;	
+            }
+            .thCenter{
+                text-align: center;
+            }
+        </style>
+        <link href="../css/bootstrap.min14ed.css" rel="stylesheet">
+        <link href="../css/font-awesome.min93e3.css" rel="stylesheet">
+        <link href="../css/animate.min.css" rel="stylesheet">
+        <link href="../css/animate.min.css" rel="stylesheet">
+        <link href="../css/style.min862f.css" rel="stylesheet">
+        <script type="text/javascript" src="../js/jquery-1.10.2.min.js"></script>
+        <script src="../js/bootstrap.min.js" type="text/javascript"></script>
+        <script src="../js/plugins/layer/layer.min.js" type="text/javascript"></script>
+        <script src="../js/content.min.js" type="text/javascript"></script>
+        <script src="../js/self_js.js" type="text/javascript"></script>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                document.getElementById('startTime').value=getNowFormatDate();
+                document.getElementById('endTime').value=getNowFormatDate();
+                searchrecord("search");
+            });
+            function parseDomain() {
+                var currURL = location.href;
+                var domain = '';
+                if (currURL.indexOf("http") >= 0) {
+                    if (currURL.indexOf("/", currURL.indexOf("http") + 7) > 0) {
+                        domain = currURL.substring(0, currURL.indexOf("/", currURL
+                                .indexOf("http") + 7));
+                    } else {
+                        domain = currURL;
+                    }
+                }
+                if (typeof domain == 'undefined' || domain.length == 0) {
+                    return '';
+                }
+                if (domain.indexOf(":", 7) > 0) {
+                    domain = domain.substring(0, domain.indexOf(":", 7));
+                }
+                return domain;
+            }
+            function searchrecord(str) {
+                var pageIndex=page(str);
+                var tableid = $("#tableTRTD").attr("id");
+                var userName = document.getElementById('userName').value;
+                var startTime = document.getElementById('startTime').value;
+                var endTime = document.getElementById('endTime').value;
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/report/MReportNextTeamSM";
+                
+                if(typeof userName == 'undefined'
+                		|| userName == null
+                		|| userName == ''){
+                	var userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
+                	if(userInfo.userType == 6){
+                		userName = userInfo.userName;
+                		$("#userName").val(userName);
+                		sendTeamReportRequest(url, userName, startTime, endTime, pageIndex, token);
+                	}else{
+                		var deffered = $.Deferred();
+                    	deffered.done(function(generalAgency){
+                    		userName = generalAgency.userName;
+                    		$("#userName").val(userName);
+                    		sendTeamReportRequest(url, userName, startTime, endTime, pageIndex, token);
+                    	});
+                    	
+                        queryGeneralAgency(deffered, token);
+                	}
+                }else{
+                	sendTeamReportRequest(url, userName, startTime, endTime, pageIndex, token);
+                }
+                
+               
+            }
+            
+            function sendTeamReportRequest(url, userName, startTime, endTime, pageIndex, token){
+            	var tableid = $("#tableTRTD").attr("id");
+            	var userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
+            	
+            	 $.ajax({
+                     url: url,
+                     type: "GET",
+                     async: false, // 设置同步方式
+                     data: {
+                         userName:userName,
+                         startTime:startTime,
+                         endTime:endTime,
+                         pageIndex:pageIndex
+                     },
+                     dataType: "json",
+//                     beforeSend: function(xhr) {
+//                         xhr.setRequestHeader("Authorization");
+//                     },
+//                     headers:{"Authorization":token},
+                     beforeSend: function (XMLHttpRequest) {
+          		XMLHttpRequest.setRequestHeader("Authorization", token);
+                     },
+                     error: function () {
+                         alert("系统错误");
+                     },
+                     success: function (data) {
+                         if(data.status===1){
+                             $("#" + tableid + "tr").remove();
+                             $("#" + tableid).empty();
+                             document.getElementById('totalNumber').value = data.data.totalNumber;
+                             document.getElementById('totalPages').value = data.data.totalPages;
+                             document.getElementById('pageIndex_button').value = data.data.pageIndex;
+                             var firstIndx = '';
+                             
+                             $.each(data.data, function(key, val) {  
+                                 var userType="";
+                                 if(val.userType == '0'){
+                                     userType="平台客户";
+                                 }else if(val.userType == '1'){
+                                     userType="代理";
+                                 }else if(val.userType == '2'){
+                                     userType="系统用户";
+                                 }else if(val.userType == '3'){
+                                     userType="总代";
+                                 }else if(val.userType == '5'){
+                                     userType="平台客户";
+                                 }else if(val.userType == '6'){
+                                     userType="代理";
+                                 }
+                                 
+                                 var vUserName = val.userName;
+                                 var vDeposit = val.deposit == null?'':val.deposit;
+                                 var vWithdraw = val.withdrawal == null?'':val.withdrawal;
+                                 var vTransfer =  val.transfer == null?'':val.transfer;
+                                 var vTransferOut = val.transferOut == null?'':val.transferOut;
+                                 var vDeduction = val.deduction == null?'':val.deduction;
+                                 var vConsumption = val.consumption == null?'':val.consumption;
+                                 var vCancelAmount = val.cancelAmount == null?'':val.cancelAmount;
+                                 var vReturnPrize = val.returnPrize == null?'':val.returnPrize;
+                                 var vRebate = val.rebate == null?'':val.rebate;
+                                 var vRechargeMember = val.rechargeMember == null?'':val.rechargeMember;
+                                 var vNewMembers = val.newMembers == null?'':val.newMembers;
+                                 var vProfit = val.profit == null?'':val.profit;
+                                 if(key != 0){
+                                	 if(userInfo.userType != 6 && (val.userType == '3' || val.userType == '6')){
+                                		 $("#" + tableid).append("<tr>\n\
+    	    	                                 <td class=\"thCenter\"><a href='#' onclick=\"NextTeam('"+val.userName+"')\">" + firstIndx +vUserName+"</a></td>\n\
+    	    	                                 <td class=\"thCenter\">"+vDeposit+"</td>\n\
+    	    	                                 <td class=\"thCenter\">"+vWithdraw+"</td>\n\
+    	    	                                 <td class=\"thCenter\">"+vTransfer+"</td>\n\
+    	    	                                 <td class=\"thCenter\">"+vTransferOut+"</td>\n\
+    	    	                                 <td class=\"thCenter\">"+vDeduction+"</td>\n\
+    	    	                                 <td class=\"thCenter\">"+vConsumption+"</td>\n\
+    	    	                                 <td class=\"thCenter\">"+vCancelAmount+"</td>\n\
+    	    	                                 <td class=\"thCenter\">"+vReturnPrize+"</td>\n\
+    	    	                                 <td class=\"thCenter\">"+vRebate+"</td>\n\
+    	    	                                 <td class=\"thCenter\">"+vRechargeMember+"</td>\n\
+    	    	                                 <td class=\"thCenter\">"+vNewMembers+"</td>\n\
+    	    	                                 <td class=\"thCenter\">"+vProfit+"</td>\n\
+    	    	                                 <td class=\"thCenter\">"+userType+"</td></tr>");
+                                     }else{
+                                    	 $("#" + tableid).append("<tr>\n\
+    	    	                                 <td class=\"thCenter\">" + firstIndx +vUserName+"</td>\n\
+    	    	                                 <td class=\"thCenter\">"+vDeposit+"</td>\n\
+    	    	                                 <td class=\"thCenter\">"+vWithdraw+"</td>\n\
+    	    	                                 <td class=\"thCenter\">"+vTransfer+"</td>\n\
+    	    	                                 <td class=\"thCenter\">"+vTransferOut+"</td>\n\
+    	    	                                 <td class=\"thCenter\">"+vDeduction+"</td>\n\
+    	    	                                 <td class=\"thCenter\">"+vConsumption+"</td>\n\
+    	    	                                 <td class=\"thCenter\">"+vCancelAmount+"</td>\n\
+    	    	                                 <td class=\"thCenter\">"+vReturnPrize+"</td>\n\
+    	    	                                 <td class=\"thCenter\">"+vRebate+"</td>\n\
+    	    	                                 <td class=\"thCenter\">"+vRechargeMember+"</td>\n\
+    	    	                                 <td class=\"thCenter\">"+vNewMembers+"</td>\n\
+    	    	                                 <td class=\"thCenter\">"+vProfit+"</td>\n\
+    	    	                                 <td class=\"thCenter\">"+userType+"</td></tr>");
+                                     }
+                                	 
+	                                
+                                 }else{
+                                	 var halfLen = val.userName.length / 2;
+                                	 for(var i = 0; i < halfLen; i++){
+                                		 firstIndx += '&nbsp;&nbsp;&nbsp;&nbsp;';
+                                	 }
+                                	 firstIndx += '|------';
+                                	 
+	                                 $("#" + tableid).append("<tr>\n\
+	                                 <td class=\"thCenter\">"+val.userName+"</td>\n\
+	                                 <td class=\"thCenter\">"+vDeposit+"</td>\n\
+	                                 <td class=\"thCenter\">"+vWithdraw+"</td>\n\
+	                                 <td class=\"thCenter\">"+vTransfer+"</td>\n\
+	                                 <td class=\"thCenter\">"+vTransferOut+"</td>\n\
+	                                 <td class=\"thCenter\">"+vDeduction+"</td>\n\
+	                                 <td class=\"thCenter\">"+vConsumption+"</td>\n\
+	                                 <td class=\"thCenter\">"+vCancelAmount+"</td>\n\
+	                                 <td class=\"thCenter\">"+vReturnPrize+"</td>\n\
+	                                 <td class=\"thCenter\">"+vRebate+"</td>\n\
+	                                 <td class=\"thCenter\">"+vRechargeMember+"</td>\n\
+	                                 <td class=\"thCenter\">"+vNewMembers+"</td>\n\
+	                                 <td class=\"thCenter\">"+vProfit+"</td>\n\
+	                                 <td class=\"thCenter\">"+userType+"</td></tr>");
+                                	 
+                                 }
+                             });
+                         }else if(data.status==0){
+                             alert(getErroe(data.error_code));
+                         }
+                     }
+                 });
+            }
+            
+            
+            function NextTeam(userName){
+            	var access_token = sessionStorage.getItem("access_token");
+                var token = "Bearer " + access_token;
+                var domain = parseDomain();
+                var url = domain+"/lottery-api/report/MReportNextTeamSM";
+                var startTime = document.getElementById('startTime').value;
+                var endTime = document.getElementById('endTime').value;
+                var pageIndex = 1;
+                
+                sendTeamReportRequest(url, userName, startTime, endTime, pageIndex, token);
+            }
+            
+            function page(str){
+                var pageIndex=null;
+                var pageIndexOld=document.getElementById('pageIndex_button').value;
+                var totalPages=document.getElementById('totalPages').value;
+                if(str=='button'){
+                    pageIndex=document.getElementById('pageIndex_button').value;
+                }else if(str=='search'){
+                    pageIndex=1;
+                }else if(str=='upPage'){
+                    if(pageIndexOld<=1){
+                        pageIndex=1;
+                    }else{
+                        pageIndex=parseInt(pageIndexOld)-parseInt(1);
+                    }
+                }else if(str=='downPage'){
+                    var total=parseInt(pageIndexOld)+parseInt(1);
+                    if(parseInt(total)>parseInt(totalPages)){
+                        pageIndex=totalPages;
+                    }else{
+                        pageIndex=total;
+                    }
+                }else if(str=='finalPage'){
+                    pageIndex=totalPages;
+                }
+                return pageIndex;
+            }
+            function checkButton(){
+               var pageIndex_button=document.getElementById('pageIndex_button').value;;
+               var totalPages=document.getElementById('totalPages').value;
+               if(parseInt(pageIndex_button)>parseInt(totalPages)){
+                   alert("输入的页数有误！！！");
+                   return false;
+               }else{
+                   searchrecord('button');
+               }
+            }
+            
+            function queryGeneralAgency(deffered, token){
+            	var domain = parseDomain();
+                var url = domain+"/lottery-api/users/queryGeneral";
+            	
+            	$.ajax({
+                    url: url,
+                    type: "GET",
+                    async: false, // 设置同步方式                    
+                    dataType: "json",
+                    beforeSend: function (XMLHttpRequest) {
+         				XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function () {
+                    	deffered.reject(-1);
+                    },
+                    success: function (data) {
+                        if(data.status === 1){
+                            if(data.data != null){
+                            	deffered.resolve(data.data);
+                            }else{
+                            	deffered.reject(-1);
+                            }
+                        }else if(data.status==0){
+                        	deffered.reject(data.error_code);
+                        }
+                    }
+                });
+            }
+        </script>
+        <script type="text/javascript" src="../js/showdate.js"></script>
+    </head>
+    <body class="gray-bg">
+        <br />
+        <div class="row  border-bottom white-bg dashboard-header">
+            <form class="form-horizontal" method="get">
+                <div class="form_box" style="width: 100%;">
+                    <div class="input-group" style="margin-left: 20px;">
+                        用户名：<input type="text" class="form-control" id="userName" name="userName" style="width:100px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        开始时间：<input type="text" id="startTime" placeholder="选择开始时间" onClick="return Calendar('startTime');" class="text_time" name="startTime" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        结束时间：<input type="text" id="endTime" placeholder="选择结束时间" onClick="return Calendar('endTime');" class="text_time" name="endTime" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <span> 
+                            <button type="button" class="btn btn-primary" style="height:32px;" onclick="searchrecord('search')">搜索
+                            </button> 
+                        </span>
+                    </div>
+                </div>
+            </form>
+            </br >
+            </br >
+            </br >
+            <div class="ibox-content">
+                <table class="table table-striped table-bordered table-hover dataTables-example">
+                    <thead id="totalTRTD">
+                        <tr>
+                            <th class="thCenter">用户名</th>
+                            <th class="thCenter">用户存款</th>
+                            <th class="thCenter">用户取款</th>
+                            <th class="thCenter">转入</th>
+                            <th class="thCenter">转出</th>
+                            <th class="thCenter">扣除</th>
+                            <th class="thCenter">消费</th>
+                            <th class="thCenter">撤单</th>
+                            <th class="thCenter">返奖</th>
+                            <th class="thCenter">返点</th>
+                            <th class="thCenter">充值会员人数</th>
+                            <th class="thCenter">新增会员人数</th>
+                            <th class="thCenter">盈利</th>
+                            <th class="thCenter">用户类型</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableTRTD">
+                        
+                    </tbody>
+                </table>
+<!--                <div class="btn-group" style="float: right; padding-left: 20px">
+                    <button type="button" class="btn btn-white"><i class="fa fa-chevron-left"></i>
+                    </button>
+                    <button class="btn btn-white">1</button>
+                    <button class="btn btn-white  active">2</button>
+                    <button class="btn btn-white">3</button>
+                    <button class="btn btn-white">4</button>
+                    <button type="button" class="btn btn-white"><i class="fa fa-chevron-right"></i>
+                    </button>
+                </div>-->
+                <div class="input-group" style="width: 850px; float: right; display:none">
+                    总记录数：<input type="text" class="form-control" value="" id="totalNumber" style="width:50px;" readonly="readonly">
+                    总页数：<input type="text" class="form-control" value="" id="totalPages" style="width:50px;" readonly="readonly">&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" class="btn btn-primary" onclick="searchrecord('search')">首页</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" class="btn btn-primary" onclick="searchrecord('upPage')">上一页</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" class="btn btn-primary" onclick="searchrecord('downPage')">下一页</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" class="btn btn-primary" onclick="searchrecord('finalPage')">尾页</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <input type="text" class="form-control" value="" id="pageIndex_button" style="width:90px;" onkeyup="this.value = this.value.replace(/[^0-9]+/, '');" size="3">
+                        <button type="button" class="btn btn-primary" onclick="return checkButton()">跳到</button>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

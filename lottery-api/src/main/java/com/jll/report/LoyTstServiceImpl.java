@@ -14,6 +14,7 @@ import com.jll.common.cache.CacheRedisService;
 import com.jll.common.constants.Constants;
 import com.jll.dao.PageBean;
 import com.jll.entity.SysCode;
+import com.jll.user.UserInfoService;
 
 
 
@@ -24,6 +25,10 @@ public class LoyTstServiceImpl implements LoyTstService {
 	LoyTstDao loyTstDao;
 	@Resource
 	CacheRedisService cacheRedisService;
+	
+	@Resource
+	UserInfoService userInfoService;
+	
 	@Override
 	public PageBean queryLoyTst(Map<String, Object> ret) {
 		String lotteryType=(String)ret.get("lotteryType");
@@ -44,6 +49,25 @@ public class LoyTstServiceImpl implements LoyTstService {
 		Integer codeTypeNameId=sysCode.getId();
 		return loyTstDao.queryLoyTst(codeTypeNameId,lotteryType,isZh,zhTrasactionNum,state,terminalType,startTime,endTime,issueNum,userName,orderNum,orderId,pageIndex,pageSize);
 	}
+	
+	@Override
+	public PageBean queryBettingRecBrief(Map<String, Object> ret) {
+		userInfoService.getCurLoginInfo();
+		String lotteryType=(String)ret.get("lotteryType");
+		String userName=(String) ret.get("userName");
+		Integer pageIndex=(Integer) ret.get("pageIndex");
+		Integer pageSize=(Integer) ret.get("pageSize");
+		//String codeTypeName=Constants.SysCodeTypes.LOTTERY_TYPES.getCode();
+		//SysCode sysCode=cacheRedisService.getSysCode(codeTypeName,codeTypeName);
+		//Integer codeTypeNameId=sysCode.getId();
+		Integer userId = userInfoService.getUserId(userName);
+		if(userId == null) {
+			return null;
+		}
+		
+		return loyTstDao.queryBettingRecBrief(lotteryType,userId,pageIndex,pageSize);
+	}
+	
 	@Override
 	public List<?> queryDetails(Integer id) {
 		String codeTypeName=Constants.SysCodeTypes.LOTTERY_TYPES.getCode();

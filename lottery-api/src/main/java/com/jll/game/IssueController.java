@@ -66,6 +66,43 @@ public class IssueController {
 		}
 		return ret;
 	}
+	
+	@RequestMapping(value="/getIssuesBrief", method = { RequestMethod.GET },  produces={"application/json"})
+	public Map<String, Object> queryRecentBetBrief(@RequestParam(name = "lotteryType", required = true) String lotteryType,
+			  @RequestParam(name = "state", required = false) Integer state,
+			  @RequestParam(name = "issueNum", required = false) String issueNum,
+			  @RequestParam(name = "startTime", required = true) String startTime,
+			  @RequestParam(name = "endTime", required = true) String endTime,
+			  @RequestParam(name = "pageIndex", required = true) Integer pageIndex,//当前请求页
+			  HttpServletRequest request){
+		Integer pageSize=Constants.Pagination.SUM_NUMBER.getCode();
+		Map<String,Object> ret=new HashMap<String,Object>();
+		if(StringUtils.isBlank(startTime)||StringUtils.isBlank(endTime)) {
+			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_ERROR_PARAMS.getCode());
+			ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_ERROR_PARAMS.getErrorMes());
+	    	return ret;
+		}
+		if(!DateUtil.isValidYmdDate(startTime)||!DateUtil.isValidYmdDate(endTime)) {
+			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_ERROR_PARAMS.getCode());
+			ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_ERROR_PARAMS.getErrorMes());
+	    	return ret;
+		}
+		try {
+			ret.clear();
+			ret=issueServ.queryRecentBetBrief(lotteryType,startTime, endTime, pageIndex, pageSize);
+			ret.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
+		}catch(Exception e){
+			ret.clear();
+			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_OTHERS.getCode());
+			ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_OTHERS.getErrorMes());
+		}
+		return ret;
+	}
+	
+	
 	//获取期次状态
 	@RequestMapping(value="/getIssuesState", method = { RequestMethod.GET },  produces={"application/json"})
 	public Map<String, Object> getIssueState(){

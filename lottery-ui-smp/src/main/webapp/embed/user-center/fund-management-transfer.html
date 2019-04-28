@@ -1,0 +1,59 @@
+<style>
+.u_c_w_tab .u_inputs {
+    width: 400.00px;
+    margin-left: auto;
+    margin-right: auto;
+}
+</style>
+<div class="usershow fl" ng-controller="transferCtrl">
+	<div class="usercontrol j-tab">
+		<div class="u_c_nav cfx" >			
+			<a data-target="u_ck" class="j-nav_item u_c_n_item" data-num="0" ui-sref="userCenter.fundManDeposit">存款</a>
+			<a data-target="u_zz" class="j-nav_item u_c_n_item  active" data-num="1" ui-sref="userCenter.fundManTransfer">转账</a> 
+			<a data-target="u_tk" class="j-nav_item u_c_n_item j-withdraw" data-num="2" ui-sref="userCenter.fundManWithdraw">提款</a>
+		</div>
+		<div class="u_c_window" >
+		
+			<div data-id="u_zz" class="u_c_w_content j-nav_tab"  style="display: block" data-num="1">
+				<div class="u_c_w_tab j-nav_tab active j-to_main" data-id="zz_zzh">
+					<div class="u_inputs">
+						<input type="hidden" id="acount_to_main" readonly="" value="0.0">
+						<label class="u_label">转出钱包</label>
+						<select class="u_select" id="transferInout" ng-model="gameAcct1" ng-change="accountChange1()">
+							<option value="">选择游戏平台</option>
+							<option value="{{v.id}}" ng-repeat="v in outWallet">{{v.t}}</option>
+						</select> 
+						
+						<span class="u_i_tips j-gamesmoney j-moneytext">{{outputAccBal}}</span>
+					</div>
+					<div class="u_inputs">
+						<label class="u_label">转入钱包</label>					
+						<select class="u_select" id="transferGameIn" ng-model="gameAcct2" ng-change="accountChange2()">
+							<option value="">选择游戏平台</option>
+							<option value="{{v.id}}" ng-repeat="v in inWallet">{{v.t}}</option>
+						</select> 
+						 
+						<!-- <select class="u_select" id="transferGameIn" onchange="getGameMoney(this.value,this);">
+							<option value="PT">PT账户</option>
+							<option value="DT">DT账户</option>
+							<option value="MG">MG账户</option>
+							<option value="QT">QT账户</option>
+							<option value="NT">NT账户</option>
+							<option value="TTG">TTG账户</option>
+							<option value="AGIN">AG账户</option>
+							<option value="MAIN" class="j-MAIN">主账户</option>
+						</select>  -->
+						<span class="u_i_tips j-gamesmoney j-moneytext" ng-model="inputAccBal">{{inputAccBal}}</span>
+					</div>
+					<div class="u_inputs">
+						<label class="u_label">转账金额</label> 
+						<input class="u_input" id="transferGameMoney" placeholder="请输入金额" ng-model="transMoney">
+					</div>
+					<a class="u_btn" ng-click="transferSubmit()">立即提交</a>
+				</div>
+
+			</div>
+	
+		</div>
+	</div>
+</div>

@@ -102,6 +102,7 @@ public class MMCBettingTest extends ControllerJunitBase{
 				Date startTime = new Date((Long)lastIssueMap.get("startTime"));
 				Integer state = (Integer)lastIssueMap.get("state");
 				String issueNum = (String)lastIssueMap.get("issueNum");
+				String retNum = (String)lastIssueMap.get("retNum");
 				lastIssue = new Issue();
 				
 				lastIssue.setDownCounter(new Long(downCounter== null?0:downCounter.intValue()));
@@ -111,6 +112,7 @@ public class MMCBettingTest extends ControllerJunitBase{
 				lastIssue.setLotteryType(lotteryType);
 				lastIssue.setStartTime(startTime);
 				lastIssue.setState(state);
+				lastIssue.setRetNum(retNum);
 			}
 			
 			
@@ -162,7 +164,7 @@ public class MMCBettingTest extends ControllerJunitBase{
 		long maxWaittingTime = 1000;
 		
 		String userName = "test001";
-		String pwd = "test001";
+		String pwd = "111111";
 		String clientId = "lottery-client";
 		
 		//String token ;
@@ -264,7 +266,7 @@ public class MMCBettingTest extends ControllerJunitBase{
 						
 						System.out.println(mapper.writeValueAsString(node));
 						bis = new ByteArrayInputStream(mapper.writeValueAsBytes(array));
-						WebRequest request = new PostMethodWebRequest("http://localhost:8080/lotteries/" +lottoType+ "/bet/zh/1/wallet/15",
+						WebRequest request = new PostMethodWebRequest("http://localhost:8080/lotteries/" +lottoType+ "/bet/zh/1/wallet/3",
 								bis,
 								MediaType.APPLICATION_JSON_VALUE);
 						WebConversation wc = new WebConversation();
@@ -315,7 +317,8 @@ public class MMCBettingTest extends ControllerJunitBase{
 			
 			while((ret == null 
 					|| ret.size() == 0
-					|| ret.get("lastIssue") == null) 
+					|| ret.get("lastIssue") == null
+					|| ((Issue)ret.get("lastIssue")).getRetNum() == null) 
 					&& queryIssueCount <= 60000) {
 				queryIssueCount++;
 				
@@ -335,6 +338,8 @@ public class MMCBettingTest extends ControllerJunitBase{
 						currIssue.getRetNum()));
 			}
 		}
+		
+		Thread.sleep(120000);
 	}
 	
 	
@@ -558,6 +563,9 @@ public class MMCBettingTest extends ControllerJunitBase{
 			counter++;
 			
 		}
+		
+		
+		Thread.sleep(60000);
 	}
 		
 	

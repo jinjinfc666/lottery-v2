@@ -38,6 +38,8 @@ import com.jll.entity.UserAccountDetails;
 @Repository
 public class LoyTstDaoImpl extends DefaultGenericDaoImpl<OrderInfo> implements LoyTstDao {
 	private Logger logger = Logger.getLogger(LoyTstDaoImpl.class);
+	
+	
 	@Override
 	public PageBean queryLoyTst(Integer codeTypeNameId,String lotteryType,Integer isZh,String zhTrasactionNum,Integer state,Integer terminalType,String startTime,String endTime,String issueNum,String userName,String orderNum,Integer orderId,Integer pageIndex,Integer pageSize) {
 		String lotteryTypeSql="";
@@ -108,6 +110,34 @@ public class LoyTstDaoImpl extends DefaultGenericDaoImpl<OrderInfo> implements L
 		PageBean pageBean=queryByPagination(page,sql,map);
 		return pageBean;
 	}
+	
+	@Override
+	public PageBean queryBettingRecBrief(String lotteryType,Integer userId,Integer pageIndex,Integer pageSize) {
+		
+		StringBuffer sqlBuffer = new StringBuffer();
+		sqlBuffer.append("from OrderInfo a,Issue c,PlayType e ")
+		.append("where 1=1 ")
+		.append("and a.issueId=c.id and a.playType=e.id ")
+		.append("and c.lotteryType=:lotteryType  ")
+		.append("and a.userId=:userId ")
+		.append("order by a.id desc");
+		Map<String,Object> map=new HashMap();
+		if(!StringUtils.isBlank(lotteryType)) {
+			map.put("lotteryType", lotteryType);
+		}
+		
+		if(userId != null) {
+			map.put("userId", userId);
+		}
+		
+		PageBean page=new PageBean();
+		page.setPageIndex(pageIndex);
+		page.setPageSize(pageSize);
+		PageBean pageBean = queryByPagination(page,sqlBuffer.toString(),map);
+		return pageBean;
+	}
+	
+	
 	@Override
 	public List<?> queryDetails(Integer codeTypeNameId,Integer id) {
 		String sql="from OrderInfo a,UserInfo b,Issue c,SysCode d,PlayType e,UserAccount f where a.userId=b.id and a.issueId=c.id and a.playType=e.id and a.walletId=f.id and c.lotteryType=d.codeName and d.codeType=:codeTypeNameId and a.id=:id";

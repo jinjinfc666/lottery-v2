@@ -243,6 +243,12 @@
                 var token="Bearer " + access_token;
                 var domain=parseDomain();
                 var url=domain+"/lottery-api/settingPlayType/state";
+                if(state == 1){
+                	state1 = 0;
+                }else{
+                	state1 = 1;
+                }
+                
                 $.ajax({
                     url: url,
                     type: "PUT",

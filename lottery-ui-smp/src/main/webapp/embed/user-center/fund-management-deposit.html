@@ -1,0 +1,250 @@
+<style>
+.u_c_w_tab .u_inputs {
+    width: 400.00px;
+    margin-left: auto;
+    margin-right: auto;
+}
+</style>
+<div class="usershow fl">
+	<div class="usercontrol j-tab">
+		<div class="u_c_nav cfx" >
+			<!-- <span data-target="u_ck" class="j-nav_item u_c_n_item active" data-num="0">存款</span>
+			<span data-target="u_zz" class="j-nav_item u_c_n_item " data-num="1">转账</span> 
+			<span data-target="u_tk" class="j-nav_item u_c_n_item j-withdraw" data-num="2">提款</span> -->
+			
+			<a data-target="u_ck" class="j-nav_item u_c_n_item active" data-num="0" ui-sref="userCenter.fundManDeposit">存款</a>
+			<a data-target="u_zz" class="j-nav_item u_c_n_item " data-num="1" ui-sref="userCenter.fundManTransfer">转账</a> 
+			<a data-target="u_tk" class="j-nav_item u_c_n_item j-withdraw" data-num="2" ui-sref="userCenter.fundManWithdraw">提款</a>
+		</div>
+		<div class="u_c_window" >
+		
+			<div data-id="u_ck" class="u_c_w_content j-nav_tab pay-type active" data-num="0" ng-controller="depositCtrl">
+				<div class="u_c_w_nav j-pay_type">
+					<span class="u_c_w_n_item j-nav_item desopit active" data-num="0" ng-repeat="(k,v) in payType" ng-click="changeType(k)">
+						<img src="{{v.img}}">
+					</span>
+					
+					<!-- <span data-target="paytype_wechat" class="u_c_w_n_item j-nav_item desopit active" onclick="doPayRiskCtrl('wechat')" data-num="0">
+						<img src="/taige/images/userhome/wechat.jpg">
+					</span>
+					<span data-target="paytype_mcpay" class="u_c_w_n_item j-nav_item desopit" onclick="doPayRiskCtrl('mcpay')" data-num="1">
+						<span>返1%</span>
+						<img src="/taige/images/userhome/mcpay.jpg">
+					</span>
+					<span data-target="paytype_unionpay" class="u_c_w_n_item j-nav_item desopit" onclick="doPayRiskCtrl('unionpay')" data-num="2">
+						<img src="/taige/images/userhome/unionpay.jpg">
+					</span>
+					<span data-target="paytype_qqpay" class="u_c_w_n_item j-nav_item desopit" onclick="doPayRiskCtrl('qqpay')" data-num="3">
+						<img src="/taige/images/userhome/qqpay.jpg">
+					</span> -->
+				</div>
+				
+				
+				<div class="j-pay_tab">
+					<div class="u_c_w_tab j-nav_tab zj_mczz" data-id="zj_mczz">
+
+						<div class="j_order_time hidden">
+							<div class="u_inputs">
+								<label class="u_label">转账金额</label> <input
+									class="u_input mcpay_need" readonly="" ng-model="amount">
+							</div>
+							<div class="u_inputs">
+								<label class="u_label">倒计时间</label> <input
+									class="u_input mc_times" readonly="">
+							</div>
+							<div class="u_inputs">
+								<label class="u_label"> <input type="checkbox"
+									id="j-agree"> 我已明白需要转账 <span
+									class="mcpay_need big-size"></span>元,否则无法自动到账
+								</label>
+							</div>
+							<a class="u_btn" onclick="secPost(false)">下一步</a>
+							<p class="red">
+								※ 请您在 <span class="mc_times big-size"></span>时间内按下【下一步】
+							</p>
+							<p class="red">※ 系统会在存款金额的后面，随机附加小数金额</p>
+							<p class="red">※ 请务必按照系统生成的金额转账，以便您的存款快速自动到账</p>
+						</div>
+
+						<div class="j_order_old hidden">
+							<div class="u_title">
+								<p class="j-tyj-title">我们的收款账户</p>
+							</div>
+							<div class="u_inputs">
+								<label class="u_label">银行名称</label> <input class="u_input"
+									id="j-myCardType" readonly="">
+							</div>
+							<div class="u_inputs">
+								<label class="u_label">银行卡号</label> <input class="u_input"
+									id="j-myCardno" readonly=""> <a
+									class="u_i_button btn-copy" data-clipboard-action="copy"
+									data-clipboard-target="#myCardno">复制</a>
+							</div>
+							<div class="u_inputs">
+								<label class="u_label">存款姓名</label> <input class="u_input"
+									id="j-myName" readonly=""> <a
+									class="u_i_button btn-copy" data-clipboard-action="copy"
+									data-clipboard-target="#myName">复制</a>
+							</div>
+							<div class="u_title">
+								<p class="j-tyj-title">您的收款信息</p>
+							</div>
+							<div class="u_inputs">
+								<label class="u_label">存款姓名</label> <input class="u_input"
+									id="j-yourName" readonly="">
+							</div>
+							<div class="u_inputs">
+								<label class="u_label">存款金额</label> <input class="u_input"
+									id="j-yourPrice" readonly="">
+							</div>
+							<div class="u_inputs">
+								<label class="u_label">存款方式</label> <input class="u_input"
+									id="j-yourType" readonly="">
+							</div>
+							<div class="u_inputs">
+								<a class="u_btn j-tech hidden" onclick="showTech()">转账流程</a> <a
+									class="u_btn j-overPlay" onclick="hadPay()">我已付款</a>
+							</div>
+						</div>
+
+						<div class="j_order_tech hidden">
+							<div class="j-img-content">
+								<div class="j-imgs active">
+									<p>
+										点击微信 <span class="red">【钱包】- 【收付款】</span>页面，使用 <span
+											class="red">【转账到银行卡功能】</span>即可进行转账！
+									</p>
+									<img src="/taige/images/userhome/helps/01.jpg">
+								</div>
+								<div class="j-imgs">
+									<p>
+										点击微信 <span class="red">【钱包】- 【收付款】</span>页面，使用 <span
+											class="red">【转账到银行卡功能】</span>即可进行转账！
+									</p>
+									<img src="/taige/images/userhome/helps/02.jpg">
+								</div>
+								<div class="j-imgs">
+									<p>
+										点击微信 <span class="red">【钱包】- 【收付款】</span>页面，使用 <span
+											class="red">【转账到银行卡功能】</span>即可进行转账！
+									</p>
+									<img src="/taige/images/userhome/helps/03.jpg">
+								</div>
+								<div class="j-imgs">
+									<p>
+										请输入我方的 <span class="red">【收款人姓名】</span>和对应的 <span class="red">【银行卡号】</span>，核对无误点击确定
+									</p>
+									<img src="/taige/images/userhome/helps/04.jpg">
+								</div>
+								<div class="j-imgs">
+									<p>
+										输入 <span class="red">【系统指定的金额】</span>进行转账操作，转账成功后，方可自动到账！
+									</p>
+									<img src="/taige/images/userhome/helps/05.jpg">
+								</div>
+							</div>
+							<div class="controls">
+								<img src="/taige/images/userhome/helps/control_left.png"
+									onclick="techControl(false)"> <img
+									src="/taige/images/userhome/helps/control_right.png"
+									onclick="techControl(true)">
+							</div>
+							<div class="u_inputs">
+								<a class="u_btn j-tech hidden" onclick="check_order()">已了解，继续存款</a>
+								<a class="u_btn j-overPlay" onclick="techControl(true)">存款步骤(下一步)</a>
+							</div>
+						</div>
+					</div>
+					
+					<div class="u_c_w_tab j-nav_tab active" data-id="paytype_wechat" data-num="0">
+							<div class="u_inputs">
+								<label class="u_label">充值渠道</label>
+								<select name="id" id="_wechat" class="u_select j-pay_type" ng-model="curChannel" ng-options="v.channelId as v.t for v in payItem"></select>
+								<!-- <select name="id" class="u_select j-pay_type" id="_wechat">
+									<option data-limit="10" data-max="500" data-platformtype="okwx" value="93">OK微信</option>
+								</select> -->
+							</div>
+							<div class="u_inputs" id="bankListDiv_wechat"></div>
+							<div class="u_inputs">
+								<label class="u_label">充值金额</label>
+								<input class="u_input" name="order_amount" placeholder="请输入充值金额" ng-model="amount">
+							</div>
+							<button class="u_btn" ng-click="rechargeSubmit()">立即提交</button>
+					</div>
+					<!-- div class="u_c_w_tab j-nav_tab" data-id="paytype_mcpay" data-num="1">
+						<form action="/onlinepayment/onlinePayDispathcer.php"
+							target="mcpay" data-show="mcpay" method="post" id="f_mcpay"
+							class="thirdpay">
+							<div class="u_inputs">
+								<label class="u_label">充值渠道</label><select name="id"
+									class="u_select j-pay_type" id="_mcpay"><option
+										data-limit="10" data-max="1000" data-platformtype="zfb"
+										value="zfb">支付宝转账</option>
+									<option data-limit="10" data-max="1000"
+										data-platformtype="bank_phone" value="bank_phone">手机银行转账</option>
+									<option data-limit="10" data-max="1000"
+										data-platformtype="bank_web" value="bank_web">网上银行转账</option>
+									<option data-limit="10" data-max="1000"
+										data-platformtype="wechat" value="wechat">微信转账</option></select>
+							</div>
+							<div class="u_inputs" id="bankListDiv_mcpay"></div>
+							<div class="u_inputs">
+								<label class="u_label">存款姓名</label><input class="u_input"
+									name="order_accountName" placeholder="请输入存款姓名">
+							</div>
+							<div class="u_inputs">
+								<label class="u_label">充值金额</label><input class="u_input"
+									name="order_amount" placeholder="请输入充值金额">
+							</div>
+							<button class="u_btn">立即提交</button>
+						</form>
+					</div-->
+					<!-- div class="u_c_w_tab j-nav_tab" data-id="paytype_unionpay" data-num="2">
+						<form action="/onlinepayment/onlinePayDispathcer.php"
+							target="_blank" data-show="unionpay" method="post"
+							id="f_unionpay" class="thirdpay">
+							<div class="u_inputs">
+								<label class="u_label">充值渠道</label><select name="id"
+									class="u_select j-pay_type" id="_unionpay"><option
+										data-limit="10" data-max="1000" data-platformtype="okun"
+										value="98">OK银联扫码</option></select>
+							</div>
+							<div class="u_inputs" id="bankListDiv_unionpay"></div>
+							<div class="u_inputs">
+								<label class="u_label">充值金额</label><input class="u_input"
+									name="order_amount" placeholder="请输入充值金额">
+							</div>
+							<button class="u_btn">立即提交</button>
+						</form>
+					</div-->
+					<!-- div class="u_c_w_tab j-nav_tab" data-id="paytype_qqpay" data-num="3">
+						<form action="/onlinepayment/onlinePayDispathcer.php"
+							target="_blank" data-show="qqpay" method="post" id="f_qqpay"
+							class="thirdpay">
+							<div class="u_inputs">
+								<label class="u_label">充值渠道</label><select name="id"
+									class="u_select j-pay_type" id="_qqpay"><option
+										data-limit="10" data-max="1000" data-platformtype="okqq"
+										value="95">OKQQ钱包</option></select>
+							</div>
+							<div class="u_inputs" id="bankListDiv_qqpay"></div>
+							<div class="u_inputs">
+								<label class="u_label">充值金额</label><input class="u_input"
+									name="order_amount" placeholder="请输入充值金额">
+							</div>
+							<button class="u_btn">立即提交</button>
+						</form>
+					</div-->
+				</div>
+				<div>
+					<br> <br>
+					<p id="riskctrl" class="red" hidden="" style="display: block;">系统会在金额后随机增加小数，以提高成功率。到账金额将是您实际支付金额</p>
+					<p class="onlineTips red" hidden="" style="display: none;">请使用付款银行的APP进行扫码支付，不可以使用微信扫一扫</p>
+					<p class="psWechatTips red" hidden="" style="display: none;">1.存款时，请输入您的存款金额和附言（转账的时候点击添加备注填写附言，否则无法自动到账）</p>
+					<p class="psWechatTips red" hidden="" style="display: none;">2.如遇转账异常，请直接联系在线客服处理</p>
+				</div>
+			</div>
+
+		</div>
+	</div>
+</div>

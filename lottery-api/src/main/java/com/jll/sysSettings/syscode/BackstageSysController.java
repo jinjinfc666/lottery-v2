@@ -1725,4 +1725,31 @@ public class BackstageSysController {
 		}
 		return ret;
 	}
+	
+	@RequestMapping(value={"/querySmPanKou"}, method={RequestMethod.GET}, produces={"application/json"})
+	public Map<String, Object> querySmPanKou() {
+		Map<String, Object> ret = new HashMap<>();
+		String bigCodeName=Constants.SysCodeTypes.SM_PANKOU.getCode();
+		try {
+			Map<String,SysCode> sysCodeMaps=cacheRedisService.getSysCode(bigCodeName);
+			Map<Integer,SysCode> sysCodeMaps1=new HashMap<Integer, SysCode>();
+			for(String key:sysCodeMaps.keySet()) {
+				SysCode sysCode=sysCodeMaps.get(key);
+				if(sysCode.getSeq()!=null) {
+					sysCodeMaps1.put(sysCode.getSeq(), sysCode);
+				}
+			}
+			TreeMap treemap = new TreeMap(sysCodeMaps1);
+			ret.clear();
+			ret.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
+			ret.put("data", treemap);
+		}catch(Exception e){
+			ret.clear();
+			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_OTHERS.getCode());
+			ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_OTHERS.getErrorMes());
+		}
+		return ret;
+	}
+	
 }

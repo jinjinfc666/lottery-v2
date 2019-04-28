@@ -37,7 +37,7 @@ public class DwdPlayTypeFacadeImplTest extends ServiceJunitBase{
 		//super.tearDown();
 	}
 	
-	public void testParseBetNumber(){
+	public void ItestParseBetNumber(){
 		String betNum = "0,,,,";
 		Date startDate = new Date();
 		List<Map<String, String>> ret = playTypeFacade.parseBetNumber(betNum);
@@ -136,4 +136,84 @@ public class DwdPlayTypeFacadeImplTest extends ServiceJunitBase{
 		Assert.assertNotNull(ret);
 		
 	}
+	
+	
+	public void testValidBetNum_invalid_betnum_(){
+		String betNum = "-1,,,,";
+		OrderInfo order = new OrderInfo();
+		
+		order.setBetNum(betNum);
+		
+		boolean ret = playTypeFacade.validBetNum(order);
+		Assert.assertFalse(ret);
+		
+		betNum = " ";		
+		order = new OrderInfo();
+		
+		order.setBetNum(betNum); 
+		
+		ret = playTypeFacade.validBetNum(order);
+		Assert.assertFalse(ret);
+		
+		betNum = "11,,,,";		
+		order = new OrderInfo();
+		
+		order.setBetNum(betNum); 
+		
+		ret = playTypeFacade.validBetNum(order);
+		Assert.assertFalse(ret);
+		
+		betNum = ",,,,";
+		order = new OrderInfo();
+		
+		order.setBetNum(betNum); 
+		
+		ret = playTypeFacade.validBetNum(order);
+		Assert.assertFalse(ret);
+		
+		betNum = "01,,,";
+		order = new OrderInfo();
+		
+		order.setBetNum(betNum); 
+		
+		ret = playTypeFacade.validBetNum(order);
+		Assert.assertFalse(ret);
+		
+		betNum = "01,,,,,";
+		order = new OrderInfo();
+		
+		order.setBetNum(betNum); 
+		
+		ret = playTypeFacade.validBetNum(order);
+		Assert.assertFalse(ret);
+		
+	}
+	
+	public void testValidBetNum_valid_betnum_(){
+		String betNum = "01,,,,";
+		OrderInfo order = new OrderInfo();
+		
+		order.setBetNum(betNum);
+		
+		boolean ret = playTypeFacade.validBetNum(order);
+		Assert.assertTrue(ret);
+		
+		betNum = "01,01,01,01,01";		
+		order = new OrderInfo();
+		
+		order.setBetNum(betNum); 
+		
+		ret = playTypeFacade.validBetNum(order);
+		Assert.assertTrue(ret);
+		
+		betNum = ",01,,,";		
+		order = new OrderInfo();
+		
+		order.setBetNum(betNum); 
+		
+		ret = playTypeFacade.validBetNum(order);
+		Assert.assertTrue(ret);
+	}
+	
+	
 }

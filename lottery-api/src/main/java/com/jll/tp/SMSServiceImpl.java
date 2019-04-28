@@ -91,7 +91,7 @@ public class SMSServiceImpl implements SMSService
 		if(ret == null || ret.size() == 0 
 				|| valStatusCode == null 
 				|| !VAL_STATUS_SUCESS.equals(valStatusCode)) {
-			return Integer.toString(Message.status.FAILED.getCode());
+			return Message.Error.ERROR_COMMON_OTHERS.getCode();
 		}
 		
 		logger.debug("captchaCode::::::::::::::::" + captchaCode);

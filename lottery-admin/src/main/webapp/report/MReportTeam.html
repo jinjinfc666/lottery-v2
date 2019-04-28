@@ -58,114 +58,140 @@
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/report/MReportTeam";
-                $.ajax({
-                    url: url,
-                    type: "GET",
-                    async: false, // 设置同步方式
-                    data: {
-                        userName:userName,
-                        startTime:startTime,
-                        endTime:endTime,
-                        pageIndex:pageIndex
-                    },
-                    dataType: "json",
-//                    beforeSend: function(xhr) {
-//                        xhr.setRequestHeader("Authorization");
-//                    },
-//                    headers:{"Authorization":token},
-                    beforeSend: function (XMLHttpRequest) {
-         		XMLHttpRequest.setRequestHeader("Authorization", token);
-                    },
-                    error: function () {
-                        alert("系统错误");
-                    },
-                    success: function (data) {
-                        if(data.status===1){
-                            $("#" + tableid + "tr").remove();
-                            $("#" + tableid).empty();
-                            document.getElementById('totalNumber').value = data.data.totalNumber;
-                            document.getElementById('totalPages').value = data.data.totalPages;
-                            document.getElementById('pageIndex_button').value = data.data.pageIndex;
-                            $.each(data.data.content, function(key, val) {  
-                                var userType="";
-                                if(val[13]=='0'){
-                                    userType="平台客户";
-                                }else if(val[13]=='1'){
-                                    userType="代理";
-                                }else if(val[13]=='2'){
-                                    userType="系统用户";
-                                }else if(val[13]=='3'){
-                                    userType="总代";
-                                }
-                                $("#" + tableid).append("<tr>\n\
-                                <td class=\"thCenter\"><a href='#' onclick=\"NextTeam('"+val[0]+"')\">"+val[0]+"</a></td>\n\
-                                <td class=\"thCenter\">"+val[1]+"</td>\n\
-                                <td class=\"thCenter\">"+val[2]+"</td>\n\
-                                <td class=\"thCenter\">"+val[3]+"</td>\n\
-                                <td class=\"thCenter\">"+val[4]+"</td>\n\
-                                <td class=\"thCenter\">"+val[5]+"</td>\n\
-                                <td class=\"thCenter\">"+val[6]+"</td>\n\
-                                <td class=\"thCenter\">"+val[7]+"</td>\n\
-                                <td class=\"thCenter\">"+val[8]+"</td>\n\
-                                <td class=\"thCenter\">"+val[9]+"</td>\n\
-                                <td class=\"thCenter\">"+val[10]+"</td>\n\
-                                <td class=\"thCenter\">"+val[11]+"</td>\n\
-                                <td class=\"thCenter\">"+val[12]+"</td>\n\
-                                <td class=\"thCenter\">"+userType+"</td></tr>");
-                            });
-                        }else if(data.status==0){
-                            alert(getErroe(data.error_code));
-                        }
-                    }
-                });
-//                var url1=domain+"/lottery-api/report/MReportSumTeam";
-//                var sumAmount = $("#sumAmount").attr("id");
-//                $.ajax({
-//                    url: url1,
-//                    type: "GET",
-//                    async: false, // 设置同步方式
-//                    data: {
-//                        userName:userName,
-//                        startTime:startTime,
-//                        endTime:endTime
-//                    },
-//                    dataType: "json",
-////                    beforeSend: function(xhr) {
-////                        xhr.setRequestHeader("Authorization");
-////                    },
-////                    headers:{"Authorization":token},
-//                    beforeSend: function (XMLHttpRequest) {
-//         		XMLHttpRequest.setRequestHeader("Authorization", token);
-//                    },
-//                    error: function () {
-//                        $.messager.alert('错误', '操作失败！', 'Error');
-//                    },
-//                    success: function (data) {
-//                        if(data.status===1){
-//                            $("#" + sumAmount + "tr").remove();
-//                            $("#" + sumAmount).empty();
-//                            $.each(data.sumData, function(key, val) {  
-//                                $("#" + sumAmount).append("<tr>\n\
-//                                <td></td>\n\
-//                                <td>总计：</td>\n\
-//                                <td>"+val.deposit+"</td>\n\
-//                                <td>"+val.withdrawal+"</td>\n\
-//                                <td>"+val.deduction+"</td>\n\
-//                                <td>"+val.consumption+"</td>\n\
-//                                <td>"+val.cancelAmount+"</td>\n\
-//                                <td>"+val.returnPrize+"</td>\n\
-//                                <td>"+val.rebate+"</td>\n\
-//                                <td>"+val.mainWallet+"</td>\n\
-//                                <td>"+val.redWallet+"</td>\n\
-//                                <td>"+val.profit+"</td></tr>");
-//                            });
-//                        }else if(data.status==0){
-//                            alert(getErroe(data.error_code));
-//                        }
-//                    }
-//                });
+                var url=domain+"/lottery-api/report/MReportNextTeam";
+                
+                if(typeof userName == 'undefined'
+                		|| userName == null
+                		|| userName == ''){
+                	var userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
+                	if(userInfo.userType == 6){
+                		userName = userInfo.userName;
+                		$("#userName").val(userName);
+                		sendTeamReportRequest(url, userName, startTime, endTime, pageIndex, token);
+                	}else{
+                		var deffered = $.Deferred();
+                    	deffered.done(function(generalAgency){
+                    		userName = generalAgency.userName;
+                    		$("#userName").val(userName);
+                    		sendTeamReportRequest(url, userName, startTime, endTime, pageIndex, token);
+                    	});
+                    	
+                        queryGeneralAgency(deffered, token);
+                	}
+                }else{
+                	sendTeamReportRequest(url, userName, startTime, endTime, pageIndex, token);
+                }
+                
+               
             }
+            
+            function sendTeamReportRequest(url, userName, startTime, endTime, pageIndex, token){
+            	var tableid = $("#tableTRTD").attr("id");
+            	
+            	 $.ajax({
+                     url: url,
+                     type: "GET",
+                     async: false, // 设置同步方式
+                     data: {
+                         userName:userName,
+                         startTime:startTime,
+                         endTime:endTime,
+                         pageIndex:pageIndex
+                     },
+                     dataType: "json",
+//                     beforeSend: function(xhr) {
+//                         xhr.setRequestHeader("Authorization");
+//                     },
+//                     headers:{"Authorization":token},
+                     beforeSend: function (XMLHttpRequest) {
+          		XMLHttpRequest.setRequestHeader("Authorization", token);
+                     },
+                     error: function () {
+                         alert("系统错误");
+                     },
+                     success: function (data) {
+                         if(data.status===1){
+                             $("#" + tableid + "tr").remove();
+                             $("#" + tableid).empty();
+                             document.getElementById('totalNumber').value = data.data.totalNumber;
+                             document.getElementById('totalPages').value = data.data.totalPages;
+                             document.getElementById('pageIndex_button').value = data.data.pageIndex;
+                             var firstIndx = '';
+                             
+                             $.each(data.data, function(key, val) {  
+                                 var userType="";
+                                 if(val[13]=='0'){
+                                     userType="平台客户";
+                                 }else if(val[13]=='1'){
+                                     userType="代理";
+                                 }else if(val[13]=='2'){
+                                     userType="系统用户";
+                                 }else if(val[13]=='3'){
+                                     userType="总代";
+                                 }
+                                 
+                                 var vUserName = val.userName;
+                                 var vDeposit = val.deposit == null?'':val.deposit;
+                                 var vWithdraw = val.withdrawal == null?'':val.withdrawal;
+                                 var vTransfer =  val.transfer == null?'':val.transfer;
+                                 var vTransferOut = val.transferOut == null?'':val.transferOut;
+                                 var vDeduction = val.deduction == null?'':val.deduction;
+                                 var vConsumption = val.consumption == null?'':val.consumption;
+                                 var vCancelAmount = val.cancelAmount == null?'':val.cancelAmount;
+                                 var vReturnPrize = val.returnPrize == null?'':val.returnPrize;
+                                 var vRebate = val.rebate == null?'':val.rebate;
+                                 var vRechargeMember = val.rechargeMember == null?'':val.rechargeMember;
+                                 var vNewMembers = val.newMembers == null?'':val.newMembers;
+                                 var vProfit = val.profit == null?'':val.profit;
+                                 if(key != 0){
+	                                 $("#" + tableid).append("<tr>\n\
+	    	                                 <td class=\"thCenter\"><a href='#' onclick=\"NextTeam('"+val.userName+"')\">" + firstIndx +vUserName+"</a></td>\n\
+	    	                                 <td class=\"thCenter\">"+vDeposit+"</td>\n\
+	    	                                 <td class=\"thCenter\">"+vWithdraw+"</td>\n\
+	    	                                 <td class=\"thCenter\">"+vTransfer+"</td>\n\
+	    	                                 <td class=\"thCenter\">"+vTransferOut+"</td>\n\
+	    	                                 <td class=\"thCenter\">"+vDeduction+"</td>\n\
+	    	                                 <td class=\"thCenter\">"+vConsumption+"</td>\n\
+	    	                                 <td class=\"thCenter\">"+vCancelAmount+"</td>\n\
+	    	                                 <td class=\"thCenter\">"+vReturnPrize+"</td>\n\
+	    	                                 <td class=\"thCenter\">"+vRebate+"</td>\n\
+	    	                                 <td class=\"thCenter\">"+vRechargeMember+"</td>\n\
+	    	                                 <td class=\"thCenter\">"+vNewMembers+"</td>\n\
+	    	                                 <td class=\"thCenter\">"+vProfit+"</td>\n\
+	    	                                 <td class=\"thCenter\">"+userType+"</td></tr>");
+                                 }else{
+                                	 var halfLen = val.userName.length / 2;
+                                	 for(var i = 0; i < halfLen; i++){
+                                		 firstIndx += '&nbsp;&nbsp;&nbsp;&nbsp;';
+                                	 }
+                                	 firstIndx += '|------';
+                                	 
+	                                 $("#" + tableid).append("<tr>\n\
+	                                 <td class=\"thCenter\"><a href='#' onclick=\"NextTeam('"+val.userName+"')\">"+val.userName+"</a></td>\n\
+	                                 <td class=\"thCenter\">"+vDeposit+"</td>\n\
+	                                 <td class=\"thCenter\">"+vWithdraw+"</td>\n\
+	                                 <td class=\"thCenter\">"+vTransfer+"</td>\n\
+	                                 <td class=\"thCenter\">"+vTransferOut+"</td>\n\
+	                                 <td class=\"thCenter\">"+vDeduction+"</td>\n\
+	                                 <td class=\"thCenter\">"+vConsumption+"</td>\n\
+	                                 <td class=\"thCenter\">"+vCancelAmount+"</td>\n\
+	                                 <td class=\"thCenter\">"+vReturnPrize+"</td>\n\
+	                                 <td class=\"thCenter\">"+vRebate+"</td>\n\
+	                                 <td class=\"thCenter\">"+vRechargeMember+"</td>\n\
+	                                 <td class=\"thCenter\">"+vNewMembers+"</td>\n\
+	                                 <td class=\"thCenter\">"+vProfit+"</td>\n\
+	                                 <td class=\"thCenter\">"+userType+"</td></tr>");
+                                	 
+                                 }
+                             });
+                         }else if(data.status==0){
+                             alert(getErroe(data.error_code));
+                         }
+                     }
+                 });
+            }
+            
+            
             function NextTeam(userName){
                 var tableid = $("#tableTRTD").attr("id");
                 document.getElementById('totalNumber').value = null;
@@ -215,7 +241,7 @@
                                     }
                                     $("#" + tableid).append("<tr>\n\
                                     <td class=\"thCenter\"><a href='#' onclick=\"NextTeam('"+val.userName+"')\">"+val.userName+"</a></td>\n\
-                                    <td class=\"thCenter\">"+val.deposit+"</td>\n\
+                                    <td class=\"thCenter\">"+val.deposit == null?'':val.deposit+"</td>\n\
                                     <td class=\"thCenter\">"+val.withdrawal+"</td>\n\
                                     <td class=\"thCenter\">"+val.transfer+"</td>\n\
                                     <td class=\"thCenter\">"+val.transferOut+"</td>\n\
@@ -271,6 +297,35 @@
                }else{
                    searchrecord('button');
                }
+            }
+            
+            function queryGeneralAgency(deffered, token){
+            	var domain = parseDomain();
+                var url = domain+"/lottery-api/users/queryGeneral";
+            	
+            	$.ajax({
+                    url: url,
+                    type: "GET",
+                    async: false, // 设置同步方式                    
+                    dataType: "json",
+                    beforeSend: function (XMLHttpRequest) {
+         				XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function () {
+                    	deffered.reject(-1);
+                    },
+                    success: function (data) {
+                        if(data.status === 1){
+                            if(data.data != null){
+                            	deffered.resolve(data.data);
+                            }else{
+                            	deffered.reject(-1);
+                            }
+                        }else if(data.status==0){
+                        	deffered.reject(data.error_code);
+                        }
+                    }
+                });
             }
         </script>
         <script type="text/javascript" src="../js/showdate.js"></script>
@@ -328,7 +383,7 @@
                     <button type="button" class="btn btn-white"><i class="fa fa-chevron-right"></i>
                     </button>
                 </div>-->
-                <div class="input-group" style="width: 850px; float: right">
+                <div class="input-group" style="width: 850px; float: right; display:none">
                     总记录数：<input type="text" class="form-control" value="" id="totalNumber" style="width:50px;" readonly="readonly">
                     总页数：<input type="text" class="form-control" value="" id="totalPages" style="width:50px;" readonly="readonly">&nbsp;&nbsp;&nbsp;&nbsp;
                     <button type="button" class="btn btn-primary" onclick="searchrecord('search')">首页</button>&nbsp;&nbsp;&nbsp;&nbsp;

@@ -170,4 +170,6 @@ public interface UserInfoService
 	void migrateUser(UserInfo user, Map<String, Object> extraParams);
 	
 	UserInfo querySuperior(UserInfo user);
+	
+	Map<String, Object> queryAllAgentSM(Map<String, Object> ret);
 }

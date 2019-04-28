@@ -164,7 +164,7 @@ public class ReportControllerTest extends ControllerJunitBase {
 	}
 	
 	
-	public void testAgentTransfer_non_agent() throws Exception {
+	public void ItestAgentTransfer_non_agent() throws Exception {
 		String userName = "test001";
 		String pwd = "test001";
 		String clientId = "lottery-client";
@@ -184,7 +184,7 @@ public class ReportControllerTest extends ControllerJunitBase {
 		bis = new ByteArrayInputStream(mapper.writeValueAsBytes(node));
 		
 		try {
-			WebRequest request = new GetMethodWebRequest("http://localhost:8080/report/agent/transfer?agentId=2&startTime=2018-11-03&endTime=2018-11-03");
+			WebRequest request = new GetMethodWebRequest("http://localhost:8080/report/agent/transfer?agentId=2&startTime=2018-12-26 00:00:00&endTime=2018-12-26 23:59:59");
 			WebConversation wc = new WebConversation();
 			
 			token = queryToken(userName, pwd, clientId);
@@ -212,7 +212,7 @@ public class ReportControllerTest extends ControllerJunitBase {
 		}
 	}
 	
-	public void testAgentTransfer_agent() throws Exception {
+	public void ItestAgentTransfer_agent() throws Exception {
 		String userName = "agent001";
 		String pwd = "test001";
 		String clientId = "lottery-client";
@@ -232,7 +232,7 @@ public class ReportControllerTest extends ControllerJunitBase {
 		bis = new ByteArrayInputStream(mapper.writeValueAsBytes(node));
 		
 		try {
-			WebRequest request = new GetMethodWebRequest("http://localhost:8080/report/agent/transfer?agentId=2&startTime=2018-11-03&endTime=2018-11-03");
+			WebRequest request = new GetMethodWebRequest("http://localhost:8080/report/agent/transfer?agentId=13&startTime=2018-12-26 00:00:00&endTime=2018-12-26 23:59:59");
 			WebConversation wc = new WebConversation();
 			
 			token = queryToken(userName, pwd, clientId);
@@ -262,32 +262,178 @@ public class ReportControllerTest extends ControllerJunitBase {
 	
 	
 	
-	public void logout(String token) throws Exception {
+	public void ItestMReport() throws Exception {
+		String userName = "agent001";
+		String pwd = "test001";
+		String clientId = "lottery-client";
+		String token = null;
 		ObjectMapper mapper = new ObjectMapper();
+		
 		try {
-			WebRequest request = new GetMethodWebRequest("http://localhost:8080/security/logout");
+			WebRequest request = new GetMethodWebRequest("http://localhost:8080/report/MReport");
 			WebConversation wc = new WebConversation();
-
+			
+			request.setParameter("userName", "test001");
+			request.setParameter("startTime", "2017-12-1");
+			request.setParameter("endTime", "2019-1-3");
+			request.setParameter("pageIndex", "1");
+			
+			token = queryToken(userName, pwd, clientId);
 			request.setHeaderField("Authorization", "bearer " + token);
-
+			
 			WebResponse response = wc.sendRequest(request);
-
+			
 			int status = response.getResponseCode();
-
+			
 			Assert.assertEquals(HttpServletResponse.SC_OK, status);
 			String result = response.getText();
-
+			
 			Map<String, Object> retItems = null;
-
+			
 			retItems = mapper.readValue(result, HashMap.class);
-
+			
 			Assert.assertNotNull(retItems);
-
+			
 			Assert.assertEquals(Message.status.SUCCESS.getCode(), retItems.get(Message.KEY_STATUS));
+			
+			
+		}catch(HttpException ex) {
+			Assert.assertEquals(403, ex.getResponseCode());
+		}
+	}
 
-			Thread.sleep(10000);
-		} catch (Exception ex) {
-			throw ex;
+
+	
+	public void ItestQueryUserAccountDetails() throws Exception {
+		String userName = "agent001";
+		String pwd = "test001";
+		String clientId = "lottery-client";
+		String token = null;
+		ObjectMapper mapper = new ObjectMapper();
+		
+		try {
+			WebRequest request = new GetMethodWebRequest("http://localhost:8080/report/userFlowDetail");
+			WebConversation wc = new WebConversation();
+			
+			request.setParameter("startTime", "2017-12-1 00:00:00");
+			request.setParameter("endTime", "2019-1-3 23:59:59");
+			request.setParameter("pageIndex", "1");
+			
+			token = queryToken(userName, pwd, clientId); 
+			request.setHeaderField("Authorization", "bearer " + token);
+			
+			WebResponse response = wc.sendRequest(request);
+			
+			int status = response.getResponseCode();
+			
+			Assert.assertEquals(HttpServletResponse.SC_OK, status);
+			String result = response.getText();
+			
+			Map<String, Object> retItems = null;
+			
+			retItems = mapper.readValue(result, HashMap.class);
+			
+			Assert.assertNotNull(retItems);
+			
+			Assert.assertEquals(Message.status.SUCCESS.getCode(), retItems.get(Message.KEY_STATUS));
+			
+			
+		}catch(HttpException ex) {
+			Assert.assertEquals(403, ex.getResponseCode());
+		}
+	}
+	
+	//terminalType=0&userName=test001&startTime=&endTime=&pageIndex=1&zhTrasactionNum=&issueNum=&orderId=397
+	public void ItestQueryLoyTst() throws Exception {
+		String userName = "agent001";
+		String pwd = "test001";
+		String clientId = "lottery-client";
+		String token = null;
+		ObjectMapper mapper = new ObjectMapper();
+		
+		try {
+			WebRequest request = new GetMethodWebRequest("http://localhost:8080/report/loyTstRecord");
+			WebConversation wc = new WebConversation();
+			
+			request.setParameter("orderId", "2");
+			request.setParameter("pageIndex", "1");
+			
+			
+			request.setParameter("terminalType", "0");
+			request.setParameter("userName", "test001");
+			request.setParameter("startTime", "");
+			request.setParameter("endTime", "");
+			request.setParameter("zhTrasactionNum", "");
+			request.setParameter("issueNum", "");
+			
+			
+			token = queryToken(userName, pwd, clientId); 
+			request.setHeaderField("Authorization", "bearer " + token);
+			
+			WebResponse response = wc.sendRequest(request);
+			
+			int status = response.getResponseCode();
+			
+			Assert.assertEquals(HttpServletResponse.SC_OK, status);
+			String result = response.getText();
+			
+			Map<String, Object> retItems = null;
+			
+			retItems = mapper.readValue(result, HashMap.class);
+			
+			Assert.assertNotNull(retItems);
+			
+			Assert.assertEquals(Message.status.SUCCESS.getCode(), retItems.get(Message.KEY_STATUS));
+			
+			
+		}catch(HttpException ex) {
+			Assert.assertEquals(403, ex.getResponseCode());
+		}
+	}
+	
+	
+	public void testQueryUserAccountDetails() throws Exception {
+		String userName = "test001";
+		String pwd = "test001";
+		String clientId = "lottery-client";
+		String token = null;
+		ObjectMapper mapper = new ObjectMapper();
+		
+		try {
+			WebRequest request = new GetMethodWebRequest("http://localhost:8080/report/userFlowDetail");
+			WebConversation wc = new WebConversation();
+			
+			//request.setParameter("orderId", "2");
+			request.setParameter("pageIndex", "1");
+			
+			
+			request.setParameter("userName", "test001");
+			request.setParameter("startTime", "");
+			request.setParameter("endTime", "");
+			request.setParameter("orderId", "");
+			
+			
+			token = queryToken(userName, pwd, clientId); 
+			request.setHeaderField("Authorization", "bearer " + token);
+			
+			WebResponse response = wc.sendRequest(request);
+			
+			int status = response.getResponseCode();
+			
+			Assert.assertEquals(HttpServletResponse.SC_OK, status);
+			String result = response.getText();
+			
+			Map<String, Object> retItems = null;
+			
+			retItems = mapper.readValue(result, HashMap.class);
+			
+			Assert.assertNotNull(retItems);
+			
+			Assert.assertEquals(Message.status.SUCCESS.getCode(), retItems.get(Message.KEY_STATUS));
+			
+			
+		}catch(HttpException ex) {
+			Assert.assertEquals(403, ex.getResponseCode());
 		}
 	}
 }

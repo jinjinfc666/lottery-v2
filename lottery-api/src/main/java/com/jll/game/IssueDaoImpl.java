@@ -220,5 +220,41 @@ public class IssueDaoImpl extends DefaultGenericDaoImpl<Issue> implements IssueD
 		map.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
 		return map;
 	}
+
+	@Override
+	public Map<String, Object> queryRecentBetBrief(String lotteryType, String startTime, String endTime,
+			Integer pageIndex, Integer pageSize) {
+		String lotteryTypeSql="";
+		String issueNumSql="";
+		String timeSql="";
+		String stateSql="";
+		Map<String,Object> map=new HashMap();
+		if(!StringUtils.isBlank(lotteryType)) {
+			lotteryTypeSql=" and lotteryType=:lotteryType ";
+			map.put("lotteryType", lotteryType);
+		}
+		if(!StringUtils.isBlank(startTime)&&!StringUtils.isBlank(endTime)) {
+			timeSql=" where state > 0 and startTime>=:startTime and startTime<:endTime ";
+		    String startTime1=startTime+" 00:00:00";//开始时间
+		    String endTime1=endTime+" 23:59:59";
+
+			Date beginDate = DateUtil.fmtYmdHisToDate(startTime1);
+		    Date endDate = DateUtil.fmtYmdHisToDate(endTime1);
+			map.put("startTime", beginDate);
+			map.put("endTime", endDate);
+		}
+		
+		
+		String sql="From Issue "+timeSql+lotteryTypeSql+issueNumSql+stateSql+"ORDER BY id DESC";
+		PageBean page=new PageBean();
+		page.setPageIndex(pageIndex);
+		page.setPageSize(pageSize);
+		PageBean pageBean=queryByTimePagination(page,sql,map);
+		//List<Issue> issues=pageBean.getContent();
+		
+		map.clear();
+		map.put("data",pageBean);
+	    return map;
+	}
 	
 }

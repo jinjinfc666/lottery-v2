@@ -18,7 +18,7 @@ public class ThreadPoolManager {
 	
 	
 	private ThreadPoolManager() {
-		executorService = Executors.newFixedThreadPool(30);
+		executorService = Executors.newFixedThreadPool(80);
 	}
 	
 	public static ThreadPoolManager getInstance() {

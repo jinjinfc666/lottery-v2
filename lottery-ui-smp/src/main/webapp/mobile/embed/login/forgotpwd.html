@@ -1,0 +1,119 @@
+<!-- 
+成功后只需要提示操作成功就可以了
+
+主頁標題需要隱藏掉
+ -->
+	<header class="header_normal">
+		<a href="../index.html" class="back_link">
+			<span class="icon icon_arrow_back"></span>
+		</a>
+		<h1>忘记密码</h1>
+	</header>
+	<div id="page_content" class="flex_1" ng-controller="authCtrl">
+		<div class="page_content_wrap">
+			<div class="main_nav_with_arrow ul_auto_wrap main_nav_with_arrow_Julien">
+				<ul>
+					<li class="active j-sms" data-num="0">
+						<a href="javascript:void(0)" data-toggle="tab" class="layout_image_with_text" > 
+							<img src="images/icons/icon_mobile.png" width="40" height="40">
+							<span class="img_text">短信找回</span>
+						</a>
+						<span class="arrow_down"></span>
+					</li>
+					<li class="j-email" data-num="1">
+						<a href="javascript:void(0)" data-toggle="tab" class="layout_image_with_text" > 
+							<img src="images/icons/icon_mail02.png" width="40" height="40">
+							<span class="img_text">邮箱找回</span>
+						</a>
+					</li>
+					<li data-href="user_rebate_content">
+						<a href="https://kf1.learnsaas.com/chat/chatClient/chatbox.jsp?companyID=809347&amp;configID=61861&amp;jid=7990183634&amp;s=1"
+							class="layout_image_with_text" target="_blank"> 
+							<img src="images/icons/icon_chat03.png" width="40" height="40">
+							<span class="img_text">客服找回</span>
+						</a>
+					</li>
+				</ul>
+			</div>
+			<div class="tab-bd">
+				<div id="tab-sms" class="tab-panel active layout_form layout_form04 j-content" data-num="0">
+					<div class="form_field_warp">
+						<div class="form_field with_icon_label">
+							<span class="form_field_label"><span
+								class="icon icon_user"></span></span>
+							<div class="form_field_input">
+								<input type="text" id="forgot-account" placeholder="请输入您的游戏账号" maxlength="20" ng-model="musername">
+							</div>
+						</div>
+						<div class="form_field with_icon_label">
+							<span class="form_field_label"><span
+								class="icon icon_phone"></span></span>
+							<div class="form_field_input">
+								<input type="text" id="forgot-phone" placeholder="请输入绑定手机号码" maxlength="11" ng-model="mmobile">
+							</div>
+						</div>
+					</div>
+					<div id="captcha-target" style="margin: 50px auto 30px; width: 320px;"></div>
+					<div class="btn_wrap">
+						<a href="javascript:void(0);" class="btn btn01" id="submit_trigger" ng-click="findPwdByMobile()">验证</a>
+					</div>
+				</div>
+				<div id="tab-email" class="tab-panel" style="display: none" data-num="1">
+					<form id="form-findPwdByEmail" class="layout_form layout_form04"
+						action="">
+						<div class="form_field_warp">
+							<div class="form_field with_icon_label">
+								<span class="form_field_label"><span
+									class="icon icon_user"></span></span>
+								<div class="form_field_input">
+									<input name="name" type="text" placeholder="请输入您的游戏账号" ng-model="eusername">
+								</div>
+							</div>
+							<div class="form_field with_icon_label">
+								<span class="form_field_label"><span
+									class="icon icon_phone"></span></span>
+								<div class="form_field_input">
+									<input name="yxdz" type="text" placeholder="请输入电子邮箱" ng-model="eemail">
+								</div>
+							</div>
+							<div class="form_field with_icon_label">
+								<span class="form_field_label"><span
+									class="icon icon_cap_code"></span></span>
+								<div class="form_field_input">
+									<input name="code" type="text" placeholder="请输入验证码" ng-model="ecode"> 
+									<img id="forgetCodeImg" class="img_code">
+								</div>
+							</div>
+						</div>
+						<div class="btn_wrap">
+							<input type="button" class="btn btn01" value="验证" ng-click="findPwdByEmail()">
+						</div>
+					</form>
+
+				</div>
+			</div>
+
+
+		</div>
+	</div>
+
+
+
+
+
+
+
+
+
+
+	<div class="dialog_wrap dialog_with_title dialog_enter_game">
+		<div class="dialog_main j-dialog_main2">
+			<span class="dialog_close"><span class="icon icon_close"></span></span>
+			<div class="title_wrap">PT黑暗城市</div>
+			<div class="dialog_content">
+				<p>祝您多多盈利！</p>
+				<a href="javascript:;" class="btn btn01 btn_real btn-play"><span>进入真钱游戏</span></a>
+				<a href="javascript:;" class="btn btn01 btn_try">进入免费试玩</a>
+			</div>
+		</div>
+	</div>

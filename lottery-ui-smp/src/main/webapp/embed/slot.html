@@ -1,0 +1,124 @@
+<html lang="zh-cn">
+<head>
+<meta charset="UTF-8">
+<script src="https://hm.baidu.com/hm.js?099778280faab37761a929fdfe630972"></script>
+<script type="text/javascript">
+	if (/AppleWebKit.*Mobile/i.test(navigator.userAgent)
+			|| /Android/i.test(navigator.userAgent)
+			|| /BlackBerry/i.test(navigator.userAgent)
+			|| /IEMobile/i.test(navigator.userAgent)
+			|| (/MIDP|SymbianOS|NOKIA|SAMSUNG|LG|NEC|TCL|Alcatel|BIRD|DBTEL|Dopod|PHILIPS|HAIER|LENOVO|MOT-|Nokia|SonyEricsson|SIE-|Amoi|ZTE/
+					.test(navigator.userAgent))) {
+		var addr = window.location.href;
+		if (addr.indexOf("mobi") >= 0) {
+		} else {
+			window.location.href = "mobile/index.jsp" + window.location.search;
+		}
+	} else {
+	}
+</script>
+<script>
+	var _hmt = _hmt || [];
+	(function() {
+		var hm = document.createElement("script");
+		hm.src = "https://hm.baidu.com/hm.js?099778280faab37761a929fdfe630972";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	})();
+</script>
+<title>泰格娱乐(Taige Gaming)</title>
+<meta name="description"
+	content="一家专注运营网络老虎机游戏的专业网站。拥有PT老虎机、MG老虎机、TTG老虎机、DT老虎机、AG捕鱼等热门老虎机平台。让您一网打进所有您喜爱的老虎机游戏，更可在手机端就可畅玩！">
+<meta name="keywords" content="PT老虎机 TTG老虎机 NT老虎机 MG老虎机 QT老虎机 DT老虎机 网上老虎机 博彩 slot">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1">
+<link href="style/base.min.css?v=13" rel="stylesheet">
+<link href="style/lib/animate.css?v=01" rel="stylesheet">
+<script src="js/lib/jquery-1.10.2.min.js?v=01"></script>
+<script src="js/lib/layer/layer.js?v=01"></script>
+<link rel="stylesheet"
+	href="https://www.taige88.com/js/lib/layer/theme/default/layer.css?v=3.1.0"
+	id="layuicss-layer">
+<!--[if lt IE 9]>
+	<script src="//apps.bdimg.com/libs/html5shiv/3.7/html5shiv.min.js?v=j12"></script>
+	<script src="//apps.bdimg.com/libs/respond.js/1.4.2/respond.min.js?v=j12"></script>
+<![endif]-->
+
+<link href="style/gamehall.min.css?v=03" rel="stylesheet">
+</head>
+<body style="" >
+	<!-- 头部结束 -->
+<main style="background-image: url(&quot;images/gamehall/{{slot_bg_name}}?v=01&quot;);" ng-controller="slotCtrl">
+	<div class="mainshow">
+		<div class="content cfx">
+			<div class="game_search cfx fr">
+				<div id="j-gameMenu" class="fl game-menu search-row hidden">
+					<a href="javascript:;" data-tab="PT" data-value="{&quot;category&quot;:&quot;PT&quot;}" class="nav  first active"> PT游戏 </a> 
+					<a href="javascript:;" data-tab="DT" data-value="{&quot;category&quot;:&quot;DT&quot;}" class="nav">&gt; DT游戏 </a> 
+					<a href="javascript:;" data-tab="MGS" data-value="{&quot;category&quot;:&quot;MGS&quot;}" class="nav"> MG游戏 </a> 
+					<a href="javascript:;" data-tab="QT" data-value="{&quot;category&quot;:&quot;QT&quot;}" class="nav"> QT游戏 </a> 
+					<a href="javascript:;" data-tab="NT" data-value="{&quot;category&quot;:&quot;NT&quot;}" class="nav"> NT游戏 </a> 
+					<a href="javascript:;" data-tab="TTG" data-value="{&quot;category&quot;:&quot;TTG&quot;}" class="nav">TTG游戏</a>
+				</div>
+
+				<label class="game_type fl"> 游戏线数 
+					<select id="j-type">
+							<option value="all" selected="true">全部</option>
+							<option value="15">1-15线</option>
+							<option value="40">16-40线</option>
+							<option value="100">41-100线</option>
+							<option value="max">全赔</option>
+					</select>
+				</label>
+				<div class="search_box fl" id="j-searchForm">
+					<input type="text" class="j-ipt" placeholder="输入游戏名称搜索" ng-model="gameTitle"> 
+					<span class="search_btn j-btnSearch" ng-click="searchByName()">搜索</span>
+					<div class="select_list j-select" style=""></div>
+				</div>
+			</div>
+			<div class="game_show cfx">
+				<div class="game_left fl" id="j-filter">
+					<!-- <div class="group search-row">
+						<a href="javascript:;" data-value="" class="nav game_btn btn-filter active">全部</a> 
+						<a href="javascript:;" data-value="{&quot;tag&quot;:&quot;HOT&quot;}" class="nav game_btn btn-filter">热门游戏</a> 
+						<a href="javascript:;" data-value="{&quot;tag&quot;:&quot;NEW&quot;}" class="nav game_btn btn-filter">最新游戏</a> 
+						<a href="javascript:;" data-value="{&quot;tag&quot;:&quot;AMA&quot;}" class="nav game_btn btn-filter">奖池游戏</a> 
+						<a class="game_btn yellow j-needlogin" id="j-favoriteAction">我的收藏</a>
+						<a class="game_btn blue j-history">最近玩过</a>
+					</div> -->
+					<div class="group search-row hidden">
+						<p>赔付线数：</p>
+						<a href="javascript:;" data-tab="all"
+							data-value="{&quot;line&quot;:&quot;&quot;}" class="nav active">
+							全部 </a> <a href="javascript:;" data-tab="15"
+							data-value="{&quot;line&quot;:&quot;1-15&quot;}" class="nav">
+							1-15线 </a> <a href="javascript:;" data-tab="40"
+							data-value="{&quot;line&quot;:&quot;16-40&quot;}" class="nav">
+							16-40线 </a> <a href="javascript:;" data-tab="100"
+							data-value="{&quot;line&quot;:&quot;41-100&quot;}" class="nav">
+							41-100线 </a> <a href="javascript:;" data-tab="max"
+							data-value="{&quot;line&quot;:&quot;100-2048&quot;}" class="nav">
+							全赔 </a>
+					</div>
+				</div>
+				<div class="game_right fr" id="j-gameContainer">
+					<div class="game_box" ng-repeat="v in gameArray">
+						<div class="game_item  game-info" id="egspin" data-subtype="" data-tag="HOT" 
+								data-json="{&quot;name&quot;:&quot;埃及旋转&quot;,&quot;eName&quot;:&quot;Egypt Spin&quot;,&quot;nameList&quot;:{&quot;en&quot;:&quot;Egypt Spin&quot;,&quot;zh-CN&quot;:&quot;埃及旋转&quot;},&quot;category&quot;:&quot;PT&quot;,&quot;subType&quot;:&quot;&quot;,&quot;id&quot;:&quot;egspin&quot;,&quot;moduleid&quot;:&quot;&quot;,&quot;state&quot;:&quot;1&quot;,&quot;line&quot;:50,&quot;language&quot;:&quot;&quot;,&quot;code&quot;:&quot;egspin&quot;,&quot;pic&quot;:&quot;egspin.jpg&quot;,&quot;tag&quot;:[&quot;HOT&quot;],&quot;type&quot;:&quot;SLO&quot;}">
+							<img alt="{{v.title}}" ng-src="images/lottery/{{v.type}}-logo.png" lazy="loaded" class="lazy" style="display: block;">
+							
+							<p class="game_title">{{v.title}}</p>
+							<!-- <div class="game_btns">
+								<a ng-click="" target="_blank" class="btn try">免费试玩</a> 
+								<a ng-click="" class="j-needlogin btn play">立即游戏</a>
+							</div> -->
+							<span class="collect j-needlogin " data-state="0"></span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</main>
+</body>
+</html>

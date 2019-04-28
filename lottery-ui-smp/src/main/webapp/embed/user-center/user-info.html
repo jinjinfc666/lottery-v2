@@ -1,0 +1,187 @@
+<style>
+.u_c_w_tab .u_inputs {
+    width: 400.00px;
+    margin-left: auto;
+    margin-right: auto;
+}
+</style>
+
+<div class="usershow fl" ng-controller="userInfoCtrl" ng-init="getMemberInfo()">
+	<div class="usercontrol j-tab">
+		<div class="u_c_nav cfx j-listBtn">
+			<span data-target="u_m_grzl" data-num="0" class="j-nav_item u_c_n_item active">个人资料</span>
+			<span data-target="u_m_yhk" data-num="1" class="j-nav_item u_c_n_item">银行卡</span>
+			<span data-target="u_m_dhyz" data-num="2" class="j-nav_item u_c_n_item">手机验证</span>
+		</div>
+		<!-- div class="u_c_window" data-num="0" ng-show="!userInfo.isSetted" data-type="user_info"> -->
+		<div class="u_c_window" data-num="0" data-type="user_info">
+			<div data-id="u_m_grzl" data-num="0" class="u_c_w_content j-nav_tab active">
+				<div class="u_c_w_tab active">
+					<div class="u_inputs">
+						<label class="u_label">真实姓名</label> 
+						<input ng-class="{'u_input':true}" ng-if="userInfo.realName == null || userInfo.realName.length == 0" id="j-accountName" placeholder="请输入真实姓名"  ng-model="userInfo.realName">
+						<input ng-class="{'u_input':true}" ng-if="userInfo.realName != null && userInfo.realName.length > 0" id="j-accountName" placeholder="请输入真实姓名"  ng-model="userInfo.realName" disabled>
+					</div>
+					<div class="u_inputs">
+						<label class="u_label">手机号码</label> 
+						<input class="u_input j-mobilenum" id="j-mobilenum" ng-model="userInfo.phoneNum" ng-if="userInfo.isValidPhone  == 0">
+						<input ng-class="{'u_input':true, 'j-mobilenum':true}" id="j-mobilenum" ng-model="userInfo.phoneNum" ng-if="userInfo.isValidPhone  != 0" disabled>
+						<a class="u_i_button" href="javascript:void(0)" ng-show="userInfo.isValidPhone  == 0 && userInfo.phoneNum != null && userInfo.phoneNum.length > 0" ng-click="goMobileVerify()">去验证</a>
+						<!-- <span class="u_i_tips">该手机号码还未验证</span> -->
+
+					</div>
+					<div class="u_inputs">
+						<label class="u_label">电子邮箱</label> 
+						<input class="u_input" id="j-email" placeholder="请输入电子邮箱"  ng-model="userInfo.email">
+					</div>
+					<div class="u_inputs">
+						<label class="u_label">QQ号码</label> 
+						<input class="u_input j-qq" id="j-qq" placeholder="请输入QQ号码" ng-model="userInfo.qq">
+					</div>
+					<div class="u_inputs" style="display:none">
+						<label class="u_label">出生日期</label> 
+						<input class="u_input" id="birthday" placeholder="请输入出生日期" 
+							onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',startDate:'1977-01-01'})" my97mark="false">
+					</div>
+					<a class="u_btn j-completeUserInfo" ng-click="updateMemInfo()">立即提交</a>
+				</div>
+			</div>
+
+			<div data-id="u_m_yhk" data-num="1" class="u_c_w_content j-nav_tab">
+                                <div class="u_c_w_tab active">
+                                    <div class="bank_content cfx j-bankCardList">
+	                                    <div class="bank_box">
+	                                    	<a href="javascript:;" class="add_bank j-add_bank" ng-click="bankCardModal()">添加银行卡</a>
+	                                    </div>
+	                                    
+	                                    <div class="box bg{{v.bg}}" ng-repeat="v in bankList">
+            								<div class="bank_card_info">
+            									<h2 class="bankname">{{v.bankName}}</h2>
+	            								<span class="acctnumber">{{v.acctNum}}</span>
+	            								<span class="acctname">持卡人：{{v.acctName}}</span>
+            								</div>
+        								</div>
+                                    </div>
+                                    <div class="u_tips text-left">
+                                       		 温馨提示：最多允许绑定 <span class="red">3</span>张银行卡！<br>
+                                        	如需解绑,请联系客服!
+                                    </div>
+                                </div>
+            </div>
+
+			<div data-id="u_m_dhyz" data-num="2" class="u_c_w_content j-nav_tab">
+				<div class="u_c_w_tab active">
+					<div class="u_inputs">
+						<label class="u_label">手机号码</label> 
+						<input class="u_input j-mobilenum" id="j-mobilenum" value="{{userInfo.phoneNum}}" disabled> 
+						<span class="u_i_tips">验证后方可享受更多服务!</span>
+					</div>
+					
+					<div id="d_sms" ng-class="{'hidden':(userInfo.phoneNum == null || userInfo.isValidPhone == 1)}">
+						<div class="u_inputs">
+							<label class="u_label">验证码</label> 
+							<input class="u_input j-remit" id="phonesmscode" placeholder="请输入短信验证码!" ng-model="mobileCode"> 
+							<a class="u_i_button j-requetsms" ng-click="applyPhoneQr()">获取验证码</a>
+						</div>
+						<a id="btn_mobileVerify" class="u_btn j-a_validate_phone" ng-if="userInfo.isValidPhone  == 0" ng-click="verifyPhone()" style="margin: 0 0 0 310;">立即验证</a>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	
+	    <!--div id="user_info_show" class="u_c_window" data-num="1" ng-show="userInfo.isSetted" data-type="user_info"-->
+	    <div id="user_info_show" class="u_c_window" data-num="1" ng-show="false" data-type="user_info">
+                        <div data-id="u_m_grzl" data-num="0" class="u_c_w_content j-nav_tab active">
+                            <div class="u_c_w_tab active">
+                                        <div class="u_inputs">
+                                            <label class="u_label">真实姓名</label>
+                                            <input class="u_input j-accountName" id="j-accountName" placeholder="请输入真实姓名" ng-model="userInfo.realName" disabled>
+                                        </div>
+                                        <div class="u_inputs">
+                                            <label class="u_label">手机号码</label>
+                                            <input class="u_input j-mobilenum" id="j-mobilenum" ng-model="userInfo.phoneNum" ng-if="userInfo.isValidPhone == 0 ">
+											<input class="u_input j-mobilenum" id="j-mobilenum" ng-model="userInfo.phoneNum" ng-if="userInfo.isValidPhone ==  1" disabled>
+                                            <a class="u_i_button" href="javascript:void(0)" ng-show="userInfo.isValidPhone == 0" ng-click="goMobileVerify()">去验证</a>
+                                        </div>
+                                        <div class="u_inputs">
+                                            <label class="u_label">电子邮箱</label>
+                                            <input class="u_input" id="j-email" placeholder="请输入电子邮箱" ng-model="userInfo.email" disabled>
+                                        </div>
+                                        <div class="u_inputs">
+                                            <label class="u_label">QQ号码</label>
+                                            <input class="u_input j-qq" id="j-qq" placeholder="请输入QQ" ng-model="userInfo.qq">
+                                        </div>
+                                        <div class="u_inputs" style="display:none">
+                                            <label class="u_label">出生日期</label>
+                                            <input class="u_input" id="j-birth_date" placeholder="请输入出生日期"
+                                            	onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',startDate:'1977-01-01'})" my97mark="false" value="{{birth}}" disabled>
+                                        </div>
+                                        <a class="u_btn j-completeUserInfo" ng-click="updateMemInfo()">立即提交</a>
+                                    </div>
+                            </div>
+                            
+                            <div data-id="u_m_yhk" data-num="1" class="u_c_w_content j-nav_tab">
+                                <div class="u_c_w_tab active">
+                                    <div class="bank_content cfx j-bankCardList">
+	                                    <div class="bank_box">
+	                                    	<a href="javascript:;" class="add_bank j-add_bank" ng-click="bankCardModal()">添加银行卡</a>
+	                                    </div>
+	                                    
+	                                    <div class="box bg{{v.bg}}" ng-repeat="v in bankList">
+            								<div class="bank_card_info">
+            									<h2 class="bankname">{{v.bankName}}</h2>
+	            								<span class="acctnumber">{{v.acctNum}}</span>
+	            								<span class="acctname">持卡人：{{v.acctName}}</span>
+            								</div>
+        								</div>
+                                    </div>
+                                    <div class="u_tips text-left">
+                                       		 温馨提示：最多允许绑定 <span class="red">3</span>张银行卡！<br>
+                                        	如需解绑,请联系客服!
+                                    </div>
+                                </div>
+                            </div>
+                        
+                        <div data-id="u_m_dhyz" data-num="2" class="u_c_w_content j-nav_tab">
+                            <div class="u_c_w_tab active">
+                                <div class="u_inputs">
+                                    <label class="u_label">手机号码</label>
+                                    <input class="u_input j-mobilenum" id="j-mobilenum"  value="{{userInfo.phoneNum}}">
+                                    <span class="u_i_tips">验证后方可享受更多服务!</span>
+                                </div>
+                                
+                                <div id="d_sms" ng-class="{'hidden':(userInfo.phoneNum == null || userInfo.isValidPhone == 1)}">
+									<div class="u_inputs">
+										<label class="u_label">验证码</label> 
+										<input class="u_input j-remit" id="phonesmscode" placeholder="请输入短信验证码!" ng-model="mobileCode"> 
+										<a class="u_i_button j-requetsms" ng-click="applyPhoneQr()">获取验证码</a>
+									</div>
+									<div id="captcha-target" style="margin: 100px auto 30px; width: 320px;"></div>
+									<a class="u_btn j-sms-btn" ng-click="bandingMobile()">立即验证</a>
+								</div>
+								<a id="btn_mobileVerify" class="u_btn j-a_validate_phone" ng-show="usersecurity.mobileVerified == 'N' " ng-click="mobileVerify()">立即验证</a>
+                            </div>
+                        </div>
+                    </div>
+	</div>
+</div>
+
+
+<aside class="register ng-scope" id="bankCardModal" ng-controller="userInfoCtrl" style="display: none;">
+	<div class="register_content">
+		<div class="r_title">
+			<p>添加银行卡</p>
+			<span class="close j-close" num="6"></span>
+		</div>
+		<div class="r_content">
+			<div class="u_c_w_tab active">
+				<div class="u_inputs">
+					<label class="u_label">银行卡号</label>
+					<input class="u_input" id="hbcouponCode" placeholder="请输入银行卡号" ng-model="cardNo">
+				</div>
+				<a class="u_btn j-submitCouponhb" ng-click="saveCard()">立即提交</a>
+			</div>
+		</div>
+	</div>
+</aside>

@@ -29,6 +29,7 @@ public class MReportServiceImpl implements MReportService {
 		String userName=(String) ret.get("userName");
 		Integer pageIndex=(Integer) ret.get("pageIndex");
 		Integer pageSize=(Integer) ret.get("pageSize");
-		return mReportDao.queryAll(startTime, endTime, userName,pageIndex,pageSize);
+		Integer userType = (Integer) ret.get("userType");
+		return mReportDao.queryAll(startTime, endTime, userName,pageIndex,pageSize, userType);
 	}
 }

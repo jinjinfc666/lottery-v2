@@ -33,23 +33,31 @@ public class MReportDaoImpl extends DefaultGenericDaoImpl<MemberPlReport> implem
 	private Logger logger = Logger.getLogger(UserInfoServiceImpl.class);
 	//会员盈亏报表
 	@Override
-	public PageBean queryAll(String startTime,String endTime,String userName,Integer pageIndex,Integer pageSize) {
-		String userNameSql="";
-		String timeSql="";
+	public PageBean queryAll(String startTime,String endTime,String userName,Integer pageIndex,Integer pageSize, Integer userType) {
+		//String userNameSql="";
+		StringBuffer buffer = new StringBuffer();
 		Map<String,Object> map=new HashMap<String,Object>();
 		if(!StringUtils.isBlank(userName)) {
-			userNameSql=" and user_name=:userName";
+			buffer.append("and user_name=:userName ");
 			map.put("userName", userName);
 		}
 		if(!StringUtils.isBlank(startTime)&&!StringUtils.isBlank(endTime)) {
-			timeSql=" where create_time >=:startTime and create_time <=:endTime";
+			buffer.append("and create_time >=:startTime and create_time <=:endTime ");
 			Date beginDate = DateUtil.fmtYmdToDate(startTime);
 		    Date endDate = DateUtil.fmtYmdToDate(endTime);
 			map.put("startTime", beginDate);
 			map.put("endTime", endDate);
 		}
-		String sql = "select user_name,SUM(deposit) as deposit,SUM(withdrawal) as withdrawal ,SUM(transfer) as transfer ,SUM(transfer_out) as transfer_out,SUM(deduction) as deduction,sum(consumption) as consumption,SUM(cancel_amount) as cancel_amount,SUM(return_prize) as return_prize,SUM(rebate) as rebate,sum(profit) as profit,user_type from member_pl_report "+timeSql+userNameSql+" GROUP BY user_name,user_type";
-//		String sql = "select a.user_name,a.deposit,a.withdrawal,a.deduction,a.consumption,a.cancel_amount,a.return_prize,a.rebate,a.profit,b.user_type from (SELECT	user_name,SUM(deposit) AS deposit,SUM(withdrawal) AS withdrawal,SUM(deduction) AS deduction,sum(consumption) AS consumption,SUM(cancel_amount) AS cancel_amount,SUM(return_prize) AS return_prize,SUM(rebate) AS rebate,sum(profit) AS profit FROM member_pl_report "+userNameSql+timeSql+" GROUP BY user_name) a LEFT JOIN (select DISTINCT(user_name),user_type from member_pl_report "+userNameSql+timeSql+") b ON a.user_name=b.user_name";
+		
+		if(userType != null) {
+			buffer.append("and user_type=:userType ");
+			map.put("userType", userType);
+		}
+		
+		
+		//String sql = "select user_name,SUM(deposit) as deposit,SUM(withdrawal) as withdrawal ,SUM(transfer) as transfer ,SUM(transfer_out) as transfer_out,SUM(deduction) as deduction,sum(consumption) as consumption,SUM(cancel_amount) as cancel_amount,SUM(return_prize) as return_prize,SUM(rebate) as rebate,sum(profit) as profit,user_type from member_pl_report "+timeSql+userNameSql+" GROUP BY user_name,user_type";
+		String sql = "select user_name,deposit,withdrawal,transfer,transfer_out,deduction,consumption,cancel_amount,return_prize,rebate,profit,user_type,create_time from team_pl_report where 1=1 "+ buffer.toString() + " order by create_time desc";
+		
 		logger.debug(sql+"-----------------------------queryLoyTst----SQL--------------------------------");
 		PageBean page=new PageBean();
 		page.setPageIndex(pageIndex);

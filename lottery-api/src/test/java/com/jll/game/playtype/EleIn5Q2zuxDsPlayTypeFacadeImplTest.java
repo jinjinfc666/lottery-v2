@@ -40,7 +40,7 @@ public class EleIn5Q2zuxDsPlayTypeFacadeImplTest extends ServiceJunitBase{
 		//super.tearDown();
 	}
 	
-	public void testIsMatchWinningNum_winning(){
+	public void ItestIsMatchWinningNum_winning(){
 		String betNum = "01 02";
 		Issue issue = new Issue();
 		issue.setRetNum("01,02,03,09,06");
@@ -74,7 +74,7 @@ public class EleIn5Q2zuxDsPlayTypeFacadeImplTest extends ServiceJunitBase{
 		
 	}
 	
-	public void testPreProcessNumber(){
+	public void ItestPreProcessNumber(){
 		Map<String, Object> params = new HashMap<>();
 		//Date startTime = new Date();
 		String betNum = "01 02";
@@ -139,7 +139,7 @@ public class EleIn5Q2zuxDsPlayTypeFacadeImplTest extends ServiceJunitBase{
 		
 	}
 	
-	public void testParseBetNumber(){
+	public void ItestParseBetNumber(){
 		String betNum = "01 02";
 		Date startDate = new Date();
 		List<Map<String, String>> ret = playTypeFacade.parseBetNumber(betNum);
@@ -168,7 +168,7 @@ public class EleIn5Q2zuxDsPlayTypeFacadeImplTest extends ServiceJunitBase{
 	}
 	
 	
-	public void testValidBetNum_invalid_betnum_(){
+	public void ItestValidBetNum_invalid_betnum_(){
 		String betNum = "00";
 		OrderInfo order = new OrderInfo();
 		
@@ -218,7 +218,7 @@ public class EleIn5Q2zuxDsPlayTypeFacadeImplTest extends ServiceJunitBase{
 		Assert.assertFalse(ret);
 	}
 	
-	public void testValidBetNum_valid_betnum_(){
+	public void ItestValidBetNum_valid_betnum_(){
 		String betNum = "01 02";
 		OrderInfo order = new OrderInfo();
 		
@@ -237,7 +237,7 @@ public class EleIn5Q2zuxDsPlayTypeFacadeImplTest extends ServiceJunitBase{
 	}
 	
 	
-	public void testObtainSampleBetNumber(){
+	public void ItestObtainSampleBetNumber(){
 		int counter = 0;
 		int maxCounter = 1000;
 		String betNum = null;
@@ -274,6 +274,15 @@ public class EleIn5Q2zuxDsPlayTypeFacadeImplTest extends ServiceJunitBase{
 			Assert.assertTrue(isValid);
 			
 		}
+	}
+	
+	
+	public void testQuerySingleBettingPrizeRange(){
+		
+			Map<String, Object> ret = playTypeFacade.querySingleBettingPrizeRange(990F);
+					
+			
+			Assert.assertNotNull(ret);
 	}
 	
 	private String obtainWinningNum(String betNum) {

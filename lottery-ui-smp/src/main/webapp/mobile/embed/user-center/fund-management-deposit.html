@@ -1,0 +1,424 @@
+<header class="header_normal" ng-controller="authCtrl">
+		<a href="javascript:void(0)" class="back_link" ng-click="goBack()"> 
+			<span class="icon icon_arrow_back mt12"></span>
+		</a>
+		<h1>充值</h1>
+</header>
+
+	<div id="page_content" class="flex_1" ng-controller="depositCtrl">
+		<select id="depositType" class="without_style with_arrow type_select hidden">
+			<option value="thirdPay">第三方存款</option>
+		</select>
+		<div class="zzhk_type" style="display: none;"></div>
+		<div class="page_content_wrap j-page_content_wrap thirdPay_type">
+			<div class="sec_box j-sec_box">
+				<div class="main_nav_with_arrow ul_auto_wrap align_center">
+					<ul class="title j-title" style="display: block;">
+						<li data-num="0" data-type="wechat" class="active">
+							<a href="javascript:void(0);" class="layout_image_with_text">
+								<img src="images/icons/icon_weixin.png" width="40" height="40">
+								<span class="img_text">微信支付</span>
+							</a>
+						</li>
+						<li data-num="1" data-type="mcpay"><a
+							href="javascript:void(0);" class="layout_image_with_text"><img
+								src="images/icons/icon_online_deposit.png" width="40"
+								height="40"><span class="img_text">秒存转账</span></a><span
+							class="rate">返1%</span></li>
+						<li data-num="2" data-type="unionpay"><a
+							href="javascript:void(0);" class="layout_image_with_text"><img
+								src="images/icons/icon_online_deposit.png" width="40"
+								height="40"><span class="img_text">银联扫码</span></a></li>
+						<li data-num="3" data-type="qqpay"><a
+							href="javascript:void(0);" class="layout_image_with_text"><img
+								src="images/icons/icon_chat03.png" width="40"
+								height="40"><span class="img_text">QQ支付</span></a></li>
+					</ul>
+				</div>
+				<div class="layout_form layout_form02 no_left_padding j-content deposit_form" data-num="0">
+					<div class="form_field_warp">
+						<div class="form_field with_right_label form_field_money">
+							<span class="form_field_label">存款金额</span>
+							<div class="form_field_input">
+								<input type="text" placeholder="请选择支付通道"
+									id="deposit-wechat-money" class="j-money"><input
+									="hidden"="" id="minmoeryipu"><input ="hidden"=""
+									id="maxmoeryipu">
+							</div>
+							<span class="right_label">元</span>
+						</div>
+						<div class="form_field with_right_label form_field_money hidden"
+							id="deposit-wechat-name">
+							<span class="form_field_label">存款姓名</span>
+							<div class="form_field_input">
+								<input type="text" placeholder="请输入存款姓名" id="j-wechat-name">
+							</div>
+						</div>
+						<div class="form_field">
+							<span class="form_field_label">支付通道</span>
+							<div class="form_field_input">
+								<input type="hidden" value="wechat"><select
+									id="m-deposit-wechat-pay" onchange="selChangeOpt(this);"
+									class="j-type"><option value="">请选择</option>
+									<option value="93" selplatformtype="okwx">OK微信</option></select>
+							</div>
+						</div>
+					</div>
+					
+					<div class="btn_wrap j-btn">
+						<a href="javascript:void(0);" class="btn btn01 j-submit">提交</a>
+					</div>
+				</div>
+				
+				<div class="layout_form layout_form02 no_left_padding j-content deposit_form" style="display: none;" data-num="1">
+					<div class="form_field_warp">
+						<div class="form_field with_right_label form_field_money">
+							<span class="form_field_label">存款金额</span>
+							<div class="form_field_input">
+								<input type="text" placeholder="请选择支付通道" id="deposit-mcpay-money" class="j-money">
+								<input type="hidden" id="minmoeryipu">
+								<input type="hidden" id="maxmoeryipu">
+							</div>
+							<span class="right_label">元</span>
+						</div>
+						<div class="form_field with_right_label form_field_money hidden" id="deposit-mcpay-name">
+							<span class="form_field_label">存款姓名</span>
+							<div class="form_field_input">
+								<input type="text" placeholder="请输入存款姓名" id="j-mcpay-name">
+							</div>
+						</div>
+						<div class="form_field">
+							<span class="form_field_label">支付通道</span>
+							<div class="form_field_input">
+								<input type="hidden" value="mcpay">
+								<select id="m-deposit-mcpay-pay" onchange="selChangeOpt(this);" class="j-type">
+									<option value="">请选择</option>
+									<option value="zfb" selplatformtype="zfb">支付宝转账</option>
+									<option value="bank_phone" selplatformtype="bank_phone">手机银行转账</option>
+									<option value="bank_web" selplatformtype="bank_web">网上银行转账</option>
+									<option value="wechat" selplatformtype="wechat">微信转账</option></select>
+							</div>
+						</div>
+					</div>
+					
+					<div class="btn_wrap j-btn">
+						<a href="javascript:void(0);" class="btn btn01 j-submit">提交</a>
+					</div>
+				</div>
+				
+				<div class="layout_form layout_form02 no_left_padding j-content deposit_form"  style="display: none;" data-num="2">
+					<div class="form_field_warp">
+						<div class="form_field with_right_label form_field_money">
+							<span class="form_field_label">存款金额</span>
+							<div class="form_field_input">
+								<input type="text" placeholder="请选择支付通道" id="deposit-unionpay-money" class="j-money">
+								<input type="hidden" id="minmoeryipu">
+								<input type="hidden" id="maxmoeryipu">
+							</div>
+							<span class="right_label">元</span>
+						</div>
+						<div class="form_field with_right_label form_field_money hidden"
+							id="deposit-unionpay-name">
+							<span class="form_field_label">存款姓名</span>
+							<div class="form_field_input">
+								<input type="text" placeholder="请输入存款姓名" id="j-unionpay-name">
+							</div>
+						</div>
+						<div class="form_field">
+							<span class="form_field_label">支付通道</span>
+							<div class="form_field_input">
+								<input type="hidden" value="unionpay"><select
+									id="m-deposit-unionpay-pay" onchange="selChangeOpt(this);"
+									class="j-type"><option value="">请选择</option>
+									<option value="98" selplatformtype="okun">OK银联扫码</option></select>
+							</div>
+						</div>
+					</div>
+					
+					<div class="btn_wrap j-btn">
+						<a href="javascript:void(0);" class="btn btn01 j-submit">提交</a>
+					</div>
+				</div>
+				
+				<div class="layout_form layout_form02 no_left_padding j-content deposit_form"  style="display: none;"  data-num="3">
+					<div class="form_field_warp">
+						<div class="form_field with_right_label form_field_money">
+							<span class="form_field_label">存款金额</span>
+							<div class="form_field_input">
+								<input type="text" placeholder="请选择支付通道" id="deposit-qqpay-money" class="j-money">
+								<input type="hidden" id="minmoeryipu">
+								<input type="hidden" id="maxmoeryipu">
+							</div>
+							<span class="right_label">元</span>
+						</div>
+						<div class="form_field with_right_label form_field_money hidden"
+							id="deposit-qqpay-name">
+							<span class="form_field_label">存款姓名</span>
+							<div class="form_field_input">
+								<input type="text" placeholder="请输入存款姓名" id="j-qqpay-name">
+							</div>
+						</div>
+						<div class="form_field">
+							<span class="form_field_label">支付通道</span>
+							<div class="form_field_input">
+								<input type="hidden" value="qqpay"><select
+									id="m-deposit-qqpay-pay" onchange="selChangeOpt(this);"
+									class="j-type"><option value="">请选择</option>
+									<option value="95" selplatformtype="okqq">OKQQ钱包</option></select>
+							</div>
+						</div>
+					</div>
+					
+					<div class="btn_wrap j-btn">
+						<a href="javascript:void(0);" class="btn btn01 j-submit">提交</a>
+					</div>
+				</div>
+			</div>
+			<!-- div class="btn_wrap j-btn">
+				<a href="javascript:void(0);" class="btn btn01 j-submit" data-num="0">提交</a>
+			</div>
+			<div class="btn_wrap j-btn hidden">
+				<a href="javascript:void(0);" class="btn btn01 j-submit" data-num="1">提交</a>
+			</div>
+			<div class="btn_wrap j-btn hidden">
+				<a href="javascript:void(0);" class="btn btn01 j-submit" data-num="2">提交</a>
+			</div>
+			<div class="btn_wrap j-btn hidden">
+				<a href="javascript:void(0);" class="btn btn01 j-submit" data-num="3">提交</a>
+			</div> -->
+		</div>
+		<div class="j-content wx-timer hidden">
+			<div class="layout_form layout_form02 no_left_padding deposit_form">
+				<div class="form_field_warp">
+					<div class="form_field with_right_label form_field_money">
+						<span class="form_field_label">转账金额</span>
+						<div class="form_field_input">
+							<input type="text" placeholder="请输入存款金额" class="mcpay_need"
+								readonly="">
+						</div>
+					</div>
+					<div class="form_field with_right_label form_field_money">
+						<span class="form_field_label">有效时间</span>
+						<div class="form_field_input">
+							<input type="text" placeholder="00:00" class="mc_times"
+								readonly="">
+						</div>
+					</div>
+				</div>
+				<label class="u_label" style="margin-bottom: 20px; display: block;">
+					<input type="checkbox" id="j-agree"> 我已明白需要转账 <span
+					class="mcpay_need big-size"></span>元,否则无法自动到账
+				</label>
+			</div>
+
+			<div class="btn_wrap">
+				<a href="javascript:void(0);" class="btn btn01"
+					onclick="secPost(false)">提交</a>
+			</div>
+		</div>
+
+		<div class="j-content wx-order hidden">
+			<div class="layout_form layout_form02 no_left_padding deposit_form">
+				<div class="form_field_warp">
+					<div class="form_field with_right_label form_field_money">
+						<span class="form_field_label">收款账户</span>
+						<div class="form_field_input">
+							<input type="text" placeholder="请输入存款金额" id="j-myCardType"
+								readonly="">
+						</div>
+					</div>
+					<div class="form_field with_right_label form_field_money">
+						<span class="form_field_label">银行卡号</span>
+						<div class="form_field_input">
+							<input type="text" placeholder="请输入存款金额" id="j-myCardno"
+								readonly="">
+						</div>
+					</div>
+					<div class="form_field with_right_label form_field_money">
+						<span class="form_field_label">存款姓名</span>
+						<div class="form_field_input">
+							<input type="text" placeholder="请输入存款金额" id="j-myName"
+								readonly="">
+						</div>
+					</div>
+
+					<div class="form_field with_right_label form_field_money">
+						<span class="form_field_label">存款姓名</span>
+						<div class="form_field_input">
+							<input type="text" placeholder="请输入存款金额" id="j-yourName"
+								readonly="">
+						</div>
+					</div>
+					<div class="form_field with_right_label form_field_money">
+						<span class="form_field_label">存款金额</span>
+						<div class="form_field_input">
+							<input type="text" placeholder="请输入存款金额" id="j-yourPrice"
+								readonly="">
+						</div>
+					</div>
+					<div class="form_field with_right_label form_field_money">
+						<span class="form_field_label">存款方式</span>
+						<div class="form_field_input">
+							<input type="text" placeholder="请输入存款金额" id="j-yourType"
+								readonly="">
+						</div>
+					</div>
+					<div class="btn_wrap">
+						<a href="javascript:void(0);" class="btn btn01 j-tech"
+							onclick="showTech()">转账流程</a>
+					</div>
+					<div class="btn_wrap">
+						<a href="javascript:void(0);" class="btn btn01" onclick="hadPay()">我已付款</a>
+					</div>
+				</div>
+			</div>
+			<div class="form_field_warp"></div>
+		</div>
+
+		<div class="j-content wx-tech hidden">
+			<section class="mc-tech-section">
+				<div class="swiper-container">
+					<div class="swiper-wrapper">
+						<div class="swiper-slide">
+							<p>
+								1、点击微信 <span class="red">【钱包】- 【收付款】</span>页面，使用 <span
+									class="red">【转账到银行卡功能】</span>即可进行转账！
+							</p>
+							<img src="/taige/images/userhome/helps/01.jpg">
+						</div>
+						<div class="swiper-slide">
+							<p>
+								2、点击微信 <span class="red">【钱包】- 【收付款】</span>页面，使用 <span
+									class="red">【转账到银行卡功能】</span>即可进行转账！
+							</p>
+							<img src="/taige/images/userhome/helps/02.jpg">
+						</div>
+						<div class="swiper-slide">
+							<p>
+								3、点击微信 <span class="red">【钱包】- 【收付款】</span>页面，使用 <span
+									class="red">【转账到银行卡功能】</span>即可进行转账！
+							</p>
+							<img src="/taige/images/userhome/helps/03.jpg">
+						</div>
+						<div class="swiper-slide">
+							<p>
+								4、请输入我方的 <span class="red">【收款人姓名】</span>和对应的 <span class="red">【银行卡号】</span>，核对无误点击确定
+							</p>
+							<img src="/taige/images/userhome/helps/04.jpg">
+						</div>
+						<div class="swiper-slide">
+							<p>
+								5、输入 <span class="red">【系统指定的金额】</span>进行转账操作，转账成功后，方可自动到账！
+							</p>
+							<img src="/taige/images/userhome/helps/05.jpg">
+						</div>
+					</div>
+				</div>
+			</section>
+			<div class="btn_wrap">
+				<a href="javascript:void(0);" class="btn btn01"
+					onclick="check_order()">已了解，继续存款</a>
+			</div>
+		</div>
+	</div>
+	<aside class="mctips hidden">
+		<div class="mctips_content">
+			<div class="mc_text">
+				1. 如果您已经支付且超过10分钟，请联系在线客服处理该笔订单 <br> 2.
+				如果未支付，请您先支付该笔订单或者选择废弃该订单
+			</div>
+			<div class="mc_btns">
+				<span onclick="secPost(true)">生成新订单</span> <span
+					onclick="check_order()">查看旧订单</span>
+			</div>
+		</div>
+	</aside>
+	<div
+		class="form_tip form_tip_with_link display_flex_h flex_align_center"
+		style="margin: 0.5em;">
+		<div class="form_tip_text flex_1 ">
+			<p class="c-red">温馨提示：</p>
+			<div class="t_psWechat tip_content hidden">
+				<span style="color: red;"></span>1.存款时，请输入您的存款金额和附言（转账的时候点击添加备注填写附言，否则无法自动到账）
+				<br> <span style="color: red;">2.如遇转账异常，请直接联系在线客服处理</span> <br>
+			</div>
+			<div class="t_mcpay tip_content hidden">
+				1.请输入你的 <span style="color: red;">转账姓名和转账金额</span>，点击提交后， <span
+					style="color: red;">获取转账资料</span> <br> <span
+					style="color: red;">2.如遇转账异常，请直接联系在线客服处理</span> <br>
+			</div>
+			<div class="t_unionpay tip_content hidden">
+				1.系统会在金额后 <span style="color: red;">随机增加小数</span>，以提高成功率。到账金额将是您实际支付金额
+				<br> 2.存款过程中如有任何问题，请及时联系24小时在线客服进行咨询 <br> 3. <span
+					style="color: red;">微信秒存时，请转入您的存款金额（转账的时候点击添加备注填写附言，否则无法自动到账）</span>
+				<br> 4.银联扫码时，请使用付款银行的APP进行扫码支付，不可以使用微信扫一扫
+			</div>
+			<div class="t_alipay t_ebank t_qqpay t_jdpay t_wechat tip_content">
+				1.系统会在金额后 <span style="color: red;">随机增加小数</span>，以提高成功率。到账金额将是您实际支付金额
+				<br> 2.存款过程中如有任何问题，请及时联系24小时在线客服进行咨询 <br> 3. <span
+					style="color: red;">微信秒存时，请转入您的存款金额（转账的时候点击添加备注填写附言，否则无法自动到账）</span>
+				<br>
+			</div>
+		</div>
+	</div>
+
+	<style>
+.mctips {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.4);
+	font-size: 16px;
+	line-height: 2;
+}
+
+.mctips_content {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 70%;
+	transform: translate(-50%, -50%);
+	background: #fff;
+	padding: 10px;
+}
+
+.mc_btns {
+	text-align: center;
+}
+
+.mc_btns span {
+	display: inline-block;
+	background: #00baa5;
+	color: #fff;
+	padding: 5px 20px;
+	margin: 10px;
+	width: 50%;
+	cursor: pointer;
+	transition: all 0.3s;
+}
+
+.mc-tech-section {
+	height: 300px;
+	padding: 10px;
+}
+
+.mc-tech-section img {
+	display: block;
+	width: 100%;
+}
+
+.ul_auto_wrap ul li {
+	margin-right: 10px;
+	vertical-align: text-top;
+}
+
+.ul_auto_wrap ul li .rate {
+	display: inline-block;
+	background: red;
+	color: #fff;
+	padding: 0px 12px;
+	border-radius: 6px;
+}
+</style>

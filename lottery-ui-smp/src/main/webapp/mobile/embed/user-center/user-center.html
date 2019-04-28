@@ -1,0 +1,573 @@
+<div id="page_content" class="flex_1" >
+	<div class="user_center_content">
+		<div class="user_info_wrap" ng-controller="authCtrl">
+			<div class="user_info_top">
+				<div class="avata_img">
+					<img src="images/user/user_pic.png" width="139" height="139">
+				</div>
+				<div class="user_info_name">{{username}}</div>
+				<div class="text_center">
+					<div class="user_info_level">
+						<span class="iconfont icon-crown"></span>普通会员
+					</div>
+					<div id="j_checkin_btn" class="user_info_level" ng-click="checkIn()">签到</div>
+				</div>
+
+			</div>
+			<div class="display_flex_h">
+				<div class="flex_1 balance_value text-center">
+					<p>
+						主账户&nbsp;&nbsp;<em id="sessionAcount">{{mianBalance}}</em>
+					</p>
+				</div>
+				<div class="flex_1 balance_value text-center">
+					<p>
+						副账户&nbsp;&nbsp;<em>0.0</em>
+					</p>
+				</div>
+			</div>
+		</div>
+		<div class="user_info_nav sec_box display_flex_h">
+			<div class="flex_1">
+				<a href="#fundManDeposit" class="box_border_box">
+					<span class="link_wrap">
+						<span class="icon icon_card"></span>
+						<span>存款</span>
+					</span>
+				</a>
+			</div>
+			<div class="flex_1">
+				<a href="#fundManWithdraw" class="box_border_box j-withdrawal">
+					<span class="link_wrap">
+						<span class="icon icon_withdraw"></span>
+						<span>取款</span>
+					</span>
+				</a>
+			</div>
+			<div class="flex_1">
+				<a href="#fundManTransfer" class="box_border_box">
+					<span class="link_wrap">
+						<span class="icon icon_transfer"></span>
+						<span>转账</span>
+					</span>
+				</a>
+			</div>
+			<div class="flex_1">
+				<a href="accountHistory.jsp" class="box_border_box"><span
+					class="link_wrap"><span class="icon icon_record"></span><span>记录</span></span></a>
+			</div>
+		</div>
+		<div class="user_info_main">
+			<div class="main_nav_with_arrow ul_auto_wrap" ng-controller="promoCtrl">
+				<ul class="auto_width  j-listBtn" style="width: 789px;">
+					<li data-href="tiyanjin_content" data-num="0">
+						<a href="javascript:void(0);" class="layout_image_with_text"> 
+							<img class="nav_pic" src="images/user/nav-experience.png" width="50" height="50" alt=""> 
+							<span class="img_text">体验金</span>
+						</a> 
+						<span class="arrow_down"></span>
+					</li>
+					<li data-href="user_transfer_content" data-num="1"><a
+						href="javascript:void(0);" class="layout_image_with_text"> <img
+							class="nav_pic" src="images/user/nav-deposit.png" width="50"
+							height="50" alt=""> <span class="img_text">存送优惠</span>
+					</a></li>
+					<li data-href="user_rebate_content" data-num="2"><a
+						href="javascript:void(0);" class="layout_image_with_text"> <img
+							class="nav_pic" src="images/user/nav-xm.png" width="50"
+							height="50" alt=""> <span class="img_text">洗码</span>
+					</a></li>
+					<li data-href="user_rescue_content" data-num="3"><a
+						href="javascript:void(0);" class="layout_image_with_text"> <img
+							class="nav_pic" src="images/user/nav-help.png" width="50"
+							height="50" alt=""> <span class="img_text">救援金</span>
+					</a></li>
+					<li data-href="user_vip_content" data-num="4"><a href="javascript:void(0);"
+						class="layout_image_with_text"> <img class="nav_pic"
+							src="images/user/nav-vip.png" width="50" height="50" alt="">
+							<span class="img_text">自助晋级</span>
+					</a></li>
+					<li data-href="user_birthday_content" data-num="5"><a
+						href="javascript:void(0);" class="layout_image_with_text"> <img
+							class="nav_pic" src="images/user/nav-birthday.png" width="50"
+							height="50" alt=""> <span class="img_text">生日礼金</span>
+					</a></li>
+
+
+
+
+
+
+					<li data-href="user_coupon_content"  data-num="6"><a
+						href="javascript:void(0);" class="layout_image_with_text"> <img
+							class="nav_pic" src="images/user/nav-coupon.png" width="50"
+							height="50" alt=""> <span class="img_text">优惠券</span>
+					</a></li>
+					<li data-href="user_couponhb_content" data-num="7"><a
+						href="javascript:void(0);" class="layout_image_with_text"> <img
+							class="nav_pic" src="images/user/nav-coupon.png" width="50"
+							height="50" alt=""> <span class="img_text">红包优惠券</span>
+					</a></li>
+				</ul>
+			</div>
+			<div class="tiyanjin_content user_center_nav_content bg_white j-tiyanjin_content"  data-num="0">
+				<div class="tiyanjin_step01 user_center_nav_content_step show">
+					<div class="layout_icon_text_button">
+						<div class="text-center">
+							<div class="j-tyj-title">系统繁忙</div>
+
+						</div>
+						<div class="btn_wrap no_padding">
+							<input type="button" class="btn btn01 j-experience btn_disable"
+								value="领取体验金">
+						</div>
+					</div>
+				</div>
+				<div class="tiyanjin_step02 user_center_nav_content_step">
+
+					<div
+						class="layout_icon_text_button display_flex_h flex_align_center">
+						<div class="icon_wrap">
+							<img src="images/icons/icon_send_message.png" width="84"
+								height="45">
+						</div>
+						<div class="flex_1">
+							<p>
+								请使用注册时填写的手机，发送短信“<span class="j-smsCode"></span>”到<span
+									class="j-smsNum"></span>，发送成功<span class="text_red">15</span>秒后，点击下一步。
+							</p>
+						</div>
+					</div>
+					<div class="btn_wrap no_padding">
+						<a href="javascript:void(0);" class="btn btn01 j-reverse-sms">下一步</a>
+					</div>
+				</div>
+				<div class="tiyanjin_step03 user_center_nav_content_step">
+					<div class="layout_icon_text_button02">
+						<img class="layout_icon" src="images/icons/icon_ok02.png"
+							width="57" height="57">
+						<p>成功，已收到您的短信！</p>
+						<div class="btn_wrap no_padding">
+							<a href="javascript:void(0);" class="btn btn01 j-getExperience">领取体验金</a>
+						</div>
+					</div>
+				</div>
+				<div
+					class="layout_form no_padding tiyanjin_step06 user_center_nav_content_step">
+
+					<div class="form_field_warp">
+						<div class="form_field field_char_6">
+							<span class="form_field_label">选择游戏平台</span>
+							<div class="form_field_input">
+								<select class="j-platExperience2">
+									<option value="PT">PT</option>
+									<option value="QT">QT</option>
+									<option value="DT">DT</option>
+									<option value="TTG">TTG</option>
+									<option value="NT">NT</option>
+									<option value="MG">MG</option>
+
+								</select>
+							</div>
+						</div>
+
+					</div>
+					<div class="form_btn_wrap">
+						<a href="javascript:void(0);" class="btn btn01 j-getExperience2">提交</a>
+					</div>
+				</div>
+				<div class="tiyanjin_step07 user_center_nav_content_step">
+					<div class="layout_icon_text_button02">
+						<img class="layout_icon" src="images/icons/icon_ok02.png"
+							width="57" height="57">
+						<p>转入成功</p>
+						<div class="btn_wrap no_padding">
+							<a href="slotGame.jsp?showtype=PT" class="btn btn01">马上游戏</a>
+						</div>
+					</div>
+				</div>
+
+				<div class="tiyanjin_step02 user_center_nav_content_step">
+
+					<div
+						class="layout_icon_text_button display_flex_h flex_align_center">
+						<div class="icon_wrap">
+							<img src="images/icons/icon_send_message.png" width="84"
+								height="45">
+						</div>
+						<div class="flex_1">
+							<p>点击短信验证，系统将向您的注册手机号发送一个验证码</p>
+							<div class="layout_form">
+								<div class=" form_field">
+									<span class="form_field_label">验证码:</span>
+									<div class="form_field_input">
+										<input type="text" id="tyjsmscode" placeholder="请输入验证码"
+											maxlength="6">
+									</div>
+								</div>
+								<div></div>
+							</div>
+							<div class="btn_wrap no_padding">
+								<a href="javascript:void(0);" class="btn btn04 j-requetsms">短信验证</a>
+							</div>
+						</div>
+					</div>
+					<div id="captcha-target"
+						style="margin: 50px auto 30px; width: 320px;"></div>
+					<div class="btn_wrap no_padding">
+						<a href="javascript:void(0);" class="btn btn01 j-sms">下一步</a>
+					</div>
+				</div>
+			</div>
+			<div class="user_transfer_content bg_white user_center_nav_content"  data-num="1">
+				<div
+					class="layout_form no_padding transfer_content_step01 user_center_nav_content_step show">
+
+					<div class="form_field_warp">
+						<div class="form_field form_field_no_label with_right_label">
+							<div class="form_field_input">
+								<input type="text" placeholder="请填写转入金额" class="j-remit"
+									oninput="changeInput()">
+							</div>
+							<div class="right_label">元</div>
+						</div>
+						<div class="form_field form_field_no_label">
+							<div class="form_field_input">
+								<select class="j-platStoragePcreference"
+									id="coupon_transferin_platform">
+									<option value="">选择游戏平台</option>
+								</select>
+							</div>
+						</div>
+						<div class="form_field form_field_no_label">
+							<div class="form_field_input">
+								<select class="j-platStoragePcreference2">
+									<option value="0">选择优惠幅度</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="display_flex_h layout_2_line_label_text">
+						<div class="flex_1">
+							<p class="label_text">可获得红利（7天有效）</p>
+							<p class="item_value text_red">
+								<span class="j-percentMoney"></span> 元
+							</p>
+						</div>
+						<div class="flex_1">
+							<p class="label_text">取款流水要求</p>
+							<p class="item_value text_red">
+								<span class="j-limitMoney"></span> 元
+							</p>
+						</div>
+					</div>
+					<div class="form_btn_wrap">
+						<a href="javascript:void(0);"
+							class="btn btn01 j-getSelfYouHuiObject">确定转入</a>
+					</div>
+					<div
+						class="form_tip form_tip_with_link display_flex_h flex_align_center">
+						<div class="form_tip_text flex_1">
+							<p class="c-red">温馨提示：</p>
+							<span class="c-red">1.每天的00:00-01:00为系统结算时间，暂时无法使用自助存送。</span><br>
+							2.申请存送后台彩金会自动添加到相应平台，您直接进入游戏即可。 <br> 3.老虎机存送优惠，存款10元后方可自主操作。
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="user_rescue_content bg_white user_center_nav_content"  data-num="3">
+				<div
+					class="rescue_content_step01 user_center_nav_content_step show  j-rescue1">
+					<div class="layout_item_with_arrow_link j-losePromoList"
+						data-is="true"></div>
+				</div>
+				<div
+					class="rescue_content_step02 user_center_nav_content_step  j-rescue2">
+					<div class="layout_form no_padding rescue_content_step02">
+						<div class="form_field_warp">
+							<div class="form_field form_field_no_label">
+								<div class="form_field_input">
+									<select class="j-platRescue">
+										<option value="">选择游戏平台</option>
+										<option value="PT">PT</option>
+										<option value="QT">QT</option>
+										<option value="DT">DT</option>
+										<option value="TTG">TTG</option>
+										<option value="NT">NT</option>
+										<option value="MG">MG</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="form_btn_wrap">
+							<a href="javascript:void(0)" class="btn btn01 j-submitRescue">确定转入</a>
+							<a href="javascript:void(0)" class="btn btn03 j-backRescue1">重新选择</a>
+						</div>
+					</div>
+				</div>
+				<div
+					class="form_tip form_tip_with_link display_flex_h flex_align_center">
+					<div class="form_tip_text flex_1">
+						<p class="c-red">温馨提示：</p>
+						1.请您确认“领取”，点击领取救援金转入游戏平台后，将无法更改。 <br>
+						2.救援金有效时间为30天（从派发当天开始计算），规定时间内未领取会自动取消。
+					</div>
+				</div>
+			</div>
+			<div class="user_rebate_content bg_white user_center_nav_content"  data-num="2">
+				<div class="user_rebate_step01 user_center_nav_content_step show">
+					<div class="layout_form no_padding">
+						<div class="form_field_warp">
+							<div class="form_field form_field_no_label">
+								<div class="form_field_input">
+									<select class="j-plat" id="ximaselect">
+										<option value="">选择游戏平台</option>
+										<option value="PT">PT</option>
+										<option value="QT">QT</option>
+										<option value="DT">DT</option>
+										<option value="TTG">TTG</option>
+										<option value="NT">NT</option>
+										<option value="MG">MG</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="form_btn_wrap">
+							<a href="javascript:void(0);" class="btn btn02"
+								id="user_rebate_step01_submit_btn">查询</a>
+						</div>
+					</div>
+				</div>
+				<div class="user_rebate_step02 user_center_nav_content_step mt20">
+					<div class="layout_form no_padding">
+						<p class="total_touzhue" id="xima_start_date"></p>
+						<p class="total_touzhue" id="xima_end_date"></p>
+						<p class="total_touzhue" id="xima_total_touzhue"></p>
+						<p class="total_touzhue" id="xima_rate_p"></p>
+						<p class="total_touzhue" id="xima_coupon_amount"></p>
+
+						<div class="form_btn_wrap">
+							<a href="javascript:void(0)" class="btn btn01"
+								id="xima_confirm_btn">确定洗码</a>
+						</div>
+					</div>
+				</div>
+
+				<div
+					class="form_tip form_tip_with_link display_flex_h flex_align_center">
+					<div class="form_tip_text flex_1">
+						<p class="c-red">温馨提示：</p>
+						1.自助返水不限平台。 <br> 2.自助返水的最低金额为10元。（要是您没达到自助返水的最低金额是不能自助返水的） <br>
+						3.每天的00:00-03:00为系统结算时间,所有平台暂时不能申请自助返水，<em class="c-red">未自助返水将通过系统返水进行结算</em>。
+						<br> 4.自助返水无次数限制，自助返水申请提交后，会在5分钟内通过审核，返水金额会自动添加到您的主账户。
+					</div>
+				</div>
+			</div>
+			<div class="user_vip_content bg_white user_center_nav_content"  data-num="4">
+				<div class="user_vip_step01 user_center_nav_content_step show">
+
+					<div class="ul_auto_wrap mb10">
+						<div class="user_vip_progress_info j-allwidth">
+							<div class="present_box j-bet">
+								<div class="present_box_content">
+									本月投注额<br> <span class="money_text text_red "></span>
+								</div>
+								<div class="present_box_arrow"></div>
+							</div>
+							<div class="progress_info">
+								<div class="progress_info_val j-progress_info_val"></div>
+							</div>
+							<div class="user_vip_level_info j-levelList"></div>
+						</div>
+					</div>
+					<div class="btn_wrap no_padding">
+						<a href="javascript:void(0);"
+							class="btn btn02 btn_disable j-submitVip">检测升级</a>
+					</div>
+					<div class="bottom_info_text">每月仅可自助申请一次哟</div>
+				</div>
+			</div>
+			<div class="user_birthday_content bg_white user_center_nav_content"  data-num="5">
+				<div class="user_birthday_step01 user_center_nav_content_step show">
+
+					<div class="j-birthdayContent hidden">
+						<div class="birthday_now j-birthdaypic hidden">
+							<p>
+								今天是 <span class="text_black j-today"></span>
+							</p>
+							<img src="images/user/birthday_text.png" width="182" height="52"
+								alt="祝您生日快乐">
+						</div>
+						<div class="birthday_now birthday_countdown">
+							<p>
+								距您的生日 <span class="text_black j-birthdayMMDD"></span> 还有
+							</p>
+							<p class="birthday_countdown_text">
+								<span class="birthday_countdown_text_day j-howmanyDay"></span>&nbsp;天
+							</p>
+						</div>
+					</div>
+					<div class="btn_wrap no_padding">
+						<a href="javascript:void(0);" class="btn btn01 j-birthdaySubmit">领取礼金</a>
+					</div>
+					<div
+						class="form_tip form_tip_with_link display_flex_h flex_align_center">
+						<div class="form_tip_text flex_1">
+							<p class="c-red">温馨提示：</p>
+							1.请您先前往个人资料账户设置中完善生日信息，才能享受该优惠。 <br>
+							2.您完善资料后，达到生日礼金的要求，即可自助申请生日礼金。 <br>
+							3.当您成功申请生日礼金后，系统将会将礼金派发至您的副账户。
+
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="user_refer_content bg_white user_center_nav_content">
+				<div class="user_refer_step01 user_center_nav_content_step show">
+					<div class="user_refer_link_wrap">
+						您的专属推荐链接 (点击可复制)<br> <span id="friend-url" class="link_ref">https://www.taige88.com?friendcode=116430</span>
+					</div>
+					<div class="layout_item_with_arrow_link">
+						<div class="item_list" id="user_ref_link_trigger">
+							<a href="javascript:;">
+								<div class="item_list_date">推荐奖金</div>
+								<div id="friend-balance" class="item_list_money text_red">0</div>
+							</a>
+						</div>
+					</div>
+				</div>
+				<div class="user_refer_step02 user_center_nav_content_step">
+					<div class="layout_form no_padding">
+						<div class="form_field_warp">
+							<div class="form_field form_field_no_label">
+								<div class="form_field_input">
+									<select class="" id="m-friend-platform"><option
+											value="PT">PT</option>
+										<option value="TTG">TTG</option>
+										<option value="NT">NT</option>
+										<option value="QT">QT</option>
+										<option value="MG">MG</option>
+										<option value="DT">DT</option></select>
+								</div>
+							</div>
+							<div class="form_field form_field_no_label with_right_label">
+								<div class="form_field_input">
+									<input id="friend-money" type="text" placeholder="请填写转入金额">
+								</div>
+							</div>
+						</div>
+
+						<div class="form_btn_wrap">
+							<a id="friend-submit" href="javascript:;" class="btn btn01">确定转入</a>
+						</div>
+					</div>
+				</div>
+
+				<div
+					class="form_tip form_tip_with_link display_flex_h flex_align_center">
+					<div class="form_tip_text flex_1">
+						<p class="c-red">温馨提示：</p>
+						1.被介绍人需要在介绍人的<span class="c-red">专属链接</span>下进行注册 <br> 2.被介绍人<span
+							class="c-red">当日的负盈利</span>,会有30%在隔日18:00前派发给介绍人. <br>
+						3.如有疑问请及时联系24小时在线客服进行咨询.
+
+					</div>
+				</div>
+			</div>
+			<div class="user_coupon_content bg_white user_center_nav_content"  data-num="6">
+				<div
+					class="layout_form no_padding transfer_content_step01 user_center_nav_content_step show">
+					<div class="form_field_warp">
+						<div class="form_field form_field_no_label">
+							<div class="form_field_input">
+								<select id="j-couponType">
+									<option value="">选择游戏平台</option>
+									<option value="pt">PT</option>
+									<option value="dt">DT</option>
+									<option value="ttg">TTG</option>
+									<option value="nt">NT</option>
+									<option value="mg">MG</option>
+									<option value="qt">QT</option>
+								</select>
+							</div>
+						</div>
+						<div class="form_field form_field_no_label with_right_label">
+							<div class="form_field_input">
+								<input type="text" placeholder="请填写转入金额" id="j-couponRemit">
+							</div>
+							<div class="right_label">元</div>
+						</div>
+						<div class="form_field form_field_no_label with_right_label">
+							<div class="form_field_input">
+								<input type="text" placeholder="优惠代码" id="j-couponCode">
+							</div>
+							<div class="right_label">元</div>
+						</div>
+					</div>
+					<div class="form_btn_wrap">
+						<a href="javascript:void(0);"
+							class="btn btn01 j-submitCouponRemit">确定转入</a>
+					</div>
+					<div
+						class="form_tip form_tip_with_link display_flex_h flex_align_center">
+						<div class="form_tip_text flex_1">
+							<p class="c-red">温馨提示：</p>
+							<span class="c-red">1.不限平台使用。</span><br>
+							2.红利金额会自动添加到您转到的游戏平台里。 <br> 3.优惠券代码会以站内信形式发送给您。
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="user_couponhb_content bg_white user_center_nav_content"  data-num="7">
+				<div class="layout_form no_padding transfer_content_step01 user_center_nav_content_step show">
+					<div class="form_field_warp">
+						<div class="form_field form_field_no_label">
+							<div class="form_field_input">
+								<select id="j-couponTypehb">
+									<option value="">选择游戏平台</option>
+									<option value="pt">PT</option>
+									<option value="dt">DT</option>
+									<option value="ttg">TTG</option>
+									<option value="nt">NT</option>
+									<option value="mg">MG</option>
+									<option value="qt">QT</option>
+								</select>
+							</div>
+						</div>
+						<div class="form_field form_field_no_label with_right_label">
+							<div class="form_field_input">
+								<input type="text" placeholder="红包优惠代码" id="j-couponCodehb">
+							</div>
+							<div class="right_label">元</div>
+						</div>
+					</div>
+					<div class="form_btn_wrap">
+						<a href="javascript:void(0);" class="btn btn01 j-submitCouponhb">确定转入</a>
+					</div>
+					<div
+						class="form_tip form_tip_with_link display_flex_h flex_align_center">
+						<div class="form_tip_text flex_1">
+							<p class="c-red">温馨提示：</p>
+							<span class="c-red">1.不限平台使用。</span><br>
+							2.红利金额会自动添加到您转到的游戏平台里。 <br> 3.红包优惠券代码会以站内信形式发送给您。
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+<style>
+	.display_flex_h {
+	    display: -webkit-box;
+	    display: -webkit-flex;
+	    display: flex;
+	    -webkit-box-orient: horizontal;
+	    flex-direction: row;
+	    height: 43px;
+	}
+
+</style>

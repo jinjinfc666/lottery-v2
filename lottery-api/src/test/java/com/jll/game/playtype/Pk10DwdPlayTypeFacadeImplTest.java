@@ -24,7 +24,7 @@ public class Pk10DwdPlayTypeFacadeImplTest extends ServiceJunitBase{
 	@Resource
 	PlayTypeFacade playTypeFacade;
 	
-	final String facadeName = "dwd|定位胆/qs|前十/fs-ds";
+	final String facadeName = "dwd|定位胆/qs|前十/fs";
 	
 	@Override
 	protected void setUp() throws Exception {
@@ -76,7 +76,7 @@ public class Pk10DwdPlayTypeFacadeImplTest extends ServiceJunitBase{
 	}
 	
 	
-	public void ItestValidBetNum_invalid_betnum_(){
+	public void testValidBetNum_invalid_betnum_(){
 		String betNum = "-1,,,,,,,,,";
 		OrderInfo order = new OrderInfo();
 		
@@ -86,6 +86,14 @@ public class Pk10DwdPlayTypeFacadeImplTest extends ServiceJunitBase{
 		Assert.assertFalse(ret);
 		
 		betNum = " ";		
+		order = new OrderInfo();
+		
+		order.setBetNum(betNum); 
+		
+		ret = playTypeFacade.validBetNum(order);
+		Assert.assertFalse(ret);
+		
+		betNum = ",,,,,,,,,";		
 		order = new OrderInfo();
 		
 		order.setBetNum(betNum); 
@@ -135,7 +143,7 @@ public class Pk10DwdPlayTypeFacadeImplTest extends ServiceJunitBase{
 		Assert.assertFalse(ret);
 	}
 	
-	public void ItestValidBetNum_valid_betnum_(){
+	public void testValidBetNum_valid_betnum_(){
 		String betNum = "01,,,,,,,,,";
 		OrderInfo order = new OrderInfo();
 		
@@ -248,7 +256,7 @@ public class Pk10DwdPlayTypeFacadeImplTest extends ServiceJunitBase{
 		return winningNumBuffer.toString();
 	}
 	
-	public void testCalPrize(){
+	public void ItestCalPrize(){
 		String winningNum = "08,05,01,02,03,04,06,07,09,10";
 		String betNum = "01030607080910,02040506070910,01030405060810,,,,,,,";
 		Map<String, Object> ret;

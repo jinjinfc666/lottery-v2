@@ -8,6 +8,6 @@ import com.jll.entity.MemberPlReport;
 
 public interface MReportDao {
 	//会员盈亏报表
-	public PageBean queryAll(String startTime,String endTime,String userName,Integer pageIndex,Integer pageSize);
+	public PageBean queryAll(String startTime,String endTime,String userName,Integer pageIndex,Integer pageSize, Integer userType);
 }
 

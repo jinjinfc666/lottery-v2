@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.eclipse.jetty.util.StringUtil;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -211,26 +212,23 @@ public class CqsscServiceImpl extends DefaultLottoTypeServiceImpl
 		while(currCounter < maxCounter) {
 			for(String url : urls) {
 				url = url.replace("{issue_id}", issueNum.replace("-", ""));
-				
+				//url = "https://shishicai.cjcp.com.cn/chongqing/kaijiang/";
+				logger.debug("cqssc data url :::::" + url +"  issueNum :::" + issueNum);
 				try {
 					result = HttpRemoteStub.synGet(new URI(url), null, null);
 					
 					if(result != null && result.size() > 0) {
 						if(result.get("responseBody") != null) {
 							response = (String)result.get("responseBody");
+							logger.debug("cqssc response :::::" + response + "   if contains ::: " + issueNum.replace("-", "") +"   :: " + (response.contains(issueNum.replace("-", ""))));
 							if(response.contains(issueNum.replace("-", ""))) {
 								if(response.contains("preDrawCode")) {//网易
 									winningNum = parse168(response, "20"+ issueNum.replace("-", ""), "10002");
 								}
 								
-								/*if(response.contains("code")) {//360
-									winningNum = parse360API(response);
-								}else if(response.contains("winningNumber")) {//网易
-									winningNum = parse163API(response);
-								}else if(response.contains("result")) {
-									//winningNum = parse168(response, "20"+ issueNum.replace("-", ""));
-									winningNum = parse168(response, "20"+ issueNum.replace("-", ""), "10002");
-								}*/
+								if(response.contains("<div class=\"hq_bg\">")) {
+									winningNum = parsePage(response, "20"+ issueNum.replace("-", ""));
+								}
 							}
 						}
 					}
@@ -267,6 +265,57 @@ public class CqsscServiceImpl extends DefaultLottoTypeServiceImpl
 				e.printStackTrace();
 			}
 		}
+	}
+
+	private String parsePage(String response, String issueNum) {
+		String issueNumStr = "重庆时时彩第{isueNum}期开奖结果";
+		issueNumStr = issueNumStr.replace("{isueNum}", issueNum);
+		if(!response.contains(issueNumStr)) {
+			return null;
+		}
+		
+		StringBuffer buffer = new StringBuffer();
+		/*
+		 * 
+		 * <div class="dqkj_kjhm">
+                    <div class="kjhm">开奖号码：</div>
+                    <div class="hq_bg">0</div><div class="hq_bg">5</div><div class="hq_bg">0</div><div class="hq_bg">6</div><div class="hq_bg">3</div>
+                </div>
+		 */
+		
+		int startIndx = -1;
+		int endIndx = -1;
+		startIndx = response.indexOf("<div class=\"hq_bg\">", 0);
+		if(startIndx >= 0) {
+			endIndx = response.indexOf("</div>", startIndx);
+			buffer.append(response.substring(startIndx + 19, endIndx)).append(",");
+		}
+		
+		if(endIndx >= 0) {
+			startIndx = response.indexOf("<div class=\"hq_bg\">", endIndx);
+			endIndx = response.indexOf("</div>", startIndx);
+			buffer.append(response.substring(startIndx + 19, endIndx)).append(",");
+		}
+		
+		if(endIndx >= 0) {
+			startIndx = response.indexOf("<div class=\"hq_bg\">", endIndx);
+			endIndx = response.indexOf("</div>", startIndx);
+			buffer.append(response.substring(startIndx + 19, endIndx)).append(",");
+		}
+		
+		if(endIndx >= 0) {
+			startIndx = response.indexOf("<div class=\"hq_bg\">", endIndx);
+			endIndx = response.indexOf("</div>", startIndx);
+			buffer.append(response.substring(startIndx + 19, endIndx)).append(",");
+		}
+		
+		if(endIndx >= 0) {
+			startIndx = response.indexOf("<div class=\"hq_bg\">", endIndx);
+			endIndx = response.indexOf("</div>", startIndx);
+			buffer.append(response.substring(startIndx + 19, endIndx));
+		}
+		
+		return buffer.toString();
 	}
 
 	private String parse163API(String response) {
@@ -395,6 +444,7 @@ public class CqsscServiceImpl extends DefaultLottoTypeServiceImpl
 					winningIssueNum = Integer.toString((Integer)winningIssueNumObj);
 				}
 				Integer lottoType_ = (Integer)winningNumMap.get("lotCode");
+				logger.debug(String.format("lottoType  %s,  winningNum  %s", lottoType_, winningIssueNum));
 				if(issueNum.equals(winningIssueNum)
 						&& lottoType.equals(String.valueOf(lottoType_))) {
 					return winningNumber;

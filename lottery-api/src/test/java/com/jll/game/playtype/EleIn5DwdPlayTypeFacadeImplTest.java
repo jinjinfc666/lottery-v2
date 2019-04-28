@@ -27,7 +27,7 @@ public class EleIn5DwdPlayTypeFacadeImplTest extends ServiceJunitBase{
 	@Resource
 	PlayTypeFacade playTypeFacade;
 	
-	final String facadeName = "dwd|定位胆/fs-ds";
+	final String facadeName = "dwd|定位胆/fs";
 	
 	@Override
 	protected void setUp() throws Exception {
@@ -83,8 +83,8 @@ public class EleIn5DwdPlayTypeFacadeImplTest extends ServiceJunitBase{
 		
 	}
 	
-	public void ItestValidBetNum_invalid_betnum_(){
-		String betNum = "00";
+	public void testValidBetNum_invalid_betnum_(){
+		String betNum = "-1,,";
 		OrderInfo order = new OrderInfo();
 		
 		order.setBetNum(betNum);
@@ -92,82 +92,81 @@ public class EleIn5DwdPlayTypeFacadeImplTest extends ServiceJunitBase{
 		boolean ret = playTypeFacade.validBetNum(order);
 		Assert.assertFalse(ret);
 		
-		betNum = "12";		
+		betNum = " ";		
 		order = new OrderInfo();
 		
-		order.setBetNum(betNum);
+		order.setBetNum(betNum); 
 		
 		ret = playTypeFacade.validBetNum(order);
 		Assert.assertFalse(ret);
 		
-		betNum = "111";		
+		betNum = "12,,";		
 		order = new OrderInfo();
 		
-		order.setBetNum(betNum);
+		order.setBetNum(betNum); 
 		
 		ret = playTypeFacade.validBetNum(order);
 		Assert.assertFalse(ret);
 		
-		betNum = "1,1";
+		betNum = ",,";
 		order = new OrderInfo();
 		
-		order.setBetNum(betNum);
+		order.setBetNum(betNum); 
 		
 		ret = playTypeFacade.validBetNum(order);
 		Assert.assertFalse(ret);
 		
-		betNum = "1";
+		betNum = "01,";
 		order = new OrderInfo();
 		
-		order.setBetNum(betNum);
+		order.setBetNum(betNum); 
 		
 		ret = playTypeFacade.validBetNum(order);
 		Assert.assertFalse(ret);
 		
-		betNum = "";
+		betNum = "01,,,";
 		order = new OrderInfo();
 		
-		order.setBetNum(betNum);
+		order.setBetNum(betNum); 
 		
 		ret = playTypeFacade.validBetNum(order);
 		Assert.assertFalse(ret);
 		
-		betNum = " ";
+		
+		betNum = "0101,,";
 		order = new OrderInfo();
 		
-		order.setBetNum(betNum);
-		
-		ret = playTypeFacade.validBetNum(order);
-		Assert.assertFalse(ret);
-		
-		betNum = "010102";
-		order = new OrderInfo();
-		
-		order.setBetNum(betNum);
+		order.setBetNum(betNum); 
 		
 		ret = playTypeFacade.validBetNum(order);
 		Assert.assertFalse(ret);
 		
 	}
 	
-	public void ItestValidBetNum_valid_betnum_(){
-		String betNum = "0";
-		for(int i = 1; i < 12; i++) {
-			if(i < 10) {
-				betNum += Integer.toString(i);				
-			}else {
-				betNum = Integer.toString(i);			
-			}
-			OrderInfo order = new OrderInfo();
-			
-			order.setBetNum(betNum);
-			
-			boolean ret = playTypeFacade.validBetNum(order);
-			Assert.assertTrue(ret);
-			
-			betNum = "0";
-		}
+	public void testValidBetNum_valid_betnum_(){
+		String betNum = "01,,";
+		OrderInfo order = new OrderInfo();
 		
+		order.setBetNum(betNum);
+		
+		boolean ret = playTypeFacade.validBetNum(order);
+		Assert.assertTrue(ret);
+		
+		betNum = "01,01,01";		
+		order = new OrderInfo();
+		
+		order.setBetNum(betNum); 
+		
+		ret = playTypeFacade.validBetNum(order);
+		Assert.assertTrue(ret);
+		
+		betNum = ",01,";		
+		order = new OrderInfo();
+		
+		order.setBetNum(betNum); 
+		
+		ret = playTypeFacade.validBetNum(order);
+		Assert.assertTrue(ret);
 	}
 	
 
@@ -222,7 +221,7 @@ public class EleIn5DwdPlayTypeFacadeImplTest extends ServiceJunitBase{
 	}
 	
 	
-	public void testPreProcessNumber_1101020304050607080910_1101020304050607080910(){
+	public void ItestPreProcessNumber_1101020304050607080910_1101020304050607080910(){
 		String betNum = "1101020304050607080910,1101020304050607080910,";
 		
 		Map<String, Object> params = new HashMap<>();

@@ -265,7 +265,7 @@ public class UserInfoServiceImpl implements UserInfoService
 			return ret;
 		}
 
-		List<String> list=sysAuthorityService.queryGetByUserId(dbInfo.getId());
+		/*List<String> list=sysAuthorityService.queryGetByUserId(dbInfo.getId());
 		if(!SecurityUtils.checkViewPermissionIsOK(list)){
 			//真实姓名只显示第一个字，电话号码只显示后面三位，电子邮件只显示头三个字母以及邮箱地址，微信和qq都只显示后面三位字母
 			if(!StringUtils.isEmpty(dbInfo.getRealName())) {
@@ -286,7 +286,7 @@ public class UserInfoServiceImpl implements UserInfoService
 			if(!StringUtils.isEmpty(dbInfo.getQq())) {
 				dbInfo.setQq(dbInfo.getQq().substring(0, 5)+StringUtils.MORE_ASTERISK);
 			}
-		}
+		}*/
 		dbInfo.setLoginPwd(StringUtils.MORE_ASTERISK);
 		dbInfo.setFundPwd(StringUtils.MORE_ASTERISK);
 		ret.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
@@ -392,7 +392,6 @@ public class UserInfoServiceImpl implements UserInfoService
 			ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_MORE_UPDATE_PHONE_NUM.getErrorMes());
 			return ret;
 		}else if((!isAdmin 
-						&& !StringUtils.isEmpty(userInfo.getPhoneNum())
 						&& !userInfo.getPhoneNum().equals(dbInfo.getPhoneNum())
 						&& (dbInfo.getIsValidPhone().intValue() 
 								== Constants.PhoneValidState.UNVERIFIED.getCode()))
@@ -459,7 +458,9 @@ public class UserInfoServiceImpl implements UserInfoService
 				&& user.getUserType().intValue() != 0
 				&& user.getUserType().intValue() != 1
 				&& user.getUserType().intValue() != 2
-				&& user.getUserType().intValue() != 3) {
+				&& user.getUserType().intValue() != 3
+				&& user.getUserType().intValue() != 5
+				&& user.getUserType().intValue() != 6) {
 			return Message.Error.ERROR_USER_INVALID_USER_TYPE.getCode();
 		}
 		
@@ -521,10 +522,14 @@ public class UserInfoServiceImpl implements UserInfoService
 		if(user.getUserType()!=null) {
 			if(user.getUserType().intValue()!=Constants.UserType.SYS_ADMIN.getCode()) {
 				String roleName="";
-				if(user.getUserType()==Constants.UserType.PLAYER.getCode()||user.getUserType()==Constants.UserType.DEMO_PLAYER.getCode()) {
+				if(user.getUserType()==Constants.UserType.PLAYER.getCode()
+						||user.getUserType()==Constants.UserType.DEMO_PLAYER.getCode()
+						|| user.getUserType()==Constants.UserType.SM_PLAYER.getCode()) {
 					roleName=Constants.Permission.ROLE_USER.getCode();
 				}else if(user.getUserType()==Constants.UserType.AGENCY.getCode()) {
 					roleName=Constants.Permission.ROLE_AGENT.getCode();
+				}else if(user.getUserType()==Constants.UserType.SM_AGENCY.getCode()) {
+					roleName=Constants.Permission.ROLE_AGENT_SM.getCode();
 				}
 				SysRole sysRole=sysRoleService.queryByRoleName(roleName);
 				if(sysRole==null) {
@@ -1274,12 +1279,32 @@ public class UserInfoServiceImpl implements UserInfoService
 	@Override
 	public Map<String, Object> processUserAmountTransfer(String fromUser, String toUser, double amount) {
 		Map<String, Object> ret = new HashMap<String, Object>();
-		UserInfo fromUserInfo = getUserByUserName(fromUser);
-		UserInfo toUserInfo = getUserByUserName(toUser);
+		UserInfo fromUserInfo = null;
+		UserInfo toUserInfo = null;
 		String orderNum = Utils.gen16DigitsSeq(getSeq());
 		
+		if(StringUtils.isBlank(toUser)) {
+			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_ERROR_PARAMS.getCode());
+			ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_ERROR_PARAMS.getErrorMes());
+			return ret;
+		}
+		
+		toUserInfo = getUserByUserName(toUser);
+		if(toUserInfo == null) {
+			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_ERROR_PARAMS.getCode());
+			ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_ERROR_PARAMS.getErrorMes());
+			return ret;
+		}
+		
+		if(StringUtils.isBlank(fromUser)) {
+			fromUserInfo = querySuperior(toUserInfo);
+		}else {
+			fromUserInfo = getUserByUserName(fromUser);
+		}
+		
 		if(null == fromUserInfo
-				|| null == toUserInfo
 				|| fromUserInfo.equals(toUserInfo)){
 			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
 			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_ERROR_PARAMS.getCode());
@@ -2191,5 +2216,30 @@ public class UserInfoServiceImpl implements UserInfoService
 		}
 		
 		return superior;
+	}
+
+	@Override
+	public Map<String, Object> queryAllAgentSM(Map<String, Object> map) {
+		UserInfo userInfo = getCurLoginInfo();
+		Map<String,Object> userInfoList = null;
+		if(userInfo.getUserType() == UserType.SYS_ADMIN.getCode()) {
+			String userName = (String) map.get("userName");
+			String startTime = (String) map.get("startTime");
+			String endTime = (String) map.get("endTime");
+			Integer pageIndex = (Integer) map.get("pageIndex");
+			Integer pageSize = (Integer) map.get("pageSize");
+			Integer searchType = (Integer)map.get("searchType");
+			userInfoList = userDao.queryAllAgentSMByAdmin(searchType, userName,startTime,endTime,pageIndex,pageSize);
+		}else if(userInfo.getUserType() == UserType.SM_AGENCY.getCode()) {
+			String userName = (String) map.get("userName");
+			String startTime = (String) map.get("startTime");
+			String endTime = (String) map.get("endTime");
+			Integer pageIndex = (Integer) map.get("pageIndex");
+			Integer pageSize = (Integer) map.get("pageSize");
+			userInfoList = userDao.queryAllAgentSMByAgency(userInfo.getId(), userName,startTime,endTime,pageIndex,pageSize);
+		}
+		
+		return userInfoList;
+		
 	}
 }

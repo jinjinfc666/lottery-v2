@@ -307,7 +307,7 @@ public class OrderServiceImpl implements OrderService
 			totalAmount = totalAmount.add(betAmount);
 		}
 		
-		return bal.compareTo(totalAmount) == 1 ?String.valueOf(Message.status.SUCCESS.getCode()):String.valueOf(Message.Error.ERROR_GAME_BAL_INSUFFICIENT.getCode());
+		return (bal.compareTo(totalAmount) == 1 || bal.compareTo(totalAmount) == 0)?String.valueOf(Message.status.SUCCESS.getCode()):String.valueOf(Message.Error.ERROR_GAME_BAL_INSUFFICIENT.getCode());
 	}
 	
 	private Issue verifyIssueCache(Integer issueId,String lotteryType) {

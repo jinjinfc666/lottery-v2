@@ -1,0 +1,43 @@
+<style>
+.u_c_w_tab .u_inputs {
+    width: 400.00px;
+    margin-left: auto;
+    margin-right: auto;
+}
+</style>
+<div class="usershow fl">
+	<div class="usercontrol j-tab">
+		<div class="u_c_nav cfx" ng-controller="withdrawCtrl">
+			<!-- <span data-target="u_ck" class="j-nav_item u_c_n_item" data-num="0">存款</span>
+			<span data-target="u_zz" class="j-nav_item u_c_n_item " data-num="1">转账</span> 
+			<span data-target="u_tk" class="j-nav_item u_c_n_item j-withdraw  active" data-num="2">提款</span> -->
+			
+			<a data-target="u_ck" class="j-nav_item u_c_n_item" data-num="0" ui-sref="userCenter.fundManDeposit">存款</a>
+			<a data-target="u_zz" class="j-nav_item u_c_n_item " data-num="1" ui-sref="userCenter.fundManTransfer">转账</a> 
+			<a data-target="u_tk" class="j-nav_item u_c_n_item j-withdraw  active" data-num="2" ui-sref="userCenter.fundManWithdraw">提款</a>
+		</div>
+		<div class="u_c_window" >		
+			<div data-id="u_tk" class="u_c_w_content j-nav_tab" style="display: block" data-num="2">
+				<div class="u_c_w_tab j-nav_tab active" data-id="zz_zzh">
+					<div class="u_inputs">
+						<label class="u_label">提款金额</label> 
+						<input name="amount" class="u_input" id="j-amount" placeholder="请输入金额,不低于100元" ng-model="money">
+					</div>
+					<div class="u_inputs">
+						<input type="hidden" id="acount_to_main" readonly="" value="0.0">
+						<label class="u_label">取款至</label> 
+						<select name="cardId" class="u_select" id="j-selectBank">
+							<option>选择取款方式</option>
+							<option value="{{v.bankId}}" ng-repeat="v in bankList">{{v.bankName}}({{v.acctNum}})</option>
+						</select>
+					</div>
+					<div class="u_inputs">
+						<label class="u_label">支付密码</label> 
+						<input name="payPassword" type="password" class="u_input" id="payPassword" placeholder="请输入密码" ng-model="drawPwd">
+					</div>
+					<button class="u_btn j-withdraw_btn" ng-click="withdrawSubmit()">立即提交</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

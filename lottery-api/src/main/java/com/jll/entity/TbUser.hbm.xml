@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generated 2018-8-14 16:52:58 by Hibernate Tools 5.2.10.Final --><!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="true" default-access="property" default-cascade="none" default-lazy="true">
+    <class catalog="lottery" dynamic-insert="false" dynamic-update="false" mutable="true" name="com.jll.entity.TbUser" optimistic-lock="version" polymorphism="implicit" select-before-update="false" table="tbuser">
+        <id name="id" type="java.lang.Integer">
+            <column name="id"/>
+            <generator class="identity"/>
+        </id>
+        <property generated="never" lazy="false" name="userName" optimistic-lock="true" type="string" unique="false">
+            <column length="30" name="username">
+            </column>
+        </property>
+        
+        <property generated="never" lazy="false" name="usermoney" optimistic-lock="true" type="java.lang.Double" unique="false">
+            <column length="256" name="usermoney">
+                <comment>֧������</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="icemoney" optimistic-lock="true" type="java.lang.Double" unique="false">
+            <column name="icemoney">
+                <comment>�û�״̬:0,����;1,����;2,����</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="creditmoney" optimistic-lock="true" type="java.lang.Double" unique="false">
+            <column name="creditmoney">
+                <comment>��½����</comment>
+            </column>
+        </property>
+        
+        <property generated="never" lazy="false" name="activitymoney" optimistic-lock="true" type="java.lang.Double" unique="false">
+            <column name="activitymoney">
+                <comment>������ Ҳ���Ǵ���</comment>
+            </column>
+        </property>
+        
+        <property generated="never" lazy="false" name="regfrom" optimistic-lock="true" type="string" unique="false">
+            <column name="regfrom">
+                <comment>����</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="isdaili" optimistic-lock="true" type="string" unique="false">
+            <column name="isdaili" precision="8">
+                <comment>ƽ̨��������ߴ�����¼��������ҵĵ�</comment>
+            </column>
+        </property>
+        
+        <property generated="never" lazy="false" name="islock" optimistic-lock="true" type="string" unique="false">
+            <column length="19" name="islock"/>
+        </property>
+        
+        <property generated="never" lazy="false" name="ip" optimistic-lock="true" type="string" unique="false">
+            <column name="ip">
+                <comment>������ Ҳ���Ǵ���</comment>
+            </column>
+        </property>
+        
+       
+    </class>
+</hibernate-mapping>

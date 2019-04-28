@@ -32,7 +32,7 @@ public class SignupRecControllerTest extends ControllerJunitBase {
 	 * 
 	 * @throws Exception
 	 */
-	public void testSgnupRecRecord_UI() throws Exception {
+	public void ItestSgnupRecRecord_UI() throws Exception {
 		String userName = "test001";
 		String pwd = "test001";
 		String clientId = "lottery-client";
@@ -87,7 +87,7 @@ public class SignupRecControllerTest extends ControllerJunitBase {
 	 * 
 	 * @throws Exception
 	 */
-	public void testSgnupRecRecord_admin_with_user() throws Exception {
+	public void ItestSgnupRecRecord_admin_with_user() throws Exception {
 		String userName = "test001";
 		String pwd = "test001";
 		String clientId = "lottery-client";
@@ -143,7 +143,7 @@ public class SignupRecControllerTest extends ControllerJunitBase {
 	 * 
 	 * @throws Exception
 	 */
-	public void testSgnupRecRecord_admin_without_user() throws Exception {
+	public void ItestSgnupRecRecord_admin_without_user() throws Exception {
 		String userName = "test001";
 		String pwd = "test001";
 		String clientId = "lottery-client";
@@ -192,33 +192,82 @@ public class SignupRecControllerTest extends ControllerJunitBase {
 		//Thread.sleep(20000);
 	}
 	
-	
-	public void logout(String token) throws Exception {
+	/**
+	 * 测试签到查询接口
+	 * 
+	 * @throws Exception
+	 */
+	public void ItestSgnupRecNowMonthRecord() throws Exception {
+		String userName = "test001";
+		String pwd = "test001";
+		String clientId = "lottery-client";
+		String token = null;
 		ObjectMapper mapper = new ObjectMapper();
-		try {
-			WebRequest request = new GetMethodWebRequest("http://localhost:8080/security/logout");
-			WebConversation wc = new WebConversation();
+		
+		
+		WebRequest request = new GetMethodWebRequest("http://localhost:8080/signup/sgnupRecNowMonthRecord");
+		
+		
+		WebConversation wc = new WebConversation();
 
-			request.setHeaderField("Authorization", "bearer " + token);
+		token = queryToken(userName, pwd, clientId);
+		request.setHeaderField("Authorization", "bearer " + token);
 
-			WebResponse response = wc.sendRequest(request);
+		WebResponse response = wc.sendRequest(request); 
 
-			int status = response.getResponseCode();
+		int status = response.getResponseCode();
 
-			Assert.assertEquals(HttpServletResponse.SC_OK, status);
-			String result = response.getText();
+		Assert.assertEquals(HttpServletResponse.SC_OK, status);
+		String result = response.getText();
 
-			Map<String, Object> retItems = null;
+		Map<String, Object> retItems = null;
 
-			retItems = mapper.readValue(result, HashMap.class);
+		retItems = mapper.readValue(result, HashMap.class);
 
-			Assert.assertNotNull(retItems);
+		Assert.assertNotNull(retItems);
 
-			Assert.assertEquals(Message.status.SUCCESS.getCode(), retItems.get(Message.KEY_STATUS));
+		Assert.assertEquals(Message.status.SUCCESS.getCode(), retItems.get(Message.KEY_STATUS));
 
-			//Thread.sleep(10000);
-		} catch (Exception ex) {
-			throw ex;
-		}
+		//Thread.sleep(20000);
+	}
+	
+	
+	/**
+	 * 测试签到查询接口
+	 * 
+	 * @throws Exception
+	 */
+	public void testSgnupRecSave() throws Exception {
+		String userName = "test001";
+		String pwd = "test001";
+		String clientId = "lottery-client";
+		String token = null;
+		ObjectMapper mapper = new ObjectMapper();
+		
+		
+		WebRequest request = new PostMethodWebRequest("http://localhost:8080/signup/sgnupRecSave");
+		
+		
+		WebConversation wc = new WebConversation();
+
+		token = queryToken(userName, pwd, clientId);
+		request.setHeaderField("Authorization", "bearer " + token);
+
+		WebResponse response = wc.sendRequest(request); 
+
+		int status = response.getResponseCode();
+
+		Assert.assertEquals(HttpServletResponse.SC_OK, status);
+		String result = response.getText();
+
+		Map<String, Object> retItems = null;
+
+		retItems = mapper.readValue(result, HashMap.class);
+
+		Assert.assertNotNull(retItems);
+
+		Assert.assertEquals(Message.status.SUCCESS.getCode(), retItems.get(Message.KEY_STATUS));
+
+		//Thread.sleep(20000);
 	}
 }

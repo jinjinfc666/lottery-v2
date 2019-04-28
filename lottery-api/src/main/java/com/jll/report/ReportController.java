@@ -217,6 +217,42 @@ public class ReportController {
 		}
 		return ret;
 	}
+	
+	/**
+	 *彩票交易
+	 */
+	@RequestMapping(value={"/bettingRecBrief"}, method={RequestMethod.GET}, produces={"application/json"})
+	public Map<String, Object> queryBettingRecordBrief(@RequestParam(name = "lotteryType", required = false) String lotteryType,//彩种 String
+			  @RequestParam(name = "userName", required = false) String userName,
+			  @RequestParam(name = "pageIndex", required = true) Integer pageIndex,//当前请求页
+			  @RequestParam(name = "pageSize", required = true) Integer pageSize,
+			  HttpServletRequest request) {
+		Map<String, Object> ret = new HashMap<>();
+		
+		if(pageSize == null || pageSize.intValue() == 0) {
+			pageSize=Constants.Pagination.SUM_NUMBER.getCode();
+		}
+		
+		ret.put("pageSize", pageSize);
+		ret.put("pageIndex", pageIndex);
+		ret.put("lotteryType", lotteryType);
+		ret.put("userName", userName);
+		logger.debug(ret+"------------------------------queryLoyTst--------------------------------------");
+		try {
+			PageBean list = loyTstService.queryBettingRecBrief(ret);
+			logger.debug(list+"------------------------------queryLoyTst--------------------------------------");
+			ret.clear();
+			ret.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
+			ret.put("data", list);
+		}catch(Exception e){
+			ret.clear();
+			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_OTHERS.getCode());
+			ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_OTHERS.getErrorMes());
+		}
+		return ret;
+	}
+	
 	//前端投注记录查询
 	@RequestMapping(value={"/betRecord"}, method={RequestMethod.GET}, produces={"application/json"})
 	public Map<String, Object> querybetRecord(@RequestParam(name = "lotteryType", required = false) String lotteryType,//彩种 String
@@ -559,6 +595,7 @@ public class ReportController {
 			  @RequestParam(name = "startTime", required = true) String startTime,//时间 String
 			  @RequestParam(name = "endTime", required = true) String endTime,//时间 String
 			  @RequestParam(name = "pageIndex", required = true) Integer pageIndex,//当前请求页
+			  @RequestParam(name = "userType", required = false) Integer userType,
 			  HttpServletRequest request) {
 		Map<String, Object> ret = new HashMap<>();
 		if(StringUtils.isBlank(startTime)||StringUtils.isBlank(endTime)) {
@@ -579,6 +616,7 @@ public class ReportController {
 		ret.put("userName", userName);
 		ret.put("startTime", startTime);
 		ret.put("endTime", endTime);
+		ret.put("userType", userType);
 		logger.debug(ret+"------------------------------queryMReport--------------------------------------");
 		try {
 			PageBean list = mReportService.queryAll(ret);
@@ -678,6 +716,7 @@ public class ReportController {
 		}
 		return ret;
 	}
+	
 	//查找下级
 	@RequestMapping(value={"/MReportNextTeam"}, method={RequestMethod.GET}, produces={"application/json"})
 	public Map<String, Object> queryMReportNextTeam(@RequestParam(name = "userName", required = true) String userName,
@@ -697,14 +736,7 @@ public class ReportController {
 			ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_ERROR_PARAMS.getErrorMes());
 	    	return ret;
 		}
-//		UserInfo userinfo=new UserInfo();
-//		userinfo.setUserName(userName);
-//		if(!userInfoService.isUserExisting(userinfo)) {
-//			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
-//			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_ERROR_PARAMS.getCode());
-//			ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_ERROR_PARAMS.getErrorMes());
-//	    	return ret;
-//		}
+		
 		ret.put("userName", userName);
 		ret.put("startTime", startTime);
 		ret.put("endTime", endTime);
@@ -712,8 +744,6 @@ public class ReportController {
 		try {
 			Map<String,Object> list = tReportService.queryNextTeamAll(ret);
 			logger.debug(list+"------------------------------queryMReportTeam--------------------------------------");
-//			ret.clear();
-//			ret.put("data", list);
 			return list;
 		}catch(Exception e){
 			ret.clear();
@@ -723,6 +753,43 @@ public class ReportController {
 			return ret;
 		}
 	}
+	
+	@RequestMapping(value={"/MReportNextTeamSM"}, method={RequestMethod.GET}, produces={"application/json"})
+	public Map<String, Object> queryMReportNextTeamSm(@RequestParam(name = "userName", required = true) String userName,
+			  @RequestParam(name = "startTime", required = true) String startTime,//时间 String
+			  @RequestParam(name = "endTime", required = true) String endTime,//时间 String
+			  HttpServletRequest request) {
+		Map<String, Object> ret = new HashMap<>();
+		if(StringUtils.isBlank(startTime)||StringUtils.isBlank(endTime)||StringUtils.isBlank(userName)) {
+			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_ERROR_PARAMS.getCode());
+			ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_ERROR_PARAMS.getErrorMes());
+	    	return ret;
+		}
+		if(!DateUtil.isValidYmdDate(startTime)||!DateUtil.isValidYmdDate(endTime)) {
+			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_ERROR_PARAMS.getCode());
+			ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_ERROR_PARAMS.getErrorMes());
+	    	return ret;
+		}
+		
+		ret.put("userName", userName);
+		ret.put("startTime", startTime);
+		ret.put("endTime", endTime);
+		logger.debug(ret+"------------------------------queryMReportTeam--------------------------------------");
+		try {
+			Map<String,Object> list = tReportService.queryNextTeamAllSM(ret);
+			logger.debug(list+"------------------------------queryMReportTeam--------------------------------------");
+			return list;
+		}catch(Exception e){
+			ret.clear();
+			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_OTHERS.getCode());
+			ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_OTHERS.getErrorMes());
+			return ret;
+		}
+	}
+	
 	/**
 	 *团队盈亏报表(按彩种查询)
 	 */

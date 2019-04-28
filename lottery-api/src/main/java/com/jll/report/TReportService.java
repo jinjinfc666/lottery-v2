@@ -16,4 +16,6 @@ public interface TReportService {
 	public TeamPlReport queryProfitByUser(Integer userId, Date createTime, Integer userType);
 	
 	public void saveOrUpdateProfit(TeamPlReport profit);
+	
+	public Map<String, Object> queryNextTeamAllSM(Map<String, Object> ret);
 }

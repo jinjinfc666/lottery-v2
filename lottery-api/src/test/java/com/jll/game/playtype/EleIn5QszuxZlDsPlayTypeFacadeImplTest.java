@@ -40,7 +40,7 @@ public class EleIn5QszuxZlDsPlayTypeFacadeImplTest extends ServiceJunitBase{
 		//super.tearDown();
 	}
 	
-	public void testIsMatchWinningNum_winning(){
+	public void ItestIsMatchWinningNum_winning(){
 		String betNum = "01 02 03";
 		Issue issue = new Issue();
 		issue.setRetNum("01,02,03,09,06");
@@ -64,7 +64,7 @@ public class EleIn5QszuxZlDsPlayTypeFacadeImplTest extends ServiceJunitBase{
 		
 	}
 	
-	public void testPreProcessNumber(){
+	public void ItestPreProcessNumber(){
 		Map<String, Object> params = new HashMap<>();
 		//Date startTime = new Date();
 		String betNum = "01 02 03";
@@ -129,7 +129,7 @@ public class EleIn5QszuxZlDsPlayTypeFacadeImplTest extends ServiceJunitBase{
 		
 	}
 	
-	public void testParseBetNumber(){
+	public void ItestParseBetNumber(){
 		String betNum = "01 02 03";
 		Date startDate = new Date();
 		List<Map<String, String>> ret = playTypeFacade.parseBetNumber(betNum);
@@ -157,7 +157,7 @@ public class EleIn5QszuxZlDsPlayTypeFacadeImplTest extends ServiceJunitBase{
 		Assert.assertTrue(ret.size() == 1452);		
 	}
 	
-	public void testObtainSampleBetNumber(){
+	public void ItestObtainSampleBetNumber(){
 		int counter = 0;
 		int maxCounter = 1000;
 		String betNum = null;
@@ -192,6 +192,16 @@ public class EleIn5QszuxZlDsPlayTypeFacadeImplTest extends ServiceJunitBase{
 			counter++;
 		}
 	}
+	
+	
+	public void testQuerySingleBettingPrizeRange(){
+		
+		Map<String, Object> ret = playTypeFacade.querySingleBettingPrizeRange(990F);
+				
+		
+		Assert.assertNotNull(ret);
+	}
+	
 	
 	private String obtainWinningNum(String betNum) {
 		StringBuffer winningNumBuffer = new StringBuffer();

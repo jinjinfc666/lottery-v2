@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generated 2018-8-14 16:52:58 by Hibernate Tools 5.2.10.Final --><!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="true" default-access="property" default-cascade="none" default-lazy="true">
+    <class catalog="lottery" dynamic-insert="false" dynamic-update="false" mutable="true" name="com.jll.entity.OldUserCard" optimistic-lock="version" polymorphism="implicit" select-before-update="false" table="old_user_card">
+        <id name="id" type="java.lang.Integer">
+            <column name="id"/>
+            <generator class="identity"/>
+        </id>
+        <property generated="never" lazy="false" name="userName" optimistic-lock="true" type="string" unique="false">
+            <column length="30" name="user_name">
+            </column>
+        </property>
+        
+        <property generated="never" lazy="false" name="realName" optimistic-lock="true" type="string" unique="false">
+            <column name="real_name">
+                <comment>����</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="bankAcc" optimistic-lock="true" type="string" unique="false">
+            <column name="bank_acc" precision="8">
+                <comment>ƽ̨��������ߴ�����¼��������ҵĵ�</comment>
+            </column>
+        </property>        
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,189 @@
+.icon_user_file {
+	background-image: url("../images/proxy/icons/icon_user_file.png");
+	width: 29px;
+	height: 29px;
+}
+.icon_website {
+	background-image: url("../images/proxy/icons/icon_website.png");
+	width: 29px;
+	height: 29px;
+}
+.icon_email {
+	background-image: url("../images/proxy/icons/icon_email.png");
+	width: 29px;
+	height: 29px;
+}
+.icon_mobile {
+	background-image: url("../images/proxy/icons/icon_mobile.png");
+	width: 29px;
+	height: 29px;
+}
+.icon_qq {
+	background-image: url("../images/proxy/icons/icon_qq.png");
+	width: 29px;
+	height: 29px;
+}
+.icon_wechat {
+	background-image: url("../images/proxy/icons/icon_wechat.png");
+	width: 29px;
+	height: 29px;
+}
+.proxy_info_wrap {
+	background: #fff;
+}
+.login_register_btn_wrap {
+	position: absolute;
+	top: 44px;
+	left: 0;
+	width: 100%;
+}
+.user_center_content .user_info_wrap .link_wrap.btn_link {
+	top: 45px;
+}
+.proxy_center_content {
+	padding-bottom: 30px;
+}
+.proxy_center_content .user_info_wrap {
+	margin-bottom: 10px;
+}
+.proxy_info_main {
+	margin-bottom: 10px;
+	/* padding-bottom: 15px; */
+}
+.proxy_info_main .grid_3_col {
+	/* margin-bottom: 20px; */
+}
+.proxy_info_main .form_tip {
+	margin-bottom: 0;
+}
+
+.joinNav{
+	margin-top: 10px;
+	border-top: 1px #e6e6e6 solid;
+	background-color: #fff;
+	padding: 25px 10px 0px;
+	transition-duration: .4s;
+}
+
+.joinNav li{
+	width: 33.33%;
+    float: left;
+    text-align: center;
+    font-size: 16px;
+    margin-bottom: 25px;
+}
+
+.joinNav li i{
+    display: inline-block;
+    width: 100px;
+    height: 70px;
+    background: url(../images/itgo/join/icon1.png) no-repeat center;
+    background-size: contain;
+    margin-bottom: 5px;
+}
+
+.joinNav li:nth-child(2) i{
+	background-image: url(../images/itgo/join/icon2.png);
+}
+.joinNav li:nth-child(3) i{
+	background-image: url(../images/itgo/join/icon3.png);
+}
+.joinNav li:nth-child(4) i{
+	background-image: url(../images/itgo/join/icon4.png);
+}
+.joinNav li:nth-child(5) i{
+	background-image: url(../images/itgo/join/icon5.png);
+}
+
+.joinNav::after{
+	content: '';
+	clear: both;
+	display: block;
+}
+
+.includeFlotter{
+	display: none;
+}
+
+.banner_image img:nth-child(2){
+	display: none;
+}
+
+.subContent .banner_image img:nth-child(1){
+	display: none;
+}
+.subContent .banner_image img:nth-child(2){
+	display: block;
+}
+
+.subContent .joinNav{
+	margin-top: 0;
+	background-color: #eee;
+	padding: 10px 0;
+}
+.subContent .joinNav li{
+	width: 20%;
+	font-size: 14px;
+	color: #6e6e6e;
+	margin-bottom: 0;
+}
+
+.subContent .joinNav li i{
+    width: 50px;
+    height: 50.2px;
+    background: url(../images/itgo/join/icon11.png) no-repeat 0 top;
+    background-size: 100% auto;
+    margin-bottom: 0;
+}
+
+.subContent .joinNav li.active{
+	color: #e21c1c;
+}
+
+.subContent .joinNav li.active i{
+	background-position: 0 bottom;
+}
+
+.subContent .joinNav li:nth-child(2) i{
+	background-image: url(../images/itgo/join/icon12.png);
+}
+.subContent .joinNav li:nth-child(3) i{
+	background-image: url(../images/itgo/join/icon13.png);
+}
+.subContent .joinNav li:nth-child(4) i{
+	background-image: url(../images/itgo/join/icon14.png);
+}
+.subContent .joinNav li:nth-child(5) i{
+	background-image: url(../images/itgo/join/icon15.png);
+}
+
+.subContent .includeFlotter{
+	display: block;
+}
+
+.joinBanner2{
+	display: none;
+}
+
+.subContent  .joinBanner2{
+	background-color: #fff;
+	display: block;
+}
+
+.subContent  .joinBanner2 img{
+	width: 100%;
+}
+
+.tab-bd{
+	background-color: #fff;
+}
+
+.subContent .joinNav{
+	height: 0;
+	padding: 0;
+	overflow: hidden;
+	border: 0;
+}
+.subContent .banner_image{
+	display: none;
+}

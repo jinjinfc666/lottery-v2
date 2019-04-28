@@ -70,8 +70,12 @@ public class SysInitLoader {
 		initBankCodeList();
 		initWithdrawalCfg();
 		initDemoUserCfg();
+		initPanKou();
 	}
 	
+	
+
+
 	//加载签到活动
 	private void initSignInDay() {
 		String codeTypeName = Constants.SysCodeTypes.SIGN_IN_DAY.getCode();
@@ -406,5 +410,27 @@ public class SysInitLoader {
 			
 			cacheServ.setSysCode(codeTypeName, sysCodes);
 		}	
+	}
+	
+	
+	private void initPanKou() {
+		String codeTypeName = Constants.SysCodeTypes.SM_PANKOU.getCode();
+		Map<String, SysCode> lottoTypes = cacheServ.getSysCode(codeTypeName);
+		List<SysCode> sysCodes = null;
+		
+		if(lottoTypes == null || lottoTypes.size() == 0) {
+			sysCodes = sysCodeServ.queryAllSmallType(codeTypeName);
+			List<SysCode> sysCodeTypes = sysCodeServ.queryByCodeNameBigType(codeTypeName);
+			
+			if(sysCodes == null || sysCodes.size() == 0
+					|| sysCodeTypes == null
+					|| sysCodeTypes.size() == 0) {
+				return ;
+			}
+			
+			sysCodes.add(sysCodeTypes.get(0));
+			
+			cacheServ.setSysCode(codeTypeName, sysCodes);
+		}
 	}
 }

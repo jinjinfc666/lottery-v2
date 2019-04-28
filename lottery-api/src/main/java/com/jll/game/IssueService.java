@@ -82,4 +82,7 @@ public interface IssueService
 	Map<String,Object> queryUnsettlement(String lotteryType,String userName);
 	//针对单笔订单取消延迟派奖
 	Map<String,Object> updateOrderDelayPayoutFlag(Integer id);
+
+	Map<String, Object> queryRecentBetBrief(String lotteryType, String startTime, String endTime,
+			Integer pageIndex, Integer pageSize);
 }

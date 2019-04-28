@@ -57,4 +57,15 @@ public class TReportServiceImpl implements TReportService {
 	public void saveOrUpdateProfit(TeamPlReport profit) {
 		tReportDao.saveOrUpdateProfit(profit);
 	}
+	
+	@Override
+	public Map<String, Object> queryNextTeamAllSM(Map<String, Object> ret) {
+		String startTime=(String) ret.get("startTime");
+		String endTime=(String) ret.get("endTime");
+		String userName=(String) ret.get("userName");
+		
+		UserInfo userInfo = userServ.getUserByUserName(userName);
+		
+		return tReportDao.queryNextTeamAllSm(startTime, endTime, userInfo);
+	}
 }

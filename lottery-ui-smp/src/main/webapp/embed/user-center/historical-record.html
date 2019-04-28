@@ -1,0 +1,210 @@
+<div class="usershow fl" >
+	<div class="usercontrol j-tab">
+		<div class="u_c_nav cfx" id="j-searchType" ng-controller="hisRecCtrl" ng-init="initHisRecTab()">
+			<span data-target="u_r_zzyh" data-type="couponRecords" data-num="4" class="j-nav_item u_c_n_item active">投注记录</span>
+			<span data-target="u_r_fzh" data-type="deputyRecords" data-num="5" class="j-nav_item u_c_n_item">帐变记录</span>
+			<span data-target="u_r_zzfs" data-type="ximaDetail" data-num="6" class="j-nav_item u_c_n_item">盈利情况</span>
+		</div>
+        <div class="u_c_window j-tablecontent" style="overflow-x: scroll;">
+        	<div data-id="u_r_zzyh" data-num="4" class="u_c_w_content j-nav_tab active" ng-controller="hisRecCtrl" ng-init="initHisRecQuery()">
+            	<div class="u_c_w_tab active">
+                	<div class="filter">
+                		彩种
+                		<select name="lotteryType" id="lotteryType" ng-model="queryRecParams.lotteryType">
+                			<option ng-repeat="v in lotterys" value="{{v.codeVal}}">{{v.remark}}</option>
+                		</select>
+                		订单状态
+                		<select name="orderStatus" id="orderStatus" ng-model="queryRecParams.state">
+                			<option ng-repeat="(key, val) in orderStatus" value="{{key}}">{{val}}</option>
+                		</select>
+                		
+                		开始时间
+                    	<input class="u_input Wdate j-startDate" 
+                    			id="4_startTime"
+                    			name="startDate" readonly="" 
+                    			onfocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" 
+                    			my97mark="false">
+                    			
+                    	结束时间
+                    	<input class="u_input Wdate j-endDate" 
+                    			id="4_endTime"
+                    			name="endDate" 
+                    			readonly="" 
+                    			onfocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" 
+                    			my97mark="false">
+                    			
+                    	<button class="u_btn j-btnSearch" ng-click="queryBettingRec(1)">查 询</button>
+                	 </div>
+            	<div class="tblwrapper" style="background: none;">
+                                    <div id="DataTables_Table_4_wrapper" class="dataTables_wrapper no-footer">
+	                                    <table class="table u_table no-footer dataTable" id="DataTables_Table_4" role="grid" style="width: 1139px;">
+		                                    <thead>
+			                                    <tr role="row">
+				                                    <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 120px;">彩种</th>
+				                                    <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 120px;">期号</th>
+				                                    <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 176px;">订单号</th>
+				                                    <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 176px;">投注号码</th>
+				                                    <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 90px;">投注金额</th>
+				                                    <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 90px;">中奖金额</th>
+				                                    <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 90px;">订单状态</th>
+				                                    <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 176px;">投注时间</th>
+			                                    </tr>
+		                                    </thead>
+		                                    <tbody>
+			                                    <tr class="odd" ng-repeat="v in bettingRecs.content">
+			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[3].remark}}</td>
+			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[2].issueNum}}</td>
+			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[0].orderNum}}</td>
+			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{getBettingNum(v[2].lotteryType, v[4].classification, v[0].betNum)}}</td>
+			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[0].betAmount}}</td>
+			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[0].winAmount}}</td>
+			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{getOrderStatus(v[0].state)}}</td>
+			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[0].createTime| date:'yyyy-MM-dd HH:mm:ss'}}</td>
+			                                    </tr>
+		                                    </tbody>
+                                    	</table>
+                                    <div class="dataTables_paginate paging_simple_numbers" id="DataTables_Table_4_paginate">
+                                    <a class="paginate_button previous disabled" aria-controls="DataTables_Table_4" data-dt-idx="{{bettingRecs.pageIndex == 1?1:bettingRecs.pageIndex - 1}}" tabindex="0" id="DataTables_Table_4_previous" ng-if="!isPre">上页</a>
+                                    <a class="paginate_button previous" aria-controls="DataTables_Table_4" tabindex="0" id="DataTables_Table_4_previous" ng-if="isPre" ng-click="queryBettingRec(bettingRecs.pageIndex == 1?1:bettingRecs.pageIndex - 1)">上页</a>
+                                    <span></span>
+                                    <a class="paginate_button next disabled" aria-controls="DataTables_Table_4" data-dt-idx="{{bettingRecs.pageIndex == bettingRecs.totalPages ?bettingRecs.pageIndex:bettingRecs.pageIndex + 1}}" tabindex="0" id="DataTables_Table_4_next" ng-if="!isNext">下页</a>
+                                    <a class="paginate_button next " aria-controls="DataTables_Table_4" tabindex="0" id="DataTables_Table_4_next" ng-if="isNext" ng-click="queryBettingRec(bettingRecs.pageIndex == bettingRecs.totalPages?bettingRecs.pageIndex:bettingRecs.pageIndex + 1)">下页</a>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+			</div>
+                        <div data-id="u_r_fzh" data-num="5" class="u_c_w_content j-nav_tab" ng-controller="hisRecCtrl" ng-init="initAccRecQuery()">
+                            <div class="u_c_w_tab active">
+                                <div class="filter">
+                                	帐变类型
+			                		<select name="operationType" id="operationType" ng-model="queryAccParams.operationType">
+			                			<option ng-repeat="v in operationTypes" value="{{v.codeVal}}">{{v.remark}}</option>
+			                		</select>
+			                		
+			                		开始时间
+			                    	<input class="u_input Wdate j-startDate" 
+			                    			id="5_startTime"
+			                    			name="startDate" 
+			                    			readonly="" 
+			                    			onfocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" 
+			                    			my97mark="false">
+			                    			
+			                    	结束时间
+			                    	<input class="u_input Wdate j-endDate" 
+			                    			id="5_endTime"
+			                    			name="endDate" 
+			                    			readonly="" 
+			                    			onfocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" 
+			                    			my97mark="false">
+			                    			
+			                    	<button class="u_btn j-btnSearch" ng-click="queryAccRec(1)">查 询</button>
+                    	
+                                </div>
+                                <div class="tblwrapper" style="background: none;">
+                                    <table class="table u_table no-footer" id="DataTables_Table_5" role="grid" style="">
+	                                    <thead>
+		                                    <tr role="row">
+			                                    <th class="" rowspan="1" colspan="1" style="width: 100px;">变动金额</th>
+			                                    <th class="" rowspan="1" colspan="1" style="width: 100px;">变动前金额</th>
+			                                    <th class="" rowspan="1" colspan="1" style="width: 100px;">变动后金额</th>
+			                                    <th class="" rowspan="1" colspan="1" style="width: 100px;">资金类型</th>
+			                                    <th class="" rowspan="1" colspan="1" style="width: 120px;">流水类型</th>
+			                                    <th class="" rowspan="1" colspan="1" style="width: 120px;">订单ID</th>
+			                                    <th class="" rowspan="1" colspan="1" style="width: 120px;">时间</th>
+		                                    </tr>
+	                                    </thead>
+	                                    <tbody>
+			                            	<tr class="odd" ng-repeat="v in accRecs.content">
+			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[0].amount}}</td>
+			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[0].preAmount}}</td>
+			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[0].postAmount}}</td>
+			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{translateDataItemType(v[0].dataItemType)}} </td>
+			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[2].remark}}</td>
+			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[0].orderId}}</td>
+			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[0].createTime| date:'yyyy-MM-dd HH:mm:ss'}}</td>
+			                           		</tr>
+		                               </tbody>
+                                    </table>
+                                    <div class="dataTables_paginate paging_simple_numbers" id="DataTables_Table_4_paginate">
+                                    <a class="paginate_button previous disabled" aria-controls="DataTables_Table_4" data-dt-idx="{{accRecs.pageIndex == 1?1:accRecs.pageIndex - 1}}" tabindex="0" id="DataTables_Table_4_previous" ng-if="!isPre">上页</a>
+                                    <a class="paginate_button previous" aria-controls="DataTables_Table_4" tabindex="0" id="DataTables_Table_4_previous" ng-if="isPre" ng-click="queryAccRec(accRecs.pageIndex == 1?1:accRecs.pageIndex - 1)">上页</a>
+                                    <span></span>
+                                    <a class="paginate_button next disabled" aria-controls="DataTables_Table_4" data-dt-idx="{{accRecs.pageIndex == accRecs.totalPages ?accRecs.pageIndex:accRecs.pageIndex + 1}}" tabindex="0" id="DataTables_Table_4_next" ng-if="!isNext">下页</a>
+                                    <a class="paginate_button next " aria-controls="DataTables_Table_4" tabindex="0" id="DataTables_Table_4_next" ng-if="isNext" ng-click="queryAccRec(accRecs.pageIndex == accRecs.totalPages?accRecs.pageIndex:accRecs.pageIndex + 1)">下页</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div data-id="u_r_zzfs" data-num="6" class="u_c_w_content j-nav_tab" ng-controller="hisRecCtrl" ng-init="initProfitRecQuery()">
+                            <div class="u_c_w_tab active">
+                                <div class="filter">
+                                    开始时间
+			                    	<input class="u_input Wdate j-startDate" 
+			                    			id="6_startTime"
+			                    			name="startDate" 
+			                    			readonly="" 
+			                    			onfocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" 
+			                    			my97mark="false">
+			                    			
+			                    	结束时间
+			                    	<input class="u_input Wdate j-endDate" 
+			                    			id="6_endTime"
+			                    			name="endDate" 
+			                    			readonly="" 
+			                    			onfocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" 
+			                    			my97mark="false">
+			                    			
+			                    	<button class="u_btn j-btnSearch" ng-click="queryProfitRec(1)">查 询</button>
+                                </div>
+                                <div class="tblwrapper" style="background: none;">
+                                    <table class="table u_table no-footer" id="DataTables_Table_5" role="grid" style="">
+	                                    <thead>
+		                                    <tr role="row">
+		                                    	<th class="" rowspan="1" colspan="1" style="width: 0px;">用户</th>
+			                                    <th class="" rowspan="1" colspan="1" style="width: 0px;">消费</th>
+			                                    <th class="" rowspan="1" colspan="1" style="width: 0px;">返奖</th>
+			                                    <th class="" rowspan="1" colspan="1" style="width: 0px;">返点</th>
+			                                    <th class="" rowspan="1" colspan="1" style="width: 0px;">利润</th>
+			                                    <th class="" rowspan="1" colspan="1" style="width: 0px;">日期</th>
+		                                    </tr>
+	                                    </thead>
+	                                    <tbody>
+			                            	<tr class="odd" ng-repeat="v in profitRecs.content">
+			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[0]}}</td>
+			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[6]}}</td>
+			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[8]}}</td>
+			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[9]}}</td>
+			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[10]}}</td>
+			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[12]}}</td>
+			                           		</tr>
+		                               </tbody>
+                                    </table>
+                                    
+                                    <div class="dataTables_paginate paging_simple_numbers" id="DataTables_Table_4_paginate">
+                                    <a class="paginate_button previous disabled" aria-controls="DataTables_Table_4" data-dt-idx="{{profitRecs.pageIndex == 1?1:profitRecs.pageIndex - 1}}" tabindex="0" id="DataTables_Table_4_previous" ng-if="!isPre">上页</a>
+                                    <a class="paginate_button previous" aria-controls="DataTables_Table_4" tabindex="0" id="DataTables_Table_4_previous" ng-if="isPre" ng-click="queryProfitRec(profitRecs.pageIndex == 1?1:profitRecs.pageIndex - 1)">上页</a>
+                                    <span></span>
+                                    <a class="paginate_button next disabled" aria-controls="DataTables_Table_4" data-dt-idx="{{profitRecs.pageIndex == profitRecs.totalPages ?profitRecs.pageIndex:profitRecs.pageIndex + 1}}" tabindex="0" id="DataTables_Table_4_next" ng-if="!isNext">下页</a>
+                                    <a class="paginate_button next " aria-controls="DataTables_Table_4" tabindex="0" id="DataTables_Table_4_next" ng-if="isNext" ng-click="queryProfitRec(profitRecs.pageIndex == profitRecs.totalPages?profitRecs.pageIndex:profitRecs.pageIndex + 1)">下页</a>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+        </div>
+	</div>
+</div>
+<style type="text/css">
+
+.filter {
+	    margin: 0 0 0 30;
+	    text-align: left;
+}
+
+.filter select,input{
+	width: 150px;
+    height: 38px;
+    padding: 10px;
+}
+</style>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:redis="http://www.springframework.org/schema/redis"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+   		http://www.springframework.org/schema/redis
+   		http://www.springframework.org/schema/redis/spring-redis-1.0.xsd">
+	
+	<bean id="redisClusterConfiguration" class="org.springframework.data.redis.connection.RedisClusterConfiguration">
+		<property name="maxRedirects" value="${redis.maxRedirects}"></property>
+		<property name="clusterNodes">
+		<set>
+		<bean class="org.springframework.data.redis.connection.RedisClusterNode">
+			<constructor-arg name="host" value="${redis.cluster.host1}"></constructor-arg>
+			<constructor-arg name="port" value="${redis.cluster.port1}"></constructor-arg>
+		</bean>
+		<bean class="org.springframework.data.redis.connection.RedisClusterNode">
+			<constructor-arg name="host" value="${redis.cluster.host1}"></constructor-arg>
+			<constructor-arg name="port" value="${redis.cluster.port2}"></constructor-arg>
+		</bean>
+		<bean class="org.springframework.data.redis.connection.RedisClusterNode">
+			<constructor-arg name="host" value="${redis.cluster.host2}"></constructor-arg>
+			<constructor-arg name="port" value="${redis.cluster.port3}"></constructor-arg>
+		</bean>
+		<bean class="org.springframework.data.redis.connection.RedisClusterNode">
+			<constructor-arg name="host" value="${redis.cluster.host2}"></constructor-arg>
+			<constructor-arg name="port" value="${redis.cluster.port4}"></constructor-arg>
+		</bean>
+		<bean class="org.springframework.data.redis.connection.RedisClusterNode">
+			<constructor-arg name="host" value="${redis.cluster.host3}"></constructor-arg>
+			<constructor-arg name="port" value="${redis.cluster.port5}"></constructor-arg>
+		</bean>
+		<bean class="org.springframework.data.redis.connection.RedisClusterNode">
+			<constructor-arg name="host" value="${redis.cluster.host3}"></constructor-arg>
+			<constructor-arg name="port" value="${redis.cluster.port6}"></constructor-arg>
+		</bean>
+		</set>
+		</property>
+	</bean>
+
+	<bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">
+		<property name="maxIdle" value="${redis.maxIdle}" />
+		<property name="maxTotal" value="${redis.maxTotal}" />
+		<property name="testOnBorrow" value="${redis.testOnBorrow}" />
+	</bean>
+
+	<!-- bean id="redisConnectionFactory"
+		class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
+		p:host-name="${redis.host}" p:port="${redis.port}"
+		p:password="${redis.pass}" p:pool-config-ref="poolConfig" /> -->
+
+	
+	<bean id="redisConnectionFactory"
+		class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+		<constructor-arg ref="redisClusterConfiguration" />
+		<constructor-arg ref="poolConfig" />
+		<property name="password" value="${redis.pass}" />
+	</bean>
+		
+	<bean id="redisTemplate"
+		class="org.springframework.data.redis.core.StringRedisTemplate">
+		<property name="connectionFactory" ref="redisConnectionFactory" />
+	</bean>
+
+	<bean id="winningNumberListenerImpl" class="com.jll.game.mesqueue.WinningNumberListenerImpl"/>
+	
+	<bean id="payoutListenerImpl" class="com.jll.game.mesqueue.PayoutListenerImpl"/>
+	
+	<bean id="jdkSerializer" class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer" />
+	
+	<bean id="stringRedisSerializer" class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+	
+	<redis:listener-container>
+        <redis:listener ref="winningNumberListenerImpl" serializer="stringRedisSerializer" method="handleMessage" topic="winning_number"/>
+        <redis:listener ref="payoutListenerImpl" serializer="stringRedisSerializer" method="handleMessage" topic="pay_out"/>
+    </redis:listener-container>
+</beans>

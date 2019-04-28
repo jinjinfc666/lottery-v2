@@ -121,13 +121,15 @@ public class AuthFilter extends ClientCredentialsTokenEndpointFilter {
 			if(Constants.KEY_CLIENT_ID_ADMIN.equals(clientId)) {
 				Integer userType = user.getUserType();
 				if(userType == null 
-						|| userType.intValue() != Constants.UserType.SYS_ADMIN.getCode()) {
+						|| (userType.intValue() != Constants.UserType.SYS_ADMIN.getCode()
+						&& userType.intValue() != Constants.UserType.SM_AGENCY.getCode())) {
 					throw new CusAuthenticationException(Message.Error.ERROR_COMMON_NO_PERMISSION.getCode());  
 				}
 			}else if(Constants.KEY_CLIENT_ID_CLIENT.equals(clientId)) {
 				Integer userType = user.getUserType();
 				if(userType == null 
-						|| userType.intValue() == Constants.UserType.SYS_ADMIN.getCode()) {
+						|| userType.intValue() == Constants.UserType.SYS_ADMIN.getCode()
+						|| userType.intValue() == Constants.UserType.SM_AGENCY.getCode()) {
 					throw new CusAuthenticationException(Message.Error.ERROR_COMMON_NO_PERMISSION.getCode());  
 				}
 			}else {

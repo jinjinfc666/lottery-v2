@@ -18,5 +18,9 @@ public interface TReportDao {
 	public TeamPlReport queryProfitByUser(Integer userId, 
 			Date createTime, 
 			Integer userType);
+	
+	public Map<String, Object> queryNextTeamAllSm(String startTime, 
+			String endTime, 
+			UserInfo userInfo);
 }
 

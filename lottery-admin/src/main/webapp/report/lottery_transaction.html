@@ -28,6 +28,9 @@
         <script language="javascript" src="../js/layer/layer.min.js"></script>
         <script type="text/javascript">
             $(document).ready(function () {
+            	 document.getElementById('startTime').value=getNowFormatDate();
+                 document.getElementById('endTime').value=getNowFormatDate();
+                 
             	var parentUrl = window.location.href;
 
     			var orderId = parseParam(parentUrl, 'orderId');

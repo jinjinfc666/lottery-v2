@@ -534,7 +534,9 @@ public class Constants {
 		AGENCY(1, "代理"),
 		SYS_ADMIN(2, "系统用户"),
 		GENERAL_AGENCY(3, "总代"),
-		DEMO_PLAYER(4, "试玩玩家");;
+		DEMO_PLAYER(4, "试玩玩家"),
+		SM_PLAYER(5, "双面玩家"),
+		SM_AGENCY(6, "双面代理");
 		
 		private int code;
 		
@@ -616,12 +618,16 @@ public class Constants {
 		LOTTERY_CONFIG_FFC("lottery_config_ffc"),//,"分分彩属性"
 		LOTTERY_CONFIG_MMC("lottery_config_mmc"),//"秒秒彩属性"
 		LOTTERY_CONFIG_BJPK10("lottery_config_bjpk10"),//"PK10属性"
+		LOTTERY_CONFIG_XYFT("lottery_config_xyft"),//"PK10属性"
+		LOTTERY_CONFIG_XJSSC("lottery_config_xjssc"),//"PK10属性"
 		SIGN_IN_DAY("sign_in_day"),
 		CT_PLAY_TYPE_CLASSICFICATION("ct_play_type_classicfication"),//"玩法类型"
 		WITHDRAWAL_CFG("withdrawal_cfg"),
 		DEMO_USER_CFG("demo_user_cfg"),//试玩用户属性
 		PAY_TYPE_CLASS("pay_type_class"),//充值方式
-		SYS_RUNTIME_ARGUMENT("sys_runtime_argument");
+		SYS_RUNTIME_ARGUMENT("sys_runtime_argument"),
+		SM_PANKOU("sm_pankou");
+		
 		private String value;
 		
 		private SysCodeTypes(String value) {
@@ -2234,7 +2240,9 @@ public class Constants {
 		SFC("sfc"),
 		FFC("ffc"),
 		MMC("mmc"),
-		BJPK10("bjpk10");
+		BJPK10("bjpk10"),
+		XYFT("xyft"),
+		XJSSC("xjssc");
 		
 		private String code;
 		
@@ -2479,6 +2487,7 @@ public class Constants {
 	public static enum Permission {
 		ROLE_USER("ROLE_USER"),
 		ROLE_AGENT("ROLE_AGENT"),
+		ROLE_AGENT_SM("ROLE_AGENT_SM"),
 		ROLE_ADMIN("ROLE_ADMIN"),
 		ROLE_MANAGER("ROLE_MANAGER"),
 		ROLE_CUSTOMER_SERVICE("ROLE_CUSTOMER_SERVICE"),

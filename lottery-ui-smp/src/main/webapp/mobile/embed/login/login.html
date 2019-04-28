@@ -1,0 +1,76 @@
+<div id="page_content" class="flex_1" ng-controller="authCtrl">
+	<div class="page_content_wrap login_content_wrap">
+		<img class="logo" src="images/logo.png?v=2" width="197" alt="taige">
+
+		<div class="layout_form layout_form04">
+			<div class="l_tab">
+				<a href="javascript:void(0)" class="login_tab active" data-num="0">立即登录</a>
+				<a href="javascript:void(0)" class="login_tab " data-num="1">免费注册</a>
+			</div>
+			<div class="form_field_warp"  data-num="0">
+				<div class="form_field form_field_no_label">
+					<div class="form_field_input">
+						<input type="text" placeholder="用户名" class="j-username" ng-model="credentials.username">
+					</div>
+				</div>
+				<div class="form_field form_field_no_label form_field_password with_right_label">
+					<div class="form_field_input">
+						<input type="password" placeholder="密&nbsp;&nbsp;&nbsp;码" class="j-password" maxlength="16" ng-model="credentials.password">
+					</div>
+					<span class="right_label"></span>
+				</div>
+				<div class="form_field form_field_no_label with_right_label form_field_cap_code">
+					<div class="form_field_input">
+						<input type="text" placeholder="验证码" class="j-imageCode" maxlength="4"  ng-model="credentials.captchaCode">
+					</div>
+					<span class="right_label">
+						<img width="100" height="33" class="j-loginImgCode" id="loginCodeImg" ng-src='{{captchaCode}}' ng-click="obtainCaptchaCode()">
+					</span>
+				</div>
+				
+				<div class="operate-links">
+					<a href="#forgotpwd" class="forget_pwd">忘记密码？</a>
+				</div>
+				<div class="btn_wrap">
+					<div class="display_flex_h">
+						<a href="javascript:void(0);" class="flex_1 btn btn01 j-login"  ng-click="login(credentials)">登录</a>
+					</div>
+				</div>
+			</div>
+			
+			<div class="form_field_warp" style="display: none" data-num="1">
+				<div class="form_field form_field_no_label">
+					<div class="form_field_input"><input type="text" placeholder="用户名(6-10位数字和字母)" id="register-account"></div>
+				</div>
+				<div class="form_field form_field_no_label form_field_password with_right_label">
+					<div class="form_field_input">
+						<input type="password" placeholder="密&nbsp;&nbsp;&nbsp;码(6-16位数字和字母）" id="register-password" maxlength="16">
+					</div>
+					<span class="right_label"></span>
+				</div>
+				<div class="form_field form_field_no_label">
+					<div class="form_field_input">
+						<input type="text" placeholder="请正确填写QQ号(方便找回密码)" id="register-qq" maxlength="20">
+					</div>
+				</div>
+				<div class="form_field form_field_no_label">
+					<div class="form_field_input">
+						<input type="text" placeholder="请正确填写手机号(取款唯一凭证)" id="register-phone" maxlength="11">
+					</div>
+				</div>
+				<div class="form_field form_field_no_label with_right_label form_field_cap_code">
+					<div class="form_field_input"><input type="text" placeholder="请输入验证码" id="register-code" maxlength="4"></div>
+					<span class="right_label"><img width="100" height="33" id="register-img" src="/mobi/mobileValidateCode.php?0.8482122836798058"></span>
+				</div>
+				<div class="btn_wrap">
+						<div class="display_flex_h">
+							<a href="javascript:void(0);" class="flex_1 btn btn01" id="register-submit">立即开户</a>
+						</div>
+					</div>
+			</div>
+					
+			
+		</div>
+
+	</div>
+</div>

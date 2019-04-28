@@ -72,4 +72,14 @@ public interface UserInfoDao
 	 */
 	PageBean<UserInfo> querySiteMsgRec(String sql, 
 			PageBean<UserInfo> page);
+	
+	Map<String, Object> queryAllAgentSMByAdmin(Integer searchType, String userName, String startTime, String endTime, Integer pageIndex,
+			Integer pageSize);
+	
+	Map<String, Object> queryAllAgentSMByAgency(Integer id, 
+			String userName, 
+			String startTime, 
+			String endTime,
+			Integer pageIndex, 
+			Integer pageSize);
 }

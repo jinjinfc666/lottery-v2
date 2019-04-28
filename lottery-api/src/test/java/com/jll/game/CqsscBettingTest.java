@@ -6374,7 +6374,7 @@ public class CqsscBettingTest extends ControllerJunitBase{
 	}
 	
 	
-	public void testBetting_cqssc_permission() throws Exception{
+	public void ItestBetting_cqssc_permission() throws Exception{
 		int maxTimes = 1;
 		int counter = 0;
 		String lottoType = "cqssc";
@@ -6534,6 +6534,75 @@ public class CqsscBettingTest extends ControllerJunitBase{
 	}
 	
 	
+	/**
+	 * 代理用户通过当前的平台点数查询奖金模式 
+	 * @throws Exception
+	 */
+	public void testMigrateUser_betting() throws Exception{
+		String userName = "sl731";
+		String pwd = "aaa123";
+		
+		String clientId = "lottery-client";
+		String lottoType = "cqssc";
+		Integer currIssueId = 50;
+		Integer playType = 1;
+		String betNum = "0,0,0";
+		
+		String token = queryToken(userName, pwd, clientId);
+		ObjectMapper mapper = new ObjectMapper();
+		ByteArrayInputStream bis = null;
+		ArrayNode array = mapper.createArrayNode();
+		//[{"issueId":67027,"playType":1,"betNum":"0,0,0","times":1,"pattern":1,"isZh":0,"terminalType":0}]
+				
+		try {
+			ObjectNode node = array.addObject();
+			node.putPOJO("issueId", currIssueId);
+			node.putPOJO("playType", playType);
+			node.putPOJO("betNum", betNum);
+			node.putPOJO("times", "1");
+			node.putPOJO("pattern", "1");
+			node.putPOJO("isZh", "0");
+			node.putPOJO("terminalType", "0");
+			
+			System.out.println(mapper.writeValueAsString(node));
+			bis = new ByteArrayInputStream(mapper.writeValueAsBytes(array));
+			WebRequest request = new PostMethodWebRequest("http://localhost:8080/lotteries/" +lottoType+ "/bet/zh/0/wallet/2750",
+					bis,
+					MediaType.APPLICATION_JSON_VALUE);
+			
+			WebConversation wc = new WebConversation();
+						
+			request.setHeaderField("Authorization", "Bearer " + token);
+			
+			//5  是玩家的当前平台点数 
+			request.setParameter("currR", "14");
+			request.setParameter("superior", "13");
+			
+			WebResponse response = wc.sendRequest(request);
+			
+			int  status = response.getResponseCode();
+			
+			Assert.assertEquals(HttpServletResponse.SC_OK, status);
+			String result = response.getText();
+			
+			Map<String, Object> retItems = null;
+			
+			retItems = mapper.readValue(result, HashMap.class);
+			
+			Assert.assertNotNull(retItems);
+
+			Assert.assertEquals(Message.status.FAILED.getCode(), retItems.get(Message.KEY_STATUS));
+			
+			Assert.assertEquals(Message.Error.ERROR_COMMON_ERROR_PARAMS.getCode(), retItems.get(Message.KEY_ERROR_CODE));
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}finally {
+			
+		}
+	}
 	
 	
 	public void manualDrawResult(String lottoType, 

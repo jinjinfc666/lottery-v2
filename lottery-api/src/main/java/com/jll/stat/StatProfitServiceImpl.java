@@ -60,6 +60,7 @@ public class StatProfitServiceImpl implements StatProfitService
 				Integer flag = TrgUserAccDetailsFlag.pending.getCode();
 				UserInfo superior = null;
 				UserInfo user = null;
+				Integer userType = null;
 				
 				params.add(flag);
 				page.setPageIndex(1);
@@ -75,17 +76,31 @@ public class StatProfitServiceImpl implements StatProfitService
 				
 				for(TrgUserAccountDetails trg : trgUserAccDetailsList) {
 					user = userServ.getUserById(trg.getUserId());
+					userType = user.getUserType();
+					
+					if(Constants.AccOperationType.BETTING.getCode().equals(trg.getOperationType())
+							&& userType.intValue() == Constants.UserType.AGENCY.getCode()) {
+						userType = Constants.UserType.PLAYER.getCode();
+					}
+					
 					handleProfit(trg, 
 							user, 
-							Constants.UserType.PLAYER.getCode());
+							userType);
+					
 					//普通玩家的盈利直接算上级，对于代理类型用户的盈利需要从本身开始算累加盈利
-					if(user.getUserType() == Constants.UserType.PLAYER.getCode()) {
+					if(user.getUserType() == Constants.UserType.PLAYER.getCode()
+							|| user.getUserType() == Constants.UserType.SM_PLAYER.getCode()) {
 						superior = userServ.querySuperior(user);						
 					}else if(user.getUserType() == Constants.UserType.AGENCY.getCode()
-							|| user.getUserType() == Constants.UserType.GENERAL_AGENCY.getCode()) {
+							|| user.getUserType() == Constants.UserType.GENERAL_AGENCY.getCode()
+							|| user.getUserType() == Constants.UserType.SM_AGENCY.getCode()) {
 						superior = user;
 					}
-					handleProfitInInherit(trg, superior);
+					
+					if(!Constants.AccOperationType.TRANSFER.getCode().equals(trg.getOperationType())) {
+						handleProfitInInherit(trg, superior);
+					}
+					
 					
 					trg.setFlag(Constants.TrgUserAccDetailsFlag.HANDLED.getCode());
 					trgUserAccDetailServ.updateTrgUserAccDetails(trg);
@@ -108,7 +123,7 @@ public class StatProfitServiceImpl implements StatProfitService
 		if(superior != null) {		
 			handleProfit(trg, 
 					superior, 
-					Constants.UserType.AGENCY.getCode());
+					superior.getUserType());
 			
 			superior = userServ.querySuperior(superior);
 			handleProfitInInherit(trg, superior);
@@ -207,7 +222,8 @@ public class StatProfitServiceImpl implements StatProfitService
 					profit.getRebate());
 		
 		//个人用户利润 和 团队利润是正好相反的
-		if(userType == Constants.UserType.PLAYER.getCode()) {
+		if(userType == Constants.UserType.PLAYER.getCode()
+				|| userType == Constants.UserType.SM_PLAYER.getCode()) {
 			profitVal = profitVal.multiply(new BigDecimal(-1));
 		}
 		profit.setProfit(profitVal);
