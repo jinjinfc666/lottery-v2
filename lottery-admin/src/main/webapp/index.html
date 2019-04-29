@@ -12,11 +12,25 @@
             #thumburlShow{
                 cursor: pointer;
             }
+            
+            .text_ {
+			    width: 200px;
+			    height: 46px;
+			    outline: none;
+			    display: inline-block;
+			    font: 14px "microsoft yahei",Helvetica,Tahoma,Arial,"Microsoft jhengHei";
+			        line-height: normal;
+			    margin-left: 50px;
+			    border: none;
+			    background: none;
+			    line-height: 46px;
+			}
         </style>
         <!--必要样式-->
         <link rel="stylesheet" type="text/css" href="css/component.css" />
         <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
         <script type="text/javascript" src="js/self_js.js"></script>
+        <script type="text/javascript" src="js/site.js"></script>
         <script type="text/javascript">
         	
         	$(document).keypress(function(e) {
@@ -32,8 +46,8 @@
                 getSessionId();
             }
             function getSessionId(){
-                var domain=parseDomain();
-                var url=domain+"/lottery-api/captchas/query-sesionid";
+                //var domain=parseDomain();
+                var url = querySessionIdURL;
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -55,10 +69,8 @@
                 });
             }
             function getCaptch(){
-                var domain=parseDomain();
-                var jsSessionId=document.getElementById('jsSessionId').value;
-                // document.getElementById('thumburlShow').src=domain+"/lottery-api/captchas/verification-code-Img;jsessionid="+jsSessionId;
-                var urlcode=domain+"/lottery-api/captchas/verification-code-Img;jsessionid="+jsSessionId;
+                var jsSessionId = document.getElementById('jsSessionId').value;
+                var urlcode = queryCaptchaCodeURL.replace("{sessionId}", jsSessionId);
                 $.ajax({
                     url: urlcode,
                     type: "GET",
@@ -104,8 +116,8 @@
                     alert("请输入账号和密码！！！");
                     return false;
                 }
-                var domain=parseDomain();
-                var url=domain+"/lottery-api/oauth/token;jsessionid="+jsSessionId;
+                
+                var url = loginURL.replace("{sessionId}", jsSessionId);
                 $.ajax({
                     url: url,
                     type: "POST",
@@ -153,9 +165,10 @@
                             </div>
                             <div class="input_outer">
                                 <div>
-                                <span class="us_uer"></span>
-                                <input name="captcha" id="captcha" class="text" style="color: #FFFFFF !important; position:absolute; z-index:100;" autocomplete="off" value="" placeholder="请输入验证码"></div>
-                                <div style="float: right;"><img id="thumburlShow" src="" width="120" height="40" onclick="getVerify();"/></div>
+	                                <span class="us_uer"></span>
+	                                <input name="captcha" id="captcha" class="text_" style="color: #FFFFFF !important; position:absolute; z-index:100;" autocomplete="off" value="" placeholder="请输入验证码">
+	                                <img id="thumburlShow"  src="" style="width:80px;height:40px;position: absolute;margin-left: 250px;" onclick="getVerify();"/>
+                                </div>
                             </div>
                               
                             <div class="mb2">
