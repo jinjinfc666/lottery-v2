@@ -567,7 +567,7 @@ public class TReportDaoImpl extends DefaultGenericDaoImpl<TeamPlReport> implemen
 		.append(")t ")
 		.append("left join ")
 		.append("user_info userInfo on t.user_id = userInfo.id ")
-		.append("order by t.user_id ");
+		.append("order by t.profit ");
 		
 	    params.add(id);
 	    params.add(id);
