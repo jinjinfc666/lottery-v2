@@ -76,7 +76,9 @@ public class XyftBettingTest extends ControllerJunitBase{
 	
 	double[] moneyArray = {25, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500};
 	
-	int[] betTimesArray = {3, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110};
+	//int[] betTimesArray = {3, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110};
+	
+	int[] betTimesArray = {3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 40, 50};
 	
 	public XyftBettingTest(String name) {
 		super(name);
