@@ -19,3 +19,7 @@ var queryLottStateURL = SITE + "/report/loyTstRecord/LoyTstState";
 var queryLotteryTerminalTypeURL = SITE + "/report/loyTstRecord/LoyTstTerminalType";
 
 var queryLotteryRecordURL = SITE + "/report/loyTstRecord";
+
+var queryGeneralURL = SITE + "/users/queryGeneral";
+
+var mReportNextTeamSMURL = SITE + "/report/MReportNextTeamSM";
