@@ -122,6 +122,7 @@
                 success: function (data) {
                     if(data.status=="1"){
                         document.getElementsByTagName('strong')[0].textContent=data.data.userName;
+                        sessionStorage.setItem("userInfo", JSON.stringify(data.data));
                         deffered.resolve('success');
                     }else{
                         alert(getErroe(data.error_code));
