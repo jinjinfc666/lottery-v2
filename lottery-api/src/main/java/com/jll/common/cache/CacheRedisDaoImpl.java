@@ -20,6 +20,7 @@ import com.jll.entity.PayChannel;
 import com.jll.entity.PayType;
 import com.jll.entity.PlayType;
 import com.jll.entity.SysCode;
+import com.jll.entity.display.UserPushCache;
 import com.jll.game.BulletinBoard;
 import com.jll.game.LotteryCenterServiceImpl;
 
@@ -379,15 +380,17 @@ public class CacheRedisDaoImpl  extends AbstractBaseRedisDao implements CacheRed
 		return null;
 	}
 
-	/*@Override
-	public boolean lock(CacheObject entity) {
-		return lock(entity);
-	}*/
-
-	/*@Override
-	public void releaseLock(CacheObject entity) {
-		// TODO Auto-generated method stub
-		
+	@Override
+	public CacheObject<UserPushCache> getUserPushCache(String userPushCacheKey) {
+		CacheObject<UserPushCache> cacheObject = get(userPushCacheKey);
+		if(cacheObject==null) {
+			return null;
+		}
+		return cacheObject;
 	}
-*/
+
+	@Override
+	public void setUserPushCache(CacheObject<UserPushCache> cacheObj) {
+		this.saveOrUpdate(cacheObj);
+	}
 }

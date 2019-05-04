@@ -111,6 +111,8 @@ var queryLotterysURL = SITE+"/settingPlayType/lotteTypes";
 
 var queryPrizeRateURL = SITE+"/lotteries/{lotteryType}/play-type/{playType}/prize-rates";
 
+var queryExpertPushNumURL = SITE+"/experts/push-numbers";
+
 
 //弹出框口
 function openWin(tip) {

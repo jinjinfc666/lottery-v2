@@ -10,6 +10,7 @@ import com.jll.entity.PayChannel;
 import com.jll.entity.PayType;
 import com.jll.entity.PlayType;
 import com.jll.entity.SysCode;
+import com.jll.entity.display.UserPushCache;
 import com.jll.game.BulletinBoard;
 
 public interface CacheRedisDao {
@@ -117,5 +118,9 @@ public interface CacheRedisDao {
 	boolean lock(CacheObject entity);
 	
 	void releaseLock(CacheObject entity);
+
+	CacheObject<UserPushCache> getUserPushCache(String string);
+
+	void setUserPushCache(CacheObject<UserPushCache> cacheObj);
 }
 

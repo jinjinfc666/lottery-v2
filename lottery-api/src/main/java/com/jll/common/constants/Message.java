@@ -64,7 +64,8 @@ public class Message {
 		ERROR_USER_INVALID_USER_TYPE("010010", "Invalid User type!!"),
 		ERROR_USER_INVALID_PLAT_REBATE("010011", "Invalid Platform rebate!!"),
 		ERROR_USER_FAILED_SAVE("010012", "Failed save user!!"),
-		ERROR_USER_FAILED_REGISTER("010013", "Failed register user!!"),
+		ERROR_USER_FAILED_REGISTER("010013", "Failed register user!!"),	
+		
 		
 		ERROR_OLD_FUND_PWD_ERROR("010014", "Old fund password error!!"),
 		ERROR_OLD_LOGIN_PWD_ERROR("010015", "Old login password error!!"),
@@ -106,6 +107,7 @@ public class Message {
 		ERROR_USER_FAILED_TO_GET_VERIFICATION_CODE("010051","Failed to get verification code, please re-acquire! ! !"),
 		ERROR_USER_BANK_CARD_REAL_NAME("010052","Please fill in your real name before you can add a bank card.! ! !"),
 		ERROR_USER_CONSUMPTION_LESS_THAN_LIMITION("010053","The consumption amount is less than limit!!!!"),
+		ERROR_USER_NO_PUSH_CONFIG("010054", "Have not push number configuration yet!!"),
 		
 		/**************third party*************************/
 		ERROR_TP_INVALID_SMS("020001", "Invalid SMS!!"),

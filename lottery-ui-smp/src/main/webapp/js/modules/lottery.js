@@ -3,7 +3,7 @@
  */
 var slotModule = angular.module('lottery', []);
 
-app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "playgameService", "$state" , "userInfoServ", "hisRecService", "sysCodeTranslateFactory", function ($scope, $http, $stateParams, $interval, playgameService, $state , userInfoServ , hisRecService, sysCodeTranslateFactory) {
+app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "playgameService", "$state" , "userInfoServ", "hisRecService", "sysCodeTranslateFactory", "expertService", function ($scope, $http, $stateParams, $interval, playgameService, $state , userInfoServ , hisRecService, sysCodeTranslateFactory, expertService) {
 
 	    //通过游戏名称搜索
 	    $scope.searchByName = function () {
@@ -1366,6 +1366,31 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 			showToast("查询利润统计失败!!");
 		});
 	};
+	
+	
+	$scope.queryExpertPushNum = function(lotteryType){
+		$scope.queryExpertPushNumParams = {};
+		$scope.queryExpertPushNumParams.lotteryType = lotteryType;
+		
+		$scope.userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
+		if(typeof $scope.userInfo == 'undefined'
+			|| $scope.userInfo == null){
+			return;
+		}
+				
+		expertService.queryExpertPushNum($scope.queryExpertPushNumParams).then(function(res){
+			// {"ds":"单","dx":"小","numbers":"01,03","amount":100,"raceLane":"冠军"}
+			$scope.raceLane = "赛道:" + res.raceLane;
+			$scope.ds = "单/双:" + res.ds +"  金额:" + res.dsAmount;
+			$scope.dx = "大/小:" + res.dx +"  金额:" + res.dxAmount;
+			$scope.numbers = "数字:" + res.numbers +"  金额:" + res.numbersAmount;
+			
+		}, function(error){
+			showToast("查询推荐号码失败!!");
+		});
+	};
+	
+	
 }])
 .controller('lotteryUICtrl', ["$scope", "$http","$state", "$location", "playgameService", "hisRecService", function ($scope, $http, $state,$location, playgameService, hisRecService) {
 	$scope.iniCqsscUI = function(){
@@ -1942,6 +1967,30 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
     	return deferred.promise;
     };
     
+    
+    
+	}
+]).service('expertService', ["$http", "$q", function ($http, $q) {
+	this.queryExpertPushNum = function(queryExpertPushNumParams){
+    	var deferred = $q.defer();
+    	    	    	
+    	$http.get(bettingRecordURL,
+    			{params:queryRecParams},
+    			{'Content-Type': 'application/json'}).then(function(res){
+    		
+    		if (res.data.status == 1) {
+    			deferred.resolve(res.data.data);
+	        }else{
+	        	deferred.reject(res.data.status);
+	        }
+    		
+    	}, function(error){
+    		
+    		deferred.reject(error);
+    	});
+    	
+    	return deferred.promise;
+    };
     
     
 	}

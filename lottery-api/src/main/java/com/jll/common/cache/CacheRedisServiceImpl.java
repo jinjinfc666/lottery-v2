@@ -31,6 +31,7 @@ import com.jll.entity.PayType;
 import com.jll.entity.PlayType;
 import com.jll.entity.SysCode;
 import com.jll.entity.UserInfo;
+import com.jll.entity.display.UserPushCache;
 import com.jll.game.BulletinBoard;
 import com.jll.game.playtype.PlayTypeFacade;
 import com.jll.game.playtype.PlayTypeService;
@@ -821,5 +822,60 @@ public class CacheRedisServiceImpl implements CacheRedisService
 		CacheObject<Object> cacheObj = new CacheObject<>();
 		cacheObj.setKey(key);
 		cacheDao.releaseLock(cacheObj);
+	}
+
+	@Override
+	public UserPushCache getUserPushCache(UserInfo user) {		
+		StringBuffer cacheKey = new StringBuffer();
+		CacheObject<UserPushCache> cacheObj = null;
+		
+		cacheKey.append(Constants.KEY_EXPERT_NUMBER)
+		.append(user);
+		
+		cacheObj = cacheDao.getUserPushCache(cacheKey.toString());
+		
+		if(cacheObj == null) {
+			return null;
+		}
+		
+		return cacheObj.getContent();
+	}
+
+	@Override
+	public void setUserPushCache(UserInfo user, UserPushCache userPushCache) {
+		/*String key=Constants.Captcha.CAPTCHA.getCode();
+		CacheObject<Map<String,String>> cacheObject=cacheDao.getSessionIdCaptcha(key);
+		Map<String,String> map=null;
+		if(cacheObject==null) {
+			map = new HashMap<>();
+			cacheObject= new CacheObject<>();
+			cacheObject.setContent(map);
+		}
+		
+		map = cacheObject.getContent();
+		map.put(keyCaptcha, value);
+		cacheObject.setContent(map);
+		cacheObject.setKey(key);
+		cacheDao.setSessionIdCaptcha(cacheObject);*/
+		
+		StringBuffer cacheKey = new StringBuffer();
+		CacheObject<UserPushCache> cacheObj = null;
+		
+		cacheKey.append(Constants.KEY_EXPERT_NUMBER)
+		.append(user);
+		
+		if(userPushCache == null){
+			return ;
+		}
+		
+		cacheObj = cacheDao.getUserPushCache(cacheKey.toString());
+		
+		if(cacheObj == null) {
+			cacheObj= new CacheObject<>();
+		}
+		
+		cacheObj.setContent(userPushCache);
+		cacheObj.setKey(cacheKey.toString());
+		cacheDao.setUserPushCache(cacheObj);
 	}
 }

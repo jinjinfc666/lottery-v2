@@ -42,6 +42,7 @@ import com.jll.game.playtype.PlayTypeService;
 import com.jll.game.playtypefacade.PlayTypeFactory;
 import com.jll.user.UserInfoService;
 import com.jll.user.details.UserAccountDetailsService;
+import com.jll.user.expert.ExpertService;
 import com.jll.user.wallet.WalletService;
 
 @Configuration
@@ -75,6 +76,9 @@ public class OrderServiceImpl implements OrderService
 	
 	@Resource
 	IssueService issueServ;
+	
+	@Resource
+	ExpertService expertServ;
 	
 	@Override
 	public String saveOrders(List<OrderInfo> orders, int walletId, int zhFlag, String lotteryType) {
@@ -206,6 +210,9 @@ public class OrderServiceImpl implements OrderService
 			cacheServ.publishMessage(Constants.TOPIC_WINNING_NUMBER, message);
 
 		}
+		
+		//在用户开启专家推荐号码服务的情况下需要修改推荐次数
+		expertServ.updateExpertPushTimes(user, lotteryType);
 		
 		return String.valueOf(Message.status.SUCCESS.getCode());
 	}

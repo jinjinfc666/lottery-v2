@@ -14,6 +14,7 @@ import com.jll.entity.PayType;
 import com.jll.entity.PlayType;
 import com.jll.entity.SysCode;
 import com.jll.entity.UserInfo;
+import com.jll.entity.display.UserPushCache;
 import com.jll.game.BulletinBoard;
 
 
@@ -204,4 +205,12 @@ public interface CacheRedisService {
 	 * @param key
 	 */
 	void releaseLock(String key);
+
+	UserPushCache getUserPushCache(UserInfo user);
+
+	/**
+	 * 专家推号缓存
+	 * @param userPushCache
+	 */
+	void setUserPushCache(UserInfo user, UserPushCache userPushCache);
 }

@@ -117,8 +117,15 @@ public class Constants {
 	
 	public final static String KEY_PRIZE_TEMPLATE_CURR_REBATE = "currR";
 	
+	public final static String KEY_EXPERT_NUMBER = "expert_number_";
 	
+	public final static String KEY_EXPERT_CURRPUSHTIMES = "curr_push_times_";
 	
+	public final static String KEY_EXPERT_MAX_PUSH_TIMES = "max_push_times_";
+	
+	public final static String KEY_EXPERT_PUSHNUM = "pushNum";
+	
+	public final static String KEY_EXPERT_BETAMOUNT = "betAmount";
 	
 	public static enum DepositOrderState{
 		

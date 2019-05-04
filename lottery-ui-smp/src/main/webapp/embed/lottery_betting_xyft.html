@@ -293,8 +293,19 @@
 							</div>
 							<button class="btn btn-danger ml10 resetBtn" style="background: #267671; border-color: #455964;" type="button">重置</button>
 							<button type="button" class="btn btn-danger ml10 ng-scope lotteryV2Btn">提交注单</button>
-							<div class="pull-right clock ng-scope" id="currentQiHaoAndTime">
-								<span id="flushTime" style="font-size: 14px; float: right; width: 40px; text-align: right; margin-top: 4px; margin-left: 6px"></span>
+							<div class="pull-right clock ng-scope" id="currentQiHaoAndTime" ng-init="queryExpertPushNum('xyft')">
+								<span id="flushTime" style="font-size: 14px; float: right; width: 40px; text-align: right; margin-top: 4px; margin-left: 6px">
+									{{raceLane}}
+								</span>
+								<span id="flushTime" style="font-size: 14px; float: right; width: 40px; text-align: right; margin-top: 4px; margin-left: 6px">
+									{{ds}}
+								</span>
+								<span id="flushTime" style="font-size: 14px; float: right; width: 40px; text-align: right; margin-top: 4px; margin-left: 6px">
+									{{dx}}
+								</span>
+								<span id="flushTime" style="font-size: 14px; float: right; width: 40px; text-align: right; margin-top: 4px; margin-left: 6px">
+									{{numbers}}
+								</span>
 							</div>
 						</div>
 						
