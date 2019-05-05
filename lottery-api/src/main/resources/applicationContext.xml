@@ -156,5 +156,5 @@
     
 	<import resource="spring-redis.xml" />
 	<import resource="spring-security.xml" />
-	<!-- import resource="spring-job.xml" /> -->
+	<import resource="spring-job.xml" />
 </beans>

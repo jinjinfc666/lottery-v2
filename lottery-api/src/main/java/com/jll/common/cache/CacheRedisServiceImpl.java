@@ -830,7 +830,7 @@ public class CacheRedisServiceImpl implements CacheRedisService
 		CacheObject<UserPushCache> cacheObj = null;
 		
 		cacheKey.append(Constants.KEY_EXPERT_NUMBER)
-		.append(user);
+		.append(user.getUserName());
 		
 		cacheObj = cacheDao.getUserPushCache(cacheKey.toString());
 		
@@ -843,26 +843,12 @@ public class CacheRedisServiceImpl implements CacheRedisService
 
 	@Override
 	public void setUserPushCache(UserInfo user, UserPushCache userPushCache) {
-		/*String key=Constants.Captcha.CAPTCHA.getCode();
-		CacheObject<Map<String,String>> cacheObject=cacheDao.getSessionIdCaptcha(key);
-		Map<String,String> map=null;
-		if(cacheObject==null) {
-			map = new HashMap<>();
-			cacheObject= new CacheObject<>();
-			cacheObject.setContent(map);
-		}
-		
-		map = cacheObject.getContent();
-		map.put(keyCaptcha, value);
-		cacheObject.setContent(map);
-		cacheObject.setKey(key);
-		cacheDao.setSessionIdCaptcha(cacheObject);*/
-		
+				
 		StringBuffer cacheKey = new StringBuffer();
 		CacheObject<UserPushCache> cacheObj = null;
 		
 		cacheKey.append(Constants.KEY_EXPERT_NUMBER)
-		.append(user);
+		.append(user.getUserName());
 		
 		if(userPushCache == null){
 			return ;

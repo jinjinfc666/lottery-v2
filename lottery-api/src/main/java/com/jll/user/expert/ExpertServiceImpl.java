@@ -17,6 +17,7 @@ import com.jll.entity.UserInfo;
 import com.jll.entity.UserPushConfig;
 import com.jll.entity.UserPushNumRec;
 import com.jll.entity.display.UserPushCache;
+import com.jll.user.UserInfoDao;
 
 @Service
 @Transactional
@@ -33,7 +34,10 @@ public class ExpertServiceImpl implements ExpertService
 	
 	@Resource
 	CacheRedisService cacheServ;
-		
+	
+	@Resource
+	ExpertDao expertDao;
+	
 	@Override
 	public Map<String, Object> produceExpertNum(String lotteryType, UserPushCache userPushCache) {
 		Map<String, Object> ret = new HashMap<>();
@@ -75,7 +79,9 @@ public class ExpertServiceImpl implements ExpertService
 					}else{
 						raceLane = "第" + (raceLaneIndex  + 1) + "名";
 					}
-					ret.put("raceLane", raceLane);
+					if(ret.get("raceLane") == null) {
+						ret.put("raceLane", raceLane);						
+					}
 					if(playTypeName.startsWith("dwd|")){
 						int counter = 0;
 						while(counter < pushNumbers){
@@ -104,7 +110,7 @@ public class ExpertServiceImpl implements ExpertService
 						}
 						
 						ret.put("numbers", numbers);
-					}else if(playTypeName.startsWith("dx!")){
+					}else if(playTypeName.startsWith("dx|")){
 						betNum = new Random().nextInt(2);
 						if(betNum == 0){
 							dx = "小";
@@ -113,7 +119,7 @@ public class ExpertServiceImpl implements ExpertService
 						}
 						
 						ret.put("dx", dx);
-					}else if(playTypeName.startsWith("ds!")){
+					}else if(playTypeName.startsWith("ds|")){
 						betNum = new Random().nextInt(2);
 						if(betNum == 0){
 							ds = "双";
@@ -156,5 +162,24 @@ public class ExpertServiceImpl implements ExpertService
 				//TODO 重新计算投注金额
 			}
 		}
+	}
+
+	@Override
+	public void cacheUserPushConfig(UserInfo user) {
+		List<UserPushConfig> userPushConfigs = expertDao.queryUserPushConfigs(user);
+		
+		if(userPushConfigs == null
+				|| userPushConfigs.size() == 0) {
+			return;
+		}
+		
+		UserPushCache userPushCache = cacheServ.getUserPushCache(user);
+		if(userPushCache == null){
+			userPushCache = new UserPushCache();
+		}
+		
+		userPushCache.setUserPushConfig(userPushConfigs);
+		
+		cacheServ.setUserPushCache(user, userPushCache);
 	}
 }

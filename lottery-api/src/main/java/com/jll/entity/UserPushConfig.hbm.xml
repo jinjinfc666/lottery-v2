@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generated 2018-8-14 16:52:58 by Hibernate Tools 5.2.10.Final --><!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="true" default-access="property" default-cascade="none" default-lazy="true">
+    <class catalog="lottery" dynamic-insert="false" dynamic-update="false" mutable="true" name="com.jll.entity.UserPushConfig" optimistic-lock="version" polymorphism="implicit" select-before-update="false" table="user_push_config">
+        <id name="id" type="java.lang.Integer">
+            <column name="id"/>
+            <generator class="identity"/>
+        </id>
+        <property generated="never" lazy="false" name="lotteryType" optimistic-lock="true" type="string" unique="false">
+            <column length="30" name="lottery_type">
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="userId" optimistic-lock="true" type="java.lang.Integer" unique="false">
+            <column length="50" name="user_id">
+                <comment>�û�����</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="playTypeId" optimistic-lock="true" type="java.lang.Integer" unique="false">
+            <column length="50" name="play_type">
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="playTypeName" optimistic-lock="true" type="string" unique="false">
+            <column length="256" name="play_type_name">
+                <comment>��¼����</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="pushTimes" optimistic-lock="true" type="java.lang.Integer" unique="false">
+            <column length="256" name="push_times">
+                <comment>֧������</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="pushAmount" optimistic-lock="true" type="java.lang.Double" unique="false">
+            <column name="push_amount">
+                <comment>�û�״̬:0,����;1,����;2,����</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="pushNumbers" optimistic-lock="true" type="java.lang.Integer" unique="false">
+            <column name="push_numbers">
+                <comment>�û�����,��Ӧ�û��������</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="state" optimistic-lock="true" type="java.lang.Integer" unique="false">
+            <column name="state">
+                <comment>��½����</comment>
+            </column>
+        </property>        
+        <property generated="never" lazy="false" name="createTime" optimistic-lock="true" type="timestamp" unique="false">
+            <column length="19" name="create_time">
+                <comment>����ʱ��</comment>
+            </column>
+        </property>        
+    </class>
+</hibernate-mapping>

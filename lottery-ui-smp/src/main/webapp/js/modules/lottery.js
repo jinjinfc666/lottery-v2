@@ -1089,6 +1089,33 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 		        return currentdate;
 		    };
 		    
+		    
+		    $scope.queryExpertPushNum = function(lotteryType){
+				$scope.queryExpertPushNumParams = {};
+				$scope.queryExpertPushNumParams.lotteryType = lotteryType;
+				
+				$scope.userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
+				if(typeof $scope.userInfo == 'undefined'
+					|| $scope.userInfo == null){
+					return;
+				}
+						
+				expertService.queryExpertPushNum($scope.queryExpertPushNumParams).then(function(res){
+					// {"ds":"单","dx":"小","numbers":"01,03","amount":100,"raceLane":"冠军"}
+					$scope.raceLane = "赛道:" + res.raceLane;
+					$scope.ds = "单/双:" + res.ds;
+					$scope.dsAmount = "金额:" + res.dsAmount;
+					$scope.dx = "大/小:" + res.dx;
+					$scope.dxAmount = "金额:" + res.dxAmount;
+					$scope.numbers = "数字:" + res.numbers;
+					$scope.numbersAmount = "金额:" + res.numbersAmount;
+					
+				}, function(error){
+					showToast("查询推荐号码失败!!");
+				});
+			};
+			
+		    
 }]).controller('hisRecCtrl', ["$scope", "$http","$state", "$location", "playgameService", "hisRecService", "sysCodeTranslateFactory", function ($scope, $http, $state,$location, playgameService, hisRecService, sysCodeTranslateFactory) {
 	$scope.initHisRecTab = function(){
 		$("span.j-nav_item").on("click",function(){
@@ -1364,29 +1391,6 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 			}
 		}, function(error){
 			showToast("查询利润统计失败!!");
-		});
-	};
-	
-	
-	$scope.queryExpertPushNum = function(lotteryType){
-		$scope.queryExpertPushNumParams = {};
-		$scope.queryExpertPushNumParams.lotteryType = lotteryType;
-		
-		$scope.userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
-		if(typeof $scope.userInfo == 'undefined'
-			|| $scope.userInfo == null){
-			return;
-		}
-				
-		expertService.queryExpertPushNum($scope.queryExpertPushNumParams).then(function(res){
-			// {"ds":"单","dx":"小","numbers":"01,03","amount":100,"raceLane":"冠军"}
-			$scope.raceLane = "赛道:" + res.raceLane;
-			$scope.ds = "单/双:" + res.ds +"  金额:" + res.dsAmount;
-			$scope.dx = "大/小:" + res.dx +"  金额:" + res.dxAmount;
-			$scope.numbers = "数字:" + res.numbers +"  金额:" + res.numbersAmount;
-			
-		}, function(error){
-			showToast("查询推荐号码失败!!");
 		});
 	};
 	
@@ -1974,8 +1978,8 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 	this.queryExpertPushNum = function(queryExpertPushNumParams){
     	var deferred = $q.defer();
     	    	    	
-    	$http.get(bettingRecordURL,
-    			{params:queryRecParams},
+    	$http.get(queryExpertPushNumURL,
+    			{params:queryExpertPushNumParams},
     			{'Content-Type': 'application/json'}).then(function(res){
     		
     		if (res.data.status == 1) {

@@ -109,7 +109,22 @@
     text-align:center;
 }
 
-
+#expertArea {
+	margin: 5px 0 0 0;
+    width: 500px;
+    border: 1px solid #267671;
+  }
+  #expertArea h1 {
+    height: 20px;
+    margin: -10px auto 0;
+    font-size: 15px;
+    padding: 1px 5px 5px 5px;
+    text-align: center;
+    width: 90px;
+    background: #d9534f;;
+    color: white;
+  }
+  
 </style>
 
 <script src="js/lib/jquery-1.10.2.min.js?v=01"></script>
@@ -417,8 +432,19 @@
 							</div>
 							<button class="btn btn-danger ml10 resetBtn" style="background: #267671; border-color: #455964;" type="button">重置</button>
 							<button type="button" class="btn btn-danger ml10 ng-scope lotteryV2Btn">提交注单</button>
-							<div class="pull-right clock ng-scope" id="currentQiHaoAndTime">
-								<span id="flushTime" style="font-size: 14px; float: right; width: 40px; text-align: right; margin-top: 4px; margin-left: 6px"></span>
+							<div class="pull-right clock ng-scope" id="currentQiHaoAndTime" ng-init="queryExpertPushNum('xyft')">
+								<span id="flushTime" style="font-size: 14px; float: right; width: 40px; text-align: right; margin-top: 4px; margin-left: 6px">
+									{{raceLane}}
+								</span>
+								<span id="flushTime" style="font-size: 14px; float: right; width: 40px; text-align: right; margin-top: 4px; margin-left: 6px">
+									{{ds}}
+								</span>
+								<span id="flushTime" style="font-size: 14px; float: right; width: 40px; text-align: right; margin-top: 4px; margin-left: 6px">
+									{{dx}}
+								</span>
+								<span id="flushTime" style="font-size: 14px; float: right; width: 40px; text-align: right; margin-top: 4px; margin-left: 6px">
+									{{numbers}}
+								</span>
 							</div>
 						</div>
 						
@@ -460,8 +486,20 @@
 							</button>
 							<button type="button" class="btn btn-danger ml10 ng-scope lotteryV2Btn"
 									ng-click='betting("xyft")'>提交注单</button>
-							<div class="pull-right clock ng-scope" id="currentQiHaoAndTime">
-								<span id="flushTime" style="font-size: 14px; float: right; width: 40px; text-align: right; margin-top: 4px; margin-left: 6px"></span>
+							<div class="pull-right clock ng-scope" id="expertArea" ng-init="queryExpertPushNum('xyft')">
+								<h1>推荐号码</h1>
+								<span id="flushTime" style="font-size: 14px; float: left; width: 90px; text-align: left; margin-top: 4px; margin-left: 30px">
+									{{raceLane}}
+								</span>
+								<span id="flushTime" style="font-size: 14px; float: left; width: 120px; text-align: left; margin-top: 4px; margin-left: 6px">
+									<span>{{ds}}</span><br>{{dsAmount}}
+								</span>
+								<span id="flushTime" style="font-size: 14px; float: left; width: 120px; text-align: left; margin-top: 4px; margin-left: 6px">
+									{{dx}}<br>{{dxAmount}}
+								</span>
+								<span id="flushTime" style="font-size: 14px; float: left; width: 120px; text-align: left; margin-top: 4px; margin-left: 6px">
+									{{numbers}}<br>{{numbersAmount}}
+								</span>
 							</div>
 						</div>
 						

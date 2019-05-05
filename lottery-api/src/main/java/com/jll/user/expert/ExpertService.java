@@ -14,4 +14,6 @@ public interface ExpertService
 	 * 如果推荐次数到达配置的最大次数,那么需要循环重置
 	 */
 	void updateExpertPushTimes(UserInfo user, String lotteryType);
+
+	void cacheUserPushConfig(UserInfo dbInfo);
 }

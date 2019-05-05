@@ -6,7 +6,12 @@ import java.util.Map;
 
 import com.jll.entity.UserPushConfig;
 
-public class UserPushCache {
+public class UserPushCache implements java.io.Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1914141843975063676L;
+
 	List<UserPushConfig> userPushConfig = null;
 	
 	Map<String, Object> lotteryPushStatus = new HashMap<>();

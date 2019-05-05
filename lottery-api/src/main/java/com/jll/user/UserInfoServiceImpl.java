@@ -91,6 +91,7 @@ import com.jll.sys.security.user.SysAuthorityService;
 import com.jll.sysSettings.syscode.SysCodeService;
 import com.jll.user.bank.UserBankCardService;
 import com.jll.user.details.UserAccountDetailsService;
+import com.jll.user.expert.ExpertService;
 import com.jll.user.transfer.TransferAppService;
 import com.jll.user.wallet.WalletService;
 
@@ -158,6 +159,10 @@ public class UserInfoServiceImpl implements UserInfoService
 	
 	@Resource
 	GenSequenceService genSeqServ;
+	
+	@Resource
+	ExpertService expertServ;
+	
 	
 	@Override
 	public int getUserId(String userName) {
@@ -265,28 +270,8 @@ public class UserInfoServiceImpl implements UserInfoService
 			return ret;
 		}
 
-		/*List<String> list=sysAuthorityService.queryGetByUserId(dbInfo.getId());
-		if(!SecurityUtils.checkViewPermissionIsOK(list)){
-			//真实姓名只显示第一个字，电话号码只显示后面三位，电子邮件只显示头三个字母以及邮箱地址，微信和qq都只显示后面三位字母
-			if(!StringUtils.isEmpty(dbInfo.getRealName())) {
-				dbInfo.setRealName(dbInfo.getRealName().substring(0, 1)+StringUtils.MORE_ASTERISK);
-			}
-			if(!StringUtils.isEmpty(dbInfo.getPhoneNum())) {
-				String userNameNew=dbInfo.getPhoneNum();
-				Integer length=userNameNew.length();
-				dbInfo.setPhoneNum( userNameNew.substring(0, length-4)+StringUtils.MORE_ASTERISK);
-			}
-			if(!StringUtils.isEmpty(dbInfo.getEmail())){
-				String emailStr=dbInfo.getEmail().substring(0, dbInfo.getEmail().indexOf('@'));
-				dbInfo.setEmail(emailStr.substring(0,5)+StringUtils.MORE_ASTERISK+dbInfo.getEmail().substring(dbInfo.getEmail().indexOf('@')));
-			}
-			if(!StringUtils.isEmpty(dbInfo.getWechat())) {
-				dbInfo.setWechat(dbInfo.getWechat().substring(0, 5)+StringUtils.MORE_ASTERISK);
-			}
-			if(!StringUtils.isEmpty(dbInfo.getQq())) {
-				dbInfo.setQq(dbInfo.getQq().substring(0, 5)+StringUtils.MORE_ASTERISK);
-			}
-		}*/
+		expertServ.cacheUserPushConfig(dbInfo);
+		
 		dbInfo.setLoginPwd(StringUtils.MORE_ASTERISK);
 		dbInfo.setFundPwd(StringUtils.MORE_ASTERISK);
 		ret.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
