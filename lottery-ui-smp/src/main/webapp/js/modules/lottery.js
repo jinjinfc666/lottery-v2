@@ -1102,7 +1102,8 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 						
 				expertService.queryExpertPushNum($scope.queryExpertPushNumParams).then(function(res){
 					// {"ds":"单","dx":"小","numbers":"01,03","amount":100,"raceLane":"冠军"}
-					$scope.raceLane = "赛道:" + res.raceLane;
+					$scope.raceLane = "赛道:";
+					$scope.raceLaneValue = res.raceLane;
 					$scope.ds = "单/双:" + res.ds;
 					$scope.dsAmount = "金额:" + res.dsAmount;
 					$scope.dx = "大/小:" + res.dx;
