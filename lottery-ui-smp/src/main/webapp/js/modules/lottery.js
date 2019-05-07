@@ -399,7 +399,7 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 					bitEle.bitIndex = i;
 					$scope.bitNumArray.push(bitEle);
 					
-					console.log('bit index ::' + i);
+					//console.log('bit index ::' + i);
 					$scope.produceOneBit(i, lotteryType, bitNumBuffeKey);
 				}				
 			}
@@ -417,6 +417,7 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 			var isDs = false;
 			var isDwd = false;
 			var bitName = null;
+			var userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
 			
 			if(bitNum == 0){
 				bitName = 'dym';
@@ -527,16 +528,28 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 					if(playType.classification.indexOf('dwd') >= 0 
 							|| playType.classification.indexOf('dx') >= 0
 							|| playType.classification.indexOf('ds') >= 0){
+						var prizeRateKey = '';
+						if(playType.classification.indexOf('dwd') >= 0){
+							prizeRateKey = 'prizeRate_digital_' + lotteryType + "_" + userInfo.userName;
+						}else if(playType.classification.indexOf('dx') >= 0){
+							prizeRateKey = 'prizeRate_dx_' + lotteryType + "_" + userInfo.userName;
+						}else if(playType.classification.indexOf('ds') >= 0){							
+							prizeRateKey = 'prizeRate_ds_' + lotteryType + "_" + userInfo.userName;
+						}
+						
 						playgameService.queryPrizeRate(lotteryType,  
 															playType, 
 															playTypeRet.bitNum, 
-															playTypeRet.bitName).then(function(ret){
+															playTypeRet.bitName,
+															prizeRateKey).then(function(ret){
 							var playType = ret.playType;
 							var prizeRate = ret.prizeRate;
 							var bitName_ = ret.bitName;
 							var bitNum_ = ret.bitNum;
+							var prizeRateKey_ = ret.prizeRateKey;
 							
-							console.log('current play type :: ' + playType.classification);
+							sessionStorage.setItem(prizeRateKey_, prizeRate);
+							//console.log('current play type :: ' + playType.classification);
 							if(playType.classification.indexOf('dwd|') >= 0 
 									&& isDwd){
 								var lotteryOptions = null;
@@ -601,7 +614,7 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 								
 								isDx = !isDx;
 								
-								console.log('play type dx---count :: ' + bettingNumDx.length);
+								//console.log('play type dx---count :: ' + bettingNumDx.length);
 							}
 							
 							if(playType.classification.indexOf('ds|') >= 0
@@ -630,14 +643,14 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 								
 								isDs = !isDs;
 								
-								console.log('play type ds---count :: ' + bettingNumDs.length);
+								//console.log('play type ds---count :: ' + bettingNumDs.length);
 							}
 							
 							var newNumbers = new Array();
 							
 							if(bettingNumDx.length > 0){
 								$scope.bitNumArray[bitNum_].bitNum = bettingNumDx.concat($scope.bitNumArray[bitNum_].bitNum);
-								console.log('bit index :: ' + bitNum_ + '   merge dx to newNumbers---count :: ' + $scope.bitNumArray[bitNum_].bitNum.length);
+								//console.log('bit index :: ' + bitNum_ + '   merge dx to newNumbers---count :: ' + $scope.bitNumArray[bitNum_].bitNum.length);
 							}
 							
 							if(bettingNumDs.length > 0){
@@ -660,12 +673,12 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 									$scope.bitNumArray[bitNum_].bitNum = bettingNumDs.concat($scope.bitNumArray[bitNum_].bitNum);
 								}	
 								
-								console.log('bit index :: ' + bitNum_ + '  merge ds to newNumbers---count :: ' + $scope.bitNumArray[bitNum_].bitNum.length);
+								//console.log('bit index :: ' + bitNum_ + '  merge ds to newNumbers---count :: ' + $scope.bitNumArray[bitNum_].bitNum.length);
 							}
 							
 							if(bettingNumDwd.length > 0){
 								$scope.bitNumArray[bitNum_].bitNum = $scope.bitNumArray[bitNum_].bitNum.concat(bettingNumDwd);
-								console.log('bit index :: ' + bitNum_ + '  merge dwd to newNumbers---count :: ' + $scope.bitNumArray[bitNum_].bitNum.length);
+								//console.log('bit index :: ' + bitNum_ + '  merge dwd to newNumbers---count :: ' + $scope.bitNumArray[bitNum_].bitNum.length);
 							}
 							
 							
@@ -768,7 +781,7 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 							
 							if(bettingNumDx.length > 0){
 								$scope.bitNumArray[prizeRet.bitNum].bitNum = bettingNumDx.concat($scope.bitNumArray[prizeRet.bitNum].bitNum);
-								console.log('bit index :: ' + prizeRet.bitNum + '   merge dx to newNumbers---count :: ' + $scope.bitNumArray[prizeRet.bitNum].bitNum.length);
+								//console.log('bit index :: ' + prizeRet.bitNum + '   merge dx to newNumbers---count :: ' + $scope.bitNumArray[prizeRet.bitNum].bitNum.length);
 							}
 							
 							if(bettingNumDs.length > 0){
@@ -791,12 +804,12 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 									$scope.bitNumArray[prizeRet.bitNum].bitNum = bettingNumDs.concat($scope.bitNumArray[prizeRet.bitNum].bitNum);
 								}	
 								
-								console.log('bit index :: ' + prizeRet.bitNum + '  merge ds to newNumbers---count :: ' + $scope.bitNumArray[prizeRet.bitNum].bitNum.length);
+								//console.log('bit index :: ' + prizeRet.bitNum + '  merge ds to newNumbers---count :: ' + $scope.bitNumArray[prizeRet.bitNum].bitNum.length);
 							}
 							
 							if(bettingNumDwd.length > 0){
 								$scope.bitNumArray[prizeRet.bitNum].bitNum = $scope.bitNumArray[prizeRet.bitNum].bitNum.concat(bettingNumDwd);
-								console.log('bit index :: ' + prizeRet.bitNum + '  merge dwd to newNumbers---count :: ' + $scope.bitNumArray[prizeRet.bitNum].bitNum.length);
+								//console.log('bit index :: ' + prizeRet.bitNum + '  merge dwd to newNumbers---count :: ' + $scope.bitNumArray[prizeRet.bitNum].bitNum.length);
 							}
 							
 							bettingNumDx = new Array();
@@ -949,6 +962,7 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 				
 				$scope.queryBettingRecBrief(lotteryType, 1);
 				$scope.queryMemberInfo();
+				$scope.queryExpertPushNum(lotteryType);
 				
 				$('tr.ng-scope[data-sel="1" ]').each(function(){
 					$(this).removeClass('selNumBg');
@@ -1093,7 +1107,7 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 		    $scope.queryExpertPushNum = function(lotteryType){
 				$scope.queryExpertPushNumParams = {};
 				$scope.queryExpertPushNumParams.lotteryType = lotteryType;
-				
+				$scope.isExpertPushNumber = false;
 				$scope.userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
 				if(typeof $scope.userInfo == 'undefined'
 					|| $scope.userInfo == null){
@@ -1111,6 +1125,7 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 					$scope.numbers = "数字:" + res.numbers;
 					$scope.numbersAmount = "金额:" + res.numbersAmount;
 					
+					$scope.isExpertPushNumber = true;
 				}, function(error){
 					showToast("查询推荐号码失败!!");
 				});
@@ -1763,26 +1778,32 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
     	return deferred.promise;
     };
     
-    this.queryPrizeRate = function(lotteryType, playType, bitNum, bitName){
+    this.queryPrizeRate = function(lotteryType, playType, bitNum, bitName,prizeRateKey){
     	var deferred = $q.defer();
-    	
-    	
-    	var prizeRate = null;
+    	    	 
+    	var prizeRate = sessionStorage.getItem(prizeRateKey);
     	var queryPrizeRateURL_ = queryPrizeRateURL.replace('{lotteryType}', lotteryType);
     	queryPrizeRateURL_ = queryPrizeRateURL_.replace('{playType}', playType.id);
     	var ret = {};
     	ret.bitNum = bitNum;
     	ret.playType = playType;
     	ret.bitName = bitName;
+    	ret.prizeRateKey = prizeRateKey;
+    	
+    	if(typeof prizeRate != 'undefined'
+    		&& prizeRate != null){
+    		ret.prizeRate = prizeRate;
+    		deferred.resolve(ret);
+    		
+    		return deferred.promise;
+    	}
     	
     	$http.get(queryPrizeRateURL_).then(function(res){
-    		
     		if (res.data.status == 1) {
-
     			prizeRate = res.data.data.single_betting_prize;
-
 	        }
     		
+    		console.log('query the prize rate :: ' + queryPrizeRateURL_ + '   prize rate value :: ' + prizeRate);
     		ret.prizeRate = prizeRate;
     		deferred.resolve(ret);
     	}, function(){

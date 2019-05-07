@@ -19,7 +19,7 @@ public class ExpertDaoImpl extends DefaultGenericDaoImpl<UserInfo> implements Ex
 	@Override
 	public List<UserPushConfig> queryUserPushConfigs(UserInfo user) {
 		List<UserPushConfig> userPushConfigs = null;
-		String sql = "from UserPushConfig where userId=?";
+		String sql = "from UserPushConfig where state = 1 and userId=?";
 	    Query<UserPushConfig> query = getSessionFactory().getCurrentSession().createQuery(sql);
 	    query.setParameter(0, user.getId());
 	    userPushConfigs = query.list();

@@ -540,7 +540,7 @@ a.money-conversion{
 .table-bet>thead>tr>th, .table-bet>tbody>tr>th, .table-bet>tfoot>tr>th, .table-bet>thead>tr>td, .table-bet>tbody>tr>td, .table-bet>tfoot>tr>td {
     line-height:2;
 	text-align:center;
-	font-size:12px;
+	font-size:11px;
 }
 .table-bet>thead>tr>th, .table-bet>tbody>tr>th, .table-bet>tfoot>tr>th{
 	color:#fff;
@@ -1271,7 +1271,7 @@ cursor: pointer;
 }
 #ticket-base .sub{
 	display: inline-block;
-    margin: 4px;
+    /*margin: 4px;*/
     vertical-align: middle;}
 .tb-b-column{ display: table-cell;
     line-height: 0;

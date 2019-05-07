@@ -184,7 +184,7 @@ app.controller('authCtrl',
             	if(res == 0){
             		$scope.queryCaptchaCode();
             	}else{
-            		$scope.isLogin = true;
+            		
             		//$scope.credentials = credentials;
             		userInfoServ.queryUserInfo().then(function(userInfo){
             			userInfoServ.queryUserAcc(userInfo.id).then(function(userAcc){
@@ -207,6 +207,8 @@ app.controller('authCtrl',
             				$scope.userInfo = userInfo;
             				$scope.mainAcc = mainAcc;
             				$scope.redPacketAcc = redPacketAcc;
+            				
+            				$scope.isLogin = true;
             			});
             		});
             	}
