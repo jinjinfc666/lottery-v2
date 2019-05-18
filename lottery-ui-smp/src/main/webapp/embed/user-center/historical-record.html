@@ -48,6 +48,7 @@
 				                                    <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 90px;">中奖金额</th>
 				                                    <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 90px;">订单状态</th>
 				                                    <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 176px;">投注时间</th>
+				                                    <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 90px;">操作</th>
 			                                    </tr>
 		                                    </thead>
 		                                    <tbody>
@@ -60,6 +61,7 @@
 			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[0].winAmount}}</td>
 			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{getOrderStatus(v[0].state)}}</td>
 			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[0].createTime| date:'yyyy-MM-dd HH:mm:ss'}}</td>
+			                                    	<td valign="top" colspan="1" class="dataTables_empty" ><button ng-if="v[0].state == 0" class="u_btn j-btnSearch" ng-click="cancelOrder(''+v[0].orderNum)">取消订单</button></td>
 			                                    </tr>
 		                                    </tbody>
                                     	</table>

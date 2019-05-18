@@ -1504,6 +1504,17 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 		});
 	};
 	
+	$scope.cancelOrder = function(orderNum){
+		hisRecService.cancelOrder(orderNum).then(function(res){
+			showToast("成功取消订单");
+		},function(error){
+			var codeType = 'error_mes';
+			var attr = error;
+			var codeVal =  sysCodeTranslateFactory.codeTranslate(codeType, attr);
+			showToast(codeVal);
+		});
+	};
+	
 	
 }])
 .controller('lotteryUICtrl', ["$scope", "$http","$state", "$location", "playgameService", "hisRecService", function ($scope, $http, $state,$location, playgameService, hisRecService) {
@@ -2077,6 +2088,30 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
     			deferred.resolve(res.data.data);
 	        }else{
 	        	deferred.reject(res.data.status);
+	        }
+    		
+    	}, function(error){
+    		
+    		deferred.reject(error);
+    	});
+    	
+    	return deferred.promise;
+    };
+    
+    
+    this.cancelOrder = function(orderNum){
+    	var deferred = $q.defer();
+    	
+    	var cancelOrderParams = {};
+    	cancelOrderParams.orderNum = orderNum;
+    	$http.post(cancelOrderURL,
+    			cancelOrderParams,
+    			{'Content-Type': 'application/json'}).then(function(res){
+    		
+    		if (res.data.status == 1) {
+    			deferred.resolve(res.data.data);
+	        }else{
+	        	deferred.reject(res.data.error_code);
 	        }
     		
     	}, function(error){
