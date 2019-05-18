@@ -85,6 +85,7 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 		var timer = null;
 		var bettingRecTimer = null;
 		var queryMemeberTimer = null;
+		var queryIssueRetGroupTimer = null;
 		$scope.queryBulletinBoard = function(lotteryType){
 			sessionStorage.removeItem("bulletinBoard");
 			$scope.downCounter = null;
@@ -146,12 +147,105 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 				$scope.queryMemberInfo();
 			},30000);
 
+						
 			$scope.$on('$destroy',function(){
 		        $interval.cancel(timer);
 		        $interval.cancel(bettingRecTimer);
 		        $interval.cancel(queryMemeberTimer);
 		    })
 		};
+		
+		
+		$scope.queryIssueRetGroup = function(){
+			
+			queryIssueRetGroupTimer = $interval(function(){
+				playgameService.queryBulletinBoard("xyft").then(function(res){
+										
+					if(res != null 
+							&& res.lastIssue != null
+							&& res.lastIssue.retNum != null){
+							var lastIssueRetNumArray = new Array();
+							var lastIssueRetNum = res.lastIssue.retNum;
+							
+							var lastIssueRetNumArrayStr = lastIssueRetNum.split(',');
+							for(var i = 0; i< lastIssueRetNumArrayStr.length; i++){
+								lastIssueRetNumArray.push(parseInt(lastIssueRetNumArrayStr[i]));
+							}
+
+							$scope.lastIssueRetNumXyft = lastIssueRetNumArray;
+					}else{
+						$scope.lastIssueRetNumXyft = new Array();
+					}
+					
+				});
+				
+				playgameService.queryBulletinBoard("cqssc").then(function(res){
+					
+					if(res != null 
+							&& res.lastIssue != null
+							&& res.lastIssue.retNum != null){
+							var lastIssueRetNumArray = new Array();
+							var lastIssueRetNum = res.lastIssue.retNum;
+							
+							var lastIssueRetNumArrayStr = lastIssueRetNum.split(',');
+							for(var i = 0; i< lastIssueRetNumArrayStr.length; i++){
+								lastIssueRetNumArray.push(parseInt(lastIssueRetNumArrayStr[i]));
+							}
+
+							$scope.lastIssueRetNumCqssc = lastIssueRetNumArray;
+					}else{
+						$scope.lastIssueRetNumCqssc = new Array();
+					}
+					
+				});
+				
+				playgameService.queryBulletinBoard("bjpk10").then(function(res){
+					
+					if(res != null 
+							&& res.lastIssue != null
+							&& res.lastIssue.retNum != null){
+							var lastIssueRetNumArray = new Array();
+							var lastIssueRetNum = res.lastIssue.retNum;
+							
+							var lastIssueRetNumArrayStr = lastIssueRetNum.split(',');
+							for(var i = 0; i< lastIssueRetNumArrayStr.length; i++){
+								lastIssueRetNumArray.push(parseInt(lastIssueRetNumArrayStr[i]));
+							}
+
+							$scope.lastIssueRetNumBjpk10 = lastIssueRetNumArray;
+					}else{
+						$scope.lastIssueRetNumBjpk10 = new Array();
+					}
+					
+				});
+				
+				playgameService.queryBulletinBoard("xjssc").then(function(res){
+					
+					if(res != null 
+							&& res.lastIssue != null
+							&& res.lastIssue.retNum != null){
+							var lastIssueRetNumArray = new Array();
+							var lastIssueRetNum = res.lastIssue.retNum;
+							
+							var lastIssueRetNumArrayStr = lastIssueRetNum.split(',');
+							for(var i = 0; i< lastIssueRetNumArrayStr.length; i++){
+								lastIssueRetNumArray.push(parseInt(lastIssueRetNumArrayStr[i]));
+							}
+
+							$scope.lastIssueRetNumXjssc = lastIssueRetNumArray;
+					}else{
+						$scope.lastIssueRetNumXjssc = new Array();
+					}
+					
+				});
+				
+			}, 30000)
+			
+			$scope.$on('$destroy',function(){
+		        $interval.cancel(queryIssueRetGroupTimer);
+		    })
+		};
+		
 		
 		$scope.queryMemberInfo = function(){
 			var userInfo = sessionStorage.getItem("userInfo");

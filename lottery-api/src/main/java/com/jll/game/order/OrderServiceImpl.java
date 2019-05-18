@@ -140,7 +140,7 @@ public class OrderServiceImpl implements OrderService
 		
 		for (OrderInfo order : orders) {
 			
-			seqVal = Utils.gen16DigitsSeq(getSeq());
+			seqVal = Utils.gen16DigitsSeq(Utils.getInstance().getSeq());
 			order.setWalletId(walletId);
 			order.setOrderNum(seqVal);
 			order.setUserId(user.getId());
@@ -395,7 +395,7 @@ public class OrderServiceImpl implements OrderService
 		return String.valueOf(Message.status.SUCCESS.getCode());
 	}
 	
-	private synchronized Long getSeq() {
+	/*private synchronized Long getSeq() {
 		GenSequence seq = genSeqServ.querySeqVal();
 		if(seq == null) {
 			return null;
@@ -410,7 +410,7 @@ public class OrderServiceImpl implements OrderService
 		genSeqServ.saveSeq(seq);
 		
 		return seq.getSeqVal();
-	}
+	}*/
 
 	@Override
 	public List<OrderInfo> queryOrdersByIssue(Integer issueId) {

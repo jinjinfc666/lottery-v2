@@ -14,21 +14,45 @@ import java.util.regex.Pattern;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 
 import com.google.gson.Gson;
+import com.jll.common.cache.CacheRedisService;
 import com.jll.common.constants.Constants;
 import com.jll.common.constants.Message;
 import com.jll.common.utils.sequence.GenSequenceService;
 import com.jll.entity.GenSequence;
+import com.jll.game.LotteryCenterController;
+import com.jll.spring.extend.SpringContextUtil;
 
 public class Utils {
+	
+	private Logger logger = Logger.getLogger(Utils.class); 
+	
 	public static final char[] alphabet = {'a','b','c','d','e','f','g','h','i',
 											'j','k','l','m','n','o','p','q','r',
 											's','t','u','v','w','x','y','z','0',
 											'1','2','3','4','5','6','7','8','9'};
 	
 	@Resource
-	GenSequenceService genSeqServ;
+	GenSequenceService genSeqServ = (GenSequenceService)SpringContextUtil.getBean("genSequenceServiceImpl");
+	
+	@Resource
+	CacheRedisService cacheServ = (CacheRedisService)SpringContextUtil.getBean("cacheRedisServiceImpl");
+	
+	private static Utils utils = null;
+	
+	private Utils() {
+		
+	}
+	
+	public static Utils getInstance() {
+		if(utils == null) {
+			utils = new Utils();
+		}
+		
+		return utils;
+	}
 	
 	public static String produce6DigitsCaptchaCode() {
 		String ret = "";
@@ -372,5 +396,58 @@ public class Utils {
 		}
 		
 		return betNumList;
+	}
+	
+	
+	public Long getSeq() {
+		int bettingBlockTimes = 3000;
+		int bettingBlockCounter = 0;
+		String keyLock = Constants.KEY_LOCK_SEQ;
+		Date lockStart = null;
+		Date lockEnd = null;
+				
+		while (bettingBlockCounter < bettingBlockTimes) {
+			logger.debug(
+					String.format("Thread Id %s    loker  %s   entering", 
+							Thread.currentThread().getId(), 
+							keyLock));
+			
+			if (cacheServ.lock(keyLock, keyLock, Constants.LOCK_BETTING_EXPIRED)) {
+				lockStart = new Date();
+				GenSequence seq = genSeqServ.querySeqVal();
+				if(seq == null) {
+					return null;
+				}
+				
+				if(seq.getSeqVal() + 1 > 9999999) {
+					seq.setSeqVal(1L);
+				}else {
+					seq.setSeqVal(seq.getSeqVal() + 1);
+				}
+				
+				genSeqServ.saveSeq(seq);
+				
+				lockEnd = new Date();
+				logger.debug(String.format("Thread ID %s release locker , consume %s ms", 
+						Thread.currentThread().getId(),
+						lockEnd.getTime() - lockStart.getTime()));
+				
+				return seq.getSeqVal();
+			}
+				
+			bettingBlockCounter++;
+			try {
+					Thread.sleep(100);
+			} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+			}finally {
+				
+				cacheServ.releaseLock(keyLock);
+			}
+		}
+		
+		return null;
+		
 	}
 }

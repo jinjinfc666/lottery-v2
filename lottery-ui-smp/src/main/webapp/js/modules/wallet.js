@@ -372,7 +372,7 @@ app.controller('depositCtrl', ["$scope", "$http", function ($scope, $http) {
 
 
 }])
-.controller('transferCtrl', ["$scope", "$http", "commonService", "$q", function ($scope, $http, commonService, $q) {
+.controller('transferCtrl', ["$scope", "$http", "$q", function ($scope, $http, $q) {
 
 	$("div.flex_1 span.icon_transfer02").on("click",function(){
 		
@@ -386,34 +386,7 @@ app.controller('depositCtrl', ["$scope", "$http", function ($scope, $http) {
     $scope.inWallet = new Array();
     $scope.outWallet = new Array();
     
-    //读取账户信息
-    $http.get(getMemAccount, {cache: true}).then(function (res) {
-        var allAccount = commonService.pingAccount(res.data.data);
-        //平台钱包
-        var platWallet = new Array();
-        //第3方钱包
-        var tpWallet = new Array();
-        
-        for(var i=0;i<allAccount.length;i++){
-
-            if(allAccount[i].type.code=='M_CA'){
-            	allAccount[i].t=allAccount[i].title;
-            	platWallet.push(allAccount[i]);
-            }else{
-                allAccount[i].t=allAccount[i].product.code+"平台";
-                tpWallet.push(allAccount[i]);
-            }
-        }
-
-        //$scope.getMainBalance();
-        $scope.gameAccount = tpWallet;
-        $scope.mainAccount = platWallet;
-        $scope.outWallet = allAccount;
-
-
-    }, function () {
-
-    });
+    
 
     //选择账户
     $scope.accountChange1 = function () {
@@ -569,7 +542,7 @@ app.controller('depositCtrl', ["$scope", "$http", function ($scope, $http) {
 
     };
 
-}]).service('walletService', ["$http",'$q','commonService', function ($http, $q, commonService) {
+}]).service('walletService', ["$http",'$q', function ($http, $q) {
 	/**
 	 * query the all wallet including the platform wallet and the third part wallet
 	 * 

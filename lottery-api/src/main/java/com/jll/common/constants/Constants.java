@@ -82,6 +82,8 @@ public class Constants {
 	
 	public final static String KEY_LOCK_STAT_PROFIT = "lock_profit";
 	
+	public final static String KEY_LOCK_SEQ = "lock_seq";
+	
 	public final static Integer LOCK_BETTING_EXPIRED = 5;
 	
 	public final static Integer LOCK_CACHE_STATISTIC_EXPIRED = 300;
