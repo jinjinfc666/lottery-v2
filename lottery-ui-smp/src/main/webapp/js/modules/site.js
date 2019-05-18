@@ -113,6 +113,8 @@ var queryPrizeRateURL = SITE+"/lotteries/{lotteryType}/play-type/{playType}/priz
 
 var queryExpertPushNumURL = SITE+"/experts/push-numbers";
 
+var cancelOrderURL = SITE+"/users/cancel/bet-order";
+
 
 //弹出框口
 function openWin(tip) {
