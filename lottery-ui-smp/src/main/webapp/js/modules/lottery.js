@@ -1537,7 +1537,7 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 		}
 	};
 	
-}]).service('playgameService', ["$http", "commonService", "$q", function ($http, commonService, $q) {
+}]).service('playgameService', ["$http", "$q", function ($http, $q) {
 
 
     //开始玩游戏
@@ -1990,7 +1990,7 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
     
     
     }
-]).service('hisRecService', ["$http", "commonService", "$q", function ($http, commonService, $q) {
+]).service('hisRecService', ["$http", "$q", function ($http, $q) {
 	this.queryBettingRec = function(queryRecParams){
     	var deferred = $q.defer();
     	    	    	

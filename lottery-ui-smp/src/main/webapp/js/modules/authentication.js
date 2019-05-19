@@ -344,6 +344,28 @@ app.controller('authCtrl',
     	
     };
     
+    $scope.changeActive = function(menueNum){
+    	if(menueNum == 0){
+    		$scope.isMainActive = true;
+    		$scope.isGameActive = false;
+    		$scope.isAccActive = false;
+    	}else if(menueNum == 1){
+    		$scope.isMainActive = false;
+    		$scope.isGameActive = true;
+    		$scope.isAccActive = false;
+    	}else if(menueNum == 2){
+    		$scope.isMainActive = false;
+    		$scope.isGameActive = false;
+    		$scope.isAccActive = true;
+    	}
+    };
+    
+    $scope.mobileIndexInit = function(){
+    	$scope.isMainActive = true;
+		$scope.isGameActive = false;
+		$scope.isAccActive = false;
+    };
+    
     $scope.hiddenHeader = function(){
     	$("#header").addClass("hiddenHeader");
     };

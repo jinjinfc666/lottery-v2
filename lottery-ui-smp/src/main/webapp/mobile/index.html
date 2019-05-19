@@ -3,7 +3,7 @@
 
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-<title>泰格娱乐(Taige Gaming)</title>
+<title>博天下</title>
 <link rel="stylesheet" href="//at.alicdn.com/t/font_wfarm5un8pfu5wmi.css">
 <link rel="stylesheet" href="css/main.css?v=a3142">
 <link rel="stylesheet" href="css/loader.css">
@@ -39,40 +39,40 @@
 </style>  
 </head>
 
-<body class="display_flex_vertical" >
-	<header class="header_index" ng-controller="authCtrl">
+<body class="display_flex_vertical" ng-controller="authCtrl"  ng-init="mobileIndexInit()">
+	<header class="header_index">
 		<div data-live-action="" class="header_icon header_icon_l">
 			<i class="iconfont icon-menu" ng-click="mobileLogin_userPanel()"></i>
 		</div>
-		<h1 class="header_title">泰格娱乐(Taige Gaming)</h1>
+		<h1 class="header_title">博天下</h1>
 		
-		<div id="login-panel" class="toolbar active" style="display: none;" >
-		<div class="tool-close">
-			<div class="iconfont icon-close" ng-click="mobileLogin_userPanel()"></div>
-		</div>
-		<div class="tool-user text-center mb20">
-			<div class="user-pic">
-				<img class="w" src="images/user/user_pic.png" alt="">
+		<div id="login-panel" class="toolbar active"  ng-if="!isLogin" style="display:none">
+			<div class="tool-close">
+				<div class="iconfont icon-close" ng-click="mobileLogin_userPanel()"></div>
 			</div>
-			<div class="user-name">您好！请先登录</div>
-		</div>
-		<a href="#login" class="tool-item" ng-click="mobileLogin_userPanel();hiddenHeader()">
-			<i class="iconfont icon-person"></i>
-			<span class="tool-text">登录</span>
-		</a>
-		<a href="#register" class="tool-item"  ng-click="mobileLogin_userPanel();hiddenHeader()">
-			<i class="iconfont icon-index"></i>
-			<span class="tool-text">立即注册</span>
-		</a>
-		<a href="https://kf1.learnsaas.com/chat/chatClient/chatbox.jsp?companyID=809347&amp;configID=61861&amp;jid=7990183634&amp;s=1"
-			target="_blank" class="tool-item">
-			<i class="iconfont icon-cs"></i>
-			<span class="tool-text">在线客服</span>
-		</a>
+			<div class="tool-user text-center mb20">
+				<div class="user-pic">
+					<img class="w" src="images/user/user_pic.png" alt="">
+				</div>
+				<div class="user-name">您好！请先登录</div>
+			</div>
+			<a href="#login" class="tool-item" ng-click="mobileLogin_userPanel();hiddenHeader();changeActive(2)">
+				<i class="iconfont icon-person"></i>
+				<span class="tool-text">登录</span>
+			</a>
+			<a href="#register" class="tool-item"  ng-click="mobileLogin_userPanel();hiddenHeader();changeActive(2)">
+				<i class="iconfont icon-index"></i>
+				<span class="tool-text">立即注册</span>
+			</a>
+			<a href="https://kf1.learnsaas.com/chat/chatClient/chatbox.jsp?companyID=809347&amp;configID=61861&amp;jid=7990183634&amp;s=1"
+				target="_blank" class="tool-item">
+				<i class="iconfont icon-cs"></i>
+				<span class="tool-text">在线客服</span>
+			</a>
 	</div>
 
 
-	<div id="memeber-panel" class="toolbar active" style="display: none;" >
+	<div id="memeber-panel" class="toolbar active" ng-if="isLogin">
 		<div class="tool-close">
 			<div class="iconfont icon-close" ng-click="mobileLogin_userPanel()"></div>
 		</div>
@@ -119,23 +119,6 @@
 		</div>
 	</div>
 
-
-
-
-
-
-	
-
-
-	
-
-
-
-
-
-
-
-
 	<div class="dialog_wrap dialog_with_title dialog_enter_game">
 		<div class="dialog_main j-dialog_main2">
 			<span class="dialog_close"><span class="icon icon_close"></span></span>
@@ -148,24 +131,16 @@
 		</div>
 	</div>
 	<footer class="j-flooter gb_footer" id="j-footerNav">
-		<div class="ft_item layout_image_with_text activeft_item layout_image_with_text active active">
+		<div class="ft_item layout_image_with_text activeft_item layout_image_with_text" ng-class="{'active':isMainActive}">
 			<a href="index.html"> <i class="iconfont icon-index2"></i>
 				<div class="img_text">首页</div></a>
 		</div>
-		<div id="agent"  class="ft_item layout_image_with_text">
-			<a href="#agent"> <i class="iconfont icon-agent"></i>
-				<div class="img_text">代理</div></a>
-		</div>
-		<div id="slot" class="ft_item layout_image_with_text">
+		<div id="slot" class="ft_item layout_image_with_text"  ng-class="{'active':isGameActive}">
 			<a href="#slot"> <i class="iconfont icon-game"></i>
 				<div class="img_text">游戏</div></a>
 		</div>
-		<div class="ft_item layout_image_with_text">
-			<a href="#promo"> <i class="iconfont icon-gift"></i>
-				<div class="img_text">优惠</div></a>
-		</div>
 
-		<div id="account" class="ft_item layout_image_with_text">
+		<div id="account" class="ft_item layout_image_with_text"  ng-class="{'active':isAccActive}">
 			<a href="javascript:void(0)" ng-click="redirectAccountAction()" ng-controller="authCtrl"> 
 				<i class="iconfont icon-user"></i>
 				<div class="img_text">账户</div>

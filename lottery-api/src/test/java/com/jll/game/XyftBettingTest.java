@@ -14,26 +14,27 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.junit.Assert;
 import org.springframework.http.MediaType;
+import org.xml.sax.SAXException;
 
 import com.ehome.test.ControllerJunitBase;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.jll.common.constants.Constants;
 import com.jll.common.constants.Message;
 import com.jll.common.threadpool.ThreadPoolManager;
+import com.jll.common.utils.MathUtil;
 import com.jll.common.utils.StringUtils;
 import com.jll.entity.Issue;
 import com.jll.entity.PlayType;
-import com.jll.game.playtype.PlayTypeFacade;
-import com.jll.game.playtypefacade.PlayTypeFactory;
+import com.jll.entity.UserInfo;
 import com.meterware.httpunit.GetMethodWebRequest;
 import com.meterware.httpunit.PostMethodWebRequest;
-import com.meterware.httpunit.PutMethodWebRequest;
 import com.meterware.httpunit.WebConversation;
 import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.WebResponse;
-import com.terran4j.commons.util.Maths;
 
 
 public class XyftBettingTest extends ControllerJunitBase{
@@ -74,6 +75,27 @@ public class XyftBettingTest extends ControllerJunitBase{
 							};
 	
 	
+	String[][] testUsers3_7 = {{"sm_test200", "26024"}, {"sm_test201", "26025"}, {"sm_test202", "26026"}, {"sm_test203", "26027"}, {"sm_test204", "26028"},
+			{"sm_test205", "26029"}, {"sm_test206", "26030"}, {"sm_test207", "26031"}, {"sm_test208", "26032"}, {"sm_test209", "26033"},
+			{"sm_test210", "26034"}, {"sm_test211", "26035"}, {"sm_test212", "26036"}, {"sm_test213", "26037"}, {"sm_test214", "26038"},
+			{"sm_test215", "26039"}, {"sm_test216", "26040"}, {"sm_test217", "26041"}, {"sm_test218", "26042"}, {"sm_test219", "26043"},
+			{"sm_test220", "26044"}, {"sm_test221", "26045"}, {"sm_test222", "26046"}, {"sm_test223", "26047"}, {"sm_test224", "26048"},
+			{"sm_test225", "26049"}, {"sm_test226", "26050"}, {"sm_test227", "26051"}, {"sm_test228", "26052"}, {"sm_test229", "26053"},
+			{"sm_test230", "26054"}, {"sm_test231", "26055"}, {"sm_test232", "26056"}, {"sm_test233", "26057"}, {"sm_test234", "26058"},
+			{"sm_test235", "26059"}, {"sm_test236", "26060"}, {"sm_test237", "26061"}, {"sm_test238", "26062"}, {"sm_test239", "26063"},
+			{"sm_test240", "26064"}, {"sm_test241", "26065"}, {"sm_test242", "26066"}, {"sm_test243", "26067"}, {"sm_test244", "26068"},
+			{"sm_test245", "26069"}, {"sm_test246", "26070"}, {"sm_test247", "26071"}, {"sm_test248", "26072"}, {"sm_test249", "26073"},
+			{"sm_test250", "26074"}, {"sm_test251", "26075"}, {"sm_test252", "26076"}, {"sm_test253", "26077"}, {"sm_test254", "26078"},
+			{"sm_test255", "26079"}, {"sm_test256", "26080"}, {"sm_test257", "26081"}, {"sm_test258", "26082"}, {"sm_test259", "26083"},
+			{"sm_test260", "26084"}, {"sm_test261", "26085"}, {"sm_test262", "26086"}, {"sm_test263", "26087"}, {"sm_test264", "26088"},
+			{"sm_test265", "26089"}, {"sm_test266", "26090"}, {"sm_test267", "26091"}, {"sm_test268", "26092"}, {"sm_test269", "26093"},
+			{"sm_test270", "26094"}, {"sm_test271", "26095"}, {"sm_test272", "26096"}, {"sm_test273", "26097"}, {"sm_test274", "26098"},
+			{"sm_test275", "26099"}, {"sm_test276", "26100"}, {"sm_test277", "26101"}, {"sm_test278", "26102"}, {"sm_test279", "26103"},
+			{"sm_test280", "26104"}, {"sm_test281", "26105"}, {"sm_test282", "26106"}, {"sm_test283", "26107"}, {"sm_test284", "26108"},
+			{"sm_test285", "26109"}, {"sm_test286", "26110"}, {"sm_test287", "26111"}, {"sm_test288", "26112"}, {"sm_test289", "26113"},
+			{"sm_test290", "26114"}, {"sm_test291", "26115"}, {"sm_test292", "26116"}, {"sm_test293", "26117"}, {"sm_test294", "26118"},
+			{"sm_test295", "26119"}, {"sm_test296", "26120"}, {"sm_test297", "26121"}, {"sm_test298", "26122"}, {"sm_test299", "26123"}};
+	
 	double[] moneyArray = {25, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500};
 	
 	//int[] betTimesArray = {3, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110};
@@ -94,16 +116,18 @@ public class XyftBettingTest extends ControllerJunitBase{
 		}
 	}
 	public void testBetting_xyft_dwd() throws Exception{
-		//int maxTimes = 10000;
-		//int counter = 0;
 		String lottoType = "xyft";
+		String playType = "227";
+		
 		int userIndx = 0;
-		Map<String, UserInfoPerformance> users = new HashMap<>();
+		Map<String, UserInfoPerformance[]> users = new HashMap<>();
+		Map<String, UserInfoPerformance[]> users3_7 = new HashMap<>();
 		Map<String, Issue> issueNum = new HashMap<>();
+		Map<String, Issue> issueNum3_7 = new HashMap<>();
 		
 		for(int i = 0; i < moneyArray.length; i++) {
 			for(int ii = 0; ii< betTimesArray.length; ii++) {
-				
+				UserInfoPerformance userPair[] = new UserInfoPerformance[2];
 				if(userIndx >= testUsers.length) {
 					continue;
 				}
@@ -118,25 +142,57 @@ public class XyftBettingTest extends ControllerJunitBase{
 				user.setMaxCounter(betTimes);
 				user.setPassword("111111");
 				user.setWallet(Integer.parseInt(wallet));
-				users.put(userName, user);
+				
+				userPair[0] = user;
+				users.put(userName, userPair);
 				
 				userIndx++;
 			}
 		}
 		
+		
+		for(int i = 0; i < testUsers3_7.length/2; i++) {
+			UserInfoPerformance userPair[] = new UserInfoPerformance[2];
+			String userName = testUsers3_7[i][0];
+			String wallet = testUsers3_7[i][1];
+			//int betTimes = betTimesArray[ii];
+			//double betAmount = moneyArray[i];
+			UserInfoPerformance user = new UserInfoPerformance();
+			user.setUserName(userName);
+			//user.setBetAmount(betAmount);
+			user.setMaxCounter(5);
+			user.setPassword("111111");
+			user.setWallet(Integer.parseInt(wallet));
+			
+			UserInfoPerformance userPartner = new UserInfoPerformance();
+			userPartner.setUserName(testUsers3_7[testUsers3_7.length/2 + i][0]);
+			//user.setBetAmount(betAmount);
+			//user.setMaxCounter(betTimes);
+			userPartner.setPassword("111111");
+			userPartner.setWallet(Integer.parseInt(testUsers3_7[testUsers3_7.length/2 + i][1]));
+			
+			userPair[0] = user;
+			userPair[1] = userPartner;
+			
+			users3_7.put(userName, userPair);
+			
+			//break;
+		}
+		
 		while(true) {
-			if(hasNewIssue(users, issueNum, lottoType)) {
+			//TODO 暂时注销
+			/*if(hasNewIssue(users, issueNum, lottoType)) {
 				Issue currIssue = issueNum.get("issueNumber");
 				Issue lastIssue = issueNum.get("lastIsssue");
-				/*Issue issue = null;
-				Iterator<String> issueNumKeys = issueNum.keySet().iterator();
-				while(issueNumKeys.hasNext()) {
-					String key = issueNumKeys.next();
-					issue = issueNum.get(key);
-					break;
-				}*/
 				
 				betting(users, currIssue, lastIssue, lottoType);
+			}*/
+			
+			if(hasNewIssue_3_7(users3_7, issueNum3_7, lottoType)) {
+				Issue currIssue = issueNum3_7.get("issueNumber");
+				Issue lastIssue = issueNum3_7.get("lastIsssue");
+				
+				betting_3_7(users3_7, currIssue, lastIssue, lottoType, playType);
 			}
 			
 			Thread.sleep(1000);
@@ -144,6 +200,414 @@ public class XyftBettingTest extends ControllerJunitBase{
 		
 	}
 	
+	private boolean hasNewIssue_3_7(Map<String, UserInfoPerformance[]> users, Map<String, Issue> issueNum,
+			String lottoType) {
+
+		String pwd = "111111";
+		String clientId = "lottery-client";
+		String userName = "sm_user001";
+		
+		
+		String token = queryToken(userName, pwd, clientId);
+		ObjectMapper mapper = new ObjectMapper();
+		ByteArrayInputStream bis = null;
+		try {
+			Map<String, Object> ret = queryCurrIssue(token, lottoType);
+			int counter_ = 0;
+			while((ret == null || ret.size() == 0) 
+					&& counter_ <= 200) {
+				counter_++;
+				
+				ret = queryCurrIssue(token, lottoType);
+			}
+			
+			if(ret == null || ret.size() == 0) {
+				Assert.fail("Can't obtain the current issue!!!!");
+			}
+			
+			Issue currIssue = (Issue)ret.get("currIssue");
+			
+			if(currIssue != null) {
+				if(issueNum.get("issueNumber") != null) {
+					if(currIssue.getId().intValue() != issueNum.get("issueNumber").getId().intValue()) {
+						
+						Long downCounter = currIssue.getDownCounter();
+						
+						if(downCounter.intValue() > 180) {
+							return false;
+						}
+						
+						
+						issueNum.put("lastIsssue", issueNum.get("issueNumber"));
+						issueNum.put("issueNumber", currIssue);
+						return true;
+					}else {
+						return false;
+					}
+				}else {
+					issueNum.put("issueNumber", currIssue);
+					
+					return true;
+				}
+			}else {
+				return false;
+			}
+		}catch(Exception ex) {
+			
+		}finally {
+			if(bis != null) {
+				try {
+					bis.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+			try {
+				if(!StringUtils.isBlank(token)) {
+					System.out.println(String.format("user name %s ,   token   %s", userName,  token));
+					logout(token);					
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return false;
+	
+	}
+
+
+	
+
+	private void betting_3_7(Map<String, UserInfoPerformance[]> users, Issue currIssue, Issue lastIssue,
+			String lottoType, String playType) throws Exception {
+		
+		Iterator<String> keys = users.keySet().iterator();
+		while(keys.hasNext()) {
+			String key = keys.next();
+			UserInfoPerformance[] userPairs = users.get(key);
+									
+			
+			boolean isDayChanged = isDayChanged(currIssue, lastIssue);
+			if(!isDayChanged 
+					&& userPairs[0].getCounter() >= userPairs[0].getMaxCounter()) {
+				continue;
+			}
+			
+			if(isDayChanged) {
+				userPairs[0].setCounter(0);
+			}
+			
+			int nextCounter = userPairs[0].getCounter() + 1;
+			userPairs[0].setCounter(nextCounter);
+			ThreadPoolManager.getInstance().exeThread(new Runnable() {
+				@Override
+				public void run() {
+					String clientId = "lottery-client";
+					String token = null;
+					ObjectMapper mapper = new ObjectMapper();
+					List<Integer> bettingNums = new ArrayList<>();
+					List<Integer> bettingNumsPair = null;
+					
+					
+					Double betingAmount = null;
+					
+					try {
+						
+						Double balance = queryBalance(userPairs[0]);
+						if(balance <= 0 || balance >= 3900) {
+							return ;
+						}
+						
+						betingAmount = MathUtil.divide(balance, 3, 2);
+						
+						Double balancePair = queryBalance(userPairs[1]);
+						
+						if(betingAmount > MathUtil.divide(balancePair, 7, 2)) {
+							betingAmount = MathUtil.divide(balancePair, 7, 2);
+						}
+						
+						if(betingAmount <= 0) {
+							return ;
+						}
+						
+						betingAmount = new Double(betingAmount.intValue());
+						
+						System.out.println(String.format("%s balance is %s   , %s balance is %s", 
+								userPairs[0].getUserName(), 
+								String.valueOf(balance), 
+								userPairs[1].getUserName(), 
+								String.valueOf(balancePair)));
+						ArrayNode array = mapper.createArrayNode();
+						ArrayNode arrayPair = mapper.createArrayNode();
+						
+						
+						int raceLane = new Random().nextInt(10);
+						int betNum = new Random().nextInt(10) + 1;
+						int betNum1 = new Random().nextInt(10) + 1;
+						int betNum2 = new Random().nextInt(10) + 1;
+						
+						while(betNum1 == betNum) {
+							Thread.sleep(1000);
+							betNum1 = new Random().nextInt(10) + 1;
+						}
+						
+						while(betNum2 == betNum
+								|| betNum2 == betNum1) {
+							Thread.sleep(1000);
+							betNum2 = new Random().nextInt(10) + 1;
+						}
+						
+						
+						String betNumTemplate = dwdBettingNumbers[raceLane];											
+						
+						bettingNums.add(betNum);
+						bettingNums.add(betNum1);
+						bettingNums.add(betNum2);
+						bettingNumsPair = producePairNum(bettingNums);
+						
+						
+						produceBettingRec(currIssue, betingAmount, array, bettingNums,
+								betNumTemplate, playType);
+						
+						
+						produceBettingRec(currIssue, betingAmount, arrayPair, bettingNumsPair,
+								betNumTemplate, playType);
+						
+												
+						token = queryToken(userPairs[0].getUserName(), userPairs[0].getPassword(), clientId);
+						sendBettingRequest(lottoType, userPairs[0], token, mapper, array);
+						
+						
+						/////////////////////////////
+						if(!StringUtils.isBlank(token)) {
+							logout(token);					
+						}
+						token = queryToken(userPairs[1].getUserName(), userPairs[1].getPassword(), clientId);
+						sendBettingRequest(lottoType, userPairs[1], token, mapper, arrayPair);
+						
+						if(!StringUtils.isBlank(token)) {
+							logout(token);					
+						}
+						
+					} catch (Exception e) {
+						e.printStackTrace();
+						//throw e;
+					}finally {
+						try {
+							if(!StringUtils.isBlank(token)) {
+								//logout(token);					
+							}
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					
+				}
+
+				private void sendBettingRequest(String lottoType, UserInfoPerformance userPairs,
+						String token, ObjectMapper mapper, ArrayNode array) throws JsonProcessingException, IOException,
+						SAXException, JsonParseException, JsonMappingException {
+					ByteArrayInputStream bis = null;
+					WebRequest request = null;
+					WebConversation wc = null;
+					String reqURL = server + "/lotteries/" +lottoType + "/bet/zh/1/wallet/" + userPairs.getWallet();
+					
+					//System.out.println(String.format("reqURL   %s", reqURL));
+					
+					try {
+						bis = new ByteArrayInputStream(mapper.writeValueAsBytes(array));
+						
+						request = new PostMethodWebRequest(reqURL,
+								bis,
+								MediaType.APPLICATION_JSON_VALUE);
+						
+						wc = new WebConversation();
+						
+						request.setHeaderField("Authorization", "Bearer " + token);
+						
+						WebResponse response = wc.sendRequest(request);
+						
+						int  status = response.getResponseCode();
+						
+						Assert.assertEquals(HttpServletResponse.SC_OK, status);
+						String result = response.getText();
+						
+						Map<String, Object> retItems = null;
+						
+						retItems = mapper.readValue(result, HashMap.class);
+						
+						System.out.println(String.format("the reqURL is %s,\r\n  the response is %s", reqURL, result));
+						
+						Assert.assertNotNull(retItems);
+						
+						Assert.assertEquals(Message.status.SUCCESS.getCode(), retItems.get(Message.KEY_STATUS));
+						
+					}catch(Exception ex) {
+						
+					}finally {
+						if(bis != null) {
+							bis.close();
+						}
+					}
+				}
+
+				private void produceBettingRec(Issue currIssue, Double betingAmount,
+						ArrayNode array, List<Integer> bettingNums, String betNumTemplate, String playType) {
+					
+					for(Integer betNum : bettingNums) {
+						String betNumStr = String.valueOf(betNum);
+						if(betNumStr.length() == 1) {
+							betNumStr = "0" + betNumStr;
+						}
+						//String betNumTemplate_ = betNumTemplate.replace("{betNum}", betNumStr);
+												
+						ObjectNode node1 = array.addObject();
+						node1.putPOJO("issueId", currIssue.getId());
+						node1.putPOJO("playType", playType);
+						node1.putPOJO("times", betingAmount);
+						node1.putPOJO("pattern", "1");
+						node1.putPOJO("isZh", "0");
+						node1.putPOJO("terminalType", "0");
+						
+						
+						betNumStr = String.valueOf(betNum);
+						if(betNumStr.length() == 1) {
+							betNumStr = "0" + betNumStr;
+						}
+						String betNumTemplate1_ = betNumTemplate.replace("{betNum}", betNumStr);
+						
+						node1.putPOJO("betNum", betNumTemplate1_);						
+					}
+				}
+
+				private List<Integer> producePairNum(List<Integer> bettingNums) {
+					List<Integer> ret = new ArrayList<>();
+					for(int i = 1; i < 11; i++) {
+						boolean isIgnore = false;
+						for(int ii = 0; ii < bettingNums.size(); ii++) {
+							if(i == bettingNums.get(ii).intValue()) {
+								isIgnore = true;
+								break;
+							}							
+						}
+						
+						if(!isIgnore) {
+							ret.add(i);
+						}
+					}
+					return ret;
+				}
+			});
+			
+			
+		}	
+		
+	}
+
+	private Double queryBalance(UserInfoPerformance user) throws Exception {
+		Double ret = null;
+		ObjectMapper mapper = new ObjectMapper();
+		UserInfo userInfo = null;
+		String token = null;
+		String clientId = "lottery-client";
+		try {
+			token = queryToken(user.getUserName(), user.getPassword(), clientId);
+			userInfo = queryUserInfo(token);
+			WebRequest request = new GetMethodWebRequest(server + "/wallet/queryByUserIdUserAccount?userId=" + userInfo.getId());
+			
+			WebConversation wc = new WebConversation();
+			
+			request.setHeaderField("Authorization", "Bearer " + token);
+			
+			WebResponse response = wc.sendRequest(request);
+			
+			int  status = response.getResponseCode();
+			
+			Assert.assertEquals(HttpServletResponse.SC_OK, status);
+			String result = response.getText();
+			
+			Map<String, Object> retItems = null;
+			
+			retItems = mapper.readValue(result, HashMap.class);
+			
+			Assert.assertNotNull(retItems);
+
+			Assert.assertEquals(Message.status.SUCCESS.getCode(), retItems.get(Message.KEY_STATUS));
+			
+			List<Map<String, Object>> data = (List<Map<String, Object>>)retItems.get("data");
+			Map<String, Object> userAcc = (Map<String, Object>)data.get(0);
+			Integer accType = (Integer)userAcc.get("accType");
+			if(accType.intValue() == 1) {
+				ret = (Double)userAcc.get("balance");
+			}else {
+				 userAcc = (Map<String, Object>)data.get(1);
+				 ret = (Double)userAcc.get("balance");
+			}
+			
+			
+		} catch (Exception e) {
+			System.out.println(String.format("userName %s", userInfo.getUserName()));
+			e.printStackTrace();
+			throw e;
+		}finally {
+			if(!StringUtils.isBlank(token)) {
+				logout(token);
+			}
+		}
+		
+		
+		System.out.println(String.format("userName %s; balance %s", userInfo.getUserName(), ret));
+		
+		return ret;
+	}
+
+	private UserInfo queryUserInfo(String token) throws Exception {
+		UserInfo userInfo = new UserInfo();
+		ObjectMapper mapper = new ObjectMapper();
+		//String token = null;
+		String clientId = "lottery-client";
+		
+		try {
+			WebRequest request = new GetMethodWebRequest(server + "/users/info");
+			
+			WebConversation wc = new WebConversation();
+			
+			request.setHeaderField("Authorization", "Bearer " + token);
+			
+			WebResponse response = wc.sendRequest(request);
+			
+			int  status = response.getResponseCode();
+			
+			Assert.assertEquals(HttpServletResponse.SC_OK, status);
+			String result = response.getText();
+			
+			Map<String, Object> retItems = null;
+			
+			retItems = mapper.readValue(result, HashMap.class);
+			
+			Assert.assertNotNull(retItems);
+
+			Assert.assertEquals(Message.status.SUCCESS.getCode(), retItems.get(Message.KEY_STATUS));
+			
+			Map data = (Map)retItems.get("data");
+			//{id=12680, realName=, userName=sm_test20, userId=, loginPwd=****, fundPwd=****, state=0, level=0, loginCount=0, failLoginCount=null, unlockTime=null, userType=5, superior=12641,0, rebate=0.2, platRebate=14.1, phoneNum=, qq=, wechat=, email=, isValidPhone=0, isValidEmail=0, regIp=112.206.193.179, createTime=1555502683000, creator=1}
+			Integer userId = (Integer)data.get("id");
+			String userName = (String)data.get("userName");
+			userInfo.setId(userId);
+			userInfo.setUserName(userName);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		
+		return userInfo;
+	}
+
 	boolean hasNewIssue(Map<String, UserInfoPerformance> users, Map<String, Issue> issueNum, String lottoType) {
 		String pwd = null;
 		String clientId = "lottery-client";
