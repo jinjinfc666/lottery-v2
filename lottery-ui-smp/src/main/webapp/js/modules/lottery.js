@@ -66,12 +66,19 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 	     */
 	    $scope.queryLotterys = function(){
 	    	$scope.lotterys = new Array();
+	    	$scope.isMenuOpen = false;
+	    	$scope.isMenuClose = true;
 	    	
 			playgameService.queryLotterys().then(function(res){
 				$scope.lotterys = res;
 			}, function(error){
 				showToast("查询热门游戏失败!!");
 			});
+		};
+		
+		$scope.dropMenuToggle = function(){
+			$scope.isMenuOpen = !$scope.isMenuOpen;
+	    	$scope.isMenuClose = !$scope.isMenuClose;
 		};
 		
 		$scope.clickLottery = function(lotteryType){

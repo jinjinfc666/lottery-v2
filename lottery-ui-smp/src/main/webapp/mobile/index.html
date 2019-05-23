@@ -10,6 +10,14 @@
 <link rel="stylesheet" type="text/css" href="css/lib/swiper/swiper.css">
 <link rel="stylesheet" href="css/lib/odometer-theme-default.css?v=22">
 
+
+<link rel="stylesheet"
+	href="common/template/lottery/jimei/css/style.css?v=2019022317110511"
+	type="text/css">
+<link rel="stylesheet"
+	href="common/template/lottery/jimei/css/balls.css?v=2019022317110511"
+	type="text/css">
+	
 <!-- script src="../js/lib/My97DatePicker/WdatePicker.js"></script> -->
 <script src="../js/jquery-3.1.1.min.js"></script>
 <script src="../js/bootstrap.min.js"></script>
@@ -60,7 +68,7 @@
 				<i class="iconfont icon-person"></i>
 				<span class="tool-text">登录</span>
 			</a>
-			<a href="#register" class="tool-item"  ng-click="mobileLogin_userPanel();hiddenHeader();changeActive(2)">
+			<!-- a href="#register" class="tool-item"  ng-click="mobileLogin_userPanel();hiddenHeader();changeActive(2)">
 				<i class="iconfont icon-index"></i>
 				<span class="tool-text">立即注册</span>
 			</a>
@@ -68,11 +76,11 @@
 				target="_blank" class="tool-item">
 				<i class="iconfont icon-cs"></i>
 				<span class="tool-text">在线客服</span>
-			</a>
+			</a> -->
 	</div>
 
 
-	<div id="memeber-panel" class="toolbar active" ng-if="isLogin">
+	<div id="memeber-panel" class="toolbar active" ng-if="isLogin" style="display:none">
 		<div class="tool-close">
 			<div class="iconfont icon-close" ng-click="mobileLogin_userPanel()"></div>
 		</div>
@@ -80,25 +88,26 @@
 			<div class="user-pic">
 				<img class="w" src="images/user/user_pic.png" alt="">
 			</div>
-			<div class="user-name">{{username}}</div>
+			<div class="user-name">{{userInfo.userName}}</div>
 		</div>
-		<a href="https://kf1.learnsaas.com/chat/chatClient/chatbox.jsp?companyID=809347&amp;configID=61861&amp;jid=7990183634&amp;s=1" target="_blank" class="tool-item">
+		<!-- a href="https://kf1.learnsaas.com/chat/chatClient/chatbox.jsp?companyID=809347&amp;configID=61861&amp;jid=7990183634&amp;s=1" target="_blank" class="tool-item">
 			<i class="iconfont icon-cs"></i>
 			<span class="tool-text">在线客服</span>
-		</a>
-		<a href="#userInfo" class="tool-item" ng-click="mobileLogin_userPanel();hiddenHeader();">
+		</a> -->
+		<a href="#userInfo" class="tool-item" ng-click="mobileLogin_userPanel();hiddenHeader();changeActive(2)">
 			<i class="iconfont icon-setting"></i>
 			<span class="tool-text">账户设置</span>
 		</a>
+		<!-- 
 		<a href="#siteMes" class="tool-item" ng-click="mobileLogin_userPanel();hiddenHeader();">
 		<i class="iconfont icon-mail"></i>
 		<span class="tool-text">站内信</span>
-		</a>
-		<a href="#accountMan" class="tool-item" ng-click="mobileLogin_userPanel();hiddenHeader();">
+		</a> -->
+		<a href="#accountMan" class="tool-item" ng-click="mobileLogin_userPanel();hiddenHeader();changeActive(2)">
 			<i class="iconfont icon-security"></i>
 			<span class="tool-text">安全设置</span>
 		</a>
-		<a href="##" class="j-logout tool-item" ng-click="logout()">
+		<a href="##" class="j-logout tool-item" ng-click="logout();changeActive(0)">
 			<i class="iconfont icon-logout"></i>
 			<span class="tool-text">退出</span>
 		</a>
@@ -131,45 +140,25 @@
 		</div>
 	</div>
 	<footer class="j-flooter gb_footer" id="j-footerNav">
-		<div class="ft_item layout_image_with_text activeft_item layout_image_with_text" ng-class="{'active':isMainActive}">
-			<a href="index.html"> <i class="iconfont icon-index2"></i>
-				<div class="img_text">首页</div></a>
+		<div class="ft_item layout_image_with_text activeft_item layout_image_with_text" ng-class="{'active':isMainActive}" ng-click="changeActive(0)">
+			<a href="#main"> 
+				<i class="iconfont icon-index2"></i>
+				<div class="img_text">首页</div>
+			</a>
 		</div>
-		<div id="slot" class="ft_item layout_image_with_text"  ng-class="{'active':isGameActive}">
-			<a href="#slot"> <i class="iconfont icon-game"></i>
-				<div class="img_text">游戏</div></a>
+		<div id="slot" class="ft_item layout_image_with_text"  ng-class="{'active':isGameActive}"  ng-click="changeActive(1)">
+			<a href="#slot"> 
+				<i class="iconfont icon-game"></i>
+				<div class="img_text">游戏</div>
+			</a>
 		</div>
 
-		<div id="account" class="ft_item layout_image_with_text"  ng-class="{'active':isAccActive}">
-			<a href="javascript:void(0)" ng-click="redirectAccountAction()" ng-controller="authCtrl"> 
+		<div id="account" class="ft_item layout_image_with_text"  ng-class="{'active':isAccActive}" ng-click="changeActive(2)">
+			<a href="javascript:void(0)" ng-click="redirectAccountAction()"> 
 				<i class="iconfont icon-user"></i>
 				<div class="img_text">账户</div>
 			</a>
 		</div>
 	</footer>
-
-	<script type="text/javascript">		
-		$(function(){
-			var url = location.href;
-			if(url.indexOf('agent') > 0 
-					|| url.indexOf('slot') > 0
-					|| url.indexOf('login') > 0
-					|| url.indexOf('register') > 0){
-				$("header").hide();
-			}
-			$("footer div.ft_item").click(function(){
-				$("footer div.ft_item").removeClass("active");
-				$(this).addClass("active");
-				if($(this).attr('id') == 'agent'
-						|| $(this).attr('id') == 'slot'
-							|| $(this).attr('id') == 'account'){
-					$("header").hide();
-				}else{
-					$("header").show();
-				}
-				
-			});
-		});
-	</script>
 </body>
 </html>

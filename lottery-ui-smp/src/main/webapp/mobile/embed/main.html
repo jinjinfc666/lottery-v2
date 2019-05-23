@@ -1,5 +1,5 @@
 
-	<div id="page_content" class="flex_1">
+	<div id="page_content" class="flex_1" ng-controller="lotteryCtrl" ng-init="queryIssueRetGroup()">
 		<div class="index_content">			
 			<section class="banner-section">
 	            <div class="swiper-container swiper-container-horizontal swiper-container-android">
@@ -15,8 +15,8 @@
 						</div>
 						<div class="swiper-slide swiper-slide-active" data-swiper-slide-index="1" style="width: 958px;">
 							<a href="../index.html">
-							<!-- img src="images/common/banner/20180506_1525539236617.jpg" style="width:100%"> -->
-							<img src="images/common/banner/index_01.png" style="width:100%">
+							<img src="images/common/banner/20180506_1525539236617.jpg" style="width:100%">
+							
 							
 							</a>
 						</div>
@@ -42,21 +42,39 @@
 			
 			<h3 class="index_title"><!-- span>游戏平台</span> --></h3>
 			<div>
-				<div class="slot_game_list cfx">
-					<div class="s_g_i">
-						<a href="slotGame.jsp?showtype=PT" class="s_g_link">
-							<!-- p class="s_g_ch">PT老虎机</p>
-							<p class="s_g_en">game</p> -->
-							<img src="images/common/banner/index_02_01.png" style="width:100%">
-						</a>
+				<div class="slot_game_list cfx menu1">
+					<div class="sub viewer ticker-drawing-viewer ticker-drawing-viewer-base">
+									<a id="lotteryV2_haoMa" class="T_PK10 L_BJPK10 status--off"> 
+										<span style="height: 30px;margin: 10px;color: #fc0;background-color: #af1d24;">幸运飞艇</span>
+										<span class="item_{{$index}}" ng-repeat="v in lastIssueRetNumXyft track by $index">
+											<b class="b{{v}}">{{v}}</b>
+										</span>
+									</a>
 					</div>
-					<!-- div class="s_g_i">
-						<a href="slotGame.jsp?showtype=DT" class="s_g_link">
-							<p class="s_g_ch">DT老虎机</p>
-							<p class="s_g_en">game</p>
-						</a>
-					</div> -->
-					
+					<div class="sub viewer ticker-drawing-viewer ticker-drawing-viewer-base">
+									<a id="lotteryV2_haoMa" class="T_PK10 L_BJPK10 status--off"> 
+										<span style="height: 30px;margin: 10px;color: #fc0;background-color: #af1d24;">重庆时时彩</span>
+										<span class="item_{{$index}}" ng-repeat="v in lastIssueRetNumCqssc track by $index">
+											<b class="b{{v}}">{{v}}</b>
+										</span>
+									</a>
+					</div>
+					<div class="sub viewer ticker-drawing-viewer ticker-drawing-viewer-base">
+									<a id="lotteryV2_haoMa" class="T_PK10 L_BJPK10 status--off"> 
+										<span style="height: 30px;margin: 10px;color: #fc0;background-color: #af1d24;">北京PK10</span>
+										<span class="item_{{$index}}" ng-repeat="v in lastIssueRetNumBjpk10 track by $index">
+											<b class="b{{v}}">{{v}}</b>
+										</span>
+									</a>
+					</div>
+					<div class="sub viewer ticker-drawing-viewer ticker-drawing-viewer-base">
+									<a id="lotteryV2_haoMa" class="T_SSC L_CQSSC status--off">
+										<span style="height: 30px;margin: 10px;color: #fc0;background-color: #af1d24;">新疆时时彩</span> 
+										<span class="item_{{$index}}" ng-repeat="v in lastIssueRetNumXjssc track by $index">
+											<b class="b{{v}}">{{v}}</b>
+										</span>
+									</a>
+								</div>
 				</div>
 			</div>
 			
@@ -66,73 +84,49 @@
 					<div class="auto_width" id="j-gameContainer" style="width: 495px;">
 					<div id="nian_k" class="slot_game_item game-info" data-json="{&quot;eName&quot;:&quot;&quot;,&quot;name&quot;:&quot;年年有余&quot;,&quot;id&quot;:&quot;nian_k&quot;,&quot;code&quot;:&quot;nian_k&quot;,&quot;category&quot;:&quot;PT&quot;,&quot;type&quot;:&quot;SLO&quot;,&quot;line&quot;:&quot;&quot;,&quot;state&quot;:1,&quot;pic&quot;:&quot;nian_k.jpg&quot;,&quot;tag&quot;:[]}">     
 						<div class="layout_image_hover_text">         
-							<a class="btn-open" href="javascript:;">        
+							<a class="btn-open" href="#lottery_betting_cqssc">        
 								<span class="game_tag "></span>             
-								<img class="game_img lazy" src="https://www.staticsources.com/images/phone/ptgames/nian_k.jpg" width="150" height="150">         
+								<img class="game_img lazy" ng-src="../images/lottery/cqssc-logo.png" width="150" height="150">         
 							</a>     
 						</div>     
 						<div class="display_flex_h game_item_operations">
-							<a href="javascript:;" class="flex_1 link_try btn-open">年年有余</a> 
+							<a href="#userCenter" class="flex_1 link_try btn-open">重庆时时彩</a> 
 							<a data-state="0" href="javascript:;" class="collect j-login link_fav"></a>
 						</div>
 					</div>
 					<div id="zcjbjp" class="slot_game_item game-info" data-json="{&quot;eName&quot;:&quot;&quot;,&quot;name&quot;:&quot;招财进宝彩池&quot;,&quot;id&quot;:&quot;zcjbjp&quot;,&quot;code&quot;:&quot;zcjbjp&quot;,&quot;category&quot;:&quot;PT&quot;,&quot;type&quot;:&quot;SLO&quot;,&quot;line&quot;:&quot;&quot;,&quot;state&quot;:1,&quot;pic&quot;:&quot;zcjbjp.jpg&quot;,&quot;tag&quot;:[]}">     
 						<div class="layout_image_hover_text">         
-							<a class="btn-open" href="javascript:;">        
+							<a class="btn-open" href="#lottery_betting_bjpk10">        
 								<span class="game_tag "></span>             
-								<img class="game_img lazy" src="images/phone/ptgames/zcjbjp.jpg" width="150" height="150">         
+								<img class="game_img lazy" ng-src="../images/lottery/bjpk10-logo.png" width="150" height="150">         
 							</a>     
 						</div>     
 						<div class="display_flex_h game_item_operations">
-							<a href="javascript:;" class="flex_1 link_try btn-open">招财进宝彩池</a> 
+							<a href="javascript:;" class="flex_1 link_try btn-open">北京PK10</a> 
 							<a data-state="0" href="javascript:;" class="collect j-login link_fav"></a>
 						</div>
 					</div>
 					<div id="bib" class="slot_game_item game-info" data-json="{&quot;eName&quot;:&quot;&quot;,&quot;name&quot;:&quot;大蓝&quot;,&quot;id&quot;:&quot;bib&quot;,&quot;code&quot;:&quot;bib&quot;,&quot;category&quot;:&quot;PT&quot;,&quot;type&quot;:&quot;SLO&quot;,&quot;line&quot;:&quot;&quot;,&quot;state&quot;:1,&quot;pic&quot;:&quot;bib.jpg&quot;,&quot;tag&quot;:[]}">     
 						<div class="layout_image_hover_text">         
-							<a class="btn-open" href="javascript:;">        
+							<a class="btn-open" href="#lottery_betting_xyft">        
 								<span class="game_tag "></span>             
-								<img class="game_img lazy" src="images/phone/ptgames/bib.jpg" width="150" height="150">         
+								<img class="game_img lazy" ng-src="../images/lottery/xyft-logo.png" width="150" height="150">         
 							</a>     
 						</div>     
 						<div class="display_flex_h game_item_operations">
-							<a href="javascript:;" class="flex_1 link_try btn-open">大蓝</a> 
+							<a href="javascript:;" class="flex_1 link_try btn-open">幸运飞艇</a> 
 							<a data-state="0" href="javascript:;" class="collect j-login link_fav"></a>
 						</div>
 					</div>
 					<div id="BreakAway" class="slot_game_item game-info" data-json="{&quot;eName&quot;:&quot;&quot;,&quot;name&quot;:&quot;冰球突破&quot;,&quot;id&quot;:&quot;BreakAway&quot;,&quot;code&quot;:&quot;BreakAway&quot;,&quot;category&quot;:&quot;MGS&quot;,&quot;type&quot;:&quot;SLO&quot;,&quot;line&quot;:&quot;&quot;,&quot;state&quot;:1,&quot;pic&quot;:&quot;breakaway.jpg&quot;,&quot;tag&quot;:[]}">     
 						<div class="layout_image_hover_text">         
-							<a class="btn-open" href="javascript:;">        
+							<a class="btn-open" href="#lottery_betting_xjssc">        
 								<span class="game_tag "></span>             
-								<img class="game_img lazy" src="images/phone/mgsgames/breakaway.jpg" width="150" height="150">         
+								<img class="game_img lazy" ng-src="../images/lottery/xjssc-logo.png" width="150" height="150">         
 							</a>     
 						</div>     
 						<div class="display_flex_h game_item_operations">
-							<a href="javascript:;" class="flex_1 link_try btn-open">冰球突破</a> 
-							<a data-state="0" href="javascript:;" class="collect j-login link_fav"></a>
-						</div>
-					</div>
-					<div id="BasketballStar" class="slot_game_item game-info" data-json="{&quot;eName&quot;:&quot;&quot;,&quot;name&quot;:&quot;篮球巨星&quot;,&quot;id&quot;:&quot;BasketballStar&quot;,&quot;code&quot;:&quot;BasketballStar&quot;,&quot;category&quot;:&quot;MGS&quot;,&quot;type&quot;:&quot;SLO&quot;,&quot;line&quot;:&quot;&quot;,&quot;state&quot;:1,&quot;pic&quot;:&quot;basketballstar.jpg&quot;,&quot;tag&quot;:[]}">     
-						<div class="layout_image_hover_text">         
-							<a class="btn-open" href="javascript:;">        
-								<span class="game_tag "></span>             
-								<img class="game_img lazy" src="images/phone/mgsgames/basketballstar.jpg" width="150" height="150">         
-							</a>     
-						</div>     
-						<div class="display_flex_h game_item_operations">
-							<a href="javascript:;" class="flex_1 link_try btn-open">篮球巨星</a> 
-							<a data-state="0" href="javascript:;" class="collect j-login link_fav"></a>
-						</div>
-					</div>
-					<div id="bikiniparty" class="slot_game_item game-info" data-json="{&quot;eName&quot;:&quot;&quot;,&quot;name&quot;:&quot;比基尼派对&quot;,&quot;id&quot;:&quot;bikiniparty&quot;,&quot;code&quot;:&quot;bikiniparty&quot;,&quot;category&quot;:&quot;MGS&quot;,&quot;type&quot;:&quot;SLO&quot;,&quot;line&quot;:&quot;&quot;,&quot;state&quot;:1,&quot;pic&quot;:&quot;bikiniparty.jpg&quot;,&quot;tag&quot;:[]}">     
-						<div class="layout_image_hover_text">         
-							<a class="btn-open" href="javascript:;">        
-								<span class="game_tag "></span>             
-								<img class="game_img lazy" src="images/phone/mgsgames/bikiniparty.jpg" width="150" height="150">         
-							</a>     
-						</div>     
-						<div class="display_flex_h game_item_operations">
-							<a href="javascript:;" class="flex_1 link_try btn-open">比基尼派对</a>
+							<a href="javascript:;" class="flex_1 link_try btn-open">新疆时时彩</a> 
 							<a data-state="0" href="javascript:;" class="collect j-login link_fav"></a>
 						</div>
 					</div>
@@ -159,4 +153,5 @@
 			
 		</div>
 	</div>
+	
 	

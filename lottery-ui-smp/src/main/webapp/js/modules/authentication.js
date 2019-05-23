@@ -159,8 +159,17 @@ app.controller('authCtrl',
         
     };
 
-    $scope.forwardLogin = function(){
-    	
+    $scope.forwardLogin = function(credentials){
+    	$scope.login(credentials);
+    	$state.go("userCenter");
+    };
+    
+    $scope.redirectAccountAction = function(){
+    	if($scope.isLogin){
+    		$state.go("userCenter");
+    	}else{
+    		$state.go("login");
+    	}
     };
     
     //用户登录

@@ -1,4 +1,6 @@
-var app = angular.module('myApp-mobile', ['ui.router','ngCookies','authentication','user','wallet']);
+var ignoreTokenArray = new Array('query-sesionid','verification-code-Img');
+
+var app = angular.module('myApp-mobile', ['ui.router','ngCookies','authentication','user','wallet','lottery', 'sysMes']);
 
 app.config(["$httpProvider", function ($httpProvider) {
 	    $httpProvider.interceptors.push('httpInterceptor');
@@ -72,7 +74,7 @@ app.config(["$httpProvider", function ($httpProvider) {
     }).state('userCenter.accMan', {
         url: '/accMan',
         templateUrl: 'embed/user-center/account-management.html'
-    }).state('userCenter.hisRecord', {
+    }).state('hisRecord', {
         url: '/hisRecord',
         templateUrl: 'embed/user-center/historical-record.html'
     }).state('userCenter.siteEmail', {
@@ -93,6 +95,18 @@ app.config(["$httpProvider", function ($httpProvider) {
     }).state('modifyPayPwd', {
         url: '/modifyPayPwd',
         templateUrl: 'embed/user-center/account-management-pay-pw.html'
+    }).state('lottery_betting_cqssc', {
+        url: '/lottery_betting_cqssc',
+        templateUrl: 'embed/lottery_betting_cqssc.html'
+    }).state('lottery_betting_bjpk10', {
+        url: '/lottery_betting_bjpk10',
+        templateUrl: 'embed/lottery_betting_bjpk10.html'
+    }).state('lottery_betting_xyft', {
+        url: '/lottery_betting_xyft',
+        templateUrl: 'embed/lottery_betting_xyft.html'
+    }).state('lottery_betting_xjssc', {
+        url: '/lottery_betting_xjssc',
+        templateUrl: 'embed/lottery_betting_xjssc.html'
     });
 
 }])
@@ -146,6 +160,74 @@ app.config(["$httpProvider", function ($httpProvider) {
 }])
 .factory('AuthInterceptor', function ($rootScope, $q) {
     return {
+    	request: function(config){
+            config.headers = config.headers || {};
+            if(sessionStorage.getItem('accessToken')){
+            	var isIgnoreToken = false;
+            	for(var i = 0; i < ignoreTokenArray.length; i++){
+            		if(config.url.indexOf(ignoreTokenArray[i]) >= 0){
+            			isIgnoreToken = true;
+            			break;
+            		}
+            	}
+            	
+            	
+                var loginTime = sessionStorage.getItem('loginTime');
+                var currTime = new Date();
+                var intervalTime = currTime.getTime() - loginTime;
+                intervalTime = intervalTime / 1000;
+                intervalTime = intervalTime / 60;
+                //小于10分钟则刷新token
+                if(intervalTime > 30 && config.url.indexOf("logout") == -1){
+                	//token超时需要重新登录
+                	$rootScope.$broadcast('user.logout', {
+                		
+                	});
+                	
+                	return $q.reject(408);
+                	
+                }else if(intervalTime >= 15 && config.url.indexOf("logout") == -1 ){
+                	var grantType = "refresh_token";
+                	var clientId = "lottery-client";
+                	var clientSecret = "secret_1";
+                	var refreshToken = sessionStorage.getItem("refreshToken");
+                	var promiseToHaveValidToken;
+                	                	
+                	promiseToHaveValidToken = $.ajax({
+                		  data:$.param({
+                        	grant_type: grantType,
+                        	client_id: clientId,
+                        	client_secret: clientSecret,
+                            refresh_token: refreshToken
+                		  }),
+                		  url:refreshTokenURL,
+                		  type: "POST",
+                		  dataType: "json",
+                		  async: false,
+                		  success: function(data){
+                			  sessionStorage.setItem("accessToken", data.access_token);
+                              sessionStorage.setItem("refreshToken", data.refresh_token);
+                              sessionStorage.setItem("tokenExpiresIn", data.expires_in);
+                              sessionStorage.setItem("loginTime",new Date().getTime());
+                              //return config;
+                		    },
+                		    error: function(XMLHttpRequest, textStatus, errorThrown){
+                		    	//return config;
+                		    }
+                	});
+                		
+                }
+                
+                if(!isIgnoreToken){
+            		config.headers.authorization = 'Bearer ' + sessionStorage.getItem('accessToken');
+            	}
+            	
+                return config;
+                
+            }else{
+            	return config;
+            }
+        },
         responseError: function (response) {
             return $q.reject(response);
         }

@@ -1,4 +1,4 @@
-<div id="page_content" class="flex_1" ng-controller="authCtrl">
+<div id="page_content" class="flex_1">
 	<div class="page_content_wrap login_content_wrap">
 		<img class="logo" src="images/logo.png?v=2" width="197" alt="taige">
 
@@ -19,21 +19,24 @@
 					</div>
 					<span class="right_label"></span>
 				</div>
-				<div class="form_field form_field_no_label with_right_label form_field_cap_code">
+				<div class="form_field form_field_no_label with_right_label form_field_cap_code" ng-init="queryCaptchaCode()">
 					<div class="form_field_input">
-						<input type="text" placeholder="验证码" class="j-imageCode" maxlength="4"  ng-model="credentials.captchaCode">
+						<!-- input type="text" placeholder="验证码" class="j-imageCode" maxlength="4"  ng-model="credentials.captchaCode"> -->
+						<input type="text" name="imageCode" placeholder="验证码" ng-model="credentials.captchaCode">
 					</div>
 					<span class="right_label">
-						<img width="100" height="33" class="j-loginImgCode" id="loginCodeImg" ng-src='{{captchaCode}}' ng-click="obtainCaptchaCode()">
+						<!-- img width="100" height="33" class="j-loginImgCode" id="loginCodeImg" ng-src='{{captchaCode}}' ng-click="obtainCaptchaCode()"> -->
+						<img style="" id="loginCodeImg" ng-src='{{captchaCode}}' ng-click="queryCaptchaCode()" width="100%" class="j-code" title="点击更新">
+						
 					</span>
 				</div>
 				
 				<div class="operate-links">
-					<a href="#forgotpwd" class="forget_pwd">忘记密码？</a>
+					<!-- a href="#forgotpwd" class="forget_pwd">忘记密码？</a> -->
 				</div>
 				<div class="btn_wrap">
 					<div class="display_flex_h">
-						<a href="javascript:void(0);" class="flex_1 btn btn01 j-login"  ng-click="login(credentials)">登录</a>
+						<a href="javascript:void(0);" class="flex_1 btn btn01 j-login"  ng-click="forwardLogin(credentials)">登录</a>
 					</div>
 				</div>
 			</div>
