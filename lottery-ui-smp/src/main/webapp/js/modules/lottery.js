@@ -70,6 +70,10 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 	    	$scope.isMenuClose = true;
 	    	
 			playgameService.queryLotterys().then(function(res){
+				if(res != null && res.length > 0){
+					
+				}
+				
 				$scope.lotterys = res;
 			}, function(error){
 				showToast("查询热门游戏失败!!");
@@ -626,15 +630,15 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 				}
 				for(var i = 0;i < playTypeRet.playTypes.length; i++){
 					var playType = playTypeRet.playTypes[i];
-					if(playType.classification.indexOf('dwd') >= 0 
-							|| playType.classification.indexOf('dx') >= 0
-							|| playType.classification.indexOf('ds') >= 0){
+					if(playType.classification.indexOf('dwd|') >= 0 
+							|| playType.classification.indexOf('dx|') >= 0
+							|| playType.classification.indexOf('ds|') >= 0){
 						var prizeRateKey = '';
-						if(playType.classification.indexOf('dwd') >= 0){
+						if(playType.classification.indexOf('dwd|') >= 0){
 							prizeRateKey = 'prizeRate_digital_' + lotteryType + "_" + userInfo.userName;
-						}else if(playType.classification.indexOf('dx') >= 0){
+						}else if(playType.classification.indexOf('dx|') >= 0){
 							prizeRateKey = 'prizeRate_dx_' + lotteryType + "_" + userInfo.userName;
-						}else if(playType.classification.indexOf('ds') >= 0){							
+						}else if(playType.classification.indexOf('ds|') >= 0){							
 							prizeRateKey = 'prizeRate_ds_' + lotteryType + "_" + userInfo.userName;
 						}
 						
@@ -1523,6 +1527,9 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 	};
 	
 	
+	$scope.changeRecordType = function(){
+		
+	}
 }])
 .controller('lotteryUICtrl', ["$scope", "$http","$state", "$location", "playgameService", "hisRecService", function ($scope, $http, $state,$location, playgameService, hisRecService) {
 	$scope.iniCqsscUI = function(){

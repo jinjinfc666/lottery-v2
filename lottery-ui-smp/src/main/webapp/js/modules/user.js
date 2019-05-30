@@ -93,12 +93,14 @@ userModule.controller('userInfoCtrl', ["$scope", "$http","$state", "$interval", 
     $scope.updateMemInfo = function () {
         if (typeof $scope.userInfo.realName != 'undefined'
         	&& $scope.userInfo.realName != null
+        	&& $scope.userInfo.realName.length > 0
         	&& !ischina($scope.userInfo.realName)) {
         	
             showToast("请输入真实姓名");
 
         }else if (typeof $scope.userInfo.email != 'undefined'
         	&& $scope.userInfo.email != null
+        	&& $scope.userInfo.email.length > 0
         	&& !isEmail($scope.userInfo.email)) {
 
             showToast("请输入正确的电子邮件");
@@ -309,6 +311,15 @@ userModule.controller('userInfoCtrl', ["$scope", "$http","$state", "$interval", 
     $scope.goMobileVerify = function(){
     	$("div.u_c_nav span[data-num=2]").click();
     };
+    
+    $scope.showSMS = function(){
+    	if($scope.isSms == null){
+    		$scope.isSms = true;
+    	}else{
+    		$scope.isSms = !$scope.isSms;
+    	}
+    	
+    }
     
 }]).controller('accManCtrl', ["$scope", "$http", "$location","$state", "userInfoServ", "authService", function ($scope, $http, $location, $state, userInfoServ, authService) {
 
@@ -632,7 +643,9 @@ userModule.controller('userInfoCtrl', ["$scope", "$http","$state", "$interval", 
 		var userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
 		var verifyPhoneURL_ = verifyPhoneURL.replace("{userName}", userInfo.userName);
 		
-		$http.get(verifyPhoneURL_).then(function (res) {
+		$http.put(verifyPhoneURL_,
+				userInfo,
+				{'Content-Type': 'application/json'}).then(function (res) {
 			if(res.data.status == 1){
 				//var userAcc = res.data.data;
 				

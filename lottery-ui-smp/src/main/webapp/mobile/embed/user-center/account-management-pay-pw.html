@@ -8,23 +8,34 @@
 		<a href="javascript:void(0);" data-back="" class="back_link"  ng-click="goBack()"><span class="icon icon_arrow_back"></span></a>
 		<h1>设置支付密码</h1>
 </header>
-<div id="page_content" class="flex_1">
+<div id="page_content" class="flex_1"  ng-controller="accManCtrl">
 		<div class="page_content_wrap">
 			<div class="layout_form layout_form04">
 					<div class="form_field_warp">
-						<div class="form_field with_right_label form_field_password">
-							<span class="form_field_label">登录密码</span>
-							<div class="form_field_input"><input type="password" placeholder="请输入您的登录密码" class="j-password"></div>
-							<span class="right_label"></span>
-						</div>
-						<div class="form_field with_right_label form_field_password">
+						<div class="form_field with_right_label form_field_password" id="oldPwdIcon">
 							<span class="form_field_label">支付密码</span>
-							<div class="form_field_input"><input type="password" placeholder="6位支付密码，纯数字组成" class="j-payPassword" maxlength="6"></div>
-							<span class="right_label"></span>
+							<div class="form_field_input">
+								<input type="password" placeholder="请输入您的支付密码" class="j-password" ng-model="oldPwd" id="oldPwd">
+							</div>
+							<span class="right_label" onclick="chageMobilePwdText('oldPwd','oldPwdIcon')"></span>
+						</div>
+						<div class="form_field with_right_label form_field_password"  id="newPwdIcon">
+							<span class="form_field_label">新密码</span>
+							<div class="form_field_input">
+								<input type="password" placeholder="6位支付密码，纯数字组成" class="j-payPassword" maxlength="6" ng-model="newPwd" id="newPwd" >
+							</div>
+							<span class="right_label" onclick="chageMobilePwdText('newPwd','newPwdIcon')"></span>
+						</div>
+						<div class="form_field with_right_label form_field_password" id="confirmNewPwdIcon">
+							<span class="form_field_label">确认密码</span>
+							<div class="form_field_input">
+								<input id="confirmNewPwd" type="password" placeholder="6-16位数字和字母" class="j-newpassword" ng-model="cnewPwd">
+							</div>
+							<span class="right_label" onclick="chageMobilePwdText('confirmNewPwd','confirmNewPwdIcon')"></span>
 						</div>
 					</div>
 					<div class="btn_wrap">
-						<a href="javascript:void(0)" class="btn btn01 j-submit">保存</a>
+						<a href="javascript:void(0)" class="btn btn01 j-submit" ng-click="modifyFundPwd()">保存</a>
 					</div>
 			</div>
 		</div>

@@ -72,7 +72,7 @@
 
 .frame_ {
 	height: 730px;
-    width: 450px;
+    width: 100%;
     position: relative;
     padding: 0;
 }
@@ -178,104 +178,38 @@
 							<button type="button" class="btn btn-danger ml10 ng-scope lotteryV2Btn">提交注单</button>
 							
 						</div>
-						
-						<div id="lotteryV2_content" class="ng-scope ssc_ball"
-							style="width: 100%; display: inline-block;"
-								ng-init="initBettingNumUnauth('cqssc', 5)">
-	
-							<table class="table table-bordered table-bet" style="display:none">
-								<thead>
-									<tr>
-										<th colspan="12">总和</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td width="60" add-color="0">总和大</td>
-										<td add-color="0"><b class="text-danger ng-binding">--</b></td>
-										<td add-color="0"><input type="text"
-											class="bet-input ng-pristine ng-untouched ng-valid"
-											maxlength="6"
-											onkeyup="this.value=this.value.replace(/[\u4E00-\u9FA5]|[\uFE30-\uFFA0]/g,''); "
-											disabled=""> <input type="hidden" name="[1].id"
-											value="1"> <input type="hidden" name="[1].oddsId"
-											value="29807"> <input type="hidden" name="[1].name"
-											value="总和大"> <input type="hidden" name="[1].rate"
-											value="1.98"> <input type="hidden" name="[1].min"
-											value="1"> <input type="hidden" name="[1].max"
-											value="50000"></td>
-										<td width="60" add-color="1">总和小</td>
-										<td add-color="1"><b class="text-danger ng-binding">--</b></td>
-										<td add-color="1"><input type="text"
-											class="bet-input ng-pristine ng-untouched ng-valid"
-											maxlength="6"
-											onkeyup="this.value=this.value.replace(/[\u4E00-\u9FA5]|[\uFE30-\uFFA0]/g,''); "
-											disabled=""> <input type="hidden" name="[2].id"
-											value="2"> <input type="hidden" name="[2].oddsId"
-											value="29808"> <input type="hidden" name="[2].name"
-											value="总和小"> <input type="hidden" name="[2].rate"
-											value="1.98"> <input type="hidden" name="[2].min"
-											value="1"> <input type="hidden" name="[2].max"
-											value="50000"></td>
-										<td width="60" add-color="2">总和单</td>
-										<td add-color="2"><b class="text-danger ng-binding">--</b></td>
-										<td add-color="2"><input type="text"
-											class="bet-input ng-pristine ng-untouched ng-valid"
-											maxlength="6"
-											onkeyup="this.value=this.value.replace(/[\u4E00-\u9FA5]|[\uFE30-\uFFA0]/g,''); "
-											disabled=""> <input type="hidden" name="[3].id"
-											value="3"> <input type="hidden" name="[3].oddsId"
-											value="29809"> <input type="hidden" name="[3].name"
-											value="总和单"> <input type="hidden" name="[3].rate"
-											value="1.98"> <input type="hidden" name="[3].min"
-											value="1"> <input type="hidden" name="[3].max"
-											value="50000"></td>
-										<td width="60" add-color="3">总和双</td>
-										<td add-color="3"><b class="text-danger ng-binding">--</b></td>
-										<td add-color="3"><input type="text"
-											class="bet-input ng-pristine ng-untouched ng-valid"
-											maxlength="6"
-											onkeyup="this.value=this.value.replace(/[\u4E00-\u9FA5]|[\uFE30-\uFFA0]/g,''); "
-											disabled=""> <input type="hidden" name="[4].id"
-											value="4"> <input type="hidden" name="[4].oddsId"
-											value="29810"> <input type="hidden" name="[4].name"
-											value="总和双"> <input type="hidden" name="[4].rate"
-											value="1.98"> <input type="hidden" name="[4].min"
-											value="1"> <input type="hidden" name="[4].max"
-											value="50000"></td>
-									</tr>
-									<tr>
-									</tr>
-								</tbody>
-							</table>
-	
-							<table ng-repeat="row in bitNumArray"  class="table table-bordered table-bet pull-left w20 ng-scope">
-								<thead>
-									<tr>
-										<th colspan="3" class="ng-binding">{{row.header}}</th>
-									</tr>
-								</thead>
-								<tbody>							
-									<tr ng-repeat="v in row.bitNum" 
-										ng-class="{{v.vClass}}" 
-											data-bit="{{row.bitIndex}}" 
-											data-play="{{v.playTypeId}}" 
-											data-bettingNum="{{v.bettingNumVal}},,,,,,,,,"  
-											data-sel="0" 
-											data-index={{$index}}>
-																				
-										<td class="ng-binding ng-scope" add-color="4">{{v.bettingNumKey}}</td>
-										<td class="" add-color="4" >
-											{{v.prizeRate}}
-										</td>
-										<td class="" add-color="4" >
-											<input type="text" id="{{row.bitIndex}}_{{$index}}_betAmount" class="bet-input ng-pristine ng-untouched ng-valid" maxlength="6" disabled>
-										</td>
-									</tr>
-								</tbody>
-							</table>
+						<div style="width: 100%;overflow-x: auto;">
+							<div id="lotteryV2_content" class="ng-scope ssc_ball"
+								style="width: 100%; display: inline-block;min-width: 600px;"
+									ng-init="initBettingNumUnauth('cqssc', 5)">
+		
+								<table ng-repeat="row in bitNumArray"  class="table table-bordered table-bet pull-left w20 ng-scope">
+									<thead>
+										<tr>
+											<th colspan="3" class="ng-binding">{{row.header}}</th>
+										</tr>
+									</thead>
+									<tbody>							
+										<tr ng-repeat="v in row.bitNum" 
+											ng-class="{{v.vClass}}" 
+												data-bit="{{row.bitIndex}}" 
+												data-play="{{v.playTypeId}}" 
+												data-bettingNum="{{v.bettingNumVal}},,,,,,,,,"  
+												data-sel="0" 
+												data-index={{$index}}>
+																					
+											<td class="ng-binding ng-scope" add-color="4">{{v.bettingNumKey}}</td>
+											<td class="" add-color="4" >
+												{{v.prizeRate}}
+											</td>
+											<td class="" add-color="4" >
+												<input type="text" id="{{row.bitIndex}}_{{$index}}_betAmount" class="bet-input ng-pristine ng-untouched ng-valid" maxlength="6" disabled>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
 						</div>
-						
 						<div class="bar-bet">
 							<div class="input-group pull-left w150 ml20">
 								<span id="basic-addon1" class="input-group-addon">预设金额</span> 
@@ -317,106 +251,107 @@
 									ng-click='betting("cqssc")'>提交注单</button>
 														
 						</div>
-						
-						<div id="lotteryV2_content" class="ng-scope ssc_ball"
-							style="width: 100%; display: inline-block;"
-								ng-init="initBettingNumAuth('cqssc', 5)">
-	
-							<table class="table table-bordered table-bet" style="display:none">
-								<thead>
-									<tr>
-										<th colspan="12">总和</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td width="60" add-color="0">总和大</td>
-										<td add-color="0"><b class="text-danger ng-binding">--</b></td>
-										<td add-color="0"><input type="text"
-											class="bet-input ng-pristine ng-untouched ng-valid"
-											maxlength="6"
-											onkeyup="this.value=this.value.replace(/[\u4E00-\u9FA5]|[\uFE30-\uFFA0]/g,''); "
-											disabled=""> <input type="hidden" name="[1].id"
-											value="1"> <input type="hidden" name="[1].oddsId"
-											value="29807"> <input type="hidden" name="[1].name"
-											value="总和大"> <input type="hidden" name="[1].rate"
-											value="1.98"> <input type="hidden" name="[1].min"
-											value="1"> <input type="hidden" name="[1].max"
-											value="50000"></td>
-										<td width="60" add-color="1">总和小</td>
-										<td add-color="1"><b class="text-danger ng-binding">--</b></td>
-										<td add-color="1"><input type="text"
-											class="bet-input ng-pristine ng-untouched ng-valid"
-											maxlength="6"
-											onkeyup="this.value=this.value.replace(/[\u4E00-\u9FA5]|[\uFE30-\uFFA0]/g,''); "
-											disabled=""> <input type="hidden" name="[2].id"
-											value="2"> <input type="hidden" name="[2].oddsId"
-											value="29808"> <input type="hidden" name="[2].name"
-											value="总和小"> <input type="hidden" name="[2].rate"
-											value="1.98"> <input type="hidden" name="[2].min"
-											value="1"> <input type="hidden" name="[2].max"
-											value="50000"></td>
-										<td width="60" add-color="2">总和单</td>
-										<td add-color="2"><b class="text-danger ng-binding">--</b></td>
-										<td add-color="2"><input type="text"
-											class="bet-input ng-pristine ng-untouched ng-valid"
-											maxlength="6"
-											onkeyup="this.value=this.value.replace(/[\u4E00-\u9FA5]|[\uFE30-\uFFA0]/g,''); "
-											disabled=""> <input type="hidden" name="[3].id"
-											value="3"> <input type="hidden" name="[3].oddsId"
-											value="29809"> <input type="hidden" name="[3].name"
-											value="总和单"> <input type="hidden" name="[3].rate"
-											value="1.98"> <input type="hidden" name="[3].min"
-											value="1"> <input type="hidden" name="[3].max"
-											value="50000"></td>
-										<td width="60" add-color="3">总和双</td>
-										<td add-color="3"><b class="text-danger ng-binding">--</b></td>
-										<td add-color="3"><input type="text"
-											class="bet-input ng-pristine ng-untouched ng-valid"
-											maxlength="6"
-											disabled=""> <input type="hidden" name="[4].id"
-											value="4"> <input type="hidden" name="[4].oddsId"
-											value="29810"> <input type="hidden" name="[4].name"
-											value="总和双"> <input type="hidden" name="[4].rate"
-											value="1.98"> <input type="hidden" name="[4].min"
-											value="1"> <input type="hidden" name="[4].max"
-											value="50000"></td>
-									</tr>
-									<tr>
-									</tr>
-								</tbody>
-							</table>
-	
-							<table ng-repeat="row in bitNumArray" 
-								class="table table-bordered table-bet pull-left w20 ng-scope">
-								<thead>
-									<tr>
-										<th colspan="3" class="ng-binding">{{row.header}}</th>
-									</tr>
-								</thead>
-								<tbody >
-									<tr ng-repeat="v in row.bitNum" 
-										ng-class="{{v.vClass}}" 
-											data-bit="{{row.bitIndex}}" 
-											data-play="{{v.playTypeId}}" 
-											data-bettingNum="{{v.bettingNumVal}}"  
-											data-sel="0" 
-											data-index={{$index}}>
-											
-										<td class="ng-binding ng-scope" add-color="4" ng-click="selNum($event)">{{v.bettingNumKey}}</td>
-										<td class="" add-color="4" ng-click="selNum($event)">
-											{{v.prizeRate}}
-										</td>
-										<td class="" add-color="4" ng-click="selNum($event)">
-											<input type="text" 
-												id="{{row.bitIndex}}_{{$index}}_betAmount" 
-												class="bet-input ng-pristine ng-untouched ng-valid" 
+						<div style="width: 100%;overflow-x: auto;">
+							<div id="lotteryV2_content" class="ng-scope ssc_ball"
+								style="width: 100%; display: inline-block;min-width: 600px;"
+									ng-init="initBettingNumAuth('cqssc', 5)">
+		
+								<table class="table table-bordered table-bet" style="display:none">
+									<thead>
+										<tr>
+											<th colspan="12">总和</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td width="60" add-color="0">总和大</td>
+											<td add-color="0"><b class="text-danger ng-binding">--</b></td>
+											<td add-color="0"><input type="text"
+												class="bet-input ng-pristine ng-untouched ng-valid"
 												maxlength="6"
-												onfocus="selNum($event)">
-										</td>
-									</tr>
-								</tbody>
-							</table>
+												onkeyup="this.value=this.value.replace(/[\u4E00-\u9FA5]|[\uFE30-\uFFA0]/g,''); "
+												disabled=""> <input type="hidden" name="[1].id"
+												value="1"> <input type="hidden" name="[1].oddsId"
+												value="29807"> <input type="hidden" name="[1].name"
+												value="总和大"> <input type="hidden" name="[1].rate"
+												value="1.98"> <input type="hidden" name="[1].min"
+												value="1"> <input type="hidden" name="[1].max"
+												value="50000"></td>
+											<td width="60" add-color="1">总和小</td>
+											<td add-color="1"><b class="text-danger ng-binding">--</b></td>
+											<td add-color="1"><input type="text"
+												class="bet-input ng-pristine ng-untouched ng-valid"
+												maxlength="6"
+												onkeyup="this.value=this.value.replace(/[\u4E00-\u9FA5]|[\uFE30-\uFFA0]/g,''); "
+												disabled=""> <input type="hidden" name="[2].id"
+												value="2"> <input type="hidden" name="[2].oddsId"
+												value="29808"> <input type="hidden" name="[2].name"
+												value="总和小"> <input type="hidden" name="[2].rate"
+												value="1.98"> <input type="hidden" name="[2].min"
+												value="1"> <input type="hidden" name="[2].max"
+												value="50000"></td>
+											<td width="60" add-color="2">总和单</td>
+											<td add-color="2"><b class="text-danger ng-binding">--</b></td>
+											<td add-color="2"><input type="text"
+												class="bet-input ng-pristine ng-untouched ng-valid"
+												maxlength="6"
+												onkeyup="this.value=this.value.replace(/[\u4E00-\u9FA5]|[\uFE30-\uFFA0]/g,''); "
+												disabled=""> <input type="hidden" name="[3].id"
+												value="3"> <input type="hidden" name="[3].oddsId"
+												value="29809"> <input type="hidden" name="[3].name"
+												value="总和单"> <input type="hidden" name="[3].rate"
+												value="1.98"> <input type="hidden" name="[3].min"
+												value="1"> <input type="hidden" name="[3].max"
+												value="50000"></td>
+											<td width="60" add-color="3">总和双</td>
+											<td add-color="3"><b class="text-danger ng-binding">--</b></td>
+											<td add-color="3"><input type="text"
+												class="bet-input ng-pristine ng-untouched ng-valid"
+												maxlength="6"
+												disabled=""> <input type="hidden" name="[4].id"
+												value="4"> <input type="hidden" name="[4].oddsId"
+												value="29810"> <input type="hidden" name="[4].name"
+												value="总和双"> <input type="hidden" name="[4].rate"
+												value="1.98"> <input type="hidden" name="[4].min"
+												value="1"> <input type="hidden" name="[4].max"
+												value="50000"></td>
+										</tr>
+										<tr>
+										</tr>
+									</tbody>
+								</table>
+		
+								<table ng-repeat="row in bitNumArray" 
+									class="table table-bordered table-bet pull-left w20 ng-scope">
+									<thead>
+										<tr>
+											<th colspan="3" class="ng-binding">{{row.header}}</th>
+										</tr>
+									</thead>
+									<tbody >
+										<tr ng-repeat="v in row.bitNum" 
+											ng-class="{{v.vClass}}" 
+												data-bit="{{row.bitIndex}}" 
+												data-play="{{v.playTypeId}}" 
+												data-bettingNum="{{v.bettingNumVal}}"  
+												data-sel="0" 
+												data-index={{$index}}>
+												
+											<td class="ng-binding ng-scope" add-color="4" ng-click="selNum($event)">{{v.bettingNumKey}}</td>
+											<td class="" add-color="4" ng-click="selNum($event)">
+												{{v.prizeRate}}
+											</td>
+											<td class="" add-color="4" ng-click="selNum($event)">
+												<input type="text" 
+													id="{{row.bitIndex}}_{{$index}}_betAmount" 
+													class="bet-input ng-pristine ng-untouched ng-valid" 
+													maxlength="6"
+													onfocus="selNum($event)">
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
 						</div>
 						<div class="bar-bet" ng-controller="authCtrl">
 							
