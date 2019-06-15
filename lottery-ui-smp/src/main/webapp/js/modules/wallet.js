@@ -1,6 +1,6 @@
 var app = angular.module('wallet', []);
 
-app.controller('depositCtrl', ["$scope", "$http", function ($scope, $http) {
+app.controller('depositCtrl', ["$scope", "$http", "walletService", "userInfoServ", function ($scope, $http, walletService, userInfoServ) {
 	
 	$("div.thirdPay_type li").on("click",function(){
 		var tabType = $(this).attr("data-num");
@@ -16,229 +16,55 @@ app.controller('depositCtrl', ["$scope", "$http", function ($scope, $http) {
 		});
 	});
 	
-    //获取充值方式
-    $http.get(getRechargeChannel).then(function (res) {
-
-        if (res.data.code == 1) {
-
-            $scope.rechargeChannel = res.data.data;
-
-
-            //收集微信，支付宝，银联
-            var wx = new Array();
-            var al = new Array();
-            var bk = new Array();
-            var bkCode = new Array();
-            var qq = new Array();
-
-            for (var i = 0; i < $scope.rechargeChannel.length; i++) {
-
-                var name = $scope.rechargeChannel[i].name;
-                var channelId = $scope.rechargeChannel[i].channelRelationId;
-                var clientType=$scope.rechargeChannel[i].clientType;
-
-                if(clientType=='W' || clientType=='B'){
-
-                    if (name.indexOf('WX')>-1) {
-
-                        wx.push(channelId);
-
-                    } else if (name.indexOf('AL')>-1) {
-
-                        al.push(channelId);
-
-                    } else if (name.indexOf('QQ')>-1) {
-
-                        qq.push(channelId);
-
-                    } else if (name=='BK') {
-
-                        bk.push(channelId);
-
-                    } else if (name=='BKCODE') {
-
-                        bkCode.push(channelId);
-
-                    }
-
-                }
-
-            }
-
-
-            var payType = new Array();
-
-            var wxItem = new Array();
-            var alItem = new Array();
-            var qqItem = new Array();
-            var bkItem = new Array();
-            var bkCodeItem = new Array();
-
-            for (var i = 0; i < $scope.rechargeChannel.length; i++) {
-
-                var clientType=$scope.rechargeChannel[i].clientType;
-
-                if(clientType=='W' || clientType=='B') {
-
-                    var item = {};
-                    item.channelId = $scope.rechargeChannel[i].channelRelationId;
-                    item.t = $scope.rechargeChannel[i].description;
-                    item.val = $scope.rechargeChannel[i].name;
-
-                    if (item.val.indexOf('WX') > -1) {
-
-                        if (wx.length > 1) {
-
-                            item.t = "微信" + (wx.indexOf(item.channelId) + 1);
-                        }
-
-                        wxItem.push(item);
-
-                    } else if (item.val.indexOf('AL') > -1) {
-
-                        if (al.length > 1) {
-
-                            item.t = "支付宝" + (al.indexOf(item.channelId) + 1);
-                        }
-
-                        alItem.push(item);
-
-                    } else if (item.val.indexOf('QQ') > -1) {
-
-                        if (qq.length > 1) {
-
-                            item.t = "QQ" + (qq.indexOf(item.channelId) + 1);
-                        }
-
-                        qqItem.push(item);
-
-                    } else if (item.val == 'BK') {
-
-                        if (bk.length > 1) {
-
-                            item.t = "网银" + (bk.indexOf(item.channelId) + 1);
-                        }
-
-                        bkItem.push(item);
-
-                    } else if (item.val == 'BKCODE') {
-
-                        if (bkCode.length > 1) {
-
-                            item.t = "网银扫码" + (bkCode.indexOf(item.channelId) + 1);
-                        }
-
-                        bkCodeItem.push(item);
-
-                    }
-
-                }
-
-            }
-
-
-            if (wxItem.length > 0) {
-
-                var obj = {};
-                obj.type = "微信支付";
-                obj.cls = "";
-                obj.payItem = wxItem;
-                obj.img = "images/userhome/wechat.jpg";
-                payType.push(obj);
-
-            }
-
-            if (alItem.length > 0) {
-
-                var obj = {};
-                obj.type = "支付宝";
-                obj.cls = "";
-                obj.payItem = alItem;
-                obj.img = "images/userhome/wechat.jpg";
-                payType.push(obj);
-
-            }
-
-            if (qqItem.length > 0) {
-
-                var obj = {};
-                obj.type = "QQ支付";
-                obj.cls = "";
-                obj.payItem = qqItem;
-                obj.img = "images/userhome/qqpay.jpg";
-                payType.push(obj);
-
-            }
-
-            if (bkItem.length > 0) {
-
-                var obj = {};
-                obj.type = "网银支付";
-                obj.cls = "";
-                obj.payItem = bkItem;
-                obj.img = "images/userhome/mcpay.jpg";
-                payType.push(obj);
-
-            }
-
-            if (bkCodeItem.length > 0) {
-
-                var obj = {};
-                obj.type = "银联扫码";
-                obj.cls = "";
-                obj.payItem = bkCodeItem;
-                obj.img = "images/userhome/unionpay.jpg";
-                payType.push(obj);
-
-            }
-
-            $scope.payType = payType;
-            if($scope.payType.length>0){
-                $scope.changeType(0);
-            }
-
-        }
-
-    }, function () {
-
-
-    });
+	$scope.initDeposit = function(){
+		userInfoServ.querySysParams().then(function(res){
+			$scope.depositSysParams = res;
+		});
+		
+		
+		$scope.queryRechargeType();
+	};
+	
+	$scope.queryRechargeType = function(){
+		walletService.queryRechargeType().then(function(res){
+			$scope.rechargeType = res;
+		}, function(error){
+			showToast("查询充值方式失败!!");
+		});
+	};
     
-    $scope.changeType=function (index) {
-
-        for(var i=0;i<$scope.payType.length;i++){
-
-            $scope.payType[i].cls='';
-        }
-
-        $scope.payType[index].cls='active';
-        $scope.payItem=$scope.payType[index].payItem;
-
-        $scope.curChannel=$scope.payItem[0].channelId;
-
-        
-    };
-
-
+    
+	$scope.queryPayChannel = function(payTypeClass){
+		//payTypeClassId=1
+		walletService.queryPayChannel(payTypeClass).then(function(res){
+			$scope.payChannel = res;
+		}, function(error){
+			showToast("查询充值渠道失败!!");
+		});
+	};
+	
+	$scope.selRechargeType = function(){
+		$scope.queryPayChannel($scope.curRechargeType);
+	};
+	
+	$scope.selPayChannel = function(){
+		$scope.currPayChannel;
+		 for(var i=0;i<$scope.payChannel.length;i++){
+			 if($scope.currPayChannel == $scope.payChannel[i].id){
+				 $scope.currPayChannelMaxAmount = $scope.payChannel[i].maxAmount;
+				 break;
+			 }
+	     }
+	};
+	
+   
     //充值提交
-    $scope.rechargeSubmit = function () {
+    $scope.deposit = function () {
 
         var money = $scope.amount;
-        var channelId=$scope.curChannel;
-
-        var data = $scope.rechargeChannel;
-        var currentChannel;
-        for (var i = 0; i < data.length; i++) {
-
-            if (channelId == data[i].channelRelationId) {
-
-                currentChannel = data[i];
-                break;
-            }
-
-        }
-
-        var type=currentChannel.name;
+        var channelId=$scope.currPayChannel;
+        var curRechargeType = $scope.curRechargeType;
+        var maxDepositAmount = $scope.currPayChannelMaxAmount;
 
 
         if (money == "") {
@@ -254,70 +80,63 @@ app.controller('depositCtrl', ["$scope", "$http", function ($scope, $http) {
         }
 
 
-        if(parseFloat(money)<parseFloat(currentChannel.minDeposit)){
-
-            showToast("充值金额不能小于"+currentChannel.minDeposit);
+        if(parseFloat(money) <= 0){
+            showToast("充值金额不能小于0");
             return;
         }
-        if(parseFloat(money)>parseFloat(currentChannel.maxDeposit)){
+        if(parseFloat(money) > parseFloat(maxDepositAmount)){
 
-            showToast("充值金额不能大于"+currentChannel.maxDeposit);
+            showToast("充值金额不能大于"+maxDepositAmount);
             return;
         }
 
 
-        $http({
-            method: 'post',
-            url: rechargeChannelSubmit,
-            data: $.param({
-                'channelRelationId': '' + channelId + '', 'amount': '' + money + '', 'payMethod': 'G',
-                'type': '' + type + '', 'clientType': 'W', "p.code": '', "client": 3
-            }),
-            headers: {'Content-type': 'application/x-www-form-urlencoded'}
-        }).then(function (res) {
-
-            if (res.data.code == 0) {
-
-                if(res.data.data.response!=''){
-
-                    var url = decodeURIComponent(res.data.data.response);
-
-                    var newTab = openWin("支付加载中，请稍候……");
-                    newTab.location.href = url;
-
-                }else{
-
-                    showToast("支付失败");
-                }
-
-            }else{
-
-                showToast("支付失败");
-            }
-
-        },function () {
-
-            showToast("支付失败");
-        });
-
+        walletService.deposit(curRechargeType, channelId, money).then(function(res){
+        	if(res.data_type == 1){
+        		openWinImage(res.qr_code);
+        	}else if(res.data_type == 5){
+        		openWinURL(res.qr_code);
+        	}
+        }, function(error){
+			showToast("充值失败!!");
+		});
+        
     };
 
 
-}]).controller('withdrawCtrl', ["$scope", "$http", function ($scope, $http) {
+}]).controller('withdrawCtrl', ["$scope", "$http", "walletService", "userInfoServ",  function ($scope, $http, walletService, userInfoServ) {
 
     //读取银行列表
-    $http.get(getBankList).then(function (res) {
+   /* $http.get(getBankList).then(function (res) {
 
         $scope.bankList = res.data.data;
 
     }, function () {
 
-    });
+    });*/
+	$scope.initWithdraw = function(){
+		var mainAcc = JSON.parse(sessionStorage.getItem("mainAcc"));
+		var redPacketAcc = JSON.parse(sessionStorage.getItem("redPacketAcc"));
+		
+		$scope.mainAccId = mainAcc.id;
+		$scope.redPacketAccId = redPacketAcc.id;
+		$scope.walletId = mainAcc.id;
+		$scope.mianBalance = mainAcc.balance;
+		userInfoServ.queryBankCard().then(function(res){
+    		$scope.bankCards = res;
+    	},
+    	function(err){
+    		//console.log(err);
+    		//showToast('注册用户失败！！');
+    	});
+		
+	};
+	
+    $scope.withdraw = function () {
 
-    $scope.withdrawSubmit = function () {
-
-        var bankId = $('#bankId option:selected').val();
-
+        var bankId = $scope.bankId;
+        var walletId = $scope.walletId;
+		
         if ($scope.money == undefined) {
 
             showToast("请输入提现金额");
@@ -339,32 +158,13 @@ app.controller('depositCtrl', ["$scope", "$http", function ($scope, $http) {
             showToast("请输入提现密码");
 
         } else {
-
-            $http({
-                method: 'post',
-                url: withdrawSubmit,
-                data: $.param({
-                    'amount': '' + $scope.money + '', 'bankAcct.id': '' + bankId + '',
-                    'password': '' + $scope.drawPwd + '', 'smsEnabled': 'false'
-                }),
-                headers: {'Content-type': 'application/x-www-form-urlencoded'}
-            }).then(function (res) {
-
-                if (res.data.code == 0) {
-
-                    showToast("提现成功");
-
-                } else {
-
-                    showToast(sx.results[res.data.code]);
-                }
-
-            }, function () {
-
-                console.log("修改失败");
-
-            });
-
+        	//bankId, walletId, password, amount
+        	walletService.withdraw(bankId, walletId, $scope.drawPwd, $scope.money).then(function(res){
+        		showToast("提款成功!!");
+            }, function(error){
+    			showToast("提款失败!!");
+    		});
+            
         }
 
 
@@ -543,6 +343,87 @@ app.controller('depositCtrl', ["$scope", "$http", function ($scope, $http) {
     };
 
 }]).service('walletService', ["$http",'$q', function ($http, $q) {
+	
+	this.queryRechargeType = function(){
+		var deferred = $q.defer();
+    	
+    	$http.get(queryRechargeTypeURL,
+    			{'Content-Type': 'application/json'}).then(function(res){
+    		
+    		if (res.data.status == 1) {
+    			deferred.resolve(res.data.data);
+	        }else{
+	        	deferred.reject(res.data.status);
+	        }
+    		
+    	}, function(error){
+    		
+    		deferred.reject(error);
+    	});
+    	
+    	return deferred.promise;
+	};
+	
+	this.queryPayChannel = function(payTypeClass){
+		var deferred = $q.defer();
+    	
+    	$http.get(queryPayChannelURL,
+    			{params: {payTypeClassId: payTypeClass}},
+    			{'Content-Type': 'application/json'}).then(function(res){
+    		
+    		if (res.data.status == 1) {
+    			deferred.resolve(res.data.data);
+	        }else{
+	        	deferred.reject(res.data.status);
+	        }
+    		
+    	}, function(error){
+    		
+    		deferred.reject(error);
+    	});
+    	
+    	return deferred.promise;
+	};
+	
+	this.deposit = function(payTypeClass, payChannel, amount){
+		var deferred = $q.defer();
+		$http.post(depositURL,
+				{'payType': '' + payTypeClass + '', 'payChannel': '' + payChannel + '', 'amount': '' + amount + ''},
+    			{'Content-Type': 'application/json'}).then(function(res){
+    		
+    		if (res.data.status == 1) {
+    			 deferred.resolve(res.data.data);
+
+	        }else{
+	        	deferred.reject(-1);
+	        }
+    		
+    	}, function(error){    		
+    		deferred.reject(-1);
+    	});	
+		
+		return deferred.promise;
+	};
+	
+	this.withdraw = function(bankId, walletId, password, amount){
+		var deferred = $q.defer();
+		$http.post(withdrawURL,
+				{'bankId': '' + bankId + '', 'walletId': '' + walletId + '', 'password': '' + password + '', 'amount': '' + amount + ''},
+    			{'Content-Type': 'application/json'}).then(function(res){
+    		
+    		if (res.data.status == 1) {
+    			 deferred.resolve(res.data.data);
+
+	        }else{
+	        	deferred.reject(-1);
+	        }
+    		
+    	}, function(error){    		
+    		deferred.reject(-1);
+    	});	
+		
+		return deferred.promise;
+	};
 	/**
 	 * query the all wallet including the platform wallet and the third part wallet
 	 * 
@@ -552,13 +433,6 @@ app.controller('depositCtrl', ["$scope", "$http", function ($scope, $http) {
 	 */
 	this.queryWallet = function(){
 		var deferred = $q.defer();
-		/*$http.get(getMemAccount, {cache: true}).then(function (res) {
-	        var allAccount = commonService.pingAccount(res.data.data);
-	        
-	        deferred.resolve(allAccount);
-	    }, function () {
-	    	deferred.reject(-1);
-	    });*/
 		
 		return deferred.promise;
 	};

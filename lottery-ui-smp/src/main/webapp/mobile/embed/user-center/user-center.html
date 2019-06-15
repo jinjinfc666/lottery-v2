@@ -27,7 +27,8 @@
 				</div>
 			</div>
 		</div>
-		<div class="user_info_nav sec_box display_flex_h">
+		<div style="width: 100%;overflow-x: auto;">
+		<div class="user_info_nav sec_box display_flex_h" style="width: 100%; min-width: 600px;">
 			<div class="flex_1">
 				<a href="#userInfo" class="box_border_box">
 					<span class="link_wrap">
@@ -44,6 +45,14 @@
 					</span>
 				</a>
 			</div>
+			<div class="flex_1">
+				<a href="#fundMan" class="box_border_box j-withdrawal">
+					<span class="link_wrap">
+						<span class="icon icon_withdraw"></span>
+						<span>资金管理</span>
+					</span>
+				</a>
+			</div>
 			
 			<div class="flex_1">
 				<a href="#hisRecord" class="box_border_box"><span
@@ -52,6 +61,7 @@
 			
 		</div>
 		
+		</div>
 		<div ui-view=""></div>
 		
 	</div>

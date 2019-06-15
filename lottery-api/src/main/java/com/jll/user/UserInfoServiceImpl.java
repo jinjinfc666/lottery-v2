@@ -1097,7 +1097,9 @@ public class UserInfoServiceImpl implements UserInfoService
 		
 		//检查银行卡
 		UserBankCard userCard = null;
+		logger.debug(String.format("userId   %s     bankId  %s", dbInfo.getId(), bankId));
 		if(bankId < 0 ){
+			
 			List<?> rts = supserDao.findByName(UserBankCard.class,"userId",dbInfo.getId());
 			if(null == rts || rts.isEmpty()){
 				ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
@@ -1109,6 +1111,7 @@ public class UserInfoServiceImpl implements UserInfoService
 		}else{
 			userCard = (UserBankCard) supserDao.get(UserBankCard.class, bankId);
 		}
+		
 		if(null == userCard){
 			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
 			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_WTD_BANK_CARD_ERROR.getCode());

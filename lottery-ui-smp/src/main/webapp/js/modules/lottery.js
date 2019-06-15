@@ -347,6 +347,11 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 		var xjsscHeaderOptions = ['万位', '千位', '百位', '十位', '个位'];
 		var xjsscDwdBettingValOptions = ['bettingVal,,,,',',bettingVal,,,',',,bettingVal,,',',,,bettingVal,',',,,,bettingVal'];
 		
+		var fivefcOptions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+		var fivefcHeaderOptions = ['万位', '千位', '百位', '十位', '个位'];
+		var fivefcDwdBettingValOptions = ['bettingVal,,,,',',bettingVal,,,',',,bettingVal,,',',,,bettingVal,',',,,,bettingVal'];
+		
+		
 		var xyftOptions = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10'];
 		var xyftHeaderOptions = ['冠军', '亚军', '季军', '第四名', '第五名', '第六名', '第七名', '第八名', '第九名', '第十名'];
 		var xyftDwdBettingValOptions = ['bettingVal,,,,,,,,,',',bettingVal,,,,,,,,',',,bettingVal,,,,,,,',',,,bettingVal,,,,,,',',,,,bettingVal,,,,,',',,,,,bettingVal,,,,',',,,,,,bettingVal,,,',',,,,,,,bettingVal,,',',,,,,,,,bettingVal,',',,,,,,,,,bettingVal'];
@@ -376,6 +381,9 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 			}else if(lotteryType == 'xyft'){
 				headerOptions = xyftHeaderOptions;
 				lotteryOptions = xyftOptions;
+			}else if(lotteryType == '5fc'){
+				headerOptions = fivefcHeaderOptions;
+				lotteryOptions = fivefcOptions;
 			}
 			
 			if(sessionStorage.getItem(bitNumBuffeKey) != null){
@@ -489,6 +497,9 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 				
 			}else if(lotteryType == 'xyft'){
 				headerOptions = xyftHeaderOptions;
+				
+			}else if(lotteryType == '5fc'){
+				headerOptions = fivefcHeaderOptions;
 				
 			}
 			
@@ -675,6 +686,9 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 								}else if(lotteryType == 'xyft'){
 									lotteryOptions = xyftOptions;
 									dwdBettingValOptions = xyftDwdBettingValOptions;
+								}else if(lotteryType == '5fc'){
+									lotteryOptions = fivefcOptions;
+									dwdBettingValOptions = fivefcDwdBettingValOptions;
 								}
 								
 								for(var i = 0; i< lotteryOptions.length; i++){
@@ -807,6 +821,9 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 									
 								}else if(lotteryType == 'xyft'){
 									lotteryOptions = xyftOptions;
+									
+								}else if(lotteryType == '5fc'){
+									lotteryOptions = fivefcOptions;
 									
 								}
 								
@@ -1275,6 +1292,15 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 		$scope.queryRecParams = {};
 	};
 	
+	$scope.initMsearch = function(){
+		
+		$scope.mSearchParam = {};
+		$scope.queryRecParams = {};
+		$scope.queryAccRecParams = {};
+		
+		$scope.mSearchParam.searchDate = 1;
+	};
+	
 	$scope.queryBettingRec = function(pageIndex){
 		var userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
 		$scope.queryRecParams.pageIndex = pageIndex;
@@ -1526,10 +1552,51 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 		});
 	};
 	
-	
-	$scope.changeRecordType = function(){
 		
-	}
+	$scope.mStartSearch = function(pageIndex){
+		var recOption = $scope.mSearchParam.recOption;
+		
+		$scope.changeTimeArea();
+		if(recOption == "0"){
+			$scope.queryBettingRec(pageIndex);
+		}else if(recOption == "1"){
+			//$scope.accRecs = {};
+			//$scope.accRecs.pageIndex = 1;
+			//$scope.accRecs.totalPages = 1;
+			$scope.queryAccRecParams = {};
+			
+			$scope.queryAccRec(pageIndex);
+		}else if(recOption == "2"){
+			$scope.initProfitRecQuery();
+			$scope.queryProfitRec(pageIndex);
+		}
+	};
+	
+	$scope.changeTimeArea = function(){
+		var timeType = $scope.mSearchParam.searchDate;
+		var startTime = null;
+		var endTime = null;
+		
+		if(timeType == "1"){
+			startTime = GetDateStr(0) + " 00:00:00";
+			endTime = GetDateStr(0) + " 23:59:59";
+			
+		}else if(timeType == "7"){
+			startTime = GetDateStr(-7) + " 00:00:00";
+			endTime = GetDateStr(0) + " 23:59:59";
+		}else if(timeType == "30"){
+			startTime = GetDateStr(-30) + " 00:00:00";
+			endTime = GetDateStr(0) + " 23:59:59";
+		}
+		
+		$("#4_startTime").val(startTime);
+		$("#4_endTime").val(endTime);
+		$("#5_startTime").val(startTime);
+		$("#5_endTime").val(endTime);
+		$("#6_startTime").val(startTime);
+		$("#6_endTime").val(endTime);
+	};
+	
 }])
 .controller('lotteryUICtrl', ["$scope", "$http","$state", "$location", "playgameService", "hisRecService", function ($scope, $http, $state,$location, playgameService, hisRecService) {
 	$scope.iniCqsscUI = function(){

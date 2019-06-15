@@ -75,6 +75,7 @@ userModule.controller('userInfoCtrl', ["$scope", "$http","$state", "$interval", 
 		}
     };
 
+    /*
     $scope.getBankList = function () {
 
         $http.get(getBankList).then(function (res) {
@@ -86,8 +87,8 @@ userModule.controller('userInfoCtrl', ["$scope", "$http","$state", "$interval", 
         });
 
     };
+    */
 
-   // $scope.getBankList();
 
     //保存用户信息
     $scope.updateMemInfo = function () {
@@ -127,35 +128,13 @@ userModule.controller('userInfoCtrl', ["$scope", "$http","$state", "$interval", 
 
 
         } else {
-
-            showLoading("正在添加…");
-
-            $http({
-                method: 'post',
-                url: bandingCard,
-                data: $.param({'bankCode': '' + $scope.cardNo + ''}),
-                headers: {'Content-type': 'application/x-www-form-urlencoded'}
-            }).then(function (res) {
-
-                hideLoading();
-                if (res.data.code == 0) {
-
-                    $scope.getBankList();
-                    $("#bankCardModal").hide();
-
-                } else {
-
-                    showToast(sx.results[res.data.code]);
-                }
-
-            }, function () {
-
-                hideLoading();
-                console.log("修改失败");
-
-            });
-
-
+        	userInfoServ.saveCard($scope.curBank, $scope.cardNo).then(function(res){
+        		showToast('成功绑定银行卡！！');
+        		$scope.bankCardModal();
+        	},
+        	function(err){
+        		showToast('绑定银行卡失败！！');
+        	});
         }
     }
 
@@ -320,6 +299,81 @@ userModule.controller('userInfoCtrl', ["$scope", "$http","$state", "$interval", 
     	}
     	
     }
+    
+    $scope.regUser = function (userType,platRebate) {
+        if (typeof $scope.userInfo.realName != 'undefined'
+        	&& $scope.userInfo.realName != null
+        	&& $scope.userInfo.realName.length > 0
+        	&& !ischina($scope.userInfo.realName)) {
+        	
+            showToast("请输入真实姓名");
+
+        }else if (typeof $scope.userInfo.userName == 'undefined'
+        	|| $scope.userInfo.userName == null
+        	|| $scope.userInfo.userName.length == 0) {
+
+            showToast("请输入正确的登录用户");
+
+        }else if (typeof $scope.userInfo.loginPwd == 'undefined'
+        	|| $scope.userInfo.loginPwd == null
+        	|| $scope.userInfo.loginPwd.length == 0) {
+
+            showToast("请输入正确的登录密码");
+
+        }else if (typeof $scope.userInfo.email != 'undefined'
+        	&& $scope.userInfo.email != null
+        	&& $scope.userInfo.email.length > 0
+        	&& !isEmail($scope.userInfo.email)) {
+
+            showToast("请输入正确的电子邮件");
+
+        }else {
+        	var location = window.location.href;
+        	if(location.indexOf('?') < 0){
+        		showToast('请联系您的上级获取注册地址!');
+        		return;
+        	}
+        	
+        	var agentId = location.substring(location.indexOf('?') + 1);
+        	agentId = agentId.substring(8);
+        	$scope.userInfo.superior = agentId;
+        	$scope.userInfo.userType = userType;
+        	$scope.userInfo.platRebate = platRebate;
+        	
+        	userInfoServ.regUser($scope.userInfo).then(function(res){
+        		//sessionStorage.setItem("userInfo", JSON.stringify($scope.userInfo));
+        		showToast('成功注册用户！！');
+        	},
+        	function(err){
+        		console.log(err);
+        		showToast('注册用户失败！！');
+        	});
+        }
+    };
+    
+    $scope.initBankCard = function () {
+    	userInfoServ.queryBank().then(function(res){
+    		$scope.banks = res;
+    	},
+    	function(err){
+    		//console.log(err);
+    		//showToast('注册用户失败！！');
+    	});
+    	
+    	
+    };
+    
+    $scope.queryBankCard = function () {
+    	userInfoServ.queryBankCard().then(function(res){
+    		$scope.bankCards = res;
+    	},
+    	function(err){
+    		//console.log(err);
+    		//showToast('注册用户失败！！');
+    	});
+    	
+    	
+    };
     
 }]).controller('accManCtrl', ["$scope", "$http", "$location","$state", "userInfoServ", "authService", function ($scope, $http, $location, $state, userInfoServ, authService) {
 
@@ -699,6 +753,109 @@ userModule.controller('userInfoCtrl', ["$scope", "$http","$state", "$interval", 
     	}, function(error){    		
     		deferred.reject(-1);
     	});	
+		
+		return deferred.promise;
+	};
+	
+	this.regUser = function(userInfo){
+		var deferred = $q.defer();
+		var regUserURL_ = regUserURL.replace("{agentId}", userInfo.superior);
+		var userName = (userInfo.userName == null || typeof userInfo.userName == 'undefined')?'':userInfo.userName;
+		$http.post(regUserURL_,
+				{'email': '' + (userInfo.email == null || typeof userInfo.email == 'undefined')?'':userInfo.email
+					+ '', 'fundPwd': '' + userInfo.loginPwd 
+					+ '', 'loginPwd': '' + userInfo.loginPwd
+					+ '', 'phoneNum': '' + (userInfo.phoneNum == null || typeof userInfo.phoneNum == 'undefined')?'':userInfo.phoneNum
+					+ '', 'platRebate': '' + userInfo.platRebate 
+					+ '', 'qq': '' + (userInfo.qq == null || typeof userInfo.qq == 'undefined')?'':userInfo.qq
+					+ '', 'realName': '' + (userInfo.realName == null || typeof userInfo.realName == 'undefined')?'':userInfo.realName
+					+ '', 'userId': '' + (userInfo.userId == null || typeof userInfo.userId == 'undefined')?'':userInfo.userId
+					+ '', 'userName': '' + userName
+					+ '', 'userType': '' + userInfo.userType
+					+ '', 'wechat': '' + (userInfo.wechat == null || typeof userInfo.wechat == 'undefined')?'':userInfo.wechat + ''},
+    			{'Content-Type': 'application/json'}).then(function(res){
+    		
+    		if (res.data.status == 1) {
+    			 deferred.resolve(1);
+
+	        }else{
+	        	deferred.reject(-1);
+	        }
+    		
+    	}, function(error){    		
+    		deferred.reject(-1);
+    	});	
+		
+		return deferred.promise;
+	};
+	
+	this.querySysParams = function(){
+		var deferred = $q.defer();
+		
+		$http.get(querySysParamsURL).then(function (res) {
+			if(res.data.status == 1){
+				//var userAcc = res.data.data;
+				
+				deferred.resolve(1);
+			}else{
+				deferred.reject(-1);
+			}
+	    }, function (err) {
+	    	deferred.reject(-1);
+	    });
+		
+		return deferred.promise;
+	};
+	
+	this.queryBank = function(){
+		var deferred = $q.defer();
+		
+		$http.get(queryBankURL).then(function (res) {
+			if(res.data.status == 1){
+				deferred.resolve(res.data.data);
+			}else{
+				deferred.reject(-1);
+			}
+	    }, function (err) {
+	    	deferred.reject(-1);
+	    });
+		
+		return deferred.promise;
+	};
+	
+	this.queryBankCard = function(){
+		var deferred = $q.defer();
+		
+		$http.get(queryBankCardURL).then(function (res) {
+			if(res.data.status == 1){
+				deferred.resolve(res.data.data);
+			}else{
+				deferred.reject(-1);
+			}
+	    }, function (err) {
+	    	deferred.reject(-1);
+	    });
+		
+		return deferred.promise;
+	};
+	
+	
+	this.saveCard = function(curBank, cardNo){
+		var deferred = $q.defer();
+		
+		$http.post(addBankCardURL,
+				{'bankBranch': '' + curBank
+					+ '', 'cardNum': '' + cardNo
+					+ '', 'remark': ''},
+    			{'Content-Type': 'application/json'}).then(function(res){
+			if(res.data.status == 1){
+				deferred.resolve(res.data.data);
+			}else{
+				deferred.reject(-1);
+			}
+	    }, function (err) {
+	    	deferred.reject(-1);
+	    });
 		
 		return deferred.promise;
 	};

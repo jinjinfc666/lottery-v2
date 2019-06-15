@@ -56,6 +56,9 @@ app.config(["$httpProvider", function ($httpProvider) {
     }).state('userCenter', {
         url: '/userCenter',
         templateUrl: 'embed/user-center/user-center.html'
+    }).state('fundMan', {
+        url: '/fundMan',
+        templateUrl: 'embed/user-center/fund-management.html'
     }).state('fundManDeposit', {
         url: '/fundManDeposit',
         templateUrl: 'embed/user-center/fund-management-deposit.html'
@@ -107,6 +110,9 @@ app.config(["$httpProvider", function ($httpProvider) {
     }).state('lottery_betting_xjssc', {
         url: '/lottery_betting_xjssc',
         templateUrl: 'embed/lottery_betting_xjssc.html'
+    }).state('lottery_betting_5fc', {
+        url: '/lottery_betting_5fc',
+        templateUrl: 'embed/lottery_betting_5fc.html'
     });
 
 }])

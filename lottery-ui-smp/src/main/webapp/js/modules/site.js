@@ -1,6 +1,6 @@
 //var SITE="http://localhost:8080/lottery-api";
 //var SITE="http://miss369.com/lottery-api";
-var SITE="http://192.168.1.6/lottery-api";
+var SITE="http://192.168.1.9/lottery-api";
 
 var queryCaptchaCodeURL = SITE+"/captchas/verification-code-Img;jsessionid={sessionId}"; //获取验证码
 
@@ -12,37 +12,15 @@ var refreshTokenURL = SITE+"/oauth/token"; //刷新token
 
 var logoutURL = SITE+"/security/logout"; //退出登录
 
-var register=SITE+"lottery/registerMember.do"; //注册
-
 var queryBettingIssueURL = SITE+"/lotteries/{lotteryType}/betting-issue";  //获取优惠列表
 
 var queryIssueRecBriefURL = SITE+"/issues/getIssuesBrief";
-
-var findPwdByMobile=SITE+"changePwdMember!findPwdByMobile.do";  //忘记密码，短信找回
-
-var findPwdByEmail=SITE+"changePwdMember!findPwdByEmail.do";  //忘记密码，短信找回
 
 var modifyLoginPwdURL = SITE+"/users/attrs/login-pwd";  //修改登录密码
 
 var modifyFundPwdURL = SITE+"/users/attrs/fund-pwd";  //设置提现密码
 
-var modifyWithdrawPwd=SITE+"member!updateWithdrawPwd.do";  //修改提现密码
-
-var getMemberSecInfo=SITE+"member!loadSecurityInfo.do";  //获取用户信息
-
-var withdrawSubmit=SITE+"withdraw.do"; //用户提现
-
-//var getBankList=SITE+"mBank!list.do"; //获取银行卡列表
-
-var bandingCard=SITE+"mBank!addCard.do"; //绑定银行卡
-
 var updateMemberInfoURL = SITE+"/users/updateUserInfo";  //修改用户信息
-
-var getIndexGame=SITE+"slot!getSlotCatWithRecommendedGameList.do";  //获取首页游戏
-
-var getGameList=SITE+"slot!getGameList.do";  //获取游戏列表
-
-var getNotice=SITE+"publicAnnouncement!sysAnnouncements.do";  //获取站内信
 
 var applyQrURL = SITE+"/users/{userName}/verify/phone-apply";  //发送手机验证码
 
@@ -52,10 +30,6 @@ var queryUserInfoURL = SITE+"/users/info";  //获取账户信息
 
 var queryUserAccURL = SITE+"/wallet/queryByUserIdUserAccount?userId={userId}";  //获取战虎信息
 
-var memFundTransfer=SITE+"memFundTranfer.do";  //账户转账
-
-var getBalance=SITE+"member!loadIDBals.do"; //获取账户余额
-
 var bettingRecordURL = SITE+"/report/loyTstRecord";
 
 var bettingRecordBriefURL = SITE+"/report/bettingRecBrief";
@@ -63,42 +37,6 @@ var bettingRecordBriefURL = SITE+"/report/bettingRecBrief";
 var queryAccOperationURL = SITE+"/report/userFlowDetail/type";
 
 var accRecordURL = SITE+"/report/userFlowDetail";
-
-var checkIn=SITE+"member!checkIn.do"; //用户签到
-
-var checkBirthday=SITE+"member!checkBirthday.do"; //检测用户生日
-
-var drawBirthday=SITE+"member!drawBirthday.do"; //领取生日彩金
-
-var checkTyj=SITE+"member!checkTyj.do"; //检测是否可以领取体验金
-
-var withdrawTyj=SITE+"member!drawTyj.do"; //领取体验金
-
-var checkCanUpgrade=SITE+"member!checkCanUpGrade.do"; //检测是否可以升级
-
-var memberUpGrade=SITE+"member!memberUpGrade.do"; //用户升级
-
-var getRechargeChannel=SITE+"channel!channel.do"; //获取充值渠道
-
-var rechargeChannelSubmit=SITE+"channelDeposit.do"; //充值提交
-
-var getAeDemoUrl=SITE+"aeConfig!getDemoUrl.do";  //获取AE的试玩地址
-
-var getAeRealUrl=SITE+"ae!getGameUrl.do";  //获取AE的正式地址
-
-var getTcGameUrl=SITE+"tc!getGameUrl.do";  //获取TC的游戏地址
-
-var getMgconfig=SITE+"mgConfig.do";  //获取MG游戏配置
-
-var getMgGameInfo=SITE+"mg!getGameInfo.do";  //获取MG游戏信息
-
-var getTtgConfig=SITE+"ttgConfig.do"; //获取TTG游戏配置
-
-var getTtgToken=SITE+"ttg!getToken.do"; //获取TTG的token
-
-var getPtConfig=SITE+"pt!getGameInfo.do";   //获取pt的配置信息
-
-var getGameListBytitle=SITE+"slot!getGameListByTitle.do";  //关键字查询游戏名称
 
 var queryOrderStatusURL = SITE+"/report/loyTstRecord/LoyTstState";
 
@@ -116,6 +54,23 @@ var queryExpertPushNumURL = SITE+"/experts/push-numbers";
 
 var cancelOrderURL = SITE+"/users/cancel/bet-order";
 
+var regUserURL = SITE+"/users/agents/{agentId}";
+
+var queryRechargeTypeURL = SITE+"/pay-types/QDPayType";
+
+var querySysParamsURL = SITE+"/users/getSystemParameters";
+
+var queryPayChannelURL = SITE+"/pay-types/QDPayChannel";
+
+var depositURL = SITE+"/payment/pay-loading";
+
+var addBankCardURL = SITE+"/users/userAddBank";
+
+var queryBankCardURL = SITE+"/users/byUNUBankList";
+
+var queryBankURL = SITE+"/settings/queryBankCodeList";
+
+var withdrawURL = SITE+"/users/withdraw/apply";
 
 //弹出框口
 function openWin(tip) {
@@ -135,6 +90,39 @@ function openWin(tip) {
     return win;
 };
 
+function openWinURL(url) {
+
+    var iWidth=window.screen.availWidth-300;    //弹出窗口的宽度;
+    var iHeight=window.screen.availHeight-200;  //弹出窗口的高度;
+    //获得窗口的垂直位置
+    var iTop = (window.screen.availHeight - 30 - iHeight) / 2;
+    //获得窗口的水平位置
+    var iLeft = (window.screen.availWidth - 10 - iWidth) / 2;
+    var win=window.open(url, "", 'height=' + iHeight + ',innerHeight=' + iHeight + ',width=' + iWidth + ',innerWidth=' + iWidth + ',top=' + iTop + ',left=' + iLeft + ',status=no,toolbar=no,menubar=no,location=no,resizable=no,scrollbars=0,titlebar=no');
+
+    /*win.document.open();
+	    win.document.write("<p style='text-align: center;font-size: 20px;margin-top: 80px;'>"+tip+"</p>");
+	    win.document.close();
+	*/
+    return win;
+};
+
+function openWinImage(imageURL) {
+
+    var iWidth=window.screen.availWidth-300;    //弹出窗口的宽度;
+    var iHeight=window.screen.availHeight-200;  //弹出窗口的高度;
+    //获得窗口的垂直位置
+    var iTop = (window.screen.availHeight - 30 - iHeight) / 2;
+    //获得窗口的水平位置
+    var iLeft = (window.screen.availWidth - 10 - iWidth) / 2;
+    var win=window.open("", "", 'height=' + iHeight + ',innerHeight=' + iHeight + ',width=' + iWidth + ',innerWidth=' + iWidth + ',top=' + iTop + ',left=' + iLeft + ',status=no,toolbar=no,menubar=no,location=no,resizable=no,scrollbars=0,titlebar=no');
+
+    win.document.open();
+    win.document.write("<img src='"+imageURL+"'>");
+    win.document.close();
+
+    return win;
+};
 
 //修改密码的可见性
 function chagePwdText(id,idIcon) {

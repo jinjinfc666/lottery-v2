@@ -353,26 +353,42 @@ app.controller('authCtrl',
     	
     };
     
+    
     $scope.changeActive = function(menueNum){
     	if(menueNum == 0){
     		$scope.isMainActive = true;
     		$scope.isGameActive = false;
     		$scope.isAccActive = false;
+    		
     	}else if(menueNum == 1){
     		$scope.isMainActive = false;
     		$scope.isGameActive = true;
     		$scope.isAccActive = false;
+    		
     	}else if(menueNum == 2){
     		$scope.isMainActive = false;
     		$scope.isGameActive = false;
     		$scope.isAccActive = true;
+    		
+    	}else if(menueNum == 3){
+    		$scope.isLoginActive = true;
+    		$scope.isRegActive = false;
+    	}else if(menueNum == 4){
+    		$scope.isLoginActive = false;
+    		$scope.isRegActive = true;
     	}
+    	
     };
     
     $scope.mobileIndexInit = function(){
     	$scope.isMainActive = true;
 		$scope.isGameActive = false;
 		$scope.isAccActive = false;
+		
+		$scope.isLoginActive = true;
+		$scope.isRegActive = false;
+		
+		$state.go("main");
     };
     
     $scope.hiddenHeader = function(){

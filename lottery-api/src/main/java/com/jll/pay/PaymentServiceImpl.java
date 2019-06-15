@@ -10,9 +10,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +19,7 @@ import com.jll.common.constants.Constants;
 import com.jll.common.constants.Constants.DepositOrderState;
 import com.jll.common.constants.Constants.PayChannelType;
 import com.jll.common.constants.Constants.PayChannnelEMA;
+import com.jll.common.constants.Constants.PayTypeClass;
 import com.jll.common.constants.Constants.PayTypeState;
 import com.jll.common.constants.Constants.UserType;
 import com.jll.common.constants.Message;
@@ -35,6 +34,8 @@ import com.jll.entity.PayType;
 import com.jll.entity.UserAccountDetails;
 import com.jll.entity.UserInfo;
 import com.jll.pay.caiPay.CaiPayService;
+import com.jll.pay.hezPay.HezPayController;
+import com.jll.pay.hezPay.HezPayService;
 import com.jll.pay.order.DepositOrderDao;
 import com.jll.pay.order.DepositOrderService;
 import com.jll.pay.tlCloud.TlCloudService;
@@ -45,6 +46,8 @@ import com.jll.user.UserInfoService;
 @Transactional
 public class PaymentServiceImpl  implements PaymentService
 {
+	private Logger logger = Logger.getLogger(PaymentServiceImpl.class);
+	
   @Resource
   PaymentDao trendAnalysisDao;
   
@@ -54,6 +57,9 @@ public class PaymentServiceImpl  implements PaymentService
   
   @Resource
   CaiPayService caiPayService;
+  
+  @Resource
+  HezPayService hezPayService;
   
   @Resource
   UserInfoService userInfoService;
@@ -206,7 +212,47 @@ public class PaymentServiceImpl  implements PaymentService
 		pramsInfo.put("userId", userId);
 		pramsInfo.put("rechargeType", pcInfo.getPayCode());
 		pramsInfo.put("amount", info.getAmount());
-		if(pt.getPlatId().equals(Constants.PayType.CAI_PAY.getCode())){
+		if(pt.getPlatId().equals(Constants.PayType.HEZ_PAY.getCode())){
+			pramsInfo.remove("reqIP");
+			pramsInfo.remove("payerName");
+			pramsInfo.remove("payCardNumber");
+			//00026  --> 表示网银
+			logger.debug(String.format("pay type class %s", pcInfo.getTypeClass()));
+			if(pcInfo.getTypeClass().equals(Integer.toString(PayTypeClass.PAY_SCAN.getCode()))){//扫码
+				String retCode = hezPayService.processScanPay(pramsInfo);
+				logger.debug(String.format("retCode %s", retCode));
+				//getScanPayInfo(ret, retCode, StringUtils.getStringValue(pramsInfo.get("qrcode")));
+				String qrCode = StringUtils.getStringValue(pramsInfo.get("qrcode"));
+				
+				logger.debug(String.format("qrCode %s", qrCode));
+				if(retCode.equals(String.valueOf(Message.status.SUCCESS.getCode()))) {
+					if(StringUtils.isBlank(qrCode)) {
+						ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+						ret.put(Message.KEY_ERROR_CODE, retCode);
+						ret.put(Message.KEY_ERROR_MES, Message.Error.getErrorByCode(retCode).getErrorMes());
+					}else {
+						data.put(Message.KEY_DATA_QR_CODE, qrCode);
+						ret.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());						
+					}
+				}else {
+					ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+					ret.put(Message.KEY_ERROR_CODE, retCode);
+					ret.put(Message.KEY_ERROR_MES, Message.Error.getErrorByCode(retCode).getErrorMes());
+				}
+				
+			}else{
+				String retCode = hezPayService.processOnlineBankPay(pramsInfo);
+				if(retCode.equals(String.valueOf(Message.status.SUCCESS.getCode()))) {
+					data.put("isRedirect",true);
+					data.put(Message.KEY_DATA_REDIRECT, pramsInfo.get("redirect"));
+					ret.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());					
+				}else {
+					ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+					ret.put(Message.KEY_ERROR_CODE, retCode);
+					ret.put(Message.KEY_ERROR_MES, Message.Error.getErrorByCode(retCode).getErrorMes());
+				}
+			}
+		}else if(pt.getPlatId().equals(Constants.PayType.CAI_PAY.getCode())){
 			pramsInfo.remove("reqIP");
 			pramsInfo.remove("payerName");
 			pramsInfo.remove("payCardNumber");

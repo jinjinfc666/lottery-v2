@@ -4,6 +4,7 @@
     margin-left: auto;
     margin-right: auto;
 }
+
 </style>
 
 <div class="usershow fl" ng-controller="userInfoCtrl" ng-init="getMemberInfo()">
@@ -19,8 +20,8 @@
 				<div class="u_c_w_tab active">
 					<div class="u_inputs">
 						<label class="u_label">真实姓名</label> 
-						<input ng-class="{'u_input':true}" ng-if="userInfo.realName == null || userInfo.realName.length == 0" id="j-accountName" placeholder="请输入真实姓名"  ng-model="userInfo.realName">
-						<input ng-class="{'u_input':true}" ng-if="userInfo.realName != null && userInfo.realName.length > 0" id="j-accountName" placeholder="请输入真实姓名"  ng-model="userInfo.realName" disabled>
+						<input ng-class="{'u_input':true}" id="j-accountName" placeholder="请输入真实姓名"  ng-model="userInfo.realName"  ng-if="!userInfo.isSetted">
+						<input ng-class="{'u_input':true}" id="j-accountName" placeholder="请输入真实姓名"  ng-model="userInfo.realName" ng-if="userInfo.isSetted"  readonly="">
 					</div>
 					<div class="u_inputs">
 						<label class="u_label">手机号码</label> 
@@ -47,18 +48,18 @@
 				</div>
 			</div>
 
-			<div data-id="u_m_yhk" data-num="1" class="u_c_w_content j-nav_tab">
+			<div data-id="u_m_yhk" data-num="1" class="u_c_w_content j-nav_tab" ng-init="queryBankCard()">
                                 <div class="u_c_w_tab active">
                                     <div class="bank_content cfx j-bankCardList">
 	                                    <div class="bank_box">
 	                                    	<a href="javascript:;" class="add_bank j-add_bank" ng-click="bankCardModal()">添加银行卡</a>
 	                                    </div>
 	                                    
-	                                    <div class="box bg{{v.bg}}" ng-repeat="v in bankList">
-            								<div class="bank_card_info">
-            									<h2 class="bankname">{{v.bankName}}</h2>
-	            								<span class="acctnumber">{{v.acctNum}}</span>
-	            								<span class="acctname">持卡人：{{v.acctName}}</span>
+	                                    <div class="box bg{{v.bg}}" ng-repeat="v in bankCards" style="width: 30%; height: 150px;">
+            								<div class="bank_card_info" style="height: 100%;">
+            									<h2 class="bankname" style="height: 20%;text-align:left;padding: 0 0 0 25px;">{{v.bankBranch}}</h2>
+	            								<div class="acctnumber" style="height: 60%;line-height: 90px;">{{v.cardNum}}</div>
+	            								<button class="acctname">删除银行卡绑定</button>
             								</div>
         								</div>
                                     </div>
@@ -121,18 +122,18 @@
                                     </div>
                             </div>
                             
-                            <div data-id="u_m_yhk" data-num="1" class="u_c_w_content j-nav_tab">
+                            <div data-id="u_m_yhk" data-num="1" class="u_c_w_content j-nav_tab" ng-init="queryBankCard()">
                                 <div class="u_c_w_tab active">
                                     <div class="bank_content cfx j-bankCardList">
 	                                    <div class="bank_box">
 	                                    	<a href="javascript:;" class="add_bank j-add_bank" ng-click="bankCardModal()">添加银行卡</a>
 	                                    </div>
 	                                    
-	                                    <div class="box bg{{v.bg}}" ng-repeat="v in bankList">
+	                                    <div class="box bg{{v.bg}}" ng-repeat="v in bankCards">
             								<div class="bank_card_info">
-            									<h2 class="bankname">{{v.bankName}}</h2>
-	            								<span class="acctnumber">{{v.acctNum}}</span>
-	            								<span class="acctname">持卡人：{{v.acctName}}</span>
+            									<h2 class="bankname">{{v.bankBranch}}</h2>
+	            								<span class="acctnumber">{{v.cardNum}}</span>
+	            								<button class="acctname">删除银行卡绑定</button>
             								</div>
         								</div>
                                     </div>
@@ -168,14 +169,18 @@
 </div>
 
 
-<aside class="register ng-scope" id="bankCardModal" ng-controller="userInfoCtrl" style="display: none;">
-	<div class="register_content">
+<aside class="register ng-scope" id="bankCardModal" style="display: none;" >
+	<div class="register_content" ng-controller="userInfoCtrl" ng-init="initBankCard()">
 		<div class="r_title">
 			<p>添加银行卡</p>
 			<span class="close j-close" num="6"></span>
 		</div>
 		<div class="r_content">
 			<div class="u_c_w_tab active">
+				<div class="u_inputs">
+					<label class="u_label">开户银行</label>
+					<select name="id" id="bank" class="u_select j-pay_type" ng-model="curBank" ng-options="v.codeVal as v.codeVal for v in banks"></select>
+				</div>
 				<div class="u_inputs">
 					<label class="u_label">银行卡号</label>
 					<input class="u_input" id="hbcouponCode" placeholder="请输入银行卡号" ng-model="cardNo">

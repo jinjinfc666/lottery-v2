@@ -1803,6 +1803,7 @@ public class Constants {
 			SELF_PAY("self_pay"),
 			WISDOM_PAYMENT("wisdom_payment"),//智慧付
 			CAI_PAY("cai_pay"),
+			HEZ_PAY("hez_pay"),
 			TLY_PAY("tly_pay");
 			
 			private String code;

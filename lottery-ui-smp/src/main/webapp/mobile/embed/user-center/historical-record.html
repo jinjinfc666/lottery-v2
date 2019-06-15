@@ -1,8 +1,9 @@
-<div ng-controller="hisRecCtrl">
+<div ng-controller="hisRecCtrl" ng-init="initMsearch()">
 	<div id="page-index" style="display: block;">
-		<header class="header_normal">
-			<a href="javascript:;" data-back="" class="back_link"><span
-				class="icon icon_arrow_back"></span></a>
+		<header class="header_normal"  ng-controller="authCtrl">
+			<a href="javascript:;" data-back="" class="back_link" ng-click="goBack()">
+				<span class="icon icon_arrow_back"></span>
+			</a>
 			<h1>记录查询</h1>
 		</header>
 		<div class="page_content_wrap">
@@ -12,7 +13,7 @@
 						<div class="form_field">
 							<span class="form_field_label">记录类型</span>
 							<div class="form_field_input">
-								<select name="" id="j-selectType" ng-model="recOption">
+								<select name="" id="j-selectType" ng-model="mSearchParam.recOption">
 									<option value="0">投注记录</option>
 									<option value="1">流水记录</option>
 									<option value="2">个人盈利报表</option>
@@ -20,205 +21,182 @@
 							</div>
 						</div>
 
-						<div class="form_field" id="recommendType" style="display: none">
-							<span class="form_field_label">推荐类型</span>
-							<div class="form_field_input">
-								<select name="" id="friend-type">
-
-								</select>
-							</div>
-						</div>
-
-
 						<div class="form_field">
 							<span class="form_field_label">时间范围</span>
 							<div class="form_field_input">
-								<select id="j-date">
-									<option value="1">一天</option>
+								<select id="j-date" ng-model="mSearchParam.searchDate" ng-change="changeTimeArea()">
+									<option value="1" ng-selected="true">一天</option>
 									<option value="7">七天</option>
 									<option value="30">一个月</option>
 								</select>
 							</div>
+							<input type="hidden" id="4_startTime" name="4_startTime">
+							<input type="hidden" id="4_endTime" name="4_endTime">
+							<input type="hidden" id="5_startTime" name="5_startTime">
+							<input type="hidden" id="5_endTime" name="5_endTime">
+							<input type="hidden" id="6_startTime" name="6_startTime">
+							<input type="hidden" id="6_endTime" name="6_endTime">
 						</div>
-
 					</div>
 					<div class="form_btn_wrap">
-						<a href="javascript:;" id="j-btnSearch" class="btn btn01">查询</a>
+						<a href="javascript:void();" id="j-btnSearch" class="btn btn01" ng-click="mStartSearch(1)">查询</a>
 					</div>
-
-
 				</form>
 			</div>
 		</div>
 	</div>
 
-	<div class="tblwrapper" style="background: none;width: 100%;overflow-x: auto;">
-		<div id="DataTables_Table_4_wrapper"
-			class="dataTables_wrapper no-footer" style="width: 100%; min-width: 600px;">
+	<div class="tblwrapper" style="background: none;width: 100%;overflow-x: auto;" ng-if="mSearchParam.recOption==0">
+		<div id="DataTables_Table_4_wrapper" class="dataTables_wrapper no-footer" style="width: 100%; min-width: 600px;">
 			<table class="table u_table no-footer dataTable"
-				id="DataTables_Table_4" role="grid" style="width: 1139px;">
+				id="DataTables_Table_4" role="grid" style="width: 1139px;background: #fff;">
 				<thead>
 					<tr role="row">
 						<th class="sorting_disabled" rowspan="1" colspan="1"
-							style="width: 120px;">彩种</th>
+							style="width: 120px;border: solid 1px #dbdbdb;">彩种</th>
 						<th class="sorting_disabled" rowspan="1" colspan="1"
-							style="width: 120px;">期号</th>
+							style="width: 120px;border: solid 1px #dbdbdb;">期号</th>
 						<th class="sorting_disabled" rowspan="1" colspan="1"
-							style="width: 176px;">投注号码</th>
+							style="width: 176px;border: solid 1px #dbdbdb;">投注号码</th>
 						<th class="sorting_disabled" rowspan="1" colspan="1"
-							style="width: 90px;">投注金额</th>
+							style="width: 90px;border: solid 1px #dbdbdb;">投注金额</th>
 						<th class="sorting_disabled" rowspan="1" colspan="1"
-							style="width: 90px;">中奖金额</th>
+							style="width: 90px;border: solid 1px #dbdbdb;">中奖金额</th>
 						<th class="sorting_disabled" rowspan="1" colspan="1"
-							style="width: 90px;">操作</th>
+							style="width: 90px;border: solid 1px #dbdbdb;">操作</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr class="odd" ng-repeat="v in bettingRecs.content">
-						<td valign="top" colspan="1" class="dataTables_empty">{{v[3].remark}}</td>
-						<td valign="top" colspan="1" class="dataTables_empty">{{v[2].issueNum}}</td>
-						<td valign="top" colspan="1" class="dataTables_empty">{{v[0].orderNum}}</td>
-						<td valign="top" colspan="1" class="dataTables_empty">{{getBettingNum(v[2].lotteryType,
-							v[4].classification, v[0].betNum)}}</td>
-						<td valign="top" colspan="1" class="dataTables_empty">{{v[0].betAmount}}</td>
-						<td valign="top" colspan="1" class="dataTables_empty">{{v[0].winAmount}}</td>
-						<td valign="top" colspan="1" class="dataTables_empty">{{getOrderStatus(v[0].state)}}</td>
-						<td valign="top" colspan="1" class="dataTables_empty">{{v[0].createTime|
-							date:'yyyy-MM-dd HH:mm:ss'}}</td>
-						<td valign="top" colspan="1" class="dataTables_empty"><button
-								ng-if="v[0].state == 0" class="u_btn j-btnSearch"
-								ng-click="cancelOrder(''+v[0].orderNum)">取消订单</button></td>
+						<td valign="top" colspan="1" class="dataTables_empty" style="border: solid 1px #dbdbdb;">{{v[3].remark}}</td>
+						<td valign="top" colspan="1" class="dataTables_empty"  style="border: solid 1px #dbdbdb;">{{v[2].issueNum}}</td>
+						<td valign="top" colspan="1" class="dataTables_empty"  style="border: solid 1px #dbdbdb;">{{getBettingNum(v[2].lotteryType,v[4].classification, v[0].betNum)}}</td>
+						<td valign="top" colspan="1" class="dataTables_empty"  style="border: solid 1px #dbdbdb;">{{v[0].betAmount}}</td>
+						<td valign="top" colspan="1" class="dataTables_empty"  style="border: solid 1px #dbdbdb;">{{v[0].winAmount}}</td>
+						<td valign="top" colspan="1" class="dataTables_empty"  style="border: solid 1px #dbdbdb;">
+							<button ng-if="v[0].state == 0" class="u_btn j-btnSearch" ng-click="cancelOrder(''+v[0].orderNum)">取消订单</button>
+						</td>
 					</tr>
 				</tbody>
 			</table>
-			<div class="dataTables_paginate paging_simple_numbers"
-				id="DataTables_Table_4_paginate">
-				<a class="paginate_button previous disabled"
-					aria-controls="DataTables_Table_4"
+			<div class="dataTables_paginate paging_simple_numbers" id="DataTables_Table_4_paginate" style="text-align: center;">
+				<a class="paginate_button previous disabled" aria-controls="DataTables_Table_4"
 					data-dt-idx="{{bettingRecs.pageIndex == 1?1:bettingRecs.pageIndex - 1}}"
 					tabindex="0" id="DataTables_Table_4_previous" ng-if="!isPre">上页</a>
 				<a class="paginate_button previous"
 					aria-controls="DataTables_Table_4" tabindex="0"
 					id="DataTables_Table_4_previous" ng-if="isPre"
-					ng-click="queryBettingRec(bettingRecs.pageIndex == 1?1:bettingRecs.pageIndex - 1)">上页</a>
-				<span></span> <a class="paginate_button next disabled"
+					ng-click="mStartSearch(bettingRecs.pageIndex == 1?1:bettingRecs.pageIndex - 1)">上页</a>
+				<span></span> 
+				<a class="paginate_button next disabled"
 					aria-controls="DataTables_Table_4"
 					data-dt-idx="{{bettingRecs.pageIndex == bettingRecs.totalPages ?bettingRecs.pageIndex:bettingRecs.pageIndex + 1}}"
-					tabindex="0" id="DataTables_Table_4_next" ng-if="!isNext">下页</a> <a
-					class="paginate_button next " aria-controls="DataTables_Table_4"
+					tabindex="0" id="DataTables_Table_4_next" ng-if="!isNext">下页</a> 
+				<a class="paginate_button next " aria-controls="DataTables_Table_4"
 					tabindex="0" id="DataTables_Table_4_next" ng-if="isNext"
 					ng-click="queryBettingRec(bettingRecs.pageIndex == bettingRecs.totalPages?bettingRecs.pageIndex:bettingRecs.pageIndex + 1)">下页</a>
 			</div>
 		</div>
 	</div>
 
-	<div id="page-result" ng-if="recOption==1">
-		<header class="header_normal">
-			<a href="javascript:;" class="back_link back_search"><span
-				class="icon icon_arrow_back"></span></a>
-			<h1>流水记录</h1>
-		</header>
-		<div id="j-grid" class="page_content_wrap">
-			<div class="m-grid">
-				<div class="m-grid-header">
-					<span class="m-grid-header-title"></span>
-					<div class="m-grid-refresh flaticon-refresh57"
-						style="display: none;"></div>
-				</div>
-				<div class="m-grid-table">
-					<table class="tb-data-default">
-						<thead>
-							<tr>
-								<td nowrap="nowrap">编号</td>
-								<td nowrap="nowrap">提款金额</td>
-								<td nowrap="nowrap">状态</td>
-								<td nowrap="nowrap">提款时间</td>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td colspan="4" algin="center"
-									style="position: relative; padding: 2em;">无资料</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-				<div class="j_pageStatistics hidden">
-					<p class="j_pageSubtotal"></p>
-					<p class="j_pageTotals"></p>
-				</div>
-				<div class="m-grid-footer">
-					<div class="m-grid-pagination">
-						<div class="m-grid-pagination-left">
-							<div class="m-grid-pagination-first flaticon-media25"></div>
-							<div class="m-grid-pagination-prev flaticon-media23"></div>
-						</div>
-						<div class="m-grid-pagination-page">
-							<span>第 </span><input type="text" value="1"><span>
-								页</span>
-						</div>
-						<div class="m-grid-pagination-right">
-							<div class="m-grid-pagination-next flaticon-media23"></div>
-							<div class="m-grid-pagination-last flaticon-media25"></div>
-						</div>
-					</div>
-					<div class="m-grid-footer-text">共1页，总共0笔</div>
-				</div>
+	<div class="tblwrapper" style="background: none;width: 100%;overflow-x: auto;" ng-if="mSearchParam.recOption==1">
+		<div id="DataTables_Table_4_wrapper" class="dataTables_wrapper no-footer" style="width: 100%; min-width: 600px;">
+			<table class="table u_table no-footer dataTable"
+				id="DataTables_Table_4" role="grid" style="width: 1139px;background: #fff;">
+				<thead>
+					<tr role="row">			                                    
+						<th class="sorting_disabled" rowspan="1" colspan="1"
+							style="width: 120px;border: solid 1px #dbdbdb;">变动金额</th>
+						<th class="sorting_disabled" rowspan="1" colspan="1"
+							style="width: 120px;border: solid 1px #dbdbdb;">变动前金额</th>
+						<th class="sorting_disabled" rowspan="1" colspan="1"
+							style="width: 176px;border: solid 1px #dbdbdb;">变动后金额</th>
+						<th class="sorting_disabled" rowspan="1" colspan="1"
+							style="width: 90px;border: solid 1px #dbdbdb;">资金类型</th>
+						<th class="sorting_disabled" rowspan="1" colspan="1"
+							style="width: 90px;border: solid 1px #dbdbdb;">流水类型</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd" ng-repeat="v in accRecs.content">
+			                                    	<td valign="top" colspan="1" class="dataTables_empty" style="border: solid 1px #dbdbdb;">{{v[0].amount}}</td>
+			                                    	<td valign="top" colspan="1" class="dataTables_empty" style="border: solid 1px #dbdbdb;">{{v[0].preAmount}}</td>
+			                                    	<td valign="top" colspan="1" class="dataTables_empty" style="border: solid 1px #dbdbdb;">{{v[0].postAmount}}</td>
+			                                    	<td valign="top" colspan="1" class="dataTables_empty" style="border: solid 1px #dbdbdb;">{{translateDataItemType(v[0].dataItemType)}} </td>
+			                                    	<td valign="top" colspan="1" class="dataTables_empty" style="border: solid 1px #dbdbdb;">{{v[2].remark}}</td>
+			                           		</tr>
+				</tbody>
+			</table>
+			<div class="dataTables_paginate paging_simple_numbers" id="DataTables_Table_4_paginate" style="text-align: center;">
+				<a class="paginate_button previous disabled" aria-controls="DataTables_Table_4"
+					data-dt-idx="{{bettingRecs.pageIndex == 1?1:bettingRecs.pageIndex - 1}}"
+					tabindex="0" id="DataTables_Table_4_previous" ng-if="!isPre">上页</a>
+				<a class="paginate_button previous"
+					aria-controls="DataTables_Table_4" tabindex="0"
+					id="DataTables_Table_4_previous" ng-if="isPre"
+					ng-click="queryBettingRec(bettingRecs.pageIndex == 1?1:bettingRecs.pageIndex - 1)">上页</a>
+				<span></span> 
+				<a class="paginate_button next disabled"
+					aria-controls="DataTables_Table_4"
+					data-dt-idx="{{bettingRecs.pageIndex == bettingRecs.totalPages ?bettingRecs.pageIndex:bettingRecs.pageIndex + 1}}"
+					tabindex="0" id="DataTables_Table_4_next" ng-if="!isNext">下页</a> 
+				<a class="paginate_button next " aria-controls="DataTables_Table_4"
+					tabindex="0" id="DataTables_Table_4_next" ng-if="isNext"
+					ng-click="queryBettingRec(bettingRecs.pageIndex == bettingRecs.totalPages?bettingRecs.pageIndex:bettingRecs.pageIndex + 1)">下页</a>
 			</div>
 		</div>
 	</div>
-	<div id="page-result" ng-if="recOption==2">
-		<header class="header_normal">
-			<a href="javascript:;" class="back_link back_search"><span
-				class="icon icon_arrow_back"></span></a>
-			<h1>盈利报表</h1>
-		</header>
-		<div id="j-grid" class="page_content_wrap">
-			<div class="m-grid">
-				<div class="m-grid-header">
-					<span class="m-grid-header-title"></span>
-					<div class="m-grid-refresh flaticon-refresh57"
-						style="display: none;"></div>
-				</div>
-				<div class="m-grid-table">
-					<table class="tb-data-default">
-						<thead>
-							<tr>
-								<td nowrap="nowrap">编号</td>
-								<td nowrap="nowrap">转账金额</td>
-								<td nowrap="nowrap">转账时间</td>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td colspan="3" algin="center"
-									style="position: relative; padding: 2em;">无资料</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-				<div class="j_pageStatistics hidden">
-					<p class="j_pageSubtotal"></p>
-					<p class="j_pageTotals"></p>
-				</div>
-				<div class="m-grid-footer">
-					<div class="m-grid-pagination">
-						<div class="m-grid-pagination-left">
-							<div class="m-grid-pagination-first flaticon-media25"></div>
-							<div class="m-grid-pagination-prev flaticon-media23"></div>
-						</div>
-						<div class="m-grid-pagination-page">
-							<span>第 </span><input type="text" value="1"><span>
-								页</span>
-						</div>
-						<div class="m-grid-pagination-right">
-							<div class="m-grid-pagination-next flaticon-media23"></div>
-							<div class="m-grid-pagination-last flaticon-media25"></div>
-						</div>
-					</div>
-					<div class="m-grid-footer-text">共1页，总共0笔</div>
-				</div>
+	
+	<div class="tblwrapper" style="background: none;width: 100%;overflow-x: auto;" ng-if="mSearchParam.recOption==2">
+		<div id="DataTables_Table_4_wrapper" class="dataTables_wrapper no-footer" style="width: 100%; min-width: 600px;">
+			<table class="table u_table no-footer dataTable"
+				id="DataTables_Table_4" role="grid" style="width: 1139px;background: #fff;">
+				<thead>
+					<tr role="row">
+						<th class="sorting_disabled" rowspan="1" colspan="1"
+							style="width: 120px;border: solid 1px #dbdbdb;">用户</th>
+						<th class="sorting_disabled" rowspan="1" colspan="1"
+							style="width: 120px;border: solid 1px #dbdbdb;">消费</th>
+						<th class="sorting_disabled" rowspan="1" colspan="1"
+							style="width: 176px;border: solid 1px #dbdbdb;">返奖</th>
+						<th class="sorting_disabled" rowspan="1" colspan="1"
+							style="width: 90px;border: solid 1px #dbdbdb;">返点</th>
+						<th class="sorting_disabled" rowspan="1" colspan="1"
+							style="width: 90px;border: solid 1px #dbdbdb;">利润</th>
+						<th class="sorting_disabled" rowspan="1" colspan="1"
+							style="width: 90px;border: solid 1px #dbdbdb;">日期</th>
+							
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd" ng-repeat="v in profitRecs.content">
+			                                    	<td valign="top" colspan="1" class="dataTables_empty" style="border: solid 1px #dbdbdb;">{{v[0]}}</td>
+			                                    	<td valign="top" colspan="1" class="dataTables_empty" style="border: solid 1px #dbdbdb;">{{v[6]}}</td>
+			                                    	<td valign="top" colspan="1" class="dataTables_empty" style="border: solid 1px #dbdbdb;">{{v[8]}}</td>
+			                                    	<td valign="top" colspan="1" class="dataTables_empty" style="border: solid 1px #dbdbdb;">{{v[9]}}</td>
+			                                    	<td valign="top" colspan="1" class="dataTables_empty" style="border: solid 1px #dbdbdb;">{{v[10]}}</td>
+			                                    	<td valign="top" colspan="1" class="dataTables_empty" style="border: solid 1px #dbdbdb;">{{v[12]}}</td>
+			                           		</tr>
+				</tbody>
+			</table>
+			<div class="dataTables_paginate paging_simple_numbers" id="DataTables_Table_4_paginate" style="text-align: center;">
+				<a class="paginate_button previous disabled" aria-controls="DataTables_Table_4"
+					data-dt-idx="{{bettingRecs.pageIndex == 1?1:bettingRecs.pageIndex - 1}}"
+					tabindex="0" id="DataTables_Table_4_previous" ng-if="!isPre">上页</a>
+				<a class="paginate_button previous"
+					aria-controls="DataTables_Table_4" tabindex="0"
+					id="DataTables_Table_4_previous" ng-if="isPre"
+					ng-click="queryBettingRec(bettingRecs.pageIndex == 1?1:bettingRecs.pageIndex - 1)">上页</a>
+				<span></span> 
+				<a class="paginate_button next disabled"
+					aria-controls="DataTables_Table_4"
+					data-dt-idx="{{bettingRecs.pageIndex == bettingRecs.totalPages ?bettingRecs.pageIndex:bettingRecs.pageIndex + 1}}"
+					tabindex="0" id="DataTables_Table_4_next" ng-if="!isNext">下页</a> 
+				<a class="paginate_button next " aria-controls="DataTables_Table_4"
+					tabindex="0" id="DataTables_Table_4_next" ng-if="isNext"
+					ng-click="queryBettingRec(bettingRecs.pageIndex == bettingRecs.totalPages?bettingRecs.pageIndex:bettingRecs.pageIndex + 1)">下页</a>
 			</div>
 		</div>
 	</div>
+	
 </div>

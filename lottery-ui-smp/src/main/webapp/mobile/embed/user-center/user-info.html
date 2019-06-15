@@ -106,5 +106,44 @@
 					</div>
 				</div>
 			</div>
-		</div>		
+		</div>
+		
+		<div class="page_content_wrap user_profile_content"  ng-init="queryBankCard()">
+			<div class="sec_box bank_card_list normal_padding box_border_box j-bankCardList">
+				<h2>银行卡资料</h2>
+				<div class="bank_card_item bankImg03" ng-repeat="v in bankCards" >
+					<div class="bank_card_info">
+						<h3>{{v.bankBranch}}</h3>
+						<img class="space" src="images/bg/bg06.png">
+						<p class="bank_card_num">{{v.cardNum}}</p>
+						<button class="acctname">删除银行卡绑定</button>
+					</div>
+				</div>
+				<div class="bank_card_item add_card j-addBankCard">
+					<span class="add_text text_red" ng-click="bankCardModal()">+ 添加银行卡</span>
+				</div>
+			</div>
+		</div>	
 	</div>
+	
+	<aside class="register ng-scope" id="bankCardModal" style="display: none;" >
+	<div class="register_content" ng-controller="userInfoCtrl" ng-init="initBankCard()">
+		<div class="r_title">
+			<p>添加银行卡</p>
+			<span class="close j-close" num="6"></span>
+		</div>
+		<div class="r_content">
+			<div class="u_c_w_tab active">
+				<div class="u_inputs">
+					<label class="u_label">开户银行</label>
+					<select name="id" id="bank" class="u_select j-pay_type" ng-model="curBank" ng-options="v.codeVal as v.codeVal for v in banks"></select>
+				</div>
+				<div class="u_inputs">
+					<label class="u_label">银行卡号</label>
+					<input class="u_input" id="hbcouponCode" placeholder="请输入银行卡号" ng-model="cardNo">
+				</div>
+				<a class="u_btn j-submitCouponhb" ng-click="saveCard()">立即提交</a>
+			</div>
+		</div>
+	</div>
+</aside>

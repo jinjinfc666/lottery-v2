@@ -30,6 +30,7 @@
 <script src="../js/modules/site.js"></script>
 <script src="../js/message-error.js"></script>
 <script src="js/modules/app.js"></script>
+<script src="js/util.js"></script>
 <script src="../js/modules/authentication.js"></script>
 <script src="../js/modules/user.js"></script>
 <script src="../js/modules/agent.js"></script>
@@ -142,20 +143,20 @@
 		</div>
 	</div>
 	<footer class="j-flooter gb_footer" id="j-footerNav">
-		<div class="ft_item layout_image_with_text activeft_item layout_image_with_text" ng-class="{'active':isMainActive}" ng-click="changeActive(0)">
+		<div class="ft_item layout_image_with_text activeft_item layout_image_with_text" ng-class="{'active':isMainActive}" ng-click="changeActive(0)"  style="width: 30%;">
 			<a href="#main"> 
 				<i class="iconfont icon-index2"></i>
 				<div class="img_text">首页</div>
 			</a>
 		</div>
-		<div id="slot" class="ft_item layout_image_with_text"  ng-class="{'active':isGameActive}"  ng-click="changeActive(1)">
+		<div id="slot" class="ft_item layout_image_with_text"  ng-class="{'active':isGameActive}"  ng-click="changeActive(1)"  style="width: 30%;">
 			<a href="#slot"> 
 				<i class="iconfont icon-game"></i>
 				<div class="img_text">游戏</div>
 			</a>
 		</div>
 
-		<div id="account" class="ft_item layout_image_with_text"  ng-class="{'active':isAccActive}" ng-click="changeActive(2)">
+		<div id="account" class="ft_item layout_image_with_text"  ng-class="{'active':isAccActive}" ng-click="changeActive(2)" style="width: 30%;">
 			<a href="javascript:void(0)" ng-click="redirectAccountAction()"> 
 				<i class="iconfont icon-user"></i>
 				<div class="img_text">账户</div>

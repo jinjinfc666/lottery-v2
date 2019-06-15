@@ -3,7 +3,7 @@
 		<div class="index_content">			
 			<section class="banner-section">
 	            <div class="swiper-container swiper-container-horizontal swiper-container-android">
-					<div class="swiper-wrapper" id="ulid" style="transition-duration: 500ms; transform: translate3d(-1916px, 0px, 0px);">
+					<div class="swiper-wrapper" id="ulid" style="transition-duration: 500ms; transform: translate3d(-1916px, 0px, 0px); height: 350px;">
 						<div class="swiper-slide swiper-slide-duplicate" data-swiper-slide-index="4" style="width: 958px;">
 							<a href="javascript:;">
 								<img src="images/common/banner/20180331_1522509017424.jpg" style="width:100%">
@@ -15,9 +15,7 @@
 						</div>
 						<div class="swiper-slide swiper-slide-active" data-swiper-slide-index="1" style="width: 958px;">
 							<a href="../index.html">
-							<img src="images/common/banner/20180506_1525539236617.jpg" style="width:100%">
-							
-							
+							<img src="images/common/banner/20180506_1525539236617.jpg" style="width:100%;height:350px">
 							</a>
 						</div>
 						<div class="swiper-slide swiper-slide-next" data-swiper-slide-index="2" style="width: 958px;">
@@ -43,33 +41,33 @@
 			<h3 class="index_title"><!-- span>游戏平台</span> --></h3>
 			<div>
 				<div class="slot_game_list cfx menu1">
-					<div class="sub viewer ticker-drawing-viewer ticker-drawing-viewer-base">
-									<a id="lotteryV2_haoMa" class="T_PK10 L_BJPK10 status--off"> 
-										<span style="height: 30px;margin: 10px;color: #fc0;background-color: #af1d24;">幸运飞艇</span>
-										<span class="item_{{$index}}" ng-repeat="v in lastIssueRetNumXyft track by $index">
-											<b class="b{{v}}">{{v}}</b>
-										</span>
-									</a>
+					<div class="sub viewer ticker-drawing-viewer ticker-drawing-viewer-base" style="height: 100px; margin: 3px;">
+						<div style="height: 30px;padding: 10px 0 0 0;color: #eee;background-color: #00ceb8;">幸运飞艇</div>
+							<a id="lotteryV2_haoMa" class="T_PK10 L_BJPK10 status--off"> 										
+								<span class="item_{{$index}}" ng-repeat="v in lastIssueRetNumXyft track by $index">
+									<b class="b{{v}}">{{v}}</b>
+								</span>
+							</a>
 					</div>
-					<div class="sub viewer ticker-drawing-viewer ticker-drawing-viewer-base">
+					<div class="sub viewer ticker-drawing-viewer ticker-drawing-viewer-base" style="height: 100px; margin: 3px;">
+						<div style="height: 30px;padding: 10px 0 0 0;color: #eee;background-color: #00ceb8;">重庆时时彩</div>
 									<a id="lotteryV2_haoMa" class="T_SSC L_CQSSC status--off"> 
-										<span style="height: 30px;margin: 10px;color: #fc0;background-color: #af1d24;">重庆时时彩</span>
 										<span class="item_{{$index}}" ng-repeat="v in lastIssueRetNumCqssc track by $index">
 											<b class="b{{v}}">{{v}}</b>
 										</span>
 									</a>
 					</div>
-					<div class="sub viewer ticker-drawing-viewer ticker-drawing-viewer-base">
+					<div class="sub viewer ticker-drawing-viewer ticker-drawing-viewer-base" style="height: 100px; margin: 3px;">
+						<div style="height: 30px;padding: 10px 0 0 0;color: #eee;background-color: #00ceb8;">北京PK10</div>
 									<a id="lotteryV2_haoMa" class="T_PK10 L_BJPK10 status--off"> 
-										<span style="height: 30px;margin: 10px;color: #fc0;background-color: #af1d24;">北京PK10</span>
 										<span class="item_{{$index}}" ng-repeat="v in lastIssueRetNumBjpk10 track by $index">
 											<b class="b{{v}}">{{v}}</b>
 										</span>
 									</a>
 					</div>
-					<div class="sub viewer ticker-drawing-viewer ticker-drawing-viewer-base">
+					<div class="sub viewer ticker-drawing-viewer ticker-drawing-viewer-base" style="height: 100px; margin: 3px;">
+						<div style="height: 30px;padding: 10px 0 0 0;color: #eee;background-color: #00ceb8;">新疆时时彩</div>
 									<a id="lotteryV2_haoMa" class="T_SSC L_CQSSC status--off">
-										<span style="height: 30px;margin: 10px;color: #fc0;background-color: #af1d24;">新疆时时彩</span> 
 										<span class="item_{{$index}}" ng-repeat="v in lastIssueRetNumXjssc track by $index">
 											<b class="b{{v}}">{{v}}</b>
 										</span>
@@ -79,7 +77,7 @@
 			</div>
 			
 			<h3 class="index_title"><span>热门游戏</span></h3>
-			<div class="hot_game_list sec_box layout_item_list mb"  ng-controller="authCtrl">
+			<div class="hot_game_list sec_box layout_item_list mb"  ng-controller="authCtrl"  style="height: 100px;">
 				<div class="ul_auto_wrap hot_game_list">
 					<div class="auto_width" id="j-gameContainer" style="width: 495px;">
 					<div id="nian_k" class="slot_game_item game-info" data-json="{&quot;eName&quot;:&quot;&quot;,&quot;name&quot;:&quot;年年有余&quot;,&quot;id&quot;:&quot;nian_k&quot;,&quot;code&quot;:&quot;nian_k&quot;,&quot;category&quot;:&quot;PT&quot;,&quot;type&quot;:&quot;SLO&quot;,&quot;line&quot;:&quot;&quot;,&quot;state&quot;:1,&quot;pic&quot;:&quot;nian_k.jpg&quot;,&quot;tag&quot;:[]}">     

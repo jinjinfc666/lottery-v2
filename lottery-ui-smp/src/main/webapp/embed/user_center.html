@@ -51,7 +51,12 @@ var _hmt = _hmt || [];
       <div class="cfx">
         <img class="user_avator" src="images/userhome/user_avator.png">
         <p class="user_des_text first-child"><img src="images/userhome/u_info_name.png"><span class="u_info_label">会员账户：</span><span class="j-loginname">{{userInfo.userName}}</span></p>
-        <p class="user_des_text"><img src="images/userhome/u_info_level.png"><span class="u_info_label">会员等级：</span><span class="j-level">普通会员</span></p>
+        <p class="user_des_text">
+        	<img src="images/userhome/u_info_level.png">
+        	<span class="u_info_label">会员等级：</span>
+        	<span class="j-level">普通会员</span>
+        </p>
+        
       </div>
       <div class="cfx u_info_last_time" style="display:none">
         <span class="u_info_label">最后登陆时间：</span>
@@ -163,12 +168,12 @@ var _hmt = _hmt || [];
 
 
 <!-- sidebar -->
-<div class="userbar fl j-userNav" >
-    <a class="u_b_item active" data-link="userManage" ui-sref="userCenter.fundManDeposit" data-num="0" ng-click="changeUserCenterFocus(0)"  style="display:none"><span class="u_b_ico_1"></span>资金管理</a>
+<div class="userbar fl j-userNav" >    
     <a class="u_b_item" data-link="userCoupons" ui-sref="userCenter.promo" data-num="1" ng-click="changeUserCenterFocus(1)"  style="display:none"><span class="u_b_ico_2"></span>自助优惠</a>
     <a class="u_b_item active" data-link="userMaterial" ui-sref="userCenter.userInfo" data-num="2" ng-click="changeUserCenterFocus(2)" ><span class="u_b_ico_3"></span>个人资料</a>
     <a class="u_b_item" data-link="userHome" ui-sref="userCenter.memberHierarchy" data-num="3" ng-click="changeUserCenterFocus(3)"  style="display:none"><span class="u_b_ico_4"></span>会员体系</a>
     <a class="u_b_item" data-link="userInfoSet" ui-sref="userCenter.accMan" data-num="4" ng-click="changeUserCenterFocus(4)" ><span class="u_b_ico_5"></span>账户设置</a>
+    <a class="u_b_item" data-link="userManage" ui-sref="userCenter.fundManDeposit" data-num="0" ng-click="changeUserCenterFocus(0)"><span class="u_b_ico_1"></span>资金管理</a>
     <a class="u_b_item" data-link="userRecords" ui-sref="userCenter.hisRecord" data-num="5" ng-click="changeUserCenterFocus(5)"><span class="u_b_ico_6"></span>交易记录</a>
     <a class="u_b_item u_b_item_letter" data-link="userLetter" ui-sref="userCenter.siteEmail" data-num="6" ng-click="changeUserCenterFocus(6)">站内信<span class="u_b_tips j-msg">1</span></a>
 </div>
