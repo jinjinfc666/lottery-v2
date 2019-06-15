@@ -1,11 +1,11 @@
 <div id="page_content" class="flex_1" >
 	<div class="user_center_content">
-		<div class="user_info_wrap" ng-controller="authCtrl">
+		<div class="user_info_wrap" ng-controller="userInfoCtrl" ng-init="initUserInfo()">
 			<div class="user_info_top">
 				<div class="avata_img">
 					<img src="images/user/user_pic.png" width="139" height="139">
 				</div>
-				<div class="user_info_name">{{username}}</div>
+				<div class="user_info_name">{{userInfo.userName}}</div>
 				<div class="text_center">
 					<div class="user_info_level">
 						<span class="iconfont icon-crown"></span>普通会员
@@ -17,12 +17,12 @@
 			<div class="display_flex_h">
 				<div class="flex_1 balance_value text-center">
 					<p>
-						主账户&nbsp;&nbsp;<em id="sessionAcount">{{mianBalance}}</em>
+						主账户&nbsp;&nbsp;<em id="sessionAcount">{{mainAcc.balance}}</em>
 					</p>
 				</div>
 				<div class="flex_1 balance_value text-center">
 					<p>
-						副账户&nbsp;&nbsp;<em>0.0</em>
+						副账户&nbsp;&nbsp;<em>{{redPacketAcc.balance}}</em>
 					</p>
 				</div>
 			</div>

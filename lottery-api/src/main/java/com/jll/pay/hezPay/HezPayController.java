@@ -39,7 +39,7 @@ public class HezPayController
  * @param userName
  * @return        {"success": true}
  */
-  @RequestMapping(value={"/notices/{noticeType}"}, method={RequestMethod.GET}, consumes={MediaType.APPLICATION_FORM_URLENCODED_VALUE}, produces={MediaType.TEXT_PLAIN_VALUE})
+  @RequestMapping(value={"/notices/{noticeType}"}, method={RequestMethod.GET}, produces={MediaType.TEXT_PLAIN_VALUE})
   public String scanPayNotices(@PathVariable("noticeType") int noticeType ,
 		  HezPayNotices notices,
 		  HttpServletRequest request){
