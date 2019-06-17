@@ -388,6 +388,8 @@ app.controller('authCtrl',
 		$scope.isLoginActive = true;
 		$scope.isRegActive = false;
 		
+		$scope.queryMemberInfo();
+		
 		$state.go("main");
     };
     

@@ -759,7 +759,8 @@ userModule.controller('userInfoCtrl', ["$scope", "$http","$state", "$interval", 
 	
 	this.regUser = function(userInfo){
 		var deferred = $q.defer();
-		var regUserURL_ = regUserURL.replace("{agentId}", userInfo.superior);
+		//var regUserURL_ = regUserURL.replace("{agentId}", userInfo.superior);
+		var regUserURL_ = regUserURL;
 		var userName = (userInfo.userName == null || typeof userInfo.userName == 'undefined')?'':userInfo.userName;
 		$http.post(regUserURL_,
 				{'email': '' + (userInfo.email == null || typeof userInfo.email == 'undefined')?'':userInfo.email
@@ -772,6 +773,7 @@ userModule.controller('userInfoCtrl', ["$scope", "$http","$state", "$interval", 
 					+ '', 'userId': '' + (userInfo.userId == null || typeof userInfo.userId == 'undefined')?'':userInfo.userId
 					+ '', 'userName': '' + userName
 					+ '', 'userType': '' + userInfo.userType
+					+ '', 'superior': '' + userInfo.superior
 					+ '', 'wechat': '' + (userInfo.wechat == null || typeof userInfo.wechat == 'undefined')?'':userInfo.wechat + ''},
     			{'Content-Type': 'application/json'}).then(function(res){
     		

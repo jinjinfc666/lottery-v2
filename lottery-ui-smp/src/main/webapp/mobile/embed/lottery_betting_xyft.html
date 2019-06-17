@@ -147,7 +147,7 @@
 				        	<li class="ng-scope "><a class="ng-binding" lot_code="longhudou" stid="33">龙虎斗</a></li>
 				        	<li class="ng-scope "><a class="ng-binding" lot_code="heshu" stid="33">和数</a></li>-->
 				        	<div style="position:relative;display:inline-block" class="moreGroup" ng-controller="lotteryCtrl" ng-init="queryLotterys()" > 
-								<a id="moreWanfa" href="javascript:void(0)" class="ng-binding" ng-click="dropMenuToggle()">切换彩种<span class="caret"></span></a> 
+								<a id="moreWanfa" href="javascript:void(0)" class="ng-binding" ng-click="dropMenuToggle()">幸运飞艇<span class="caret"></span></a> 
 								<ul ng-class="{'dropdown-menu':true,'sub-menu':true,'dropdown-menu_open':isMenuOpen,'dropdown-menu_close':isMenuClose}"  class="dropdown-menu sub-menu">
 									<li class="ng-scope" ng-repeat="v in lotterys">
 										<a class="ng-binding" ui-sref="lottery_betting_{{v.codeName}}" >{{v.remark}}</a>

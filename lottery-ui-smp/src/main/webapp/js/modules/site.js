@@ -54,7 +54,7 @@ var queryExpertPushNumURL = SITE+"/experts/push-numbers";
 
 var cancelOrderURL = SITE+"/users/cancel/bet-order";
 
-var regUserURL = SITE+"/users/agents/{agentId}";
+var regUserURL = SITE+"/users/self/players";
 
 var queryRechargeTypeURL = SITE+"/pay-types/QDPayType";
 

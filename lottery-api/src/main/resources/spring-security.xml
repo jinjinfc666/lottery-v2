@@ -123,7 +123,8 @@
 		<intercept-url method="GET" pattern="/users/queryAllUserAgent" access="hasRole('ROLE_MANAGER')" />
 		<intercept-url method="GET" pattern="/users/queryAgentByAgent" access="hasRole('ROLE_MANAGER')" />
 		<intercept-url method="GET" pattern="/users/agents/**" access="hasRole('ROLE_MANAGER')" />
-		<intercept-url method="POST" pattern="/users/agents/**"  access="hasRole('ROLE_ANONYMOUS')"  />
+		<!-- intercept-url method="POST" pattern="/users/agents/**"  access="hasRole('ROLE_ANONYMOUS') or hasRole('ROLE_ADMIN')"  /-->
+		<intercept-url method="POST" pattern="/users/agents/**"  access="hasRole('ROLE_ADMIN') or  or hasRole('ROLE_AGENT_SM')"  />
 		<intercept-url method="PUT" pattern="/users/agents/**" access="hasRole('ROLE_MANAGER')" />
 		<intercept-url method="DELETE" pattern="/users/agents/**" access="hasRole('ROLE_MANAGER')" />		
 		<intercept-url method="POST" pattern="/users/players" access="hasRole('ROLE_AGENT')" />
