@@ -53,9 +53,7 @@ public class ExpertController {
 		UserPushCache userPushCache = cacheServ.getUserPushCache(user);
 		
 		if(userPushCache == null){
-			resp.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
-			resp.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_USER_NO_PUSH_CONFIG.getCode());
-			resp.put(Message.KEY_ERROR_MES, Message.Error.ERROR_USER_NO_PUSH_CONFIG.getErrorMes());
+			resp.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
 			return resp;
 		}
 		

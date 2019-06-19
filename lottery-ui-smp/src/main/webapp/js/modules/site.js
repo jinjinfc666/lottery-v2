@@ -90,6 +90,33 @@ function openWin(tip) {
     return win;
 };
 
+function openWinBankInfo(bank_name, bank_acc, remark) {
+
+    var iWidth=window.screen.availWidth-300;    //弹出窗口的宽度;
+    var iHeight=window.screen.availHeight-200;  //弹出窗口的高度;
+    //获得窗口的垂直位置
+    var iTop = (window.screen.availHeight - 30 - iHeight) / 2;
+    //获得窗口的水平位置
+    var iLeft = (window.screen.availWidth - 10 - iWidth) / 2;
+    var win=window.open("", "", 'height=' + iHeight + ',innerHeight=' + iHeight + ',width=' + iWidth + ',innerWidth=' + iWidth + ',top=' + iTop + ',left=' + iLeft + ',status=no,toolbar=no,menubar=no,location=no,resizable=no,scrollbars=0,titlebar=no');
+
+    win.document.open();
+    win.document.write("<div style=\"text-align: center\">");
+    win.document.write("<div style=\"height: 50px;text-align: left;margin: 50px 20px 10px 50px;\">");
+	    win.document.write("<span style=\"width:120px; margin: 0 10px 0 0; background: #009688; font-size: 50px; color: white;\">银行账号:</span><span style='text-align: center;font-size: 50px;margin-top: 80px;'>"+bank_acc+"</span><br>");
+	win.document.write("</div>");
+	win.document.write("<div style=\"height: 50px;text-align: left;margin: 50px 20px 10px 50px;\">");
+	    win.document.write("<span style=\"width:120px; margin: 0 10px 0 0; background: #009688; font-size: 50px; color: white;\">账户姓名:</span><span style='text-align: center;font-size: 50px;margin-top: 80px;'>"+bank_name+"</span><br>");
+	win.document.write("</div>");
+	win.document.write("<div style=\"height: 50px;text-align: left;margin: 50px 20px 10px 50px;\">");
+	    win.document.write("<span style=\"width:120px;padding: 0 100px 0 0; margin: 0 10px 0 0; background: #009688; font-size: 50px; color: white;\">附言:</span><span style='text-align: center;font-size: 50px;margin-top: 80px;'>"+remark+"</span>");
+	win.document.write("</div>");
+	win.document.write("</div>");
+	    win.document.close();
+	
+    return win;
+};
+
 function openWinURL(url) {
 
     var iWidth=window.screen.availWidth-300;    //弹出窗口的宽度;

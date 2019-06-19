@@ -49,6 +49,7 @@
   
 		<headers>
 			<frame-options policy="SAMEORIGIN" />
+			<frame-options policy="SAMEORIGIN" />
 			<header name="Access-Control-Allow-Origin" value="*" />
 			<header name="Access-Control-Allow-Methods" value="POST, GET, PUT, DELETE, OPTIONS" />
        		<header name="Access-Control-Allow-Headers" value="Content-Type, Authorization, X-Requested-With" />
@@ -124,7 +125,7 @@
 		<intercept-url method="GET" pattern="/users/queryAgentByAgent" access="hasRole('ROLE_MANAGER')" />
 		<intercept-url method="GET" pattern="/users/agents/**" access="hasRole('ROLE_MANAGER')" />
 		<!-- intercept-url method="POST" pattern="/users/agents/**"  access="hasRole('ROLE_ANONYMOUS') or hasRole('ROLE_ADMIN')"  /-->
-		<intercept-url method="POST" pattern="/users/agents/**"  access="hasRole('ROLE_ADMIN') or  or hasRole('ROLE_AGENT_SM')"  />
+		<intercept-url method="POST" pattern="/users/agents/**"  access="hasRole('ROLE_ADMIN') or hasRole('ROLE_AGENT_SM')"  />
 		<intercept-url method="PUT" pattern="/users/agents/**" access="hasRole('ROLE_MANAGER')" />
 		<intercept-url method="DELETE" pattern="/users/agents/**" access="hasRole('ROLE_MANAGER')" />		
 		<intercept-url method="POST" pattern="/users/players" access="hasRole('ROLE_AGENT')" />

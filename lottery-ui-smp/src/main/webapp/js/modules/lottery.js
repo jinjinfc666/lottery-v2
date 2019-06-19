@@ -1094,7 +1094,10 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 				});
 			},
 			function(error){
-				showToast(error);
+				var codeType = 'error_mes';
+				var attr = error;
+				var codeVal =  sysCodeTranslateFactory.codeTranslate(codeType, attr);
+				showToast(codeVal);
 			});
 		};
 		
@@ -2016,7 +2019,7 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
     			deferred.resolve(res.data.status);
 
 	        }else{
-	        	deferred.reject(res.data.status);
+	        	deferred.reject(res.data.error_code);
 	        }
     		
     	}, function(error){

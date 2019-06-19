@@ -160,8 +160,60 @@ app.controller('authCtrl',
     };
 
     $scope.forwardLogin = function(credentials){
-    	$scope.login(credentials);
-    	$state.go("userCenter");
+    	if (credentials.username == '') {
+
+            showToast("用户名不能为空");
+
+        } else if (credentials.password == '') {
+
+            showToast("密码不能为空");
+
+        } else if (credentials.captchaCode == '') {
+
+            showToast("验证码不能为空");
+
+        } else {
+        	var sessionId = sessionStorage.getItem("sessionId");
+            authService.login(credentials, sessionId).then(function(res){
+            	if(res == 0){
+            		$scope.queryCaptchaCode();
+            	}else{
+            		
+            		//$scope.credentials = credentials;
+            		userInfoServ.queryUserInfo().then(function(userInfo){
+            			userInfoServ.queryUserAcc(userInfo.id).then(function(userAcc){
+            				var mainAcc = null;
+            				var redPacketAcc = null;
+            				
+            				for(var i = 0; i < userAcc.length; i++){
+            					var val = userAcc[i];
+            					if(val.accType == 1){
+            						mainAcc = val;
+            					}else{
+            						redPacketAcc = val;
+            					}
+            				}
+            				
+            				sessionStorage.setItem("userInfo", JSON.stringify(userInfo));
+            				sessionStorage.setItem("mainAcc", JSON.stringify(mainAcc));
+            				sessionStorage.setItem("redPacketAcc", JSON.stringify(redPacketAcc));
+            				
+            				$scope.userInfo = userInfo;
+            				$scope.mainAcc = mainAcc;
+            				$scope.redPacketAcc = redPacketAcc;
+            				
+            				$scope.isLogin = true;
+            				
+            				$state.go("userCenter");
+            			});
+            		});
+            	}
+            },
+            function(error){
+            	showToast("登录失败!!!");
+            });
+        }
+    	
     };
     
     $scope.redirectAccountAction = function(){
@@ -634,7 +686,7 @@ app.controller('mainController', ["$scope", "$http","$interval","$timeout", func
         }).error(function (data, status, headers, config) {
             hideLoading();
             //$("#loginCodeImg").attr("src", get_code + Math.random());
-            deferred.resolve(0);
+            deferred.reject(-1);
         });
         
         return deferred.promise;

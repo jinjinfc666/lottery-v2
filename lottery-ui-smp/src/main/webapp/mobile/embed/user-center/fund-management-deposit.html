@@ -45,6 +45,62 @@
 
 		
 
+		<aside class="register ng-scope" id="onlineBank" ng-class="{'onlineDisplayNone':!isOnlineBank,'onlineDisplayBlock':isOnlineBank}">
+			<div class="register_content" style="min-width: 380px;">
+				<div class="r_title">
+					<p>账户信息</p>
+					<span class="close j-close" num="6" ng-click="closeOnlineBank()"></span>
+				</div>
+				<div class="r_content">
+					<div class="u_c_w_tab active">
+						<div class="u_inputs" style="text-align: center;">
+							<label class="u_label">银行账号</label>
+							<input class="u_input" id="hbcouponCode" placeholder="请输入银行卡号" ng-model="onlineBankAcc" readonly>
+						</div>
+						<div class="u_inputs"  style="text-align: center;">
+							<label class="u_label">账户姓名</label>
+							<input class="u_input" id="hbcouponCode" placeholder="请输入银行卡号" ng-model="onlineBankName" readonly>
+						</div>
+						<div class="u_inputs"  style="text-align: center;">
+							<label class="u_label">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;附言</label>
+							<input class="u_input" id="hbcouponCode" placeholder="请输入银行卡号" ng-model="onlineRemark" readonly>
+						</div>
+					</div>
+				</div>
+			</div>
+		</aside>
+		
+		<aside class="register ng-scope" id="payURL" ng-class="{'onlineDisplayNone':!isPayURL,'onlineDisplayBlock':isPayURL}">
+			<div class="register_content" style="min-width: 380px;">
+				<div class="r_title">
+					<p>支付二维码</p>
+					<span class="close j-close" num="6" ng-click="closePayURL()"></span>
+				</div>
+				<div class="r_content">
+					<div class="u_c_w_tab active">
+						<div class="u_inputs" style="text-align: center;">
+							<a id="payURL_a" ng-href="{{qrPayURL}}" target="_self">点击支付</a>
+						</div>						
+					</div>
+				</div>
+			</div>
+		</aside>
+		
+		<aside class="register ng-scope" id="imageURL" ng-class="{'onlineDisplayNone':!isImageURL,'onlineDisplayBlock':isImageURL}">
+			<div class="register_content" style="min-width: 320px;">
+				<div class="r_title">
+					<p>支付二维码</p>
+					<span class="close j-close" num="6" ng-click="closeImageURL()"></span>
+				</div>
+				<div class="r_content">
+					<div class="u_c_w_tab active">
+						<div class="u_inputs" style="text-align: center;">
+							<img ng-src="{{qrImageURL}}" style="width:100%">
+						</div>						
+					</div>
+				</div>
+			</div>
+		</aside>
 		
 	</div>
 	<aside class="mctips hidden">
@@ -54,11 +110,37 @@
 				如果未支付，请您先支付该笔订单或者选择废弃该订单
 			</div>
 			<div class="mc_btns">
-				<span onclick="secPost(true)">生成新订单</span> <span
-					onclick="check_order()">查看旧订单</span>
+				<span onclick="secPost(true)">生成新订单</span> 
+				<span onclick="check_order()">查看旧订单</span>
 			</div>
 		</div>
 	</aside>
+	
+	<aside class="register ng-scope" id="onlineBank" ng-if="true">
+	<div class="register_content">
+		<div class="r_title">
+			<p>账户信息</p>
+			<span class="close j-close" num="6"></span>
+		</div>
+		<div class="r_content">
+			<div class="u_c_w_tab active">
+				<div class="u_inputs">
+					<label class="u_label">银行账号</label>
+					<input class="u_input" id="hbcouponCode" placeholder="请输入银行卡号" ng-model="onlineBankAcc">
+				</div>
+				<div class="u_inputs">
+					<label class="u_label">账户姓名</label>
+					<input class="u_input" id="hbcouponCode" placeholder="请输入银行卡号" ng-model="onlineBankName">
+				</div>
+				<div class="u_inputs">
+					<label class="u_label">附言</label>
+					<input class="u_input" id="hbcouponCode" placeholder="请输入银行卡号" ng-model="onlineRemark">
+				</div>
+			</div>
+		</div>
+	</div>
+</aside>
+
 	<div
 		class="form_tip form_tip_with_link display_flex_h flex_align_center"
 		style="margin: 0.5em;">
@@ -89,6 +171,15 @@
 	</div>
 
 	<style>
+	.onlineDisplayNone{
+		display:none;
+	}
+	
+	.onlineDisplayBlock{
+		display:block;
+	}
+	
+	
 .mctips {
 	position: fixed;
 	top: 0;

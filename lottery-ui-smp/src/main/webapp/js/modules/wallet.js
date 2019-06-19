@@ -1,6 +1,6 @@
 var app = angular.module('wallet', []);
 
-app.controller('depositCtrl', ["$scope", "$http", "walletService", "userInfoServ", function ($scope, $http, walletService, userInfoServ) {
+app.controller('depositCtrl', ["$scope", "$http", "walletService", "userInfoServ", "$sce", function ($scope, $http, walletService, userInfoServ, $sce) {
 	
 	$("div.thirdPay_type li").on("click",function(){
 		var tabType = $(this).attr("data-num");
@@ -93,9 +93,17 @@ app.controller('depositCtrl', ["$scope", "$http", "walletService", "userInfoServ
 
         walletService.deposit(curRechargeType, channelId, money).then(function(res){
         	if(res.data_type == 1){
-        		openWinImage(res.qr_code);
+        		$scope.isImageURL = true;
+        		$scope.qrImageURL = res.qr_code;
         	}else if(res.data_type == 5){
-        		openWinURL(res.qr_code);
+        		$scope.qrPayURL = res.qr_code;
+        		
+        		window.location.href= res.qr_code;
+        	}else if(res.data_type == 0){
+        		$scope.isOnlineBank = true;
+        		$scope.onlineBankAcc = res.bank_acc;
+        		$scope.onlineBankName = res.bank_name;
+        		$scope.onlineRemark =  res.remark;
         	}
         }, function(error){
 			showToast("充值失败!!");
@@ -103,7 +111,18 @@ app.controller('depositCtrl', ["$scope", "$http", "walletService", "userInfoServ
         
     };
 
-
+    $scope.closeOnlineBank = function(){
+    	$scope.isOnlineBank = false;
+    };
+    
+    $scope.closePayURL = function(){
+    	$scope.isPayURL = false;
+    };
+    
+    $scope.closeImageURL = function(){
+    	$scope.isImageURL = false;
+    };
+    
 }]).controller('withdrawCtrl', ["$scope", "$http", "walletService", "userInfoServ",  function ($scope, $http, walletService, userInfoServ) {
 
     //读取银行列表
@@ -122,6 +141,8 @@ app.controller('depositCtrl', ["$scope", "$http", "walletService", "userInfoServ
 		$scope.redPacketAccId = redPacketAcc.id;
 		$scope.walletId = mainAcc.id;
 		$scope.mianBalance = mainAcc.balance;
+		$scope.money = '';
+		$scope.drawPwd = '';
 		userInfoServ.queryBankCard().then(function(res){
     		$scope.bankCards = res;
     	},
