@@ -557,7 +557,7 @@ public class TReportDaoImpl extends DefaultGenericDaoImpl<TeamPlReport> implemen
 		.append("SUM(profit)*(-1) as profit ")
 		.append("from team_pl_report ")
 		.append("where ( ")
-		.append("(user_id in (select id from user_info where FIND_IN_SET(?,superior) = 1 and user_type = 5) and user_type = 5) ")
+		.append("(user_id in (select id from user_info where FIND_IN_SET(?,superior) = 1 and user_type in (5, 7)) and user_type in (5, 7)) ")
 		.append(" or ")
 		.append("(user_id = ? and user_type = 0) ")
 		.append(") ")

@@ -1,7 +1,6 @@
 package com.jll.game;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -9,12 +8,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.aspectj.apache.bcel.generic.RET;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,12 +39,14 @@ import com.jll.dao.PageBean;
 import com.jll.dao.SupserDao;
 import com.jll.entity.Issue;
 import com.jll.entity.OrderInfo;
+import com.jll.entity.OrderInfoExt;
 import com.jll.entity.PlayType;
 import com.jll.entity.SysCode;
 import com.jll.entity.UserAccount;
 import com.jll.entity.UserAccountDetails;
 import com.jll.entity.UserInfo;
 import com.jll.game.order.OrderDao;
+import com.jll.game.order.OrderInfoExtService;
 import com.jll.game.order.OrderService;
 import com.jll.game.playtype.PlayTypeDao;
 import com.jll.game.playtype.PlayTypeFacade;
@@ -86,6 +87,9 @@ public class IssueServiceImpl implements IssueService
 	
 	@Resource
 	OrderService orderInfoServ;
+	
+	@Resource
+	OrderInfoExtService orderInfoExtServ;
 	
 	@Resource
 	UserInfoService userServ;
@@ -595,6 +599,31 @@ public class IssueServiceImpl implements IssueService
 		
 		boolean isMatch = isMatchWinningNum(issue, order);
 		
+		if(user.getUserType().intValue() == Constants.UserType.XY_PLAYER.getCode()) {
+			List<OrderInfoExt> orderInfoExts = orderInfoExtServ.queryOrderInfoExt(order.getId());
+			if(orderInfoExts == null || orderInfoExts.size() == 0) {
+				order.setIsPrize(0);
+			}else {
+				order.setIsPrize(1);
+			}
+			
+			Date startTime = issue.getStartTime();
+			Random random = new Random();
+			int extraTime = random.nextInt(30) + 1;
+			Date createTime = DateUtil.addSeconds(startTime, extraTime);
+			order.setCreateTime(createTime);
+			
+			if(isMatch && order.getIsPrize().intValue() == 0) {
+				
+				modifyBettingNum(issue, order, false);
+				isMatch = false;
+			}else if(!isMatch && order.getIsPrize().intValue() == 1) {				
+				modifyBettingNum(issue, order, true);
+				isMatch = true;
+			}
+			
+		}
+		
 		if(isMatch) {//赢
 			//TODO 发奖金
 			Map<String, Object> ret = calPrize(issue, order, user);
@@ -608,7 +637,6 @@ public class IssueServiceImpl implements IssueService
 				if(prize.compareTo(maxWinningAmount) == 1) {
 					prize = maxWinningAmount;
 				}
-				
 			}
 			//试玩用户跳过派奖
 			if(UserType.DEMO_PLAYER.getCode() != user.getUserType()){
@@ -642,6 +670,36 @@ public class IssueServiceImpl implements IssueService
 		
 	}
 	
+	private boolean modifyBettingNum(Issue issue, OrderInfo order, boolean isMatch) {
+		PlayType playType = null;
+		String playTypeName = null;
+		PlayTypeFacade playTypeFacade = null;
+		
+		Integer playTypeId = order.getPlayType();
+		playType = playTypeServ.queryById(playTypeId);
+		if(playType == null) {
+			return false;
+		}
+				
+		if(playType.getPtName().equals("fs")) {
+			playTypeName = playType.getClassification() + "/fs";
+		}else if(playType.getPtName().equals("ds")){
+			playTypeName = playType.getClassification() + "/ds";
+		}else {
+			playTypeName = playType.getClassification() + "/" + playType.getPtName();
+		}
+		playTypeFacade = PlayTypeFactory.getInstance().getPlayTypeFacade(playTypeName);
+		
+		if(playTypeFacade == null) {
+			return false;
+		}
+		
+		boolean isSuccess = playTypeFacade.modifyBettingNum(issue, order, isMatch);
+		
+		return isSuccess;
+		
+	}
+
 	private boolean isMatchWinningNum(Issue issue, OrderInfo order) {
 		PlayType playType = null;
 		String playTypeName = null;

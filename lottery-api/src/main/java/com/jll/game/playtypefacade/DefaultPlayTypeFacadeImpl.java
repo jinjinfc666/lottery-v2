@@ -98,6 +98,11 @@ public abstract class DefaultPlayTypeFacadeImpl implements PlayTypeFacade {
 	}
 	
 	@Override
+	public boolean modifyBettingNum(Issue issue, OrderInfo order, boolean isMatch) {
+		return true;
+	};
+	
+	@Override
 	public Map<String, Object> querySingleBettingPrizeRange(Float prizePattern){
 		BigDecimal singleBettingPrize = null;
 		BigDecimal winningRate = calWinningRate();

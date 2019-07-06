@@ -3,7 +3,7 @@
 		<div class="u_c_nav cfx" id="j-searchType" ng-controller="hisRecCtrl" ng-init="initHisRecTab()">
 			<span data-target="u_r_zzyh" data-type="couponRecords" data-num="4" class="j-nav_item u_c_n_item active">投注记录</span>
 			<span data-target="u_r_fzh" data-type="deputyRecords" data-num="5" class="j-nav_item u_c_n_item">帐变记录</span>
-			<span data-target="u_r_zzfs" data-type="ximaDetail" data-num="6" class="j-nav_item u_c_n_item">盈利情况</span>
+			<span data-target="u_r_zzfs" data-type="ximaDetail" data-num="6" class="j-nav_item u_c_n_item">盈亏</span>
 		</div>
         <div class="u_c_window j-tablecontent" style="overflow-x: scroll;">
         	<div data-id="u_r_zzyh" data-num="4" class="u_c_w_content j-nav_tab active" ng-controller="hisRecCtrl" ng-init="initHisRecQuery()">
@@ -11,7 +11,7 @@
                 	<div class="filter">
                 		彩种
                 		<select name="lotteryType" id="lotteryType" ng-model="queryRecParams.lotteryType">
-                			<option ng-repeat="v in lotterys" value="{{v.codeVal}}">{{v.remark}}</option>
+                			<option ng-repeat="v in lotterys" value="{{v.codeName}}">{{v.remark}}</option>
                 		</select>
                 		订单状态
                 		<select name="orderStatus" id="orderStatus" ng-model="queryRecParams.state">
@@ -117,7 +117,8 @@
 		                                    </tr>
 	                                    </thead>
 	                                    <tbody>
-			                            	<tr class="odd" ng-repeat="v in accRecs.content">
+			                            	<tr class="odd" ng-repeat="v in accRecs.content"  ng-if="v[0].operationType != wd_freeze && v[0].dataItemType !=3">
+			                            			
 			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[0].amount}}</td>
 			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[0].preAmount}}</td>
 			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[0].postAmount}}</td>
@@ -163,22 +164,24 @@
                                     <table class="table u_table no-footer" id="DataTables_Table_5" role="grid" style="">
 	                                    <thead>
 		                                    <tr role="row">
+		                                    	<th class="" rowspan="1" colspan="1" style="width: 0px;">日期</th>
 		                                    	<th class="" rowspan="1" colspan="1" style="width: 0px;">用户</th>
 			                                    <th class="" rowspan="1" colspan="1" style="width: 0px;">消费</th>
 			                                    <th class="" rowspan="1" colspan="1" style="width: 0px;">返奖</th>
 			                                    <th class="" rowspan="1" colspan="1" style="width: 0px;">返点</th>
 			                                    <th class="" rowspan="1" colspan="1" style="width: 0px;">利润</th>
-			                                    <th class="" rowspan="1" colspan="1" style="width: 0px;">日期</th>
+			                                    
 		                                    </tr>
 	                                    </thead>
 	                                    <tbody>
 			                            	<tr class="odd" ng-repeat="v in profitRecs.content">
+			                            			<td valign="top" colspan="1" class="dataTables_empty">{{v[12]}}</td>
 			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[0]}}</td>
 			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[6]}}</td>
 			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[8]}}</td>
 			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[9]}}</td>
 			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[10]}}</td>
-			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[12]}}</td>
+			                                    	
 			                           		</tr>
 		                               </tbody>
                                     </table>

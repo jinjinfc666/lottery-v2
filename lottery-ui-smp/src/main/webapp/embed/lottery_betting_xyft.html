@@ -66,8 +66,12 @@
 	outline: none;
 }
 
-.displaySm{
+.displayNone{
 	display: none;
+}
+
+.displayBlock{
+	display: block;
 }
 
 .betRecArea{
@@ -460,20 +464,12 @@
 							</button>
 							<button type="button" class="btn btn-danger ml10 ng-scope lotteryV2Btn"
 									ng-click='betting("xyft")'>提交注单</button>
-							<div class="pull-right clock ng-scope" id="expertArea" ng-init="queryExpertPushNum('xyft')" ng-show="isExpertPushNumber">
-								<h1>推荐号码</h1>
-								<span id="flushTime" style="font-size: 14px; float: left; width: 100px;height:50px; text-align: center; padding: 5px;margin: 5px 10px 0 20px;background: #267671;color:white">
-									<span>{{raceLane}}</span>{{raceLaneValue}}
-								</span>
-								<span id="flushTime" style="font-size: 14px; float: left; width: 100px; text-align: center; padding: 5px;margin: 5px 10px 0 10px;background: #267671;color:white">
-									<span>{{ds}}</span><br>{{dsAmount}}
-								</span>
-								<span id="flushTime" style="font-size: 14px; float: left; width: 100px; text-align: center; padding: 5px;margin: 5px 10px 0 10px;background: #267671;color:white">
-									{{dx}}<br>{{dxAmount}}
-								</span>
-								<span id="flushTime" style="font-size: 14px; float: left; width: 100px; text-align: center; padding: 5px;margin: 5px 10px 0 10px;background: #267671;color:white">
-									{{numbers}}<br>{{numbersAmount}}
-								</span>
+									
+							<button type="button" class="btn btn-danger ml10 ng-scope lotteryV2Btn" ng-if="userInfo.userType == 7"
+									ng-click='changeProduceScheduleState(1)'>生成计划</button>
+									
+							<div class="pull-right clock ng-scope" id="currentQiHaoAndTime">
+								<span id="flushTime" style="font-size: 14px; float: right; width: 40px; text-align: right; margin-top: 4px; margin-left: 6px"></span>
 							</div>
 						</div>
 						
@@ -653,6 +649,106 @@
                         </div>
                                     
 		</div>
+		
+		<aside class="register ng-scope" id="schedule_tab" ng-class="{'ng-scope':true,'displayNone':!isProduceSchedule,'displayBlock':isProduceSchedule}">
+			<div class="register_content" style="overflow-y: auto;  min-height: 500px; height: 600px;">
+				<div class="r_title">
+					<p>投注计划</p>
+					<span class="close j-close" num="6" ng-click='changeProduceScheduleState(0)'></span>
+				</div>
+				<div class="r_content">
+					<div class="bar-bet">
+									<div class="input-group pull-left w150 ml20">
+										<span id="basic-addon1" class="input-group-addon">赛道</span> 
+										<select name="bitIndex" id="bitIndex" class="j-bankCard"  ng-model="bitIndex_" ng-change="selRowFun()">
+											<option value="{{row.bitIndex}}" ng-repeat="row in bitNumArray">{{row.header}}</option>
+										</select>
+									</div>
+									<div class="input-group pull-left w150 ml20">
+										<span id="basic-addon1" class="input-group-addon">选号</span> 
+										<select  name="playTypeId_" id="playTypeId_" class="j-bankCard"  ng-model="playTypeId_" ng-change="selPlayTypeFunc()">
+											<option value="{{v.playTypeId}}" ng-repeat="v in selRow.bitNum">{{v.bettingNumKey}}</option>
+										</select>
+										<input type="hidden" id="bettingNum_" name="bettingNum_">
+									</div>
+									<div class="input-group pull-left w150 ml20">
+										<span id="basic-addon1" class="input-group-addon">投注金额</span> 
+										<input type="text" 
+												class="form-control ng-pristine ng-untouched ng-valid"
+												name="betAmount_" 
+												id="betAmount_" 
+												value="">
+									</div>
+									<div class="input-group pull-left w150 ml20">
+										<span id="basic-addon1" class="input-group-addon">投注倍数</span> 
+										<input type="text" 
+												class="form-control ng-pristine ng-untouched ng-valid"
+												name="betTimes_" 
+												id="betTimes_" 
+												value="1">
+									</div>
+									
+									<div class="input-group pull-left w150 ml20">
+										<span id="basic-addon1" class="input-group-addon">是否递增</span> 
+										<input type="checkbox" id="isIncrease" name="isIncrease" class="bet-input ng-pristine ng-untouched ng-valid" name="sel_{{$index}}">
+									</div>
+									
+									<div class="input-group pull-left w150 ml20" style="width: 100px;">
+										<button class="btn btn-danger ml10 resetBtn" style="background: #267671; border-color: #455964;" type="button" ng-click="produceSchedule()">生成计划</button>
+									</div>
+									<div class="input-group pull-left w150 ml20">
+										<button class="btn btn-danger ml10 resetBtn" style="background: #267671; border-color: #455964;" type="button" ng-click="submitSchedule('xyft')">提交计划</button>
+									</div>
+								</div>
+								
+								<div id="lotteryV2_content" class="ng-scope ssc_ball" style="width: 100%; display: inline-block;" ng-init="queryZhIssue('xyft')">
+									<table  class="table table-bordered table-bet pull-left w20 ng-scope" style="width: 100%;">
+										<thead>
+											<tr>
+												<th class="ng-binding" style="width:25%">期次号</th>
+												<th class="ng-binding" style="width:25%">金额</th>
+												<th class="ng-binding" style="width:25%">是否选中</th>
+												<th class="ng-binding" style="width:25%">是否中奖</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr ng-repeat="v in zhIssue" ng-class="{'ng-scope':true}" class="ng-scope" data-index="{{$index}}"  data-type="10">
+													
+												<td class="ng-binding ng-scope" add-color="4" ng-click="selNum($event)">
+												<input type="text" 
+														class="form-control ng-pristine ng-untouched ng-valid"
+														name="issue_{{$index}}" 
+														id="issue_{{$index}}" 
+														value="{{v.issueNum}}" readonly>
+														
+												<input type="hidden" 
+														name="issueId_{{$index}}" 
+														id="issueId_{{$index}}" 
+														value="{{v.id}}">
+												
+												</td>
+												<td class="ng-binding" add-color="4" ng-click="selNum($event)">
+													<input type="text" 
+														class="form-control ng-pristine ng-untouched ng-valid"
+														name="zhAmount_{{$index}}" 
+														id="zhAmount_{{$index}}" 
+														maxlength="6" 
+														value="" readonly>
+												</td>
+												<td class="" add-color="4" ng-click="selNum($event)">
+													<input type="checkbox" class="bet-input ng-pristine ng-untouched ng-valid" name="isSel_{{$index}}" id="isSel_{{$index}}">
+												</td>
+												<td class="" add-color="4" ng-click="selNum($event)">
+													<input type="checkbox" class="bet-input ng-pristine ng-untouched ng-valid" name="isPize_{{$index}}" id="isPize_{{$index}}" ng-true-value="'1'" ng-false-value="'0'">
+												</td>
+											</tr>									
+										</tbody>
+									</table>
+								</div>		
+				</div>
+			</div>
+</aside>
+
 	</div>
 </body>
 </html>

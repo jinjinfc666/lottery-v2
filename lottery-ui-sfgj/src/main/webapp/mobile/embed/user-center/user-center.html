@@ -1,0 +1,82 @@
+<div id="page_content" class="flex_1" >
+	<div class="user_center_content">
+		<div class="user_info_wrap" ng-controller="userInfoCtrl" ng-init="initUserInfo()">
+			<div class="user_info_top">
+				<div class="avata_img">
+					<img src="images/user/user_pic.png" width="139" height="139">
+				</div>
+				<div class="user_info_name">{{userInfo.userName}}</div>
+				<div class="text_center">
+					<div class="user_info_level">
+						<span class="iconfont icon-crown"></span>普通会员
+					</div>
+					<!-- div id="j_checkin_btn" class="user_info_level" ng-click="checkIn()">签到</div> -->
+				</div>
+
+			</div>
+			<div class="display_flex_h">
+				<div class="flex_1 balance_value text-center">
+					<p>
+						主账户&nbsp;&nbsp;<em id="sessionAcount">{{mainAcc.balance}}</em>
+					</p>
+				</div>
+				<div class="flex_1 balance_value text-center">
+					<p>
+						副账户&nbsp;&nbsp;<em>{{redPacketAcc.balance}}</em>
+					</p>
+				</div>
+			</div>
+		</div>
+		<div style="width: 100%;overflow-x: auto;">
+		<div class="user_info_nav sec_box display_flex_h" style="width: 100%; min-width: 600px;">
+			<div class="flex_1">
+				<a href="#userInfo" class="box_border_box">
+					<span class="link_wrap">
+						<span class="icon icon_card"></span>
+						<span>个人资料</span>
+					</span>
+				</a>
+			</div>
+			<div class="flex_1">
+				<a href="#accountMan" class="box_border_box j-withdrawal">
+					<span class="link_wrap">
+						<span class="icon icon_withdraw"></span>
+						<span>安全设置</span>
+					</span>
+				</a>
+			</div>
+			<div class="flex_1">
+				<a href="#fundMan" class="box_border_box j-withdrawal">
+					<span class="link_wrap">
+						<span class="icon icon_withdraw"></span>
+						<span>资金管理</span>
+					</span>
+				</a>
+			</div>
+			
+			<div class="flex_1">
+				<a href="#hisRecord" class="box_border_box"><span
+					class="link_wrap"><span class="icon icon_record"></span><span>投注记录</span></span></a>
+			</div>
+			
+		</div>
+		
+		</div>
+		<div ui-view=""></div>
+		
+	</div>
+</div>
+
+
+
+<style>
+	.display_flex_h {
+	    display: -webkit-box;
+	    display: -webkit-flex;
+	    display: flex;
+	    -webkit-box-orient: horizontal;
+	    flex-direction: row;
+	    height: 43px;
+	}
+
+</style>

@@ -89,7 +89,8 @@ public class StatProfitServiceImpl implements StatProfitService
 					
 					//普通玩家的盈利直接算上级，对于代理类型用户的盈利需要从本身开始算累加盈利
 					if(user.getUserType() == Constants.UserType.PLAYER.getCode()
-							|| user.getUserType() == Constants.UserType.SM_PLAYER.getCode()) {
+							|| user.getUserType() == Constants.UserType.SM_PLAYER.getCode()
+							|| user.getUserType() == Constants.UserType.XY_PLAYER.getCode()) {
 						superior = userServ.querySuperior(user);						
 					}else if(user.getUserType() == Constants.UserType.AGENCY.getCode()
 							|| user.getUserType() == Constants.UserType.GENERAL_AGENCY.getCode()
@@ -223,7 +224,8 @@ public class StatProfitServiceImpl implements StatProfitService
 		
 		//个人用户利润 和 团队利润是正好相反的
 		if(userType == Constants.UserType.PLAYER.getCode()
-				|| userType == Constants.UserType.SM_PLAYER.getCode()) {
+				|| userType == Constants.UserType.SM_PLAYER.getCode()
+				|| userType == Constants.UserType.XY_PLAYER.getCode()) {
 			profitVal = profitVal.multiply(new BigDecimal(-1));
 		}
 		profit.setProfit(profitVal);

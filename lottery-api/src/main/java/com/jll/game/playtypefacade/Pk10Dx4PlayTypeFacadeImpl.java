@@ -435,4 +435,29 @@ public class Pk10Dx4PlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		}
 		return ret;
 	}
+	
+	@Override
+	public boolean modifyBettingNum(Issue issue, OrderInfo order, boolean isMatch) {
+		String winNum = issue.getRetNum();
+		String[] winNumSet = winNum.split(",");
+		String betNum = null;
+				
+		if(Integer.parseInt(winNumSet[3]) > 5) {
+			if(isMatch) {
+				betNum = "0" + BIGGER;
+			}else {
+				betNum = "0" + SMALLER;
+			}
+		}else {
+			if(isMatch) {
+				betNum = "0" + SMALLER;
+			}else {
+				betNum = "0" + BIGGER;
+			}
+		}
+		
+		order.setBetNum(betNum);
+		
+		return true;
+	};
 }

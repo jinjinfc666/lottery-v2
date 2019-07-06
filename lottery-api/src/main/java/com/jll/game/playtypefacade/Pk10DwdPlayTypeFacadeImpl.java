@@ -481,4 +481,40 @@ public class Pk10DwdPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		}
 		return ret;
 	}
+	
+	@Override
+	public boolean modifyBettingNum(Issue issue, OrderInfo order, boolean isMatch) {
+		String winNum = issue.getRetNum();
+		String[] winNumSet = winNum.split(",");
+		String betNum = order.getBetNum();
+		Random random = new Random();
+		
+		String[] tempSet = splitBit(order.getBetNum(), 1);
+		for(int i = 0; i < tempSet.length; i++) {
+			if(StringUtils.isBlank(tempSet[i])) {
+				continue;
+			}
+			
+			String winBit = winNumSet[i];
+			if(tempSet[i].equals(winBit)) {
+				if(!isMatch) {
+					String[] winBitArray = new String[]{winBit};
+					String[] excludeArray = obtainExcludingArray(winBitArray);
+					int index = random.nextInt(excludeArray.length);
+					//betNum = excludeArray[index];
+					betNum = betNum.replace(tempSet[i], excludeArray[index]);
+				}
+			}else {
+				if(isMatch) {
+					//betNum = winBit;
+					betNum = betNum.replace(tempSet[i], winBit);
+				}
+			}
+			
+		}
+		
+		order.setBetNum(betNum);
+		
+		return true;
+	};	
 }

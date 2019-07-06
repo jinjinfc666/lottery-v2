@@ -124,6 +124,7 @@
             }
             function add(){
                 updateToken();
+                var userType = document.getElementById('userType').value;
                 var agentId=document.getElementById('agentId').value;
                 var realName=document.getElementById('realName').value;
                 var userName=document.getElementById('userName').value;
@@ -136,6 +137,20 @@
                 var qq=document.getElementById('qq').value;
                 var wechat=document.getElementById('wechat').value;
                 var email=document.getElementById('email').value;
+                var xyAmount = document.getElementById('xyAmount').value;
+                var xyPayoutRate = document.getElementById('xyPayoutRate').value;
+                
+                if(userType == 7){
+                	if(typeof xyAmount == 'undefined' || xyAmount == null || xyAmount.length == 0){                		
+                		$("#xyAmount_error").text("请输入信誉额度!");
+                        return false;
+                	}
+                	
+                	if(typeof xyPayoutRate == 'undefined' || xyPayoutRate == null || xyPayoutRate.length == 0){                		
+                		$("#xyPayoutRate_error").text("请输入最大派奖率 0.00--1.00!");
+                        return false;
+                	}
+                }
                 if(userName==""){
                     $("#userName1").text("请输入用户名!");
                     return false;
@@ -166,7 +181,9 @@
                     "qq": qq,
                     "wechat": wechat,
                     "email": email,
-                    "userType":5
+                    "userType":userType,
+                    "xyAmount":xyAmount,
+                    "xyPayoutRate":xyPayoutRate
                 });
                 $.ajax({
                     url: url,
@@ -231,6 +248,16 @@
     <body>
         <input type="hidden" id="agentId" name="agentId" value="" />
         <table width="600px" cellspacing="0" cellpadding="5">
+        	<tr>
+                <th style="background-color:#ffcc99">用户类型</th>
+                <td>
+                <select id="userType" style="width:250px;height:50px" >
+                	<option value="5">双面玩家</option>
+                	<option value="7">信誉玩家</option>
+                	<option value="4">试玩玩家</option>
+                </select>
+                <span id="platRebate1" style="color:red;"></span></td>
+            </tr>
             <tr>
                 <th style="background-color:#ffcc99">真实姓名：</th>
                 <td>
@@ -262,6 +289,20 @@
                 <td>
                 <select id="smPanKou" style="width:250px;height:50px" ></select>
                 <span id="platRebate1" style="color:red;"></span></td>
+            </tr>
+            <tr>
+                <th style="background-color:#ffcc99">信誉额度</th>
+                <td>
+                	<input type="text" id="xyAmount" name="xyAmount" value="" style="width:250px;" class="login_putin" />
+                	<span id="xyAmount_error" style="color:red;"></span></td>
+                </td>
+            </tr>
+             <tr>
+                <th style="background-color:#ffcc99">最高派奖率</th>
+                <td>
+                	<input type="number" id="xyPayoutRate" name="xyPayoutRate" value="" style="width:250px;" class="login_putin" placeholder="取值范围 0.0-1.0" />
+                	<span id="xyPayoutRate_error" style="color:red;"></span></td>
+                </td>
             </tr>
             <tr>
                 <th style="background-color:#ffcc99">手机号：</th>

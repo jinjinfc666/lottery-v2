@@ -21,6 +21,7 @@ import com.jll.common.utils.StringUtils;
 import com.jll.dao.DefaultGenericDaoImpl;
 import com.jll.dao.PageBean;
 import com.jll.entity.UserInfo;
+import com.jll.entity.UserInfoExt;
 
 @Repository
 public class UserInfoDaoImpl extends DefaultGenericDaoImpl<UserInfo> implements UserInfoDao
@@ -414,6 +415,9 @@ public class UserInfoDaoImpl extends DefaultGenericDaoImpl<UserInfo> implements 
 		Integer generalAgency = Constants.UserType.GENERAL_AGENCY.getCode();
 		Integer smAgency = Constants.UserType.SM_AGENCY.getCode();
 		Integer smUser = Constants.UserType.SM_PLAYER.getCode();
+		Integer xyUser = Constants.UserType.XY_PLAYER.getCode();
+		Integer demoUser = Constants.UserType.DEMO_PLAYER.getCode();
+		UserInfo superior = null;
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("from UserInfo where 1 = 1");
 		if(!StringUtils.isBlank(userName)) {
@@ -425,13 +429,15 @@ public class UserInfoDaoImpl extends DefaultGenericDaoImpl<UserInfo> implements 
 				map.put("userName", userName);
 				map.put("smUser", smUser);
 			}else {//查下级
-				UserInfo superior = getUserByUserName(userName);
+				superior = getUserByUserName(userName);
 				if(superior != null) {
-					buffer.append(" and (userType =:generalAgency or userType =:smAgency or userType =:smUser)  and FIND_IN_SET(:superior,superior) = 1");
+					buffer.append(" and (userType =:generalAgency or userType =:smAgency or userType =:smUser  or userType =:xyUser or userType =:demoUser )  and FIND_IN_SET(:superior,superior) = 1");
 					map.put("superior", superior.getId());
 					map.put("generalAgency", generalAgency);
 					map.put("smAgency", smAgency);
 					map.put("smUser", smUser);
+					map.put("xyUser", xyUser);
+					map.put("demoUser", demoUser);
 				}
 			}
 		}else {
@@ -489,5 +495,4 @@ public class UserInfoDaoImpl extends DefaultGenericDaoImpl<UserInfo> implements 
 		map.put("data", pageBean);
 		return map;
 	}
-  
 }

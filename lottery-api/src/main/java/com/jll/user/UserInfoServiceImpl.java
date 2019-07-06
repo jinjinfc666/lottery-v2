@@ -163,6 +163,8 @@ public class UserInfoServiceImpl implements UserInfoService
 	@Resource
 	ExpertService expertServ;
 	
+	@Resource
+	UserInfoExtService userExtServ;
 	
 	@Override
 	public int getUserId(String userName) {
@@ -445,7 +447,8 @@ public class UserInfoServiceImpl implements UserInfoService
 				&& user.getUserType().intValue() != 2
 				&& user.getUserType().intValue() != 3
 				&& user.getUserType().intValue() != 5
-				&& user.getUserType().intValue() != 6) {
+				&& user.getUserType().intValue() != 6
+				&& user.getUserType().intValue() != 7) {
 			return Message.Error.ERROR_USER_INVALID_USER_TYPE.getCode();
 		}
 		
@@ -502,6 +505,12 @@ public class UserInfoServiceImpl implements UserInfoService
 		user.setRegIp(reqIP);
 		
 		userDao.saveUser(user);
+		
+		if(user.getXyAmount() != null
+				&& user.getXyAmount() > 0) {
+			userExtServ.saveUserInfoExt(user);
+		}
+		
 		Integer userId=user.getId();
 		
 		if(user.getUserType()!=null) {
@@ -509,7 +518,8 @@ public class UserInfoServiceImpl implements UserInfoService
 				String roleName="";
 				if(user.getUserType()==Constants.UserType.PLAYER.getCode()
 						||user.getUserType()==Constants.UserType.DEMO_PLAYER.getCode()
-						|| user.getUserType()==Constants.UserType.SM_PLAYER.getCode()) {
+						|| user.getUserType()==Constants.UserType.SM_PLAYER.getCode()
+						|| user.getUserType() == Constants.UserType.XY_PLAYER.getCode()) {
 					roleName=Constants.Permission.ROLE_USER.getCode();
 				}else if(user.getUserType()==Constants.UserType.AGENCY.getCode()) {
 					roleName=Constants.Permission.ROLE_AGENT.getCode();

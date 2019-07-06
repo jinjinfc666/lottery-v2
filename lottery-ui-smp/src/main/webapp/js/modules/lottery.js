@@ -3,7 +3,7 @@
  */
 var slotModule = angular.module('lottery', []);
 
-app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "playgameService", "$state" , "userInfoServ", "hisRecService", "sysCodeTranslateFactory", "expertService", function ($scope, $http, $stateParams, $interval, playgameService, $state , userInfoServ , hisRecService, sysCodeTranslateFactory, expertService) {
+app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "playgameService", "$state" , "userInfoServ", "hisRecService", "sysCodeTranslateFactory", "expertService", "issueService", function ($scope, $http, $stateParams, $interval, playgameService, $state , userInfoServ , hisRecService, sysCodeTranslateFactory, expertService, issueService) {
 
 	    //通过游戏名称搜索
 	    $scope.searchByName = function () {
@@ -22,31 +22,22 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 
 
 
-	    //玩游戏
-	    $scope.palyGame=function (id,gameId,type,code,catSeq,clientType) {
-
-
-	        playgameService.palyGame(id,gameId,type,code,catSeq,clientType);
-
-
-	    };
-
-	    //试玩
-	    $scope.palyTry=function (id,type,code,catSeq,clientType) {
-
-	        playgameService.playTry(id,type,code,catSeq,clientType);
-
-	    };
-	    
-	    $scope.fish=function () {
-
-	        playgameService.palyGame(0,4,0,'A00012',3,'');
-	    };
-	    
-	    $scope.live=function () {
-
-	        playgameService.palyGame(0,4,0,'A00012',3,'');
-	    };
+	    $scope.displayIssueRec = function(){
+			if(typeof $scope.isIssueRecOpen == 'undefined'
+				|| $scope.isIssueRecOpen == null){
+				$scope.isIssueRecOpen = false;
+				
+			}else{
+				$scope.isIssueRecOpen = !$scope.isIssueRecOpen;
+			}
+			
+			if($scope.isIssueRecOpen){
+				$scope.issueRecImg = 'images/triangel_open.png';
+			}else{
+				$scope.issueRecImg = 'images/triangel_close.png';
+			}
+			
+		};
 	    
 	    /**
 	     * query the hot games
@@ -98,10 +89,11 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 		var queryMemeberTimer = null;
 		var queryIssueRetGroupTimer = null;
 		$scope.queryBulletinBoard = function(lotteryType){
+			$scope.issueRecImg = 'images/triangel_close.png';
 			sessionStorage.removeItem("bulletinBoard");
 			$scope.downCounter = null;
 			$scope.downCounter_ = 0;
-			
+			//$scope.bitIndex_ = 0;
 			timer = $interval(function () {
 				if($scope.downCounter_ > 0){
 					CountDown($scope.downCounter_);
@@ -1161,7 +1153,7 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 			    	if(codeVal != null){
 			    		var number = playType.substring(playType.length - 2, playType.length - 1);
 			    		var numberDes = number;
-			    		if(lotteryType == 'cqssc' || lotteryType == 'xjssc'){
+			    		if(lotteryType == 'cqssc' || lotteryType == 'xjssc' || lotteryType == '5fc'){
 			    			if(number == '一'){
 			    				numberDes = '万位';
 			    			}else if(number == '二'){
@@ -1257,6 +1249,208 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 			};
 			
 		    
+			 $scope.getNowFormatDate = function(){
+			        var date = new Date();
+			        var seperator1 = "-";
+			        var year = date.getFullYear();
+			        var month = date.getMonth() + 1;
+			        var strDate = date.getDate();
+			        if (month >= 1 && month <= 9) {
+			            month = "0" + month;
+			        }
+			        if (strDate >= 0 && strDate <= 9) {
+			            strDate = "0" + strDate;
+			        }
+			        var currentdate = year + seperator1 + month + seperator1 + strDate;
+			        return currentdate;
+			    };
+			    
+			    
+			    $scope.queryZhIssue = function(lottoType){
+					
+					issueService.queryZhIssue(lottoType).then(function(res){
+												
+						$scope.zhIssue = res;
+					}, function(error){
+						showToast("查询追号期次失败!!");
+					});
+				};
+				
+			
+				$scope.selRowFun = function(){
+					var bitIndex_ = $('#bitIndex').val();
+					var selRow = $scope.bitNumArray[bitIndex_];
+					$scope.selRow = selRow;
+				};
+				
+				$scope.produceSchedule = function(){
+					var playTypeId_ = $('#playTypeId_').val();
+					var betAmount_ = $('#betAmount_').val();
+					var betTimes_ = $('#betTimes_').val();
+					var isIncrease_ = $('#isIncrease')[0].checked?1:0;
+					//var isPize_ = $('#isPize').val();
+					
+					if(typeof playTypeId_ == 'undefined' || playTypeId_ == null || playTypeId_.length == 0 || playTypeId_ == '? undefined:undefined ?'){
+						showToast("请选择号码!!");
+						return ;
+					}else if( playTypeId_ == '-1'){
+						showToast("请登录!!");
+						//return ;
+					}
+					
+					if(typeof betAmount_ == 'undefined' || betAmount_ == null || betAmount_.length == 0){
+						showToast("请输入金额!!");
+						return ;
+					}
+					
+					if(typeof betTimes_ == 'undefined' || betTimes_ == null || betTimes_.length == 0){
+						showToast("请输入金额!!");
+						return ;
+					}
+					
+					var initTimes = isIncrease_;
+					$('tr.ng-scope[data-type="10" ]').each(function(){
+						var dataIndex_ = $(this).attr('data-index');
+						var isPrize_ = $('#isPize_'+dataIndex_)[0].checked?1:0;
+						var isSelected = $('#isSel_'+dataIndex_)[0].checked?1:0;
+						
+						var amount_ = 0
+						
+						if(isSelected == 0){
+							return;
+						}
+						
+						
+						
+						if(isIncrease_ == 0){
+							amount_ = betAmount_ ;
+						}else{
+							amount_ = betAmount_ * initTimes;
+						}
+						
+						$('#zhAmount_'+dataIndex_).val(amount_);
+						
+						if( isPrize_ == 1){
+							initTimes = 1;
+						}else{
+							initTimes++;
+						}
+						
+					});
+				};
+				
+				$scope.changeProduceScheduleState = function(state){
+					if(state == 0){
+						$scope.isProduceSchedule = false;
+					}else if(state == 1){
+						$scope.isProduceSchedule = true;
+					}
+				};
+				
+				$scope.selPlayTypeFunc = function(){
+					var playTypeId_ = $('#playTypeId_').val();
+					for(var i = 0; i < $scope.selRow.bitNum.length; i++){
+						var row_ = $scope.selRow.bitNum[i];
+						if(row_.playTypeId == playTypeId_){
+							$("#bettingNum_").val(row_.bettingNumVal);
+							return;
+						}
+					}
+				};
+				
+				$scope.submitSchedule = function(lotteryType){
+					var betNum_ = $('#bettingNum_').val();
+					var playTypeId = $(this).attr("playTypeId_");
+					var bet = null;
+					var bets = new Array();
+					var times = 1;
+					var pattern = 1;
+					var isZh = 1;
+					var terminalType = 0; 
+					var walletId = JSON.parse(sessionStorage.getItem("mainAcc")).id;
+					
+					if(typeof betNum_ == 'undefined' || betNum_ == null || betNum_.length == 0 || betNum_ == '? undefined:undefined ?'){
+						showToast("请选择号码!!");
+						return ;
+					}else if( betNum_ == '-1'){
+						showToast("请登录!!");
+						return ;
+					}					
+					
+					$('tr.ng-scope[data-type="10" ]').each(function(){
+						
+						var dataIndex_ = $(this).attr('data-index');
+						var isPrize_ = $('#isPize_'+dataIndex_)[0].checked?1:0;
+						var isSelected = $('#isSel_'+dataIndex_)[0].checked?1:0;
+						var betAmount = $('#zhAmount_'+dataIndex_).val();
+						var issueId = $('#issueId_'+dataIndex_).val();
+						bet = {};
+						
+						if(isSelected == 0){
+							return;
+						}
+						
+						if(typeof betAmount == 'undefined' || betAmount == null || betAmount.length == 0 || betAmount == '? undefined:undefined ?'){
+							//showToast("请先生成计划!!");
+							return false;
+						}			
+						
+						
+						
+						//var selFlag = $(this).attr("data-sel");
+						//var dataBit = $(this).attr("data-bit");
+						//var dataIndex = $(this).attr("data-index");
+						//var betNum = $(this).attr("data-bettingNum");
+						
+						//var betAmount = $('#'+dataBit+'_'+dataIndex+'_betAmount').val();
+						times = betAmount / pattern;
+						bet.issueId = issueId;
+						bet.playType = playTypeId;
+						bet.betNum = betNum_;
+						bet.times = times;
+						bet.pattern = pattern;
+						bet.isZh = isZh;
+						bet.terminalType = terminalType;
+						bet.isPrize = isPrize_;
+						if(typeof betAmount == 'undefined' 
+							|| betAmount == null
+							|| betAmount == ''){
+							blankCounter++;
+						}
+						
+						bets.push(bet);
+						
+						
+					});
+					
+					if(bets.length == 0){
+						showToast("请至少选择一个有效投注期次!");
+						return;
+					}
+					
+					playgameService.bet(bets, lotteryType, walletId).then(function(){
+						showToast("成功生成投注计划!");
+						
+						//$scope.queryBettingRecBrief(lotteryType, 1);
+						$scope.queryMemberInfo();
+						//$scope.queryExpertPushNum(lotteryType);
+						
+						/*$('tr.ng-scope[data-sel="1" ]').each(function(){
+							$(this).removeClass('selNumBg');
+							$(this).attr("data-sel", "0");
+							$(this).children("td").children("input").val('');
+							//$('html, body').animate({scrollTop:0}, 'slow'); 
+						});*/
+					},
+					function(error){
+						var codeType = 'error_mes';
+						var attr = error;
+						var codeVal =  sysCodeTranslateFactory.codeTranslate(codeType, attr);
+						showToast(codeVal);
+					});
+				};
+				
+				
 }]).controller('hisRecCtrl', ["$scope", "$http","$state", "$location", "playgameService", "hisRecService", "sysCodeTranslateFactory", function ($scope, $http, $state,$location, playgameService, hisRecService, sysCodeTranslateFactory) {
 	$scope.initHisRecTab = function(){
 		$("span.j-nav_item").on("click",function(){
@@ -1377,7 +1571,7 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 	    	if(codeVal != null){
 	    		var number = playType.substring(playType.length - 2, playType.length - 1);
 	    		var numberDes = number;
-	    		if(lotteryType == 'cqssc' || lotteryType == 'xjssc'){
+	    		if(lotteryType == 'cqssc' || lotteryType == 'xjssc' || lotteryType == '5fc'){
 	    			if(number == '一'){
 	    				numberDes = '万位';
 	    			}else if(number == '二'){
@@ -1607,6 +1801,8 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 		$scope.isBitActive = false;
 		$scope.isSmDisplay = false;
 	};
+	
+	
 	
 	$scope.changeFocus = function(focusType){
 		if(focusType == 0){
@@ -2221,6 +2417,31 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
     			deferred.resolve(res.data.data);
 	        }else{
 	        	deferred.reject(res.data.status);
+	        }
+    		
+    	}, function(error){
+    		
+    		deferred.reject(error);
+    	});
+    	
+    	return deferred.promise;
+    };
+    
+    
+	}
+]).service('issueService', ["$http", "$q", function ($http, $q) {
+	this.queryZhIssue = function(lottoType){
+    	var deferred = $q.defer();
+    	
+    	var queryZhIssueURL_ = queryZhIssueURL.replace('{lotoType}', lottoType);
+    	
+    	$http.get(queryZhIssueURL_,
+    			{'Content-Type': 'application/json'}).then(function(res){
+    		
+    		if (res.data.status == 1) {
+    			deferred.resolve(res.data.data);
+	        }else{
+	        	deferred.reject(res.data.error_code);
 	        }
     		
     	}, function(error){

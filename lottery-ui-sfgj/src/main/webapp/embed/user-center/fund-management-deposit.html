@@ -1,0 +1,55 @@
+<style>
+.u_c_w_tab .u_inputs {
+    width: 400.00px;
+    margin-left: auto;
+    margin-right: auto;
+}
+</style>
+<div class="usershow fl">
+	<div class="usercontrol j-tab">
+		<div class="u_c_nav cfx" >
+			<!-- <span data-target="u_ck" class="j-nav_item u_c_n_item active" data-num="0">存款</span>
+			<span data-target="u_zz" class="j-nav_item u_c_n_item " data-num="1">转账</span> 
+			<span data-target="u_tk" class="j-nav_item u_c_n_item j-withdraw" data-num="2">提款</span> -->
+			
+			<a data-target="u_ck" class="j-nav_item u_c_n_item active" data-num="0" ui-sref="userCenter.fundManDeposit">存款</a>
+			<a data-target="u_zz" class="j-nav_item u_c_n_item " data-num="1" ui-sref="userCenter.fundManTransfer" style="display:none">转账</a> 
+			<a data-target="u_tk" class="j-nav_item u_c_n_item j-withdraw" data-num="2" ui-sref="userCenter.fundManWithdraw">提款</a>
+		</div>
+		<div class="u_c_window" >
+		
+			<div data-id="u_ck" class="u_c_w_content j-nav_tab pay-type active" data-num="0" ng-controller="depositCtrl">
+				
+				<div class="j-pay_tab">
+					<div class="u_c_w_tab j-nav_tab active" data-id="paytype_wechat" data-num="0" ng-controller="depositCtrl" ng-init="initDeposit()">
+						<div class="u_inputs">
+								<label class="u_label">充值方式</label>
+								<select name="id" id="_wechat" class="u_select j-pay_type" ng-model="curRechargeType" ng-options="v.id as v.name for v in rechargeType" ng-change="selRechargeType()"></select>
+							</div>
+							
+							<div class="u_inputs">
+								<label class="u_label">充值渠道</label>
+								<select name="id" id="_wechat" class="u_select j-pay_type" ng-model="currPayChannel" ng-options="v.id as v.channelName for v in payChannel" ng-change="selPayChannel()"></select>
+							</div>
+							<div class="u_inputs" id="bankListDiv_wechat"></div>
+							<div class="u_inputs">
+								<label class="u_label">充值金额</label>
+								<input class="u_input" name="order_amount" placeholder="请输入充值金额" ng-model="amount">
+							</div>
+							<button class="u_btn" ng-click="deposit()">立即提交</button>
+							
+							<div>
+								<br> <br>
+								<p id="riskctrl" class="red" hidden="" style="display: block;">本充值渠道最大充值金额{{currPayChannelMaxAmount}}</p>
+								<p class="onlineTips red" hidden="" style="display: none;">请使用付款银行的APP进行扫码支付，不可以使用微信扫一扫</p>
+								<p class="psWechatTips red" hidden="" style="display: none;">1.存款时，请输入您的存款金额和附言（转账的时候点击添加备注填写附言，否则无法自动到账）</p>
+								<p class="psWechatTips red" hidden="" style="display: none;">2.如遇转账异常，请直接联系在线客服处理</p>
+							</div>
+					</div>					
+				</div>
+				
+			</div>
+
+		</div>
+	</div>
+</div>

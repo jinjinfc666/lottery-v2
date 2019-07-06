@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generated 2018-8-14 16:52:58 by Hibernate Tools 5.2.10.Final --><!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="true" default-access="property" default-cascade="none" default-lazy="true">
+    <class catalog="lottery" dynamic-insert="false" dynamic-update="false" mutable="true" name="com.jll.entity.UserInfoExt" optimistic-lock="version" polymorphism="implicit" select-before-update="false" table="user_info_ext">
+        <id name="id" type="java.lang.Integer">
+            <column name="id"/>
+            <generator class="identity"/>
+        </id>
+        <property generated="never" lazy="false" name="userId" optimistic-lock="true" type="java.lang.Integer" unique="false">
+            <column name="user_id">
+            </column>
+        </property>
+        
+        <property generated="never" lazy="false" name="extFieldName" optimistic-lock="true" type="string" unique="false">
+            <column name="ext_field_name">
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="extFieldVal" optimistic-lock="true" type="string" unique="false">
+            <column name="ext_field_val">
+                <comment>�Ƿ��������:0,�Ǵ�������;1,��������</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="createTime" optimistic-lock="true" type="timestamp" unique="false">
+            <column length="19" name="create_time"/>
+        </property>           
+    </class>
+</hibernate-mapping>

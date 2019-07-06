@@ -34,6 +34,10 @@ public class UserInfo implements java.io.Serializable {
 	private Date createTime;
 	private Integer creator;
 
+	private int panKou;
+	private Double xyAmount;
+	private Double xyPayoutRate;
+	
 	public UserInfo() {
 	}
 
@@ -259,4 +263,30 @@ public class UserInfo implements java.io.Serializable {
 		this.creator = creator;
 	}
 
+	public int getPanKou() {
+		return panKou;
+	}
+
+	public void setPanKou(int panKou) {
+		this.panKou = panKou;
+	}
+
+	public Double getXyAmount() {
+		return xyAmount;
+	}
+
+	public void setXyAmount(Double xyAmount) {
+		this.xyAmount = xyAmount;
+	}
+
+	public Double getXyPayoutRate() {
+		return xyPayoutRate;
+	}
+
+	public void setXyPayoutRate(Double xyPayoutRate) {
+		this.xyPayoutRate = xyPayoutRate;
+	}
+
+	
+	
 }

@@ -1,0 +1,681 @@
+<html lang="zh-cn" ng-app="myApp">
+<head>
+<meta charset="UTF-8">
+
+<!-- <script
+	src="https://hm.baidu.com/hm.js?099778280faab37761a929fdfe630972"></script> -->
+<script type="text/javascript">
+	if (/AppleWebKit.*Mobile/i.test(navigator.userAgent)
+			|| /Android/i.test(navigator.userAgent)
+			|| /BlackBerry/i.test(navigator.userAgent)
+			|| /IEMobile/i.test(navigator.userAgent)
+			|| (/MIDP|SymbianOS|NOKIA|SAMSUNG|LG|NEC|TCL|Alcatel|BIRD|DBTEL|Dopod|PHILIPS|HAIER|LENOVO|MOT-|Nokia|SonyEricsson|SIE-|Amoi|ZTE/
+					.test(navigator.userAgent))) {
+		var addr = window.location.href;
+		if (addr.indexOf("mobi") >= 0) {
+		} else {
+			window.location.href = "mobile/index.html" + window.location.search;
+		}
+	} else {
+	}
+</script>
+<!-- <script>
+	var _hmt = _hmt || [];
+	(function() {
+		var hm = document.createElement("script");
+		hm.src = "https://hm.baidu.com/hm.js?099778280faab37761a929fdfe630972";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	})();
+</script> -->
+<title>顺发国际</title>
+<meta name="description" content="一家专注运营网络老虎机游戏的专业网站。拥有PT老虎机、MG老虎机、TTG老虎机、DT老虎机、AG捕鱼等热门老虎机平台。让您一网打进所有您喜爱的老虎机游戏，更可在手机端就可畅玩！">
+<meta name="keywords" content="PT老虎机 TTG老虎机 NT老虎机 MG老虎机 QT老虎机 DT老虎机 网上老虎机 博彩 slot">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1">
+<link href="style/base.min.css?v=13" rel="stylesheet">
+<link href="style/lib/animate.css?v=01" rel="stylesheet">
+<!-- link rel="stylesheet" href="js/lib/layer/theme/default/layer.css?v=3.1.0" id="layuicss-layer"> -->
+<link href="style/index.min.css?v=03" rel="stylesheet">
+<link href="style/fSelect.css" rel="stylesheet" type="text/css">
+
+<script src="js/lib/jquery-1.10.2.min.js?v=01"></script>
+<!-- <script src="js/lib/layer/layer.js?v=01"></script> -->
+<script src="js/lib/My97DatePicker/WdatePicker.js"></script>
+<script src="js/angularjs/angular.min.js"></script>
+<script src="js/angularjs/angular-ui-router.min.js"></script>
+<script src="js/angularjs/angular-cookies.min.js"></script>
+<script src="js/modules/site.js"></script>
+<script src="js/modules/app.js"></script>
+<script src="js/modules/sys-message.js"></script>
+<script src="js/modules/authentication.js"></script>
+<script src="js/modules/user.js"></script>
+<script src="js/modules/agent.js"></script>
+<script src="js/modules/wallet.js"></script>
+<script src="js/modules/lottery.js"></script>
+<script src="js/message-error.js"></script>
+<script src="js/login-error.js"></script>
+
+
+<script src="js/angularjs-dropdown-multiselect.min.js"></script>
+
+<!--[if lt IE 9]>
+	<script src="//apps.bdimg.com/libs/html5shiv/3.7/html5shiv.min.js?v=j12"></script>
+	<script src="//apps.bdimg.com/libs/respond.js/1.4.2/respond.min.js?v=j12"></script>
+<![endif]-->
+
+<style type="text/css">
+.hiddenHeader {
+	display: none;
+}
+
+.capital{
+	    color: #00baa6;
+    	font-size: 40;
+    	font-weight: bold;
+}
+
+</style>
+</head>
+<body ng-controller="authCtrl"  ng-init="queryCaptchaCode()">
+	<!-- 注册 -->
+	<header id="header" ng-show="!isLogin" style="background: #ffffff;">
+		<div class="content cfx">
+			<div class="ico fl">
+				<span class="capital" style="color:#0075bb;">顺发国际</span>
+			</div>
+
+			<form id="form-login" data-type="money" class="fr">
+				<div class="login cfx fr">
+					<a class="fl welcome" href="/"  style="color:#0075bb;">欢迎来到顺发国际彩票平台!</a>
+					<div class="inputs fl">
+						<input type="text" name="account" placeholder="用户名" ng-model="credentials.username"  style="color:#0075bb;">
+					</div>
+					<div class="inputs fl"  style="color:#0075bb;">
+						<input type="password" name="password" placeholder="密码"  ng-model="credentials.password"> 
+						<span class="btn btn-forget j-forget_pwd" ng-click="showForgetPwd()"  style="color:#0075bb;">忘记?</span>
+					</div>
+					<div class="inputs fl">
+						<input type="text" name="imageCode" placeholder="验证码" ng-model="credentials.captchaCode">
+						<img style="" id="loginCodeImg" ng-src='{{captchaCode}}' ng-click="queryCaptchaCode()" width="100%" class="j-code" title="点击更新">
+					</div>
+					<div class="fl btns">
+						<button class="btn btn-login fl" ng-click="login(credentials)">登录</button>
+						<a class="btn j-register btn-register fl" href="javascript:void(0)" ng-click="showRegModal()" style="display:none">免费注册</a>
+					</div>
+				</div>
+			</form>
+		</div>
+	</header>
+
+
+	<header id="header" ng-show="isLogin"  style="background: #ffffff;">
+		<div class="content cfx">
+			<div class="ico fl">
+				<span class="capital" style="color:#0075bb;"> 顺发国际</span>
+			</div>
+
+
+			<div class="login fr">
+				<div class="login_info fl">
+					<div class="user_info">
+						<span style="color:#0075bb">欢迎回来,<span class="username">{{userInfo.userName}}</span>
+						</span> 
+						<a class="mail" href="javascript:void(0)"> 
+							<span class="mail_num j-msg">1</span>
+						</a>
+					</div>
+					<div class="money_info" style="color:#0075bb">
+						余额：<span class="show_money j-showmoney"  ng-click="queryMemberInfo()">{{mainAcc.balance}}</span>
+					</div>					
+				</div>
+				<div class="login_btns fl">
+					<div class="user_btn" style="color:#0075bb">
+						<a href="#" class="login_out j-logout" ng-click="logout()" style="color:#0075bb">退出</a> 
+						<a ui-sref="userCenter.fundManDeposit" class="login_user" ng-click="changeUserCenterFocus(0)"  style="display:none">账户中心</a>
+					</div>
+					<div class="user_link" style="display:none">
+						<!--<span class="j-dosign dosign">签到</span>-->
+						<a ui-sref="userCenter.fundManDeposit" ng-click="changeUserCenterFocus(0)">存款</a>
+						<a ui-sref="userCenter.promo" ng-click="changeUserCenterFocus(1)">自助优惠</a>
+						<a ui-sref="userCenter.fundManWithdraw" ng-click="changeUserCenterFocus(0)">提款</a>
+					</div>
+				</div>
+			</div>
+
+
+		</div>
+	</header>
+
+
+
+	<!-- 导航 -->
+	<div class="nav-box" id="nav">
+		<nav class="nav j-nav"   style="background:#d9534f">
+			<div class="content cfx">
+				<a href="###" data-link="index" > 
+					<span class="nav-index"></span>全部彩种
+				</a> 
+				<a  ui-sref="slot({seqNo:1})" data-link="PT" data-more="nav_box_1" ng-mouseenter="slotNav()" ng-mouseleave="slotNav()">
+					<span class="nav-slot"></span>热门彩种
+				</a> 
+				<a ui-sref="userCenter" class="j-needlogin" data-link="AG_REAL" ng-controller="userInfoCtrl" ng-show="isLogin"> 
+					<span class="nav-ag"></span>用户中心
+				</a> 
+				<a href="javascript:void(0)" class="j-needlogin" data-link="AG_FISH" 
+						target="_blank" data-more="nav_box_3" ng-mouseenter="fishingNav()" ng-mouseleave="fishingNav()" ng-click="fish()"  ng-controller="lotteryCtrl" style="display:none"> 
+					<span class="nav-fish"></span>信息查询
+				</a> 
+				<a href="#promo" data-link="promotion"> 
+					<span class="nav-promotion"></span>系统公告
+				</a> 
+				<a href="#vip" class="yellow" data-link="vip" style="color: #ffcc00;"> 
+					<span class="nav-vip"></span>系统帮助
+				</a> 
+			</div>
+		</nav>
+		<div id="slotNav" class="nav_box nav_box_1 nav_games" style="z-index: 7;" ng-mouseenter="slotNav()" ng-mouseleave="slotNav()">
+			<div class="content">
+				<a class="fl nav_game_item" ui-sref="lottery_betting_cqssc">
+					<img alt="重庆时时彩" ng-src="images/lottery/cqssc-logo.png" lazy="loaded" class="lazy" src="images/lottery/cqssc-logo.png">
+					<span> 重庆时时彩 </span>
+				</a> 
+				<a class="fl nav_game_item" ui-sref="lottery_betting_bjpk10">
+					<img alt="重庆时时彩" ng-src="images/lottery/bjpk10-logo.png" lazy="loaded" class="lazy" src="images/lottery/bjpk10-logo.png">
+					<span> 北京PK10 </span>
+				</a> 
+				<a class="fl nav_game_item" ui-sref="lottery_betting_xyft">
+					<img alt="重庆时时彩" ng-src="images/lottery/xyft-logo.png" lazy="loaded" class="lazy" src="images/lottery/xyft-logo.png">
+					<span> 幸运飞艇 </span>
+				</a>
+				<a class="fl nav_game_item" ui-sref="lottery_betting_xjssc">
+					<img alt="新疆时时彩" ng-src="images/lottery/xjssc-logo.png" lazy="loaded" class="lazy" src="images/lottery/xjssc-logo.png">
+					<span>新疆时时彩</span>
+				</a>				
+			</div>
+		</div>
+		<div id="baccaratNav" class="nav_box nav_box_2" style="z-index: 7;"  ng-mouseenter="baccaratNav()" ng-mouseleave="baccaratNav()">
+			<div class="content"></div>
+		</div>
+		<!-- <div id="fishingNav" class="nav_box nav_box_3 nav_games" style="z-index: 7;" ng-mouseenter="fishingNav()" ng-mouseleave="fishingNav()">
+			<div class="content">
+				<a class="fl nav_game_item j-needlogin" href="/gameAgFish.php"
+					target="_blank">
+					<div class="nav_ico_fishag">
+						<img src="/taige/images/base/nav-pt.png">
+					</div> <span> AG捕鱼 </span>
+				</a> <a class="fl nav_game_item j-needlogin"
+					href="/loginGame.php?gameCode=cashfi" target="_blank">
+					<div class="nav_ico_fishpt">
+						<img src="/taige/images/base/nav-pt.png">
+					</div> <span> PT捕鱼 </span>
+				</a> <a class="fl nav_game_item"
+					onclick="playTtg(this,'14900','EGIGAme&amp;gameType=0')"
+					href="javascript:void(0);">
+					<div class="nav_ico_fishttg">
+						<img src="/taige/images/base/nav-pt.png">
+					</div> <span> TTG捕鱼 </span>
+				</a>
+			</div>
+		</div> -->
+		<div id="phoneNav" class="nav_box nav_box_4 nav_games" style="z-index: 7;" ng-mouseenter="phoneNav()" ng-mouseleave="phoneNav()">
+			<div class="content">
+				<a class="fl nav_game_item" href="javascript:void(0);">
+					<div class="nav_ico_app">
+						<!-- <img src="/taige/images/base/nav-pt.png"> -->
+					</div> <span> 官方APP </span>
+				</a> <a class="fl nav_game_item" href="javascript:void(0);">
+					<div class="nav_ico_apppt">
+						<!-- <img src="/taige/images/base/nav-pt.png"> -->
+					</div> <span> PT电子 </span>
+				</a> <a class="fl nav_game_item" href="javascript:void(0);">
+					<div class="nav_ico_appag">
+						<!-- <img src="/taige/images/base/nav-pt.png"> -->
+					</div> <span> AG真人 </span>
+				</a> <a class="fl nav_game_item" href="javascript:void(0);">
+					<div class="nav_ico_appfish">
+						<!-- <img src="/taige/images/base/nav-pt.png"> -->
+					</div> <span> AG捕鱼 </span>
+				</a>
+			</div>
+		</div>
+	</div>
+
+	<!-- 主体部分开始 -->
+	<div ui-view></div>
+
+	<aside class="register j-close" id="j_news_">
+		<div class="register_content">
+			<div class="r_title">
+				<p>公告ss</p>
+				<span class="close j-close"></span>
+			</div>
+			<div class="r_content">
+				<div class="new_show" id="j_new_show"></div>
+			</div>
+		</div>
+	</aside>
+
+
+
+
+
+
+
+
+
+	<!-- 底部開始 -->
+	<footer style="background:#ffffff;color:black">
+		<div class="content">
+			<div class="texts cfx">
+				<nav class="cfx">
+					<a href="#about"  style="color:black">关于我们</a> 
+					<a href="/about.jsp?about=services" style="color:black">服务条款</a> 
+					<a href="/about.jsp?about=play" style="color:black">责任博彩</a> 
+					<a href="/about.jsp?about=question" style="color:black">常见问题</a>
+					<a href="/about.jsp?about=dns" style="color:black">技术相关</a>
+				</nav>
+				<span class="copyright"> ©2019&nbsp;顺发国际 版权所有.
+				</span>
+			</div>
+			<div class="partners">合作平台:</div>
+			<div class="watcher">监管机构:</div>
+		</div>
+	</footer>
+	<!-- 底部結束 -->
+
+	<!-- 註冊彈窗 -->
+	<aside class="new_register register" id="registModal" ng-controller="authCtrl">
+		<div class="new_register_content register_content">
+			<span title="点击关闭" class="new_reg_close j-close" ng-click="hideRegModal()"></span>
+			<form id="form-register" class="new_form_register">
+				<div class="new_r_content">
+					<div class="new_inputs">
+						<label>游戏账号：</label> 
+						<input type="text" name="account" placeholder="由6-10位数字、字母组成" maxlength="10" ng-model="username">
+					</div>
+					<div class="new_inputs">
+						<label>登录密码：</label> 
+						<input id="regPwd" type="password" class="inpt-pwd" name="password" placeholder="由6-16位数字、字母组成" maxlength="16" ng-model="password">
+						<span class="j-changpwd eyes close" onclick="chagePwdText('regPwd','regPwdIcon')" id="regPwdIcon"></span>
+					</div>
+					<div class="new_inputs">
+						<label>QQ号码：</label> 
+						<input type="text" name="qq" placeholder="方便与您联系" maxlength="18" ng-model="qq">
+					</div>
+					<div class="new_inputs">
+						<label>手机号码：</label> 
+						<input type="text" name="phone" placeholder="请填写真实有效手机号码" maxlength="11" ng-model="mobile">
+					</div>
+					<div class="new_inputs">
+						<label>验证码：</label> 
+						<input type="text" name="imageCode" placeholder="请输入验证码" class="new_code" ng-model="regcode"> 
+						<img id="regCodeImg" width="100%" class="j-code" title="点击更新" ng-src='{{captchaCode}}' ng-click="obtainCaptchaCode()">
+					</div>
+					<p class="new_r_tips">注意:若填写虚假手机号码,将无法享受网站全部服务。</p>
+				</div>
+				<button class="new_reg_btn" href="javascript:void(0);" title="点击注册"  ng-click="regist()"></button>
+			</form>
+			<img src="images/base/new_register-ico.png" class="new_reg_ico">
+		</div>
+		<div class="register_content j-register_success" id="registerSuccess" style="display:none">
+			<div class="r_title">
+				<p>
+					注册成功<span class="small">请刷新页面</span>
+				</p>
+				<span class="close j-reflesh" ng-click="hideRegSuccessModal()"></span>
+			</div>
+			<p class="register_ok">
+				<img src="images/base/ico/ok.png">
+			</p>
+			<p class="register_welcome">欢迎成为泰格尊贵会员，您的账户已注册成功!</p>
+			<div class="r_btns" ng-controller="userBalCtrl">
+				<!-- <a class="btn reg" ui-sref="userCenter.fundManDeposit" ng-click="changeUserCenterFocus(0)" disabled>立即存款</a> -->
+				<span class="reg"  disabled>立即存款</span>
+			</div>
+			<div class="download">
+				<div class="success_img">
+					<!-- img class="download_code" style="width: 110px;" src="images/generateQRCode_App.png?v=20180116"> -->
+				</div>
+				<div class="success_text">
+					<p>1、扫描左侧二维码,安装官方APP</p>
+					<p>
+						2、登录APP领取<span class="green">免费立即</span>
+					</p>
+					<p class="down_teach">安装教程</p>
+					<p class="down_btn">
+						<a class="active j-tech" data-target="#j_tech1" data-num="0">苹果系统</a> 
+						<a class="j-tech" data-target="#j_tech2" data-num="1">安卓系统</a>
+					</p>
+				</div>
+			</div>
+		</div>
+	</aside>
+	<aside class="register j-close"></aside>
+	<aside class="register j-close" id="forget_pwd" ng-controller="authCtrl">
+		<div class="register_content">
+			<div class="r_title">
+				<p>
+					忘记密码<span class="small"></span>
+				</p>
+				<span class="close j-close" ng-click="hideForgetPwd()"></span>
+			</div>
+			<div class="cfx forget_nav">
+				<span data-target="f_p_sms" class="forget_item j-nav_item active" data-num="0">短信找回</span>
+				<span data-target="f_p_email" class="forget_item j-nav_item" data-num="1">邮箱找回</span>
+				<a href="https://kf1.learnsaas.com/chat/chatClient/chatbox.jsp?companyID=809347&amp;configID=61861&amp;jid=7990183634&amp;s=1" target="_blank" class="forget_item">联系客服</a>
+			</div>
+			<div class="forget_content">
+				<div data-id="f_p_sms" class="j-nav_tab active" data-num="0">
+					<form id="form-findPwdBySms">
+						<div class="r_content">
+							<div class="inputs">
+								<label>游戏账户</label> 
+								<input type="text" name="name" placeholder="请输入您的游戏账号" maxlength="16" ng-model="musername">
+							</div>
+							<div class="inputs">
+								<label>手机号码</label> 
+								<input type="text" class="inpt-pwd" name="phone" placeholder="请输入绑定手机号码" maxlength="11" ng-model="mmobile">
+							</div>
+							<div id="touclick-container"
+								style="margin: 50px auto 30px; width: 320px;"></div>
+							<p class="r_tips">请保持手机通讯功能正常</p>
+						</div>
+						<div class="r_btns">
+							<button class="btn reg" href="javascript:void(0);" ng-click="findPwdByMobile()">验证</button>
+						</div>
+					</form>
+				</div>
+				<div data-id="f_p_email" class="j-nav_tab" data-num="1">
+					<form id="form-findPwdByEmail">
+						<div class="r_content">
+							<div class="inputs">
+								<label>游戏账户</label> 
+								<input type="text" name="name" placeholder="请输入您的游戏账号" maxlength="16" ng-model="eusername">
+							</div>
+							<div class="inputs">
+								<label>邮箱</label> 
+								<input type="text" class="inpt-pwd" name="yxdz" placeholder="请输入邮箱地址" maxlength="60" ng-model="eemail">
+							</div>
+							<div class="inputs">
+								<label>验证码</label> 
+								<input type="text" name="code" placeholder="请输入验证码" ng-model="ecode"> 
+								<img id="loginCodeImg" ng-src='{{captchaCode}}' ng-click="obtainCaptchaCode()" width="100%" class="j-code" title="点击更新">
+							</div>
+							<p class="r_tips">请确保邮箱地址有效</p>
+						</div>
+						<div class="r_btns">
+							<button class="btn reg" href="javascript:void(0);" ng-click="findPwdByEmail()">提交</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</aside>
+
+	<!--优惠公告弹窗s-->
+	<aside class="register" id="j_news_box" style="display: none;">
+		<div class="register_content">
+			<h3 class="j_news_title">五一聚惠存送100%存款有大礼包</h3>
+			<div class="new_show j_new_show">
+				平台存款渠道新增秒存转账充值方式，笔笔皆赠送1%，整月无上限哦。<br> <br> <br>【一】存送100%.，最高彩金510！<br>
+				<br> <br>【二】如出现无法打开网页，请使用官网链接www.tg8.vip<br> <br>
+				<br>【三】本月每日累积存款≥510即可找在线客服申请五一大礼包，即可找在线客服申请五一大礼包<br> <br>
+				<br>【四】今日30送21,60送36,80送52优惠券联系在线客服申请<br> <br> <br>【五】提款就送100%优惠券，喜上加“金”喜
+			</div>
+			<span class="close j-close" title="点击关闭"></span> 
+			<!-- img class="new_show_ico" src="images/base/new_notice_ico.png"> 
+			<img class="new_show_qr download_code" src="images/generateQRCode_App.png?v=20180116"> -->
+			<div class="new_show_wins">
+				<marquee direction="up" border="0" class="j-new-group">
+					<a href="javascript:void(0);" class="cfx"><div class="fl des">
+							恭喜玩家<span>te***</span>在MG 【花粉派对】 投注18赢得奖池 <span>18,000.00元
+							</span>
+						</div></a><a href="javascript:void(0);" class="cfx"><div class="fl des">
+							恭喜玩家<span>xi***</span>在QT 【闪电宝石】 投注3.75赢得奖池 <span>12,000.00元
+							</span>
+						</div></a><a href="javascript:void(0);" class="cfx"><div class="fl des">
+							恭喜玩家<span>wa***</span>在DT 【西游降妖】 投注10赢得奖池 <span>9,000.00元
+							</span>
+						</div></a><a href="javascript:void(0);" class="cfx"><div class="fl des">
+							恭喜玩家<span>hu***</span>在PT 【众神的时代】 投注0.4赢得奖池 <span>35,349.00元
+							</span>
+						</div></a><a href="javascript:void(0);" class="cfx"><div class="fl des">
+							恭喜玩家<span>bl***</span>在PT 【招财进宝】 投注9赢得奖池 <span>10,000.00元
+							</span>
+						</div></a><a href="javascript:void(0);" class="cfx"><div class="fl des">
+							恭喜玩家<span>te***</span>在PT 【大蓝】 投注12赢得奖池 <span>22,000.00元 </span>
+						</div></a><a href="javascript:void(0);" class="cfx"><div class="fl des">
+							恭喜玩家<span>ja***</span>在PT 【年年有余】 投注20赢得奖池 <span>15,000.00元
+							</span>
+						</div></a>
+				</marquee>
+			</div>
+		</div>
+	</aside>
+	
+	<aside class="register" id="j_news_box" style="display: none;">
+        <div class="register_content">
+            <h3 class="j_news_title">官网升级维护公告</h3>
+            <div class="new_show j_new_show">尊敬的泰格会员您好：<br>为了给您提供更好的服务，我们现进行官网安全系统维护升级，现在将进行全面维护，维护期间您将无法进行存款和户内转账和游戏，有任何问题请您联系官网24小时在线客服，感谢您的支持与配合。维护完毕我们会发布公告进行通知，感谢您对泰格娱乐的支持，祝您盈利多多</div>
+            <span class="close j-close" title="点击关闭"></span>
+            <!--img class="new_show_ico" src="/taige/images/base/new_notice_ico.png">
+            <img class="new_show_qr download_code" src="/taige/images/generateQRCode_App.png?v=20180116">-->
+            <div class="new_show_wins">
+              <marquee direction="up" border="0" class="j-new-group"><a href="javascript:void(0);" class="cfx"><div class="fl des">恭喜玩家<span>te***</span>在MG 【花粉派对】 投注18赢得奖池 <span>18,000.00元 </span></div></a><a href="javascript:void(0);" class="cfx"><div class="fl des">恭喜玩家<span>xi***</span>在QT 【闪电宝石】 投注3.75赢得奖池 <span>12,000.00元 </span></div></a><a href="javascript:void(0);" class="cfx"><div class="fl des">恭喜玩家<span>wa***</span>在DT 【西游降妖】 投注10赢得奖池 <span>9,000.00元 </span></div></a><a href="javascript:void(0);" class="cfx"><div class="fl des">恭喜玩家<span>hu***</span>在PT 【众神的时代】 投注0.4赢得奖池 <span>35,349.00元 </span></div></a><a href="javascript:void(0);" class="cfx"><div class="fl des">恭喜玩家<span>bl***</span>在PT 【招财进宝】 投注9赢得奖池 <span>10,000.00元 </span></div></a><a href="javascript:void(0);" class="cfx"><div class="fl des">恭喜玩家<span>te***</span>在PT 【大蓝】 投注12赢得奖池 <span>22,000.00元 </span></div></a><a href="javascript:void(0);" class="cfx"><div class="fl des">恭喜玩家<span>ja***</span>在PT 【年年有余】 投注20赢得奖池 <span>15,000.00元 </span></div></a></marquee>
+            </div>
+        </div>
+    </aside>
+    
+	<!--电话回拨-->
+	<aside class="register" id="callback">
+		<div class="register_content j-register_content">
+			<form id="form-callback">
+				<div class="r_title">
+					<p>电话回拨</p>
+					<span class="close j-close"></span>
+				</div>
+				<div class="r_content">
+					<div class="inputs">
+						<label>手机号码</label> <input type="text" name="phone"
+							placeholder="请输入您的手机号码！" maxlength="11">
+					</div>
+					<p class="r_tips">若填写虚假手机号码,将无法享受网站全部服务。</p>
+				</div>
+				<div class="r_btns">
+					<button class="btn reg" href="javascript:void(0);">提交</button>
+				</div>
+			</form>
+		</div>
+	</aside>
+	<!--教程-->
+	<aside class="register" id="j_tech1" ng-controller="authCtrl">
+		<div class="register_content">
+			<div class="r_title">
+				<p>
+					苹果系统-App教程<span class="small"></span>
+				</p>
+				<span class="close j-close" ng-click="hideAppleTutorial()"></span>
+			</div>
+			<div class="r_content cfx app-box">
+				<div class="fl tech-img">
+					<img class="download_code" src="images/generateQRCode_App.png?v=20180116">
+				</div>
+				<div class="fl tech-control">
+					<span class="app-control app-left"></span> 
+					<span class="app-control app-right"></span>
+					<div class="tech_img">
+						<img class="active views" src="images/tech/ios/1.jpg"> 
+						<img class="views" src="images/tech/ios/2.jpg"> 
+							<img class="views" src="images/tech/ios/3.jpg"> 
+							<img class="views" src="images/tech/ios/4.jpg"> 
+							<img class="views" src="images/tech/ios/5.jpg"> 
+							<img class="views" src="images/tech/ios/6.jpg"> 
+							<img class="views" src="images/tech/ios/7.jpg"> 
+							<img class="views" src="images/tech/ios/8.jpg"> 
+							<img class="views" src="images/tech/ios/9.jpg">
+					</div>
+				</div>
+			</div>
+		</div>
+	</aside>
+	<aside class="register" id="j_tech2"  ng-controller="authCtrl">
+		<div class="register_content">
+			<div class="r_title">
+				<p>
+					安卓系统-App教程<span class="small"></span>
+				</p>
+				<span class="close j-close"  ng-click="hideAndroidTutorial()"></span>
+			</div>
+			<div class="r_content cfx app-box">
+				<div class="fl tech-img">
+					<img class="download_code"
+						src="images/generateQRCode_App.png?v=20180116">
+				</div>
+				<div class="fl tech-control">
+					<span class="app-control app-left"></span> <span
+						class="app-control app-right"></span>
+					<div class="tech_img">
+						<img class="active views" src="images/tech/android/1.jpg"> <img
+							class="views" src="images/tech/android/2.jpg"> <img
+							class="views" src="images/tech/android/3.jpg"> <img
+							class="views" src="images/tech/android/4.jpg"> <img
+							class="views" src="images/tech/android/5.jpg">
+					</div>
+				</div>
+			</div>
+		</div>
+	</aside>
+	<aside class="register" id="j_tech3">
+		<div class="register_content">
+			<div class="r_title">
+				<p>
+					苹果系统-彩金领取教程<span class="small"></span>
+				</p>
+				<span class="close j-close"></span>
+			</div>
+			<div class="r_content cfx app-box">
+				<div class="fl tech-img">
+					<img class="download_code"
+						src="images/generateQRCode_App.png?v=20180116">
+				</div>
+				<div class="fl tech-control">
+					<span class="app-control app-left"></span> <span
+						class="app-control app-right"></span>
+					<div class="tech_img">
+						<img class="active views" src="images/demo/hotgame.jpg"> <img
+							class="views" src="images/demo/candyDreams.jpg"> <img
+							class="views" src="images/demo/forbiddenThrone.png">
+					</div>
+				</div>
+			</div>
+		</div>
+	</aside>
+	<aside class="register" id="j_tech4">
+		<div class="register_content">
+			<div class="r_title">
+				<p>
+					安卓系统-彩金领取教程<span class="small"></span>
+				</p>
+				<span class="close j-close"></span>
+			</div>
+			<div class="r_content cfx app-box">
+				<div class="fl tech-img">
+					<img class="download_code"
+						src="images/generateQRCode_App.png?v=20180116">
+				</div>
+				<div class="fl tech-control">
+					<span class="app-control app-left"></span> <span
+						class="app-control app-right"></span>
+					<div class="tech_img">
+						<img class="active views" src="images/demo/hotgame.jpg"> <img
+							class="views" src="images/demo/candyDreams.jpg"> <img
+							class="views" src="images/demo/forbiddenThrone.png">
+					</div>
+				</div>
+			</div>
+		</div>
+	</aside>
+	
+	<aside class="register" id="toastDiv" style="display:none">
+		<div class="register_content" style="min-width: 150px;">
+			<div class="r_title" >
+				<p>
+					系统提示<span class="small"></span>
+				</p>
+				<!-- <span class="close j-close"></span> -->
+			</div>
+			<div class="r_content cfx app-box" id="toastTxt" style="width:50px;height:50px;min-width: 150px;"></div>
+		</div>
+	</aside>
+	
+	<!--侧边工具栏目-->
+	<!-- <aside class="tooler" ng-controller="authCtrl">
+		<div class="content">
+			<div class="tool_bar">
+				<a class="t_ites t_ico1 j-dosign" ng-click="checkIn()"> 签到 </a> 
+				<a class="t_ites t_ico3" href="https://kf1.learnsaas.com/chat/chatClient/chatbox.jsp?companyID=809347&amp;configID=61861&amp;jid=7990183634&amp;s=1" target="_blank"> 在线客服 </a>
+				<a class="t_ites t_ico2 j-callback">
+				电话回拨
+				</a>
+				<a class="t_ites t_ico4"> 微信公众号 <img
+					src="images/base/wechat.jpg">
+				</a> <a class="t_ites t_ico5 j-to_top"> 返回顶部 </a>
+			</div>
+
+			<div class="luckmoney j-register animated tada">
+				<img src="images/base/luckmoney.gif">
+			</div>
+
+		</div>
+	</aside> -->
+	<!-- <aside class="footer_app j-close">
+		<h3 class="f_app_title">
+			<span>APP</span>二维码下载
+		</h3>
+		<div class="f_app_qr">
+			<img class="download_code"
+				src="images/generateQRCode_App.png?v=20180116">
+		</div>
+	</aside> -->
+	<input id="level0" type="hidden" value="普通会员">
+	<input id="level1" type="hidden" value="青铜会员">
+	<input id="level2" type="hidden" value="白银会员">
+	<input id="level3" type="hidden" value="黄金会员">
+	<input id="level4" type="hidden" value="铂金会员">
+	<input id="level5" type="hidden" value="钻石会员">
+	<input type="hidden" id="j-isLogin" value="false">
+
+	<div class="mint-toast is-placemiddle" style="padding: 30px; display: none;" id="toastDiv">
+    	<span class="mint-toast-text" style="padding-top: 0px;" id="toastTxt">验证码不能为空</span>
+	</div>
+	<!-- <script src="js/base.js?v=14"></script> -->
+
+	<!-- <script src="js/index.js?v=29"></script> -->
+
+	<script type="text/javascript">
+		$(function() {
+			var url = location.href;
+			if (url.indexOf('#/agent') > 0
+					|| url.indexOf('#/agent_project') > 0) {
+				$("#header").addClass("hiddenHeader");
+				$("#nav").addClass("hiddenHeader");
+			} else {
+				$("#header").removeClass("hiddenHeader");
+				$("#nav").removeClass("hiddenHeader");
+			}
+			$("#nav a").click(function() {
+				if ($(this).attr('id') == 'agent') {
+					$("#header").addClass("hiddenHeader");
+					$("#nav").addClass("hiddenHeader");
+				} else {
+					$("#header").removeClass("hiddenHeader");
+					$("#nav").removeClass("hiddenHeader");
+				}
+
+			});
+		});
+	</script>
+	
+</body>
+</html>

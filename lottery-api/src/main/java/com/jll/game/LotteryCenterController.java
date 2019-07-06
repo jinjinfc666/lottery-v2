@@ -1,6 +1,7 @@
 package com.jll.game;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -24,8 +25,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jll.common.cache.CacheRedisService;
 import com.jll.common.constants.Constants;
 import com.jll.common.constants.Constants.SysCodeTypes;
+import com.jll.common.constants.Constants.UserType;
 import com.jll.common.constants.Message;
+import com.jll.common.utils.MathUtil;
 import com.jll.common.utils.StringUtils;
+import com.jll.dao.PageBean;
 import com.jll.entity.Issue;
 import com.jll.entity.OrderInfo;
 import com.jll.entity.PlayType;
@@ -35,11 +39,14 @@ import com.jll.game.order.OrderService;
 import com.jll.game.playtype.PlayTypeFacade;
 import com.jll.game.playtype.PlayTypeService;
 import com.jll.game.playtypefacade.PlayTypeFactory;
+import com.jll.report.MReportService;
 import com.jll.sysSettings.syscode.SysCodeService;
+import com.jll.user.UserInfoExtService;
 import com.jll.user.UserInfoService;
 import com.jll.user.wallet.WalletService;
 import com.terran4j.commons.api2doc.annotations.Api2Doc;
 import com.terran4j.commons.api2doc.annotations.ApiComment;
+import com.vladsch.flexmark.formatter.internal.Formatter;
 
 @Api2Doc(id = "lotteryCenter", name = "lottery center")
 @ApiComment(seeClass = UserInfo.class)
@@ -72,6 +79,13 @@ public class LotteryCenterController {
 	
 	@Resource
 	UserInfoService userServ;
+	
+	@Resource
+	UserInfoExtService userExtServ;
+	
+	@Resource
+	MReportService reportServ;
+	
 	
 	@RequestMapping(value="/{lottery-type}/pre-bet", method = { RequestMethod.POST }, consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
 	public Map<String, Object> PreBet(@PathVariable(name = "lottery-type", required = true) String lotteryType,
@@ -245,13 +259,21 @@ public class LotteryCenterController {
 						return resp;
 					}
 					
-//					if(zh.getCode() == Constants.ZhState.NON_ZH.getCode()
-//							&& orders.size() > 1) {
-//						resp.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
-//						resp.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_GAME_MULTIPLE_ORDERS_NOT_ALLOWED.getCode());
-//						resp.put(Message.KEY_ERROR_MES, Message.Error.ERROR_GAME_MULTIPLE_ORDERS_NOT_ALLOWED.getErrorMes());
-//						return resp;
-//					}
+					//new function for xy player
+					if(user.getUserType().intValue() == UserType.XY_PLAYER.getCode()) {
+						String payoutRate = userExtServ.queryFiledByName(user.getId(), "xyPayoutRate");
+						String xyAmount = userExtServ.queryFiledByName(user.getId(), "xyAmount");
+						
+						user.setXyAmount(Double.parseDouble(xyAmount));
+						user.setXyPayoutRate(Double.parseDouble(payoutRate));
+						boolean isExtendMaxmium = validMaxPayout(lotteryType, orders, user);
+						if(!isExtendMaxmium) {
+							resp.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+							resp.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_GAME_PAYOUT_UP_LIMIT.getCode());
+							resp.put(Message.KEY_ERROR_MES, Message.Error.ERROR_GAME_PAYOUT_UP_LIMIT.getErrorMes());
+							return resp;
+						}
+					}
 					
 					retCode = orderServ.saveOrders(orders, walletId, zhFlag,lotteryType);
 					if(!String.valueOf(Message.status.SUCCESS.getCode()).equals(retCode)) {
@@ -289,6 +311,67 @@ public class LotteryCenterController {
 	}
 	
 	
+	private boolean validMaxPayout(String lotteryType, List<OrderInfo> orders, UserInfo user) {
+		//String payoutRate = userExtServ.queryFiledByName(user.getId(), "xyPayoutRate");
+		Integer pageSize=Constants.Pagination.SUM_NUMBER.getCode();
+		SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd");
+		Date today = new Date();
+		String todayStr = formater.format(today);
+		String startTime = todayStr + " 00:00:00";
+		String endTime = todayStr + " 23:59:59";
+		PageBean list = null;
+		Double totalPayoutAmount = null;
+		Double maxPayoutRate = user.getXyPayoutRate();
+		Double maxPayoutAmount = MathUtil.multiply(user.getXyAmount(), maxPayoutRate, Double.class);
+		
+		Map<String, Object> ret = new HashMap<>();
+		ret.put("pageSize", pageSize);
+		ret.put("pageIndex", 1);
+		ret.put("userName", user.getUserName());
+		ret.put("startTime", startTime);
+		ret.put("endTime", endTime);
+		ret.put("userType", user.getUserType());
+		try {
+			list = reportServ.queryAll(ret);
+			
+		}catch(Exception e){
+			
+		}
+		
+		if(list == null || list.getContent() == null || list.getContent().size() == 0) {
+			return true;
+		}
+		
+		Object[] profitRec = (Object[])list.getContent().get(0);
+		
+		if(profitRec[8] == null) {
+			return true;
+		}
+		
+		totalPayoutAmount = ((BigDecimal)(profitRec[8])).doubleValue();
+		
+		
+		for(OrderInfo order : orders) {
+			if(order.getIsPrize() == 1) {
+				Map<String, Object> params = new HashMap<>();
+				params.put("betNum", order.getBetNum());
+				params.put("times", order.getTimes());
+				params.put("monUnit", String.valueOf(order.getPattern().doubleValue()));
+				params.put("playType", order.getPlayType());
+				
+				Map<String, Object> preBetRec = PreBet(lotteryType, params);
+				Double winAmount = new Double((Float)((HashMap<String, Object>)preBetRec.get("data")).get("maxWinAmount"));
+				totalPayoutAmount += MathUtil.add(totalPayoutAmount, winAmount, Double.class);
+			}
+		}
+		
+		if(totalPayoutAmount >= maxPayoutAmount) {
+			return false;
+		}
+		
+		return true;
+	}
+
 	@RequestMapping(value="/{lottery-type}/betting-issue", method = { RequestMethod.GET }, produces=MediaType.APPLICATION_JSON_VALUE)
 	public Map<String, Object> queryBettingIssue(@PathVariable(name = "lottery-type", required = true) String lotteryType){
 		Map<String, Object> resp = new HashMap<String, Object>();

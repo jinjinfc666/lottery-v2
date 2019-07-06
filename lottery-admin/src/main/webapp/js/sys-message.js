@@ -53,6 +53,17 @@ var messageArray = {
 				"dwd_8":"第九名 {number}",
 				"dwd_9":"第十名 {number}"
 			},
+			"play_type_5fc":{
+				"5ds_00":"{number} 双",
+				"5ds_01":"{number} 单",
+				"5dx_00":"{number} 小",
+				"5dx_01":"{number} 大",
+				"dwd_0":"万位 {number}",
+				"dwd_1":"千位 {number}",
+				"dwd_2":"百位 {number}",
+				"dwd_3":"十位 {number}",
+				"dwd_4":"个位 {number}"
+			},
 			"data_item_type":{
 				"0":"余额",
 				"0":"余额",
@@ -72,7 +83,8 @@ function getBettingNum(lotteryType, playType, bettingNum) {
     	if(codeVal != null){
     		var number = playType.substring(playType.length - 2, playType.length - 1);
     		var numberDes = number;
-    		if(lotteryType == 'cqssc' || lotteryType == 'xjssc'){
+    		if(lotteryType == 'cqssc' || lotteryType == 'xjssc'
+    			||  lotteryType == '5fc'){
     			if(number == '一'){
     				numberDes = '万位';
     			}else if(number == '二'){

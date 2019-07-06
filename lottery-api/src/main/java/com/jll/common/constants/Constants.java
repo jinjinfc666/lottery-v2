@@ -545,7 +545,8 @@ public class Constants {
 		GENERAL_AGENCY(3, "总代"),
 		DEMO_PLAYER(4, "试玩玩家"),
 		SM_PLAYER(5, "双面玩家"),
-		SM_AGENCY(6, "双面代理");
+		SM_AGENCY(6, "双面代理"),
+		XY_PLAYER(7, "信誉玩家");;
 		
 		private int code;
 		

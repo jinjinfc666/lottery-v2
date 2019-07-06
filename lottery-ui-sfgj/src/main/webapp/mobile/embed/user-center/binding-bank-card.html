@@ -1,0 +1,29 @@
+
+	<header class="header_normal" ng-controller="authCtrl">
+		<a href="javascript:void(0);" data-back="" class="back_link" ng-click="goBack()">
+			<span class="icon icon_arrow_back"></span>
+		</a>
+		<h1>添加银行卡</h1>
+	</header>
+	<div id="page_content" class="flex_1" ng-controller="accManCtrl">
+		<div class="page_content_wrap add_bank_content">
+			<div class="layout_form layout_form04">
+
+				<div class="form_field_warp">
+					<div class="form_field">
+						<span class="form_field_label">银行卡号</span>
+						<div class="form_field_input">
+							<input type="text" placeholder="输入卡号,系统智能识别" class="j-bankno"
+								maxlength="23">
+						</div>
+					</div>
+					<div class="j-tips addBankTips"></div>
+				</div>
+
+				<div class="btn_wrap">
+					<a href="javascript:void(0);" class="btn btn01 j-submit" ng-click="">保存</a>
+				</div>
+			</div>
+		</div>
+	</div>
+

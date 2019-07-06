@@ -1,0 +1,60 @@
+<div class="usershow fl" ng-controller="accManCtrl">
+	<div class="usercontrol j-tab">
+		<div class="u_c_nav cfx j-listBtn"  style=" background: #d9534f;">
+			<span data-target="u_s_dl" data-num="0" class="j-nav_item u_c_n_item active" style=":hover:#d9534f;">修改登录密码</span> 
+			<span data-target="u_s_zf" data-num="1" class="j-nav_item u_c_n_item j-payPwdAction">设置支付密码</span>
+			<span data-target="u_s_zfpwd" data-num="3" class="j-nav_item u_c_n_item j-findPayPwd hidden" style="display: none;">找回支付密码</span>
+		</div>
+		<div class="u_c_window" data-num="0" style="border: solid 20px #d9534f;">
+			<div data-id="u_s_dl" class="u_c_w_content j-nav_tab active">
+				<div class="u_c_w_tab active">
+					<form id="form-changepwd" class="contentbox modifypassword">
+						<div class="u_inputs">
+							<label class="u_label">原密码</label> 
+							<input id="oldPwd" class="u_input inpt-pwd" type="password" placeholder="请输入原始" name="password" ng-model="oldPwd"> 
+							<span class="j-changpwd eyes close" onclick="chagePwdText('oldPwd','oldPwdIcon')" id="oldPwdIcon"></span>
+						</div>
+						<div class="u_inputs">
+							<label class="u_label">新密码</label> 
+							<input class="u_input inpt-pwd" type="password" placeholder="请输入新密码" name="new_password" ng-model="newPwd" id="newPwd"> 
+							<span class="j-changpwd eyes close" onclick="chagePwdText('newPwd','newPwdIcon')" id="newPwdIcon"></span>
+						</div>
+						<div class="u_inputs">
+							<label class="u_label">确认密码</label> 
+							<input class="u_input inpt-pwd" type="password" placeholder="请再次输入新密码" name="confirm_password" ng-model="cnewPwd" id="confirmNewPwd"> 
+							<span class="j-changpwd eyes close" onclick="chagePwdText('confirmNewPwd','confirmNewPwdIcon')" id="confirmNewPwdIcon"></span>
+						</div>
+						<button class="u_btn" ng-click="modifyLoginPwd()">立即提交</button>
+					</form>
+				</div>
+			</div>			
+		</div>
+		
+		
+		<div class="u_c_window"  data-num="1" style="display:none;">
+        	<div data-id="u_s_dl" class="u_c_w_content j-nav_tab active" >
+            	<div data-id="u_s_zf" class="u_c_w_content j-nav_tab  active">
+					<div class="u_c_w_tab active">
+						<form id="form-setPayPwd" class="wrapper formbox" style="">
+							<div class="u_inputs">
+								<label class="u_label">旧密码</label> 
+								<input class="u_input inpt-pwd" type="password" name="loginPwd" placeholder="请输入资金密码" id="lPwd" ng-model="oldPwd"> 
+								<span class="j-changpwd eyes close" onclick="chagePwdText('lPwd','lPwdIcon')" id="lPwdIcon"></span>
+							</div>
+							<div class="u_inputs">
+								<label class="u_label">新资金密码</label> 
+								<input class="u_input inpt-pwd" type="password" name="withdrawPwd" placeholder="请输入新的资金密码,6位纯数字" id="drawPwd" ng-model="newPwd"> 
+								<span class="j-changpwd eyes close" onclick="chagePwdText('drawPwd','drawPwdIcon')" id="drawPwdIcon"></span>
+							</div>
+							<div class="u_inputs">
+								<label class="u_label">确认资金密码</label> 
+								<input class="u_input inpt-pwd" type="password" name="confirm_withdrawPwd" placeholder="请再次输入资金密码,6位纯数字" id="cdrawPwd" ng-model="cnewPwd">
+								<span class="j-changpwd eyes close" onclick="chagePwdText('cdrawPwd','cdrawPwdIcon')" id="cdrawPwdIcon"></span>
+							</div>
+							<button class="u_btn" ng-click="modifyFundPwd()">立即提交</button>
+						</form>
+				</div>
+			</div>
+     	</div>
+	</div>
+</div>

@@ -93,7 +93,8 @@
                             }else if(data.data.state=='2'){
                                 $("#state3").attr("checked","checked");
                             }
-                            if(data.data.userType=='0'){
+                            
+                            /*if(data.data.userType=='0'){
                                 $("#userType1").attr("checked","checked");
                             }else if(data.data.userType=='1'){
                                 $("#userType2").attr("checked","checked");
@@ -101,7 +102,9 @@
                                 $("#userType3").attr("checked","checked");
                             }else if(data.data.userType=='3'){
                                 $("#userType4").attr("checked","checked");
-                            }
+                            }*/
+                            
+                            $("#userType").val(data.data.userType);
                             document.getElementById('realName').value=data.data.realName;
                             document.getElementById('userName').value=data.data.userName;
                             document.getElementById('userId').value=data.data.userId;
@@ -149,7 +152,8 @@
                 var email=document.getElementById('email').value;
                 var id=document.getElementById('id').value;
                 var state=$("input[name='state']:checked").val();
-                var userType=$("input[name='userType']:checked").val();
+                //var userType=$("input[name='userType']:checked").val();
+                var userType=$("#userType").val();
                 var domain=parseDomain();
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
@@ -161,7 +165,8 @@
                     "userType":userType,
                     "platRebate":platRebate,
                     "phoneNum": phoneNum,
-                    "email": email
+                    "email": email,
+                    "userType":userType
                 });
                 $.ajax({
                     url: url,
@@ -343,6 +348,21 @@
         <input type="hidden" id="id" name="id" value="" />
         <table width="600px" cellspacing="0" cellpadding="5">
             <tr>
+                <th class="thstyle">用户类型：</th>
+                <td style="text-align: left;">
+                	<select id="userType" style="width:150px;height:34px" >
+                		<option value="0">玩家</option>
+                		<option value="1">在线代理</option>
+                		<option value="2">系统用户</option>
+                		<option value="3">总代</option>
+                		<option value="4">试玩玩家</option>
+	                	<option value="5">双面玩家</option>
+	                	<option value="6">双面代理</option>
+	                	<option value="7">信誉玩家</option>
+                	</select>
+                </td>
+            </tr>
+            <tr>
                 <th class="thstyle">真实姓名：</th>
                 <td><input type="text" id="realName" name="realName" value="" style="width:150px;" class="form-control" /></td>
             </tr>
@@ -374,13 +394,13 @@
                 <th class="thstyle">登陆次数：</th>
                 <td><input type="text" id="loginCount" name="loginCount" value="" style="width:150px;" class="form-control" readonly /></td>
             </tr>
-            <tr>
+            <!-- tr>
                 <th class="thstyle">用户类型：</th>
                 <td>平台客户：<input type="radio" id="userType1" name="userType"  value="0">&nbsp;&nbsp;&nbsp;&nbsp;
                     代理：<input type="radio" id="userType2" name="userType"  value="1">&nbsp;&nbsp;&nbsp;&nbsp;
                     系统用户：<input type="radio" id="userType3" name="userType"  value="2">&nbsp;&nbsp;&nbsp;&nbsp;
                     总代：<input type="radio" id="userType4" name="userType"  value="3"></td>
-            </tr>
+            </tr> -->
             <tr>
                 <th class="thstyle">上级代理：</th>
                 <td><input type="text" id="superior" name="superior" value="" style="width:150px;" class="form-control" readonly /></td>

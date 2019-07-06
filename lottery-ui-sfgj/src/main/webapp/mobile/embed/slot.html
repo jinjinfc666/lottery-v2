@@ -1,0 +1,64 @@
+<!-- 
+不顯示頭，保留底部
+
+ -->
+<header class="header_normal">
+	<a href="index.jsp" class="back_link"><span
+		class="icon icon_arrow_back"></span></a>
+	<h1>所有彩种</h1>
+</header>
+
+<div id="page_content" class="flex_1" ng-controller="lotteryCtrl" ng-init="queryLotterys()">
+	<div class="page_content_wrap slot_game_list_wrap display_flex_vertical">		
+		<div class="slot_game_result"></div>
+		<div class="slot_game_item_list" id="j-gameContainer">
+			<div ng-repeat="v in lotterys">
+				<div id="{{v.codeName}}" class="slot_game_item game-info" >
+					<div class="layout_image_hover_text">
+						<a class="btn-open" href="javascript:;"  ng-click="clickLottery(''+v.codeName)"> 
+							<span ng-class="{'game_tag':true,'game_tag_hot':v.codeVal == 1}"></span> 
+							<img class="game_img lazy" 
+								data-original="https://www.staticsources.com/images/phone/dtgames/hiphopman.png"
+								width="150" height="150"
+								ng-src="../images/lottery/{{v.codeName}}-logo.png"
+								style="display: inline;">
+						</a>
+					</div>
+					<div class="display_flex_h game_item_operations">
+						<a href="javascript:;" class="flex_1 link_try btn-open">{{v.remark}}</a> 
+						<a data-state="0" href="javascript:;" class="collect j-login link_fav"></a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<input id="j-baseUrl" type="hidden" value="https://www.taige88.com">
+<input id="j-ptToken" type="hidden" value="">
+<input id="j-ntToken" type="hidden" value="">
+<input id="j-dtToken" type="hidden" value="">
+<input id="j-referWebsite" type="hidden" value="">
+<input id="j-username" type="hidden" value="">
+<input id="j-isLogin" type="hidden" value="false">
+
+
+
+
+
+
+
+
+
+
+<div class="dialog_wrap dialog_with_title dialog_enter_game">
+	<div class="dialog_main j-dialog_main2">
+		<span class="dialog_close"><span class="icon icon_close"></span></span>
+		<div class="title_wrap">PT黑暗城市</div>
+		<div class="dialog_content">
+			<p>祝您多多盈利！</p>
+			<a href="javascript:;" class="btn btn01 btn_real btn-play"><span>进入真钱游戏</span></a>
+			<a href="javascript:;" class="btn btn01 btn_try">进入免费试玩</a>
+		</div>
+	</div>
+</div>

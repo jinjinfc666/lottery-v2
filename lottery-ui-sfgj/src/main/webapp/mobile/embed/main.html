@@ -1,0 +1,155 @@
+
+	<div id="page_content" class="flex_1" ng-controller="lotteryCtrl" ng-init="queryIssueRetGroup()">
+		<div class="index_content">			
+			<section class="banner-section">
+	            <div class="swiper-container swiper-container-horizontal swiper-container-android">
+					<div class="swiper-wrapper" id="ulid" style="transition-duration: 500ms; transform: translate3d(-1916px, 0px, 0px); height: 350px;">
+						<div class="swiper-slide swiper-slide-duplicate" data-swiper-slide-index="4" style="width: 958px;">
+							<a href="javascript:;">
+								<img src="images/common/banner/20180331_1522509017424.jpg" style="width:100%">
+							</a>
+						</div>
+						<div class="swiper-slide swiper-slide-prev" data-swiper-slide-index="0" style="width: 958px;">
+							<a href="../index.html">
+							<img src="images/common/banner/20180506_1525541101728.jpg" style="width:100%"></a>
+						</div>
+						<div class="swiper-slide swiper-slide-active" data-swiper-slide-index="1" style="width: 958px;">
+							<a href="../index.html">
+							<img src="images/common/banner/20180506_1525539236617.jpg" style="width:100%;height:350px">
+							</a>
+						</div>
+						<div class="swiper-slide swiper-slide-next" data-swiper-slide-index="2" style="width: 958px;">
+							<a href="javascript:;">
+							<img src="images/common/banner/20171026_1509008823881.jpg" style="width:100%"></a>
+						</div>
+						<div class="swiper-slide" data-swiper-slide-index="3" style="width: 958px;">
+							<a href="javascript:;">
+							<img src="images/common/banner/20180331_1522508930450.jpg" style="width:100%"></a>
+						</div>
+						<div class="swiper-slide" data-swiper-slide-index="4" style="width: 958px;">
+							<a href="javascript:;">
+							<img src="images/common/banner/20180331_1522509017424.jpg" style="width:100%"></a>
+						</div>
+						<div class="swiper-slide swiper-slide-duplicate" data-swiper-slide-index="0" style="width: 958px;">
+							<a href="../index.html">
+							<img src="images/common/banner/20180506_1525541101728.jpg" style="width:100%"></a>
+						</div>
+					</div>
+	            </div>
+			</section>
+			
+			<h3 class="index_title"><!-- span>游戏平台</span> --></h3>
+			<div>
+				<div class="slot_game_list cfx menu1">
+					<div class="sub viewer ticker-drawing-viewer ticker-drawing-viewer-base" style="height: 100px; margin: 3px;">
+						<div style="height: 30px;padding: 10px 0 0 0;color: #eee;background-color: #00ceb8;">幸运飞艇</div>
+							<a id="lotteryV2_haoMa" class="T_PK10 L_BJPK10 status--off"> 										
+								<span class="item_{{$index}}" ng-repeat="v in lastIssueRetNumXyft track by $index">
+									<b class="b{{v}}">{{v}}</b>
+								</span>
+							</a>
+					</div>
+					<div class="sub viewer ticker-drawing-viewer ticker-drawing-viewer-base" style="height: 100px; margin: 3px;">
+						<div style="height: 30px;padding: 10px 0 0 0;color: #eee;background-color: #00ceb8;">重庆时时彩</div>
+									<a id="lotteryV2_haoMa" class="T_SSC L_CQSSC status--off"> 
+										<span class="item_{{$index}}" ng-repeat="v in lastIssueRetNumCqssc track by $index">
+											<b class="b{{v}}">{{v}}</b>
+										</span>
+									</a>
+					</div>
+					<div class="sub viewer ticker-drawing-viewer ticker-drawing-viewer-base" style="height: 100px; margin: 3px;">
+						<div style="height: 30px;padding: 10px 0 0 0;color: #eee;background-color: #00ceb8;">北京PK10</div>
+									<a id="lotteryV2_haoMa" class="T_PK10 L_BJPK10 status--off"> 
+										<span class="item_{{$index}}" ng-repeat="v in lastIssueRetNumBjpk10 track by $index">
+											<b class="b{{v}}">{{v}}</b>
+										</span>
+									</a>
+					</div>
+					<div class="sub viewer ticker-drawing-viewer ticker-drawing-viewer-base" style="height: 100px; margin: 3px;">
+						<div style="height: 30px;padding: 10px 0 0 0;color: #eee;background-color: #00ceb8;">新疆时时彩</div>
+									<a id="lotteryV2_haoMa" class="T_SSC L_CQSSC status--off">
+										<span class="item_{{$index}}" ng-repeat="v in lastIssueRetNumXjssc track by $index">
+											<b class="b{{v}}">{{v}}</b>
+										</span>
+									</a>
+								</div>
+				</div>
+			</div>
+			
+			<h3 class="index_title"><span>热门游戏</span></h3>
+			<div class="hot_game_list sec_box layout_item_list mb"  ng-controller="authCtrl"  style="height: 100px;">
+				<div class="ul_auto_wrap hot_game_list">
+					<div class="auto_width" id="j-gameContainer" style="width: 495px;">
+					<div id="nian_k" class="slot_game_item game-info" data-json="{&quot;eName&quot;:&quot;&quot;,&quot;name&quot;:&quot;年年有余&quot;,&quot;id&quot;:&quot;nian_k&quot;,&quot;code&quot;:&quot;nian_k&quot;,&quot;category&quot;:&quot;PT&quot;,&quot;type&quot;:&quot;SLO&quot;,&quot;line&quot;:&quot;&quot;,&quot;state&quot;:1,&quot;pic&quot;:&quot;nian_k.jpg&quot;,&quot;tag&quot;:[]}">     
+						<div class="layout_image_hover_text">         
+							<a class="btn-open" href="#lottery_betting_cqssc">        
+								<span class="game_tag "></span>             
+								<img class="game_img lazy" ng-src="../images/lottery/cqssc-logo.png" width="150" height="150">         
+							</a>     
+						</div>     
+						<div class="display_flex_h game_item_operations">
+							<a href="#userCenter" class="flex_1 link_try btn-open">重庆时时彩</a> 
+							<a data-state="0" href="javascript:;" class="collect j-login link_fav"></a>
+						</div>
+					</div>
+					<div id="zcjbjp" class="slot_game_item game-info" data-json="{&quot;eName&quot;:&quot;&quot;,&quot;name&quot;:&quot;招财进宝彩池&quot;,&quot;id&quot;:&quot;zcjbjp&quot;,&quot;code&quot;:&quot;zcjbjp&quot;,&quot;category&quot;:&quot;PT&quot;,&quot;type&quot;:&quot;SLO&quot;,&quot;line&quot;:&quot;&quot;,&quot;state&quot;:1,&quot;pic&quot;:&quot;zcjbjp.jpg&quot;,&quot;tag&quot;:[]}">     
+						<div class="layout_image_hover_text">         
+							<a class="btn-open" href="#lottery_betting_bjpk10">        
+								<span class="game_tag "></span>             
+								<img class="game_img lazy" ng-src="../images/lottery/bjpk10-logo.png" width="150" height="150">         
+							</a>     
+						</div>     
+						<div class="display_flex_h game_item_operations">
+							<a href="javascript:;" class="flex_1 link_try btn-open">北京PK10</a> 
+							<a data-state="0" href="javascript:;" class="collect j-login link_fav"></a>
+						</div>
+					</div>
+					<div id="bib" class="slot_game_item game-info" data-json="{&quot;eName&quot;:&quot;&quot;,&quot;name&quot;:&quot;大蓝&quot;,&quot;id&quot;:&quot;bib&quot;,&quot;code&quot;:&quot;bib&quot;,&quot;category&quot;:&quot;PT&quot;,&quot;type&quot;:&quot;SLO&quot;,&quot;line&quot;:&quot;&quot;,&quot;state&quot;:1,&quot;pic&quot;:&quot;bib.jpg&quot;,&quot;tag&quot;:[]}">     
+						<div class="layout_image_hover_text">         
+							<a class="btn-open" href="#lottery_betting_xyft">        
+								<span class="game_tag "></span>             
+								<img class="game_img lazy" ng-src="../images/lottery/xyft-logo.png" width="150" height="150">         
+							</a>     
+						</div>     
+						<div class="display_flex_h game_item_operations">
+							<a href="javascript:;" class="flex_1 link_try btn-open">幸运飞艇</a> 
+							<a data-state="0" href="javascript:;" class="collect j-login link_fav"></a>
+						</div>
+					</div>
+					<div id="BreakAway" class="slot_game_item game-info" data-json="{&quot;eName&quot;:&quot;&quot;,&quot;name&quot;:&quot;冰球突破&quot;,&quot;id&quot;:&quot;BreakAway&quot;,&quot;code&quot;:&quot;BreakAway&quot;,&quot;category&quot;:&quot;MGS&quot;,&quot;type&quot;:&quot;SLO&quot;,&quot;line&quot;:&quot;&quot;,&quot;state&quot;:1,&quot;pic&quot;:&quot;breakaway.jpg&quot;,&quot;tag&quot;:[]}">     
+						<div class="layout_image_hover_text">         
+							<a class="btn-open" href="#lottery_betting_xjssc">        
+								<span class="game_tag "></span>             
+								<img class="game_img lazy" ng-src="../images/lottery/xjssc-logo.png" width="150" height="150">         
+							</a>     
+						</div>     
+						<div class="display_flex_h game_item_operations">
+							<a href="javascript:;" class="flex_1 link_try btn-open">新疆时时彩</a> 
+							<a data-state="0" href="javascript:;" class="collect j-login link_fav"></a>
+						</div>
+					</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="dialog_wrap dialog_with_title dialog_enter_game" style="display: none;" ng-controller="authCtrl">
+				<div class="dialog_main j-dialog_main2">
+					<span class="dialog_close">
+						<span class="icon icon_close"></span>
+					</span>
+					<div class="title_wrap">招财进宝彩池</div>
+					<div class="dialog_content">
+						<p>祝您多多盈利！</p>
+						<a href="javascript:;" class="btn btn01 btn_real btn-play">
+							<span>进入真钱游戏</span>
+						</a>
+						<a href="javascript:;" class="btn btn01 btn_try hidden">进入免费试玩</a>
+					</div>
+				</div>
+			</div>
+			
+			
+		</div>
+	</div>
+	
+	

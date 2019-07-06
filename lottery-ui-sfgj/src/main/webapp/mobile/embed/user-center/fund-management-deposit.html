@@ -1,0 +1,241 @@
+<header class="header_normal" ng-controller="authCtrl">
+		<a href="javascript:void(0)" class="back_link" ng-click="goBack()"> 
+			<span class="icon icon_arrow_back mt12"></span>
+		</a>
+		<h1>充值</h1>
+</header>
+
+	<div id="page_content" class="flex_1"  ng-controller="depositCtrl" ng-init="initDeposit()">		
+		<div class="zzhk_type" style="display: none;"></div>
+		<div class="page_content_wrap j-page_content_wrap thirdPay_type">
+			<div class="sec_box j-sec_box">
+				<div class="layout_form layout_form02 no_left_padding j-content deposit_form" data-num="0">
+					<div class="form_field_warp">
+						<div class="form_field with_right_label form_field_money">
+							<span class="form_field_label">存款金额</span>
+							<div class="form_field_input">
+								<input type="text" placeholder="请输入存款金额" id="deposit-wechat-money" class="j-money"  ng-model="amount">
+							</div>
+							<span class="right_label">元</span>
+						</div>
+						<div class="form_field">
+							<span class="form_field_label">支付方式</span>
+							<div class="form_field_input">
+								<input type="hidden" value="wechat">
+								<select id="m-deposit-wechat-pay" class="j-type" ng-model="curRechargeType" ng-options="v.id as v.name for v in rechargeType" ng-change="selRechargeType()"></select>
+							</div>
+						</div>
+						
+						<div class="form_field">
+							<span class="form_field_label">支付通道</span>
+							<div class="form_field_input">
+								<input type="hidden" value="wechat">
+								<select id="m-deposit-wechat-pay" class="j-type" ng-model="currPayChannel" ng-options="v.id as v.channelName for v in payChannel" ng-change="selPayChannel()"></select>
+							</div>
+						</div>
+					</div>
+					
+					<div class="btn_wrap j-btn">
+						<a href="javascript:void(0);" class="btn btn01 j-submit" ng-click="deposit()">提交</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+
+		
+
+		<aside class="register ng-scope" id="onlineBank" ng-class="{'onlineDisplayNone':!isOnlineBank,'onlineDisplayBlock':isOnlineBank}">
+			<div class="register_content" style="min-width: 380px;">
+				<div class="r_title">
+					<p>账户信息</p>
+					<span class="close j-close" num="6" ng-click="closeOnlineBank()"></span>
+				</div>
+				<div class="r_content">
+					<div class="u_c_w_tab active">
+						<div class="u_inputs" style="text-align: center;">
+							<label class="u_label">银行账号</label>
+							<input class="u_input" id="hbcouponCode" placeholder="请输入银行卡号" ng-model="onlineBankAcc" readonly>
+						</div>
+						<div class="u_inputs"  style="text-align: center;">
+							<label class="u_label">账户姓名</label>
+							<input class="u_input" id="hbcouponCode" placeholder="请输入银行卡号" ng-model="onlineBankName" readonly>
+						</div>
+						<div class="u_inputs"  style="text-align: center;">
+							<label class="u_label">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;附言</label>
+							<input class="u_input" id="hbcouponCode" placeholder="请输入银行卡号" ng-model="onlineRemark" readonly>
+						</div>
+					</div>
+				</div>
+			</div>
+		</aside>
+		
+		<aside class="register ng-scope" id="payURL" ng-class="{'onlineDisplayNone':!isPayURL,'onlineDisplayBlock':isPayURL}">
+			<div class="register_content" style="min-width: 380px;">
+				<div class="r_title">
+					<p>支付二维码</p>
+					<span class="close j-close" num="6" ng-click="closePayURL()"></span>
+				</div>
+				<div class="r_content">
+					<div class="u_c_w_tab active">
+						<div class="u_inputs" style="text-align: center;">
+							<a id="payURL_a" ng-href="{{qrPayURL}}" target="_self">点击支付</a>
+						</div>						
+					</div>
+				</div>
+			</div>
+		</aside>
+		
+		<aside class="register ng-scope" id="imageURL" ng-class="{'onlineDisplayNone':!isImageURL,'onlineDisplayBlock':isImageURL}">
+			<div class="register_content" style="min-width: 320px;">
+				<div class="r_title">
+					<p>支付二维码</p>
+					<span class="close j-close" num="6" ng-click="closeImageURL()"></span>
+				</div>
+				<div class="r_content">
+					<div class="u_c_w_tab active">
+						<div class="u_inputs" style="text-align: center;">
+							<img ng-src="{{qrImageURL}}" style="width:100%">
+						</div>						
+					</div>
+				</div>
+			</div>
+		</aside>
+		
+	</div>
+	<aside class="mctips hidden">
+		<div class="mctips_content">
+			<div class="mc_text">
+				1. 如果您已经支付且超过10分钟，请联系在线客服处理该笔订单 <br> 2.
+				如果未支付，请您先支付该笔订单或者选择废弃该订单
+			</div>
+			<div class="mc_btns">
+				<span onclick="secPost(true)">生成新订单</span> 
+				<span onclick="check_order()">查看旧订单</span>
+			</div>
+		</div>
+	</aside>
+	
+	<aside class="register ng-scope" id="onlineBank" ng-if="true">
+	<div class="register_content">
+		<div class="r_title">
+			<p>账户信息</p>
+			<span class="close j-close" num="6"></span>
+		</div>
+		<div class="r_content">
+			<div class="u_c_w_tab active">
+				<div class="u_inputs">
+					<label class="u_label">银行账号</label>
+					<input class="u_input" id="hbcouponCode" placeholder="请输入银行卡号" ng-model="onlineBankAcc">
+				</div>
+				<div class="u_inputs">
+					<label class="u_label">账户姓名</label>
+					<input class="u_input" id="hbcouponCode" placeholder="请输入银行卡号" ng-model="onlineBankName">
+				</div>
+				<div class="u_inputs">
+					<label class="u_label">附言</label>
+					<input class="u_input" id="hbcouponCode" placeholder="请输入银行卡号" ng-model="onlineRemark">
+				</div>
+			</div>
+		</div>
+	</div>
+</aside>
+
+	<div
+		class="form_tip form_tip_with_link display_flex_h flex_align_center"
+		style="margin: 0.5em;">
+		<div class="form_tip_text flex_1 ">
+			<p class="c-red">温馨提示：</p>
+			<div class="t_psWechat tip_content hidden">
+				<span style="color: red;"></span>1.存款时，请输入您的存款金额和附言（转账的时候点击添加备注填写附言，否则无法自动到账）
+				<br> <span style="color: red;">2.如遇转账异常，请直接联系在线客服处理</span> <br>
+			</div>
+			<div class="t_mcpay tip_content hidden">
+				1.请输入你的 <span style="color: red;">转账姓名和转账金额</span>，点击提交后， <span
+					style="color: red;">获取转账资料</span> <br> <span
+					style="color: red;">2.如遇转账异常，请直接联系在线客服处理</span> <br>
+			</div>
+			<div class="t_unionpay tip_content hidden">
+				1.系统会在金额后 <span style="color: red;">随机增加小数</span>，以提高成功率。到账金额将是您实际支付金额
+				<br> 2.存款过程中如有任何问题，请及时联系24小时在线客服进行咨询 <br> 3. <span
+					style="color: red;">微信秒存时，请转入您的存款金额（转账的时候点击添加备注填写附言，否则无法自动到账）</span>
+				<br> 4.银联扫码时，请使用付款银行的APP进行扫码支付，不可以使用微信扫一扫
+			</div>
+			<div class="t_alipay t_ebank t_qqpay t_jdpay t_wechat tip_content">
+				1.系统会在金额后 <span style="color: red;">随机增加小数</span>，以提高成功率。到账金额将是您实际支付金额
+				<br> 2.存款过程中如有任何问题，请及时联系24小时在线客服进行咨询 <br> 3. <span
+					style="color: red;">微信秒存时，请转入您的存款金额（转账的时候点击添加备注填写附言，否则无法自动到账）</span>
+				<br>
+			</div>
+		</div>
+	</div>
+
+	<style>
+	.onlineDisplayNone{
+		display:none;
+	}
+	
+	.onlineDisplayBlock{
+		display:block;
+	}
+	
+	
+.mctips {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.4);
+	font-size: 16px;
+	line-height: 2;
+}
+
+.mctips_content {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 70%;
+	transform: translate(-50%, -50%);
+	background: #fff;
+	padding: 10px;
+}
+
+.mc_btns {
+	text-align: center;
+}
+
+.mc_btns span {
+	display: inline-block;
+	background: #00baa5;
+	color: #fff;
+	padding: 5px 20px;
+	margin: 10px;
+	width: 50%;
+	cursor: pointer;
+	transition: all 0.3s;
+}
+
+.mc-tech-section {
+	height: 300px;
+	padding: 10px;
+}
+
+.mc-tech-section img {
+	display: block;
+	width: 100%;
+}
+
+.ul_auto_wrap ul li {
+	margin-right: 10px;
+	vertical-align: text-top;
+}
+
+.ul_auto_wrap ul li .rate {
+	display: inline-block;
+	background: red;
+	color: #fff;
+	padding: 0px 12px;
+	border-radius: 6px;
+}
+</style>

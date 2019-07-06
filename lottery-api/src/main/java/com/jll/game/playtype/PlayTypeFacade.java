@@ -87,4 +87,6 @@ public interface PlayTypeFacade
 	 * @return
 	 */
 	Map<String, Object> querySingleBettingPrizeRange(Float prizePattern);
+
+	boolean modifyBettingNum(Issue issue, OrderInfo order, boolean isMatch);
 }

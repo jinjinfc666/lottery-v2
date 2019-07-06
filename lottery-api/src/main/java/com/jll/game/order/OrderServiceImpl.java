@@ -80,6 +80,9 @@ public class OrderServiceImpl implements OrderService
 	@Resource
 	ExpertService expertServ;
 	
+	@Resource
+	OrderInfoExtService orderInfoExtServ;
+	
 	@Override
 	public String saveOrders(List<OrderInfo> orders, int walletId, int zhFlag, String lotteryType) {
 		String isIssueValid = "";
@@ -158,6 +161,17 @@ public class OrderServiceImpl implements OrderService
 				order.setZhTrasactionNum(zhTransactionNum);				
 			}
 			orderDao.saveOrders(order);
+			
+			//extend the xy function
+			if(user.getUserType().intValue() == Constants.UserType.XY_PLAYER.getCode()) {
+				if(order.getIsPrize() == null) {
+					order.setIsPrize(0);
+				}
+				
+				if(order.getIsPrize().intValue() == 1) {
+					orderInfoExtServ.saveOrderInfoExt(order);
+				}
+			}
 			
 			UserAccountDetails userDetails = new UserAccountDetails();
 			userDetails.setUserId(user.getId());
@@ -379,9 +393,9 @@ public class OrderServiceImpl implements OrderService
 					return Message.Error.ERROR_COMMON_ERROR_PARAMS.getCode();
 				}
 				Issue currIssue = bulletinBoard.getCurrIssue();
-				if(issue.getId().intValue() != currIssue.getId().intValue()) {
-					if(currIssue == null 
-							|| currIssue.getId().intValue() >= issueId.intValue()
+				if(currIssue != null && (
+						issue.getId().intValue() != currIssue.getId().intValue())) {
+					if(currIssue.getId().intValue() >= issueId.intValue()
 							|| issue.getState() != Constants.IssueState.INIT.getCode()) {
 						return Message.Error.ERROR_GAME_EXPIRED_ISSUE.getCode();
 					}

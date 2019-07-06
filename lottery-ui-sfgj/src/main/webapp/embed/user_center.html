@@ -1,0 +1,188 @@
+<html>
+<head>
+<meta charset="UTF-8">
+
+<script src="https://hm.baidu.com/hm.js?099778280faab37761a929fdfe630972"></script><script type="text/javascript">
+	if(/AppleWebKit.*Mobile/i.test(navigator.userAgent)
+			|| /Android/i.test(navigator.userAgent)
+			|| /BlackBerry/i.test(navigator.userAgent)
+			|| /IEMobile/i.test(navigator.userAgent)
+			|| (/MIDP|SymbianOS|NOKIA|SAMSUNG|LG|NEC|TCL|Alcatel|BIRD|DBTEL|Dopod|PHILIPS|HAIER|LENOVO|MOT-|Nokia|SonyEricsson|SIE-|Amoi|ZTE/.test(navigator.userAgent))){
+		var addr = window.location.href;
+		if(addr.indexOf("mobi")>=0){
+		}else{
+			window.location.href="mobile/index.jsp"+window.location.search;
+		}
+	}else{
+	}
+</script>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?099778280faab37761a929fdfe630972";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<title>博天下</title>
+<meta name="description" content="一家专注运营网络老虎机游戏的专业网站。拥有PT老虎机、MG老虎机、TTG老虎机、DT老虎机、AG捕鱼等热门老虎机平台。让您一网打进所有您喜爱的老虎机游戏，更可在手机端就可畅玩！">
+<meta name="keywords" content="PT老虎机 TTG老虎机 NT老虎机 MG老虎机 QT老虎机 DT老虎机 网上老虎机 博彩 slot">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1">
+<link href="style/base.min.css?v=13" rel="stylesheet">
+<link href="style/lib/animate.css?v=01" rel="stylesheet">
+<script src="js/lib/jquery-1.10.2.min.js?v=01"></script>
+<script src="js/lib/layer/layer.js?v=01"></script>
+<script src="js/user/userCommon.js?v=j26"></script>
+<link rel="stylesheet" href="js/lib/layer/theme/default/layer.css?v=3.1.0" id="layuicss-layer">
+<!--[if lt IE 9]>
+	<script src="//apps.bdimg.com/libs/html5shiv/3.7/html5shiv.min.js?v=j12"></script>
+	<script src="//apps.bdimg.com/libs/respond.js/1.4.2/respond.min.js?v=j12"></script>
+<![endif]-->
+
+        <link href="style/user.min.css?v=05" rel="stylesheet"></head>
+<body style="">
+
+<main>
+<div class="usertop cfx" ng-controller="userInfoCtrl" ng-init="initUserInfo()">
+  <div class="user_info cfx">
+    <div class="u_info_des fl">
+      <div class="cfx">
+        <img class="user_avator" src="images/userhome/user_avator.png">
+        <p class="user_des_text first-child"><img src="images/userhome/u_info_name.png"><span class="u_info_label">会员账户：</span><span class="j-loginname">{{userInfo.userName}}</span></p>
+        <p class="user_des_text">
+        	<img src="images/userhome/u_info_level.png">
+        	<span class="u_info_label">会员等级：</span>
+        	<span class="j-level">普通会员</span>
+        </p>
+        
+      </div>
+      <div class="cfx u_info_last_time" style="display:none">
+        <span class="u_info_label">最后登陆时间：</span>
+        <span class="j-last_login">2018-05-28</span>
+        <span class="fr u_info_logout j-logout" ng-click="logout()">
+        	<img src="images/userhome/u_info_logout.png">退出
+        </span>
+      </div>
+    </div>
+    <div class="u_info_money fl">
+      <p class="u_info_main_label u_info_label" style="height:60px">主钱包
+      	<span title="点击刷新" class="j-user-money" data-target="MAIN">
+      		<img src="images/userhome/u_info_refresh.png" style="padding: 0px 0px 0px 350px;width:20px;cursor: pointer;" ng-click="initUserInfo()">
+      	</span>
+      </p>
+      <div class="ucenter_balance">
+	      <p class="u_info_main_num">账户余额</p>
+	      <span class="j-MAIN-info user-money-MAIN">{{mainAcc.balance}}</span>
+      </div>
+      <div class="ucenter_balance">
+	      <p class="u_info_main_num">冻结资金</p>
+	      <span class="j-MAIN-info user-money-MAIN">{{mainAcc.freeze}}</span>
+      </div>
+      <div class="ucenter_balance">
+	      <p class="u_info_main_num">合计资金</p>
+	      <span class="j-MAIN-info user-money-MAIN">{{mainAcc.total}}</span>
+      </div>
+      <div class="u_info_quick">
+        <!-- <a class="u_info_q_btn"> -->
+        <a class="u_info_q_btn u_info_1" ui-sref="userCenter.fundManDeposit" ng-click="changeUserCenterFocus(0)" style="visibility:hidden">充值</a>
+        <a class="u_info_q_btn u_info_2" ui-sref="userCenter.fundManWithdraw" ng-click="changeUserCenterFocus(0)" style="visibility:hidden">提款</a>
+        <a class="u_info_q_btn u_info_3" ui-sref="userCenter.fundManTransfer" ng-click="changeUserCenterFocus(0)" style="visibility:hidden">转账</a>
+        <!-- </a> -->
+      </div>
+    </div>
+    <div class="u_info_win fl">
+      <div class="u_info_win_img">
+        <img src="images/userhome/user_win.png">
+      </div>
+      <div class="u_info_money_dep">
+       		 红包钱包:<span class="j-DEPUTY-info">{{redPacketAcc.balance}}</span>元 
+       		 <a class="u_info_dep_btn" ui-sref="userCenter.fundManTransfer" ng-click="changeUserCenterFocus(0)"  style="display:none">转出</a>
+      </div>
+    </div>
+  </div>
+  <div class="user_money_detail cfx" style="display:none">
+    <div class="u_m_control_l"></div>
+    <div class="u_m_content">
+      <div class="u_info_money" ng-repeat="v in tpWallet">
+      
+        <p class="u_i_m_title">{{v.product.code}}  电子
+        	<span class="u_i_m_refresh j-user-money" ng-click="refreshBalance('uc_'+v.id)" ></span>
+        </p>
+        <!-- <p class="u_i_m_num user-money-PT" id="{{v.id}}">刷新余额</p> -->
+        <p class="u_i_m_num user-money-PT" id="uc_{{v.id}}">刷新余额</p>
+      </div>
+      
+      <!-- <div class="u_info_money">
+        <p class="u_i_m_title">DT  老虎机<span class="u_i_m_refresh j-user-money" data-target="DT"></span></p>
+        <p class="u_i_m_num user-money-DT">刷新余额</p>
+      </div>
+      <div class="u_info_money">
+        <p class="u_i_m_title">QT  老虎机<span class="u_i_m_refresh j-user-money" data-target="QT"></span></p>
+        <p class="u_i_m_num user-money-QT">刷新余额</p>
+      </div>
+      <div class="u_info_money">
+        <p class="u_i_m_title">NT  老虎机<span class="u_i_m_refresh j-user-money" data-target="NT"></span></p>
+        <p class="u_i_m_num user-money-NT">刷新余额</p>
+      </div>
+      <div class="u_info_money">
+        <p class="u_i_m_title">TTG  老虎机<span class="u_i_m_refresh j-user-money" data-target="TTG"></span></p>
+        <p class="u_i_m_num user-money-TTG">刷新余额</p>
+      </div> -->
+      <!-- <div class="u_info_money">
+        <p class="u_i_m_title">MG  老虎机<span class="u_i_m_refresh j-user-money" data-target="MG"></span></p>
+        <p class="u_i_m_num user-money-MG">刷新余额</p>
+      </div>
+      <div class="u_info_money">
+        <p class="u_i_m_title">AG  真人捕鱼<span class="u_i_m_refresh j-user-money" data-target="AGIN"></span></p>
+        <p class="u_i_m_num user-money-AGIN">刷新余额</p>
+      </div> -->
+    </div>
+    <div class="u_m_control_r"></div>
+  </div>
+  <!-- <div class="u_t_info long fl">
+      <span class="u_t_title">账户:</span>
+      <span class="u_t_result">001nick001</span>
+      <span class="u_t_level"><img src="images/userhome/level.png"><span class="j-level">1</span></span>
+  </div>
+  <div class="u_t_info fl">
+      <span class="u_t_title">主账户余额:</span>
+      <span class="u_t_result green j-MAIN-info">0.0</span>
+  </div>
+  <div class="u_t_info fl">
+      <span class="u_t_title">副账户余额:</span>
+      <span class="u_t_result green j-DEPUTY-info">0.0</span>
+  </div> -->
+</div>
+
+
+                <div class="content">
+                    <div class="userbox cfx">
+                        <!-- sidebar -->
+                        
+
+
+
+
+
+
+<!-- sidebar -->
+<div class="userbar fl j-userNav" style=" background: #d9534f;">    
+    <a class="u_b_item" data-link="userCoupons" ui-sref="userCenter.promo" data-num="1" ng-click="changeUserCenterFocus(1)"  style="display:none"><span class="u_b_ico_2"></span>自助优惠</a>
+    <a class="u_b_item active" data-link="userMaterial" ui-sref="userCenter.userInfo" data-num="2" ng-click="changeUserCenterFocus(2)"   style="display:none"><span class="u_b_ico_3"></span>个人资料</a>
+    <a class="u_b_item" data-link="userHome" ui-sref="userCenter.memberHierarchy" data-num="3" ng-click="changeUserCenterFocus(3)"  style="display:none"><span class="u_b_ico_4"></span>会员体系</a>
+    <a class="u_b_item" data-link="userInfoSet" ui-sref="userCenter.accMan" data-num="4" ng-click="changeUserCenterFocus(4)" ><span class="u_b_ico_5"></span>账户设置</a>
+    <a class="u_b_item" data-link="userManage" ui-sref="userCenter.fundManDeposit" data-num="0" ng-click="changeUserCenterFocus(0)"   style="display:none"><span class="u_b_ico_1"></span>资金管理</a>
+    <a class="u_b_item" data-link="userRecords" ui-sref="userCenter.hisRecord" data-num="5" ng-click="changeUserCenterFocus(5)"><span class="u_b_ico_6"></span>交易记录</a>
+    <a class="u_b_item u_b_item_letter" data-link="userLetter" ui-sref="userCenter.siteEmail" data-num="6" ng-click="changeUserCenterFocus(6)"   style="display:none">站内信<span class="u_b_tips j-msg">1</span></a>
+</div>
+
+
+
+                        <div ui-view=""></div>
+                    </div>
+                </div>
+            </main>
+</body>
+</html>
