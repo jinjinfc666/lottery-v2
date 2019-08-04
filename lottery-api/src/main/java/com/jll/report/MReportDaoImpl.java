@@ -56,7 +56,7 @@ public class MReportDaoImpl extends DefaultGenericDaoImpl<MemberPlReport> implem
 		
 		
 		//String sql = "select user_name,SUM(deposit) as deposit,SUM(withdrawal) as withdrawal ,SUM(transfer) as transfer ,SUM(transfer_out) as transfer_out,SUM(deduction) as deduction,sum(consumption) as consumption,SUM(cancel_amount) as cancel_amount,SUM(return_prize) as return_prize,SUM(rebate) as rebate,sum(profit) as profit,user_type from member_pl_report "+timeSql+userNameSql+" GROUP BY user_name,user_type";
-		String sql = "select user_name,deposit,withdrawal,transfer,transfer_out,deduction,consumption,cancel_amount,return_prize,rebate,profit,user_type,create_time from team_pl_report where 1=1 "+ buffer.toString() + " order by create_time desc";
+		String sql = "select user_name,deposit,withdrawal,transfer,transfer_out,deduction,consumption,cancel_amount,return_prize,rebate,profit,user_type,create_time,sys_bonus from team_pl_report where 1=1 "+ buffer.toString() + " order by create_time desc";
 		
 		logger.debug(sql+"-----------------------------queryLoyTst----SQL--------------------------------");
 		PageBean page=new PageBean();

@@ -24,7 +24,7 @@ app.controller('authCtrl',
 		
 		
 		$scope.$on('user.logout', function(handle, data){
-    		$scope.logout();
+    		$scope.logout();    		
         });
 		
 	};
@@ -289,6 +289,8 @@ app.controller('authCtrl',
     		$scope.userInfo = null;
 			$scope.mainAcc = null;
 			$scope.redPacketAcc = null;
+			
+			$state.go("lottery_list");
     	},
     	 function() {
     		sessionStorage.clear();
@@ -296,6 +298,8 @@ app.controller('authCtrl',
     		$scope.userInfo = null;
 			$scope.mainAcc = null;
 			$scope.redPacketAcc = null;
+			
+			$state.go("lottery_list");
     	 });
 
     };

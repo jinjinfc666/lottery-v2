@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>添加下级用户</title>
+        <title>添加下级代理</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style type="text/css">
@@ -9,11 +9,18 @@
             margin:20px auto;
             border-radius: 5px;
         }
-        table th,table td{
-            padding:5px;
-            text-align: center;
+        table th{
+            padding:5 20 5 5;
+            text-align: right;
             border: 1px solid #999999;
         }
+        
+        table td{
+            padding:5 5 5 20;
+            text-align: left;
+            border: 1px solid #999999;
+        }
+        
         table tr:hover{
             background-color: #ccccff;
         }
@@ -63,11 +70,12 @@
                 var obj = {};
                 obj=getValue();
                 document.getElementById('agentId').value=obj['agentId'];
-                /*document.getElementById('loginPwd').value='111111';
-                document.getElementById('fundPwd').value='111111';*/
+                //document.getElementById('loginPwd').value='111111';
+                //document.getElementById('fundPwd').value='111111';
                 getplat();
                 // if(a){
-               // changenum();
+                //changenum();
+                // }
             });
             function getplat(){
                 updateToken();
@@ -75,6 +83,8 @@
                 var token="Bearer " + access_token;
                 var domain=parseDomain();
                 var url=domain+"/lottery-api/settings/querySmPanKou";
+                var userId = $("#agentId").val();
+                
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -85,21 +95,21 @@
                     beforeSend: function (XMLHttpRequest) {
                         XMLHttpRequest.setRequestHeader("Authorization", token);
                     },
-                    error: function (jqXHR,textStatus,errorThrown) {
-                        if(typeof jqXHR != 'undefined' 
-                        		&& typeof jqXHR.status != 'undefined' 
-                        		&& jqXHR.status == 401){
-                        	
-                        }
+                    error: function () {
+                    	 if(typeof jqXHR != 'undefined' 
+                     		&& typeof jqXHR.status != 'undefined' 
+                     		&& jqXHR.status == 401){
+                     	
+                     	 }
                     },
                     success: function (data) {
-                        if(data.status=="1"){
-                        	 $.each(data.data, function(key, val) {  
-                                 $("#smPanKou").append("<option data-seq='"+ val.seq +"' value='"+val.codeVal+"'>"+val.remark+"</option>");
-                             })
-                        }else{
-                            alert(getErroe(data.error_code));
-                        }
+                    	if(data.status=="1"){
+                       	 $.each(data.data, function(key, val) {  
+                       		$("#smPanKou").append("<option data-seq='"+ val.seq +"' value='"+val.codeVal+"'>"+val.remark+"</option>");
+                            })
+                       }else{
+                           alert(getErroe(data.error_code));
+                       }
                     }
                 });
             }
@@ -124,7 +134,6 @@
             }
             function add(){
                 updateToken();
-                var userType = document.getElementById('userType').value;
                 var agentId=document.getElementById('agentId').value;
                 var realName=document.getElementById('realName').value;
                 var userName=document.getElementById('userName').value;
@@ -137,22 +146,10 @@
                 var qq=document.getElementById('qq').value;
                 var wechat=document.getElementById('wechat').value;
                 var email=document.getElementById('email').value;
+                var userType = document.getElementById('userType').value;
                 var xyAmount = document.getElementById('xyAmount').value;
-                var xyPayoutRate = document.getElementById('xyPayoutRate').value;
-                var isHiddenPlan = document.getElementById('isHiddenPlan').value;
                 var panKou = $("#smPanKou option:selected").attr("data-seq");
                 
-                if(userType == 7){
-                	if(typeof xyAmount == 'undefined' || xyAmount == null || xyAmount.length == 0){                		
-                		$("#xyAmount_error").text("请输入信誉额度!");
-                        return false;
-                	}
-                	
-                	if(typeof xyPayoutRate == 'undefined' || xyPayoutRate == null || xyPayoutRate.length == 0){                		
-                		$("#xyPayoutRate_error").text("请输入最大派奖率 0.00--1.00!");
-                        return false;
-                	}
-                }
                 if(userName==""){
                     $("#userName1").text("请输入用户名!");
                     return false;
@@ -168,6 +165,12 @@
                     return false;
                 }
                 $("#platRebate1").text("");
+                
+                if(userType==""){
+                    $("#userType_error").text("请选择用户类型!");
+                    return false;
+                }
+                
                 var domain=parseDomain();
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
@@ -185,8 +188,6 @@
                     "email": email,
                     "userType":userType,
                     "xyAmount":xyAmount,
-                    "xyPayoutRate":xyPayoutRate,
-                    'isHiddenPlan':isHiddenPlan,
                     'panKou':panKou
                 });
                 $.ajax({
@@ -214,7 +215,7 @@
                             parent.layer.close(wz);
                         }else if(data.status==0){
                             alert(getErroe(data.error_code));
-                        }       
+                        }                    
                     }
                 });
             }
@@ -247,21 +248,57 @@
                     obj.value= parseFloat(obj.value); 
                 } 
             }
+            
+            function queryUserInfo(deffered, userId){
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/users/queryUserInfo";
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    async: false, // 设置同步方式
+                    data: {
+                        userId: userId
+                    },
+                    dataType: "json",
+                    beforeSend: function (XMLHttpRequest) {
+                        XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function (jqXHR,textStatus,errorThrown) {
+                        if(typeof jqXHR != 'undefined' 
+                        		&& typeof jqXHR.status != 'undefined' 
+                        		&& jqXHR.status == 401){
+                        	var url = "index.html";
+                            window.location.href = url;
+                        }
+                    },
+                    success: function (data) {
+                        if(data.status=="1"){
+                            deffered.resolve(data.data);
+                        }else{
+                        	deffered.reject(-1);
+                        }
+                    }
+                });
+            }
         </script>
     </head>
     <body>
         <input type="hidden" id="agentId" name="agentId" value="" />
         <table width="600px" cellspacing="0" cellpadding="5">
-        	<tr>
-                <th style="background-color:#ffcc99">用户类型</th>
+			<tr>
+                <th style="background-color:#ffcc99">代理类型：</th>
                 <td>
-                <select id="userType" style="width:250px;height:50px" disabled>
-                	<option value="5" selected>双面玩家</option>
-                	<option value="7">信誉玩家</option>
-                	<option value="4">试玩玩家</option>
-                </select>
-                <span id="platRebate1" style="color:red;"></span></td>
+                    <select id="userType" name="userType" style="width:250px;height:50px"  disabled>
+			        	<option value=""></option>
+			            <option value="6">双面代理</option>
+			            <option value="8" selected>信誉代理</option>
+			        </select>
+			        <span id="userType_error" style="color:red;"></span>
+                </td>
             </tr>
+            
             <tr>
                 <th style="background-color:#ffcc99">真实姓名：</th>
                 <td>
@@ -288,11 +325,11 @@
                 <th style="background-color:#ffcc99">资金密码：</th>
                 <td><input type="password" id="fundPwd" name="fundPwd" value="" placeholder="密码为6-15位的字母或数字组成" style="width:250px;" class="login_putin" /></td>
             </tr>
+                        
             <tr>
                 <th style="background-color:#ffcc99">选择盘口</th>
                 <td>
                 <select id="smPanKou" style="width:250px;height:50px" ></select>
-                <span id="platRebate1" style="color:red;"></span></td>
             </tr>
             <tr>
                 <th style="background-color:#ffcc99">信誉额度</th>
@@ -301,13 +338,7 @@
                 	<span id="xyAmount_error" style="color:red;"></span></td>
                 </td>
             </tr>
-             <tr>
-                <th style="background-color:#ffcc99">最高派奖率</th>
-                <td>
-                	<input type="number" id="xyPayoutRate" name="xyPayoutRate" value="" style="width:250px;" class="login_putin" placeholder="取值范围 0.0-1.0" />
-                	<span id="xyPayoutRate_error" style="color:red;"></span></td>
-                </td>
-            </tr>
+            
             <tr>
                 <th style="background-color:#ffcc99">手机号：</th>
                 <td><input type="text" id="phoneNum" name="phoneNum" value="" style="width:250px;" class="login_putin" /></td>
@@ -324,16 +355,6 @@
                 <th style="background-color:#ffcc99">邮箱：</th>
                 <td><input type="text" id="email" name="email" value="" style="width:250px;" class="login_putin" /></td>
             </tr>
-            
-            <tr>
-                <th style="background-color:#ffcc99">隐藏计划</th>
-                <td>
-                <select id="isHiddenPlan" style="width:250px;height:50px" >
-                	<option value="0">隐藏</option>
-                	<option value="1">显示</option>
-                </select>
-            </tr>
-            
         </table>
         <script>
             var wz = parent.layer.getFrameIndex(window.name);

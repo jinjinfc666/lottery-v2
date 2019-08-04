@@ -82,4 +82,12 @@ public interface UserInfoDao
 			String endTime,
 			Integer pageIndex, 
 			Integer pageSize);
+	
+	PageBean<UserInfo> queryXYUsers(String string, PageBean<UserInfo> page);
+	
+	Map<String, Object> queryAllAgentXYByAdmin(Integer searchType, String userName, String startTime, String endTime,
+			Integer pageIndex, Integer pageSize);
+	
+	Map<String, Object> queryAllAgentXYByAgency(Integer id, String userName, String startTime, String endTime,
+			Integer pageIndex, Integer pageSize);
 }

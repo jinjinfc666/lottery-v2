@@ -21,6 +21,7 @@ public class TeamPlReport implements java.io.Serializable {
 	private BigDecimal consumption;
 	private BigDecimal cancelAmount;
 	private BigDecimal returnPrize;
+	private BigDecimal sysBonus;
 	private BigDecimal rebate;
 	private Integer rechargeMember;
 	private Integer newMembers;
@@ -194,4 +195,13 @@ public class TeamPlReport implements java.io.Serializable {
 		this.userType = userType;
 	}
 
+	public BigDecimal getSysBonus() {
+		return sysBonus;
+	}
+
+	public void setSysBonus(BigDecimal sysBonus) {
+		this.sysBonus = sysBonus;
+	}
+
+	
 }

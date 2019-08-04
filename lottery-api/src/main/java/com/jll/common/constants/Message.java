@@ -181,7 +181,10 @@ public class Message {
 		/*************************Login module******************************/
 		ERROR_LOGIN_ILLEGAL_USER_NO_LOGIN("180001","Illegal user, no login!!!"),
 		ERROR_LOGIN_FAILED_TO_GET_VERIFICATION_CODE("180002","Failed to get verification code!!!"),
-		;
+		
+		
+		/*************************User settlement module******************************/
+		ERROR_SETTLEMENT_NON_EXISTING("190001","Specified Id is not existing!!!");
 		
 		private String code;
 		

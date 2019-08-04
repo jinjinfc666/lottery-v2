@@ -413,6 +413,8 @@ public class DefaultGenericDaoImpl<T> extends HibernateDaoSupport implements Gen
 		PageBean<T> ret = new PageBean<>();
 		List<T> content = null;
 		String sql = SQL;
+		int entityNameStartInd = 0;
+		StringBuffer sqlCount = new StringBuffer("select count(*) ");
 		Long totalPages =  null;
 		Long totalNumber=null;
 		Integer pageIndex = page.getPageIndex();
@@ -420,7 +422,17 @@ public class DefaultGenericDaoImpl<T> extends HibernateDaoSupport implements Gen
 	    Query<T> query = getSessionFactory().getCurrentSession().createNativeQuery(sql,clazz);
 	    
 	    
-	    totalNumber =  querySqlCount(SQL, params);
+	    entityNameStartInd = sql.indexOf("from");
+	    if(entityNameStartInd < 0) {
+	    	entityNameStartInd = sql.indexOf("FROM");
+	    }
+	    
+	    if(entityNameStartInd > 0) {
+	    	sqlCount.append(sql.substring(entityNameStartInd));	
+	    }
+	    
+	    
+	    totalNumber =  querySqlCount(sqlCount.toString(), params);
 	    
 	    if(totalNumber % pageSize == 0) {
 	    	totalPages = totalNumber / pageSize;

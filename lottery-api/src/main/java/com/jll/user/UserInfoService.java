@@ -172,4 +172,8 @@ public interface UserInfoService
 	UserInfo querySuperior(UserInfo user);
 	
 	Map<String, Object> queryAllAgentSM(Map<String, Object> ret);
+	
+	PageBean<UserInfo> queryXYUsers(PageBean<UserInfo> page);
+	
+	Map<String, Object> queryAllAgentXY(Map<String, Object> params);
 }

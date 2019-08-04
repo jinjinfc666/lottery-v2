@@ -276,6 +276,30 @@ public class UserInfoServiceImpl implements UserInfoService
 		
 		dbInfo.setLoginPwd(StringUtils.MORE_ASTERISK);
 		dbInfo.setFundPwd(StringUtils.MORE_ASTERISK);
+		
+		if(dbInfo.getUserType().intValue() == UserType.XY_PLAYER.getCode()) {
+			String payoutRate = userExtServ.queryFiledByName(dbInfo.getId(), "xyPayoutRate");
+			String xyAmount = userExtServ.queryFiledByName(dbInfo.getId(), "xyAmount");
+			String panKou = userExtServ.queryFiledByName(dbInfo.getId(), "panKou");
+			String isHiddenPlan = userExtServ.queryFiledByName(dbInfo.getId(), "isHiddenPlan");
+			
+			if(payoutRate != null) {
+				dbInfo.setXyPayoutRate(Double.parseDouble(payoutRate));
+			}
+			
+			if(xyAmount != null) {
+				dbInfo.setXyAmount(Double.parseDouble(xyAmount));
+			}
+			
+			if(isHiddenPlan != null) {
+				dbInfo.setIsHiddenPlan(Integer.parseInt(isHiddenPlan));
+			}
+			
+			if(panKou != null) {
+				dbInfo.setPanKou(Integer.parseInt(panKou));
+			}
+		}
+		
 		ret.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
 		ret.put(Message.KEY_DATA, dbInfo);
 		return ret;
@@ -448,7 +472,8 @@ public class UserInfoServiceImpl implements UserInfoService
 				&& user.getUserType().intValue() != 3
 				&& user.getUserType().intValue() != 5
 				&& user.getUserType().intValue() != 6
-				&& user.getUserType().intValue() != 7) {
+				&& user.getUserType().intValue() != 7
+				&& user.getUserType().intValue() != 8) {
 			return Message.Error.ERROR_USER_INVALID_USER_TYPE.getCode();
 		}
 		
@@ -525,6 +550,8 @@ public class UserInfoServiceImpl implements UserInfoService
 					roleName=Constants.Permission.ROLE_AGENT.getCode();
 				}else if(user.getUserType()==Constants.UserType.SM_AGENCY.getCode()) {
 					roleName=Constants.Permission.ROLE_AGENT_SM.getCode();
+				}else if(user.getUserType()==Constants.UserType.XY_AGENCY.getCode()) {
+					roleName=Constants.Permission.ROLE_AGENT_XY.getCode();
 				}
 				SysRole sysRole=sysRoleService.queryByRoleName(roleName);
 				if(sysRole==null) {
@@ -897,6 +924,11 @@ public class UserInfoServiceImpl implements UserInfoService
 			user.setUnlockTime(date);
 		}
 		userDao.saveUser(user);
+		
+		if(user.getXyAmount() != null
+				&& user.getXyAmount() > 0) {
+			userExtServ.saveUserInfoExt(user);
+		}
 	}
 	//查询所有的用户
 	@Override
@@ -1900,6 +1932,33 @@ public class UserInfoServiceImpl implements UserInfoService
 			
 			userInfo.setLoginPwd(StringUtils.MORE_ASTERISK);
 			userInfo.setFundPwd(StringUtils.MORE_ASTERISK);
+			
+			
+			if(userInfo.getUserType().intValue() == Constants.UserType.XY_PLAYER.getCode()
+					|| userInfo.getUserType().intValue() == Constants.UserType.XY_AGENCY.getCode()
+					|| userInfo.getUserType().intValue() == Constants.UserType.SM_PLAYER.getCode()) {
+				String payoutRate = userExtServ.queryFiledByName(userInfo.getId(), "xyPayoutRate");
+				String xyAmount = userExtServ.queryFiledByName(userInfo.getId(), "xyAmount");
+				String panKou = userExtServ.queryFiledByName(userInfo.getId(), "panKou");
+				String isHiddenPlan = userExtServ.queryFiledByName(userInfo.getId(), "isHiddenPlan");
+				
+				if(payoutRate != null) {
+					userInfo.setXyPayoutRate(Double.parseDouble(payoutRate));
+				}
+				
+				if(xyAmount != null) {
+					userInfo.setXyAmount(Double.parseDouble(xyAmount));
+				}
+				
+				if(isHiddenPlan != null) {
+					userInfo.setIsHiddenPlan(Integer.parseInt(isHiddenPlan));
+				}
+				
+				if(panKou != null) {
+					userInfo.setPanKou(Integer.parseInt(panKou));
+				}
+				
+			}
 			ret.clear();
 			ret.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
 			ret.put(Message.KEY_DATA, userInfo);
@@ -2239,5 +2298,40 @@ public class UserInfoServiceImpl implements UserInfoService
 		
 		return userInfoList;
 		
+	}
+
+	@Override
+	public PageBean<UserInfo> queryXYUsers(PageBean<UserInfo> page) {
+		StringBuffer sql = new StringBuffer();
+		
+		sql.append("from UserInfo t where t.userType in (7, 8)")
+		.append(" and t.state = 0");
+		
+		
+		return userDao.queryXYUsers(sql.toString(), page);
+	}
+
+	@Override
+	public Map<String, Object> queryAllAgentXY(Map<String, Object> params) {
+		UserInfo userInfo = getCurLoginInfo();
+		Map<String,Object> userInfoList = null;
+		if(userInfo.getUserType() == UserType.SYS_ADMIN.getCode()) {
+			String userName = (String) params.get("userName");
+			String startTime = (String) params.get("startTime");
+			String endTime = (String) params.get("endTime");
+			Integer pageIndex = (Integer) params.get("pageIndex");
+			Integer pageSize = (Integer) params.get("pageSize");
+			Integer searchType = (Integer)params.get("searchType");
+			userInfoList = userDao.queryAllAgentXYByAdmin(searchType, userName,startTime,endTime,pageIndex,pageSize);
+		}else if(userInfo.getUserType() == UserType.SM_AGENCY.getCode()) {
+			String userName = (String) params.get("userName");
+			String startTime = (String) params.get("startTime");
+			String endTime = (String) params.get("endTime");
+			Integer pageIndex = (Integer) params.get("pageIndex");
+			Integer pageSize = (Integer) params.get("pageSize");
+			userInfoList = userDao.queryAllAgentXYByAgency(userInfo.getId(), userName,startTime,endTime,pageIndex,pageSize);
+		}
+		
+		return userInfoList;
 	}
 }

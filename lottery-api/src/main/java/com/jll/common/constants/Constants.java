@@ -84,6 +84,8 @@ public class Constants {
 	
 	public final static String KEY_LOCK_SEQ = "lock_seq";
 	
+	public final static String KEY_LOCK_SETTLEMENT = "lock_settlement";
+	
 	public final static Integer LOCK_BETTING_EXPIRED = 5;
 	
 	public final static Integer LOCK_CACHE_STATISTIC_EXPIRED = 300;
@@ -101,6 +103,8 @@ public class Constants {
 	public final static Integer LOCK_WITHDRAW_APPLY_EXPIRED = 30;
 	
 	public final static Integer LOCK_STAT_PROFIT = 600;
+	
+	public final static Integer LOCK_SETTLEMENT_EXPIRED = 600;
 	
 	//再给总代添加下级代理时需要填写的superior
 	public final static Integer VAL_SUPERIOR = 0;
@@ -546,7 +550,8 @@ public class Constants {
 		DEMO_PLAYER(4, "试玩玩家"),
 		SM_PLAYER(5, "双面玩家"),
 		SM_AGENCY(6, "双面代理"),
-		XY_PLAYER(7, "信誉玩家");;
+		XY_PLAYER(7, "信誉玩家"),
+		XY_AGENCY(8, "信誉代理");
 		
 		private int code;
 		
@@ -2499,6 +2504,7 @@ public class Constants {
 		ROLE_USER("ROLE_USER"),
 		ROLE_AGENT("ROLE_AGENT"),
 		ROLE_AGENT_SM("ROLE_AGENT_SM"),
+		ROLE_AGENT_XY("ROLE_AGENT_XY"),
 		ROLE_ADMIN("ROLE_ADMIN"),
 		ROLE_MANAGER("ROLE_MANAGER"),
 		ROLE_CUSTOMER_SERVICE("ROLE_CUSTOMER_SERVICE"),
@@ -2561,5 +2567,37 @@ public class Constants {
 				return desc;
 			}
 
+	}
+	
+	public static enum SettlementState{
+		HANDLED(1, "已处理"), 
+		pending(0, "未处理");
+		
+		private int code;
+		
+		private String desc;
+		
+		private SettlementState(int code, String desc) {
+			this.code = code;
+			this.desc = desc;
+		}
+		
+		public int getCode() {
+			return this.code;
+		}
+		
+		public String getDesc() {
+			return this.desc;
+		}
+		
+		public static WalletState geByCode(int code) {
+			WalletState[] walStates = WalletState.values();
+			for(WalletState walState: walStates) {
+				if(walState.getCode() == code) {
+					return walState;
+				}
+			}
+			return null;
+		}
 	}
 }

@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.jll.common.cache.CacheRedisService;
 import com.jll.common.constants.Constants;
 import com.jll.common.constants.Constants.TrgUserAccDetailsFlag;
+import com.jll.common.constants.Constants.UserType;
 import com.jll.dao.PageBean;
 import com.jll.entity.TeamPlReport;
 import com.jll.entity.TrgUserAccountDetails;
@@ -85,7 +86,8 @@ public class StatProfitServiceImpl implements StatProfitService
 					
 					handleProfit(trg, 
 							user, 
-							userType);
+							userType,
+							false);
 					
 					//普通玩家的盈利直接算上级，对于代理类型用户的盈利需要从本身开始算累加盈利
 					if(user.getUserType() == Constants.UserType.PLAYER.getCode()
@@ -124,7 +126,8 @@ public class StatProfitServiceImpl implements StatProfitService
 		if(superior != null) {		
 			handleProfit(trg, 
 					superior, 
-					superior.getUserType());
+					superior.getUserType(),
+					true);
 			
 			superior = userServ.querySuperior(superior);
 			handleProfitInInherit(trg, superior);
@@ -134,7 +137,8 @@ public class StatProfitServiceImpl implements StatProfitService
 
 	private void handleProfit(TrgUserAccountDetails trg, 
 			UserInfo userInfo, 
-			Integer userType) {
+			Integer userType,
+			boolean isInherit) {
 		TeamPlReport profit = null;
 		BigDecimal profitVal = null;
 		
@@ -207,6 +211,13 @@ public class StatProfitServiceImpl implements StatProfitService
 						profit.getDeduction().add(new BigDecimal(trg.getAmount()));
 					
 			profit.setDeduction(deduction);
+		}else if(trg.getOperationType().equals(Constants.AccOperationType.DEPOSIT_CASH.getCode())
+				&& (!isInherit || (isInherit && userType.intValue() != UserType.SM_AGENCY.getCode()))) {
+			BigDecimal sysBonus = profit.getSysBonus() == null?
+					new BigDecimal(trg.getAmount()):
+						profit.getSysBonus().add(new BigDecimal(trg.getAmount()));
+					
+			profit.setSysBonus(sysBonus);
 		}
 		
 		profitVal = profit.getConsumption() == null?
@@ -222,10 +233,18 @@ public class StatProfitServiceImpl implements StatProfitService
 				new BigDecimal(0):
 					profit.getRebate());
 		
+		if(profit.getSysBonus() != null) {
+			profitVal = profitVal.subtract(profit.getSysBonus() == null?
+					new BigDecimal(0):
+						profit.getSysBonus());
+		}
+		
 		//个人用户利润 和 团队利润是正好相反的
 		if(userType == Constants.UserType.PLAYER.getCode()
 				|| userType == Constants.UserType.SM_PLAYER.getCode()
 				|| userType == Constants.UserType.XY_PLAYER.getCode()) {
+			
+			
 			profitVal = profitVal.multiply(new BigDecimal(-1));
 		}
 		profit.setProfit(profitVal);

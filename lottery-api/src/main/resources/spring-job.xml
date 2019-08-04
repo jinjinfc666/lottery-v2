@@ -15,6 +15,9 @@
 	<bean id="statProfitServiceImpl" class="com.jll.stat.StatProfitServiceImpl">
 	</bean>
 
+	<bean id="settlementServiceImpl" class="com.jll.settlement.SettlementServiceImpl">
+	</bean>
+	
 	<bean id="makeAPlanJobDetail"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject" ref="lotteryCenterServiceImpl" />
@@ -31,6 +34,12 @@
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject" ref="statProfitServiceImpl" />
 		<property name="targetMethod" value="exeStatistic" />
+	</bean>
+	
+	<bean id="settlementServiceImplJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="settlementServiceImpl" />
+		<property name="targetMethod" value="exeSettlement" />
 	</bean>
 	
 	<bean id="makeAPlanTrigger"
@@ -54,12 +63,19 @@
 		<property name="cronExpression" value="0 0/1 * * * ?" />
 	</bean>
 	
+	<bean id="settlementServiceImplJobDetailCtronTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="settlementServiceImplJobDetail"/>
+		<property name="cronExpression" value="0 0/5 * * * ?" />
+	</bean>
+	
 	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
 			<list>
 				<ref bean="makeAPlanTrigger"/>
 				<ref bean="processScheduleIssueCronTrigger"/>
 				<ref bean="statProfitServiceImplJobDetailCtronTrigger"/>
+				<!-- <ref bean="settlementServiceImplJobDetailCtronTrigger"/> -->
 			</list>
 		</property>
 	</bean>

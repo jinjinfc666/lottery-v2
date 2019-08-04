@@ -162,6 +162,7 @@
                 var qq=document.getElementById('qq').value;
                 var wechat=document.getElementById('wechat').value;
                 var email=document.getElementById('email').value;
+                var userType = document.getElementById('userType').value;
                 if(userName==""){
                     $("#userName1").text("请输入用户名!");
                     return false;
@@ -177,6 +178,12 @@
                     return false;
                 }
                 $("#platRebate1").text("");
+                
+                if(userType==""){
+                    $("#userType_error").text("请选择用户类型!");
+                    return false;
+                }
+                
                 var domain=parseDomain();
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
@@ -192,7 +199,7 @@
                     "qq": qq,
                     "wechat": wechat,
                     "email": email,
-                    "userType":6
+                    "userType":userType
                 });
                 $.ajax({
                     url: url,
@@ -266,10 +273,6 @@
                         userId: userId
                     },
                     dataType: "json",
-//                        beforeSend: function(xhr) {
-//                            xhr.setRequestHeader("Authorization");
-//                        },
-//                        headers:{"Authorization":token},
                     beforeSend: function (XMLHttpRequest) {
                         XMLHttpRequest.setRequestHeader("Authorization", token);
                     },
@@ -295,6 +298,18 @@
     <body>
         <input type="hidden" id="agentId" name="agentId" value="" />
         <table width="600px" cellspacing="0" cellpadding="5">
+			<tr>
+                <th style="background-color:#ffcc99">代理类型：</th>
+                <td>
+                    <select id="userType" name="userType" style="width:100px;" class="form-control" disabled>
+			        	<option value=""></option>
+			            <option value="6" selected>双面代理</option>
+			            <option value="8">信誉代理</option>
+			        </select>
+			        <span id="userType_error" style="color:red;"></span>
+                </td>
+            </tr>
+            
             <tr>
                 <th style="background-color:#ffcc99">真实姓名：</th>
                 <td>

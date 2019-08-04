@@ -197,8 +197,12 @@
 
 	
 	
-	<beans:bean id="tokenStore" class="org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore" />
+	<!-- beans:bean id="tokenStore" class="org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore" /> -->
 	
+	<beans:bean id="tokenStore" class="org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore">
+    	<beans:constructor-arg name="connectionFactory" ref="redisConnectionFactory"/>
+	</beans:bean>
+
     <beans:bean id="tokenServices" class="com.jll.sys.security.CusTokenService">
 		<beans:property name="tokenStore" ref="tokenStore" />
         <!--允许刷新token ， 默认不允许-->

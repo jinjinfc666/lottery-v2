@@ -173,7 +173,7 @@ public class IssueDaoImpl extends DefaultGenericDaoImpl<Issue> implements IssueD
 	//追号需要的期号信息
 	@Override
 	public List<Issue> queryIsZhIssue(String lotteryType, Date startTime, Date endTime) {
-		String sql="From Issue where (lotteryType=:lotteryType and startTime>:startTime and startTime<=:endTime) OR (startTime<=:startTime and endTime>=:startTime and lotteryType=:lotteryType)";
+		String sql="From Issue where (lotteryType=:lotteryType and startTime>:startTime and startTime<=:endTime) OR (startTime<=:startTime and endTime>=:startTime and lotteryType=:lotteryType) order by id";
 		Query<Issue> query = getSessionFactory().getCurrentSession().createQuery(sql,Issue.class);
 		query.setParameter("lotteryType", lotteryType);
 	    query.setParameter("startTime", startTime,TimestampType.INSTANCE);

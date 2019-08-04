@@ -1132,10 +1132,30 @@ public class UserController {
 			Integer userType=userInfo.getUserType();
 			String phoneNum=userInfo.getPhoneNum();
 			String email=userInfo.getEmail();
+			Integer isHiddenPlan = userInfo.getIsHiddenPlan();
 			BigDecimal platRebate=userInfo.getPlatRebate();
+			Integer panKou = userInfo.getPanKou();
+			Double xyPayoutRate = userInfo.getXyPayoutRate();
+			Double xyAmount = userInfo.getXyAmount();
 			UserInfo user = userInfoService.getUserById(userId);
 			if(userType!=null) {
 				user.setUserType(userType);
+			}
+			
+			if(isHiddenPlan != null) {
+				user.setIsHiddenPlan(isHiddenPlan);
+			}
+			
+			if(panKou != null) {
+				user.setPanKou(panKou);
+			}
+			
+			if(xyAmount != null) {
+				user.setXyAmount(xyAmount);
+			}
+			
+			if(xyPayoutRate != null) {
+				user.setXyPayoutRate(xyPayoutRate);
 			}
 			
 			if(!StringUtils.isBlank(email)
@@ -1803,6 +1823,44 @@ public class UserController {
 		
 		try {
 			map = userInfoService.queryAllAgentSM(ret);
+			map.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
+			return map;
+		}catch(Exception e){
+			ret.clear();
+			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_OTHERS.getCode());
+			ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_OTHERS.getErrorMes());
+			return ret;
+		}
+	}
+	
+	@RequestMapping(value={"/queryAllUserAgentXY"}, method={RequestMethod.GET}, produces=MediaType.APPLICATION_JSON_VALUE)
+	public Map<String, Object> queryAllUserAgentXY(@RequestParam(name = "userName", required = false) String userName,
+			  @RequestParam(name = "startTime", required = false) String startTime,
+			  @RequestParam(name = "endTime", required = false) String endTime,
+			  @RequestParam(name = "pageIndex", required = true) Integer pageIndex,//当前请求页
+			  @RequestParam(name = "searchType", required = true) Integer searchType,
+			  HttpServletRequest request) {
+		Map<String, Object> ret = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
+		if(!StringUtils.isBlank(startTime)||!StringUtils.isBlank(endTime)) {
+			if(!DateUtil.isValidDate(startTime)||!DateUtil.isValidDate(endTime)) {
+				ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+				ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_ERROR_PARAMS.getCode());
+				ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_ERROR_PARAMS.getErrorMes());
+		    	return ret;
+			}
+		}
+		Integer pageSize = Constants.Pagination.SUM_NUMBER.getCode();
+		ret.put("pageSize", pageSize);
+		ret.put("pageIndex", pageIndex);
+		ret.put("userName", userName);
+		ret.put("startTime", startTime);
+		ret.put("endTime", endTime);
+		ret.put("searchType", searchType);
+		
+		try {
+			map = userInfoService.queryAllAgentXY(ret);
 			map.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
 			return map;
 		}catch(Exception e){

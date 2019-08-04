@@ -59,6 +59,13 @@
                 <comment>����</comment>
             </column>
         </property>
+        
+        <property generated="never" lazy="false" name="sysBonus" optimistic-lock="true" type="big_decimal" unique="false">
+            <column name="sys_bonus">
+                <comment>����</comment>
+            </column>
+        </property>
+        
         <property generated="never" lazy="false" name="rebate" optimistic-lock="true" type="big_decimal" unique="false">
             <column name="rebate">
                 <comment>����</comment>

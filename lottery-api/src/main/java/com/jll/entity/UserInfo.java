@@ -34,9 +34,10 @@ public class UserInfo implements java.io.Serializable {
 	private Date createTime;
 	private Integer creator;
 
-	private int panKou;
+	private Integer panKou;
 	private Double xyAmount;
 	private Double xyPayoutRate;
+	private Integer isHiddenPlan;
 	
 	public UserInfo() {
 	}
@@ -263,11 +264,11 @@ public class UserInfo implements java.io.Serializable {
 		this.creator = creator;
 	}
 
-	public int getPanKou() {
+	public Integer getPanKou() {
 		return panKou;
 	}
 
-	public void setPanKou(int panKou) {
+	public void setPanKou(Integer panKou) {
 		this.panKou = panKou;
 	}
 
@@ -285,6 +286,14 @@ public class UserInfo implements java.io.Serializable {
 
 	public void setXyPayoutRate(Double xyPayoutRate) {
 		this.xyPayoutRate = xyPayoutRate;
+	}
+
+	public Integer getIsHiddenPlan() {
+		return isHiddenPlan;
+	}
+
+	public void setIsHiddenPlan(Integer isHiddenPlan) {
+		this.isHiddenPlan = isHiddenPlan;
 	}
 
 	

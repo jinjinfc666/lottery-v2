@@ -207,6 +207,16 @@
                                 if(val=='ROLE_CUSTOMER_SERVICE'){
                                     document.getElementById("siteMessage").style.display="inline";
                                 }
+                                
+                                if(val=='ROLE_CUSTOMER_SERVICE'|| val=='ROLE_AGENT_SM'){
+                                    document.getElementById("sm_member_management").style.display="inline";
+                                    document.getElementById("sm_system_operation").style.display="inline";
+                                }
+                                
+                                if(val=='ROLE_CUSTOMER_SERVICE'|| val=='ROLE_AGENT_XY'){
+                                    document.getElementById("xy_member_management").style.display="inline";
+                                }
+                                
                             });
                         }
                     }else{
@@ -397,7 +407,7 @@
                         </ul>
                     </li>
                     
-                     <li id="member_management" style="display: block;">
+                     <li id="sm_member_management" style="display: none;">
                         <a class="J_menuItem">
                             <i class="fa fa-edit"></i> 
                             <span class="nav-label">双面会员管理</span>
@@ -406,6 +416,19 @@
                         <ul class="nav nav-second-level">                           
                             <li id="agent_maintaince" style="display: block;">
                                 <a class="J_menuItem"  href="sm-memberManagement/agent.html?v=4.0">代理维护</a>
+                            </li>
+                        </ul>
+                    </li>
+                    
+                    <li id="xy_member_management" style="display: none;">
+                        <a class="J_menuItem">
+                            <i class="fa fa-edit"></i> 
+                            <span class="nav-label">信誉会员管理</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level">                           
+                            <li id="agent_maintaince" style="display: block;">
+                                <a class="J_menuItem"  href="xy-memberManagement/agent.html?v=4.0">代理维护</a>
                             </li>
                         </ul>
                     </li>
@@ -438,7 +461,7 @@
                         </ul>
                     </li>
                     
-                    <li id="system_operation" style="display: block;">
+                    <li id="sm_system_operation" style="display: none;">
                         <a class="J_menuItem">
                             <i class="fa fa-edit"></i> 
                             <span class="nav-label">双面系统操作</span>
@@ -447,6 +470,9 @@
                         <ul class="nav nav-second-level">
                             <li id="betting_order" style="display: block;">
                                 <a class="J_menuItem"  href="sm-report/lottery_transaction.html?v=4.0">投注订单</a>
+                            </li>
+                            <li id="user_settlement" style="display: block;">
+                                <a class="J_menuItem"  href="sm-report/user_settlement.html">用户结算</a>
                             </li>
                         </ul>
                     </li>

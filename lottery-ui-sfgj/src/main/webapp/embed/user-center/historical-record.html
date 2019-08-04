@@ -5,7 +5,7 @@
 			<span data-target="u_r_fzh" data-type="deputyRecords" data-num="5" class="j-nav_item u_c_n_item">帐变记录</span>
 			<span data-target="u_r_zzfs" data-type="ximaDetail" data-num="6" class="j-nav_item u_c_n_item">盈亏</span>
 		</div>
-        <div class="u_c_window j-tablecontent" style="overflow-x: scroll;border: solid 20px #d9534f;">
+        <div class="u_c_window j-tablecontent" style="overflow-x: scroll;">
         	<div data-id="u_r_zzyh" data-num="4" class="u_c_w_content j-nav_tab active" ng-controller="hisRecCtrl" ng-init="initHisRecQuery()">
             	<div class="u_c_w_tab active">
                 	<div class="filter">
@@ -168,6 +168,7 @@
 		                                    	<th class="" rowspan="1" colspan="1" style="width: 0px;">用户</th>
 			                                    <th class="" rowspan="1" colspan="1" style="width: 0px;">消费</th>
 			                                    <th class="" rowspan="1" colspan="1" style="width: 0px;">返奖</th>
+			                                    <th class="" rowspan="1" colspan="1" style="width: 0px;">平台奖励</th>
 			                                    <th class="" rowspan="1" colspan="1" style="width: 0px;">盈亏</th>			                                    
 		                                    </tr>
 	                                    </thead>
@@ -177,6 +178,7 @@
 			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[0]}}</td>
 			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[6]}}</td>
 			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[8]}}</td>
+			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[13]}}</td>
 			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[10]}}</td>
 			                           		</tr>
 		                               </tbody>

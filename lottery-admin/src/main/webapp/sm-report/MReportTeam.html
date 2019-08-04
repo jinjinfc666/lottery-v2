@@ -129,7 +129,7 @@
                                      userType="系统用户";
                                  }else if(val.userType == '3'){
                                      userType="总代";
-                                 }else if(val.userType == '5'){
+                                 }else if(val.userType == '5'  || val.userType == '7'){
                                      userType="平台客户";
                                  }else if(val.userType == '6'){
                                      userType="代理";
@@ -148,6 +148,8 @@
                                  var vRechargeMember = val.rechargeMember == null?'':val.rechargeMember;
                                  var vNewMembers = val.newMembers == null?'':val.newMembers;
                                  var vProfit = val.profit == null?'':val.profit;
+                                 var vSysBonus = val.sysBonus == null?'':val.sysBonus;
+                                 
                                  if(key != 0){
                                 	 if(userInfo.userType != 6 && (val.userType == '3' || val.userType == '6')){
                                 		 $("#" + tableid).append("<tr>\n\
@@ -161,6 +163,7 @@
     	    	                                 <td class=\"thCenter\">"+vCancelAmount+"</td>\n\
     	    	                                 <td class=\"thCenter\">"+vReturnPrize+"</td>\n\
     	    	                                 <td class=\"thCenter\">"+vRebate+"</td>\n\
+    	    	                                 <td class=\"thCenter\">"+vSysBonus+"</td>\n\
     	    	                                 <td class=\"thCenter\">"+vRechargeMember+"</td>\n\
     	    	                                 <td class=\"thCenter\">"+vNewMembers+"</td>\n\
     	    	                                 <td class=\"thCenter\">"+vProfit+"</td>\n\
@@ -177,6 +180,7 @@
     	    	                                 <td class=\"thCenter\">"+vCancelAmount+"</td>\n\
     	    	                                 <td class=\"thCenter\">"+vReturnPrize+"</td>\n\
     	    	                                 <td class=\"thCenter\">"+vRebate+"</td>\n\
+    	    	                                 <td class=\"thCenter\">"+vSysBonus+"</td>\n\
     	    	                                 <td class=\"thCenter\">"+vRechargeMember+"</td>\n\
     	    	                                 <td class=\"thCenter\">"+vNewMembers+"</td>\n\
     	    	                                 <td class=\"thCenter\">"+vProfit+"</td>\n\
@@ -202,6 +206,7 @@
 	                                 <td class=\"thCenter\">"+vCancelAmount+"</td>\n\
 	                                 <td class=\"thCenter\">"+vReturnPrize+"</td>\n\
 	                                 <td class=\"thCenter\">"+vRebate+"</td>\n\
+	                                 <td class=\"thCenter\">"+vSysBonus+"</td>\n\
 	                                 <td class=\"thCenter\">"+vRechargeMember+"</td>\n\
 	                                 <td class=\"thCenter\">"+vNewMembers+"</td>\n\
 	                                 <td class=\"thCenter\">"+vProfit+"</td>\n\
@@ -330,6 +335,7 @@
                             <th class="thCenter" style="width:100px">撤单</th>
                             <th class="thCenter" style="width:100px">返奖</th>
                             <th class="thCenter" style="width:100px">返点</th>
+                            <th class="thCenter" style="width:100px">平台奖励</th>
                             <th class="thCenter" style="width:100px">充值会员人数</th>
                             <th class="thCenter" style="width:100px">新增会员人数</th>
                             <th class="thCenter" style="width:100px">盈利</th>

@@ -1405,7 +1405,7 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 						var isSelected = $('#isSel_'+dataIndex_)[0].checked?1:0;
 						var betAmount = $('#zhAmount_'+dataIndex_).val();
 						var issueId = $('#issueId_'+dataIndex_).val();
-						
+						var isPrizeIndex = Math.floor($scope.playTypeId_.length - 1);
 						
 						
 						if(isSelected == 0){
@@ -1429,7 +1429,13 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 							bet.pattern = pattern;
 							bet.isZh = isZh;
 							bet.terminalType = terminalType;
-							bet.isPrize = isPrize_;
+							
+							if(isPrize_ == 1 && isPrizeIndex == i){
+								bet.isPrize = 1;
+							}else{
+								bet.isPrize = 0;
+							}
+							//bet.isPrize = isPrize_;
 							if(typeof betAmount == 'undefined' 
 								|| betAmount == null
 								|| betAmount == ''){

@@ -461,7 +461,8 @@ public class TReportDaoImpl extends DefaultGenericDaoImpl<TeamPlReport> implemen
 		.append("SUM(recharge_member) as recharge_member,")
 		.append("SUM(new_members) as new_members,")
 		.append("SUM(profit) as profit, ")
-		.append("? user_type ")
+		.append("? user_type, ")
+		.append("SUM(sys_bonus) as sys_bonus ")
 		.append("from team_pl_report ")
 		.append("where 1=1 ")
 		.append("and (user_type = 3 or user_type = 6) and user_id = ? ")
@@ -515,6 +516,10 @@ public class TReportDaoImpl extends DefaultGenericDaoImpl<TeamPlReport> implemen
 			m.setNewMembers(bd11 == null?null:bd11.intValue());
 			BigDecimal bd12 = (BigDecimal) obj[13];
 			m.setProfit(bd12);
+			
+			BigDecimal bd13 = (BigDecimal) obj[15];
+			m.setSysBonus(bd13);
+			
 			m.setUserType((Integer)obj[14]);
 			
 			if(m.getUserId() == null) {
@@ -554,7 +559,8 @@ public class TReportDaoImpl extends DefaultGenericDaoImpl<TeamPlReport> implemen
 		.append("SUM(rebate) as rebate,")
 		.append("SUM(recharge_member) as recharge_member,")
 		.append("SUM(new_members) as new_members,")
-		.append("SUM(profit)*(-1) as profit ")
+		.append("SUM(profit) as profit, ")
+		.append("SUM(sys_bonus) as sys_bonus ")
 		.append("from team_pl_report ")
 		.append("where ( ")
 		.append("(user_id in (select id from user_info where FIND_IN_SET(?,superior) = 1 and user_type in (5, 7)) and user_type in (5, 7)) ")
@@ -612,7 +618,11 @@ public class TReportDaoImpl extends DefaultGenericDaoImpl<TeamPlReport> implemen
 			m.setNewMembers(bd11 == null?null:bd11.intValue());
 			BigDecimal bd12 = (BigDecimal) obj[13];
 			m.setProfit(bd12);
-			m.setUserType((Integer)obj[14]);
+			
+			BigDecimal bd13 = (BigDecimal) obj[14];
+			m.setSysBonus(bd13);
+			
+			m.setUserType((Integer)obj[15]);
 		    listRecord.add(m);
 		}
 		return listRecord;
@@ -641,7 +651,8 @@ public class TReportDaoImpl extends DefaultGenericDaoImpl<TeamPlReport> implemen
 		.append("SUM(rebate) as rebate,")
 		.append("SUM(recharge_member) as recharge_member,")
 		.append("SUM(new_members) as new_members,")
-		.append("SUM(profit) as profit ")
+		.append("SUM(profit) as profit, ")
+		.append("SUM(sys_bonus) as sys_bonus ")
 		.append("from team_pl_report ")
 		.append("where user_id in (select id from user_info where FIND_IN_SET(?,superior) = 1 and user_type = 6) and user_type = 6 ")
 		.append("and create_time >= ? and create_time <= ? ")
@@ -695,7 +706,11 @@ public class TReportDaoImpl extends DefaultGenericDaoImpl<TeamPlReport> implemen
 			m.setNewMembers(bd11 == null?null:bd11.intValue());
 			BigDecimal bd12 = (BigDecimal) obj[13];
 			m.setProfit(bd12);
-			m.setUserType((Integer)obj[14]);
+			
+			BigDecimal bd13 = (BigDecimal) obj[14];
+			m.setSysBonus(bd13);
+			
+			m.setUserType((Integer)obj[15]);
 		    listRecord.add(m);
 		}
 		return listRecord;

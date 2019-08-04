@@ -95,7 +95,7 @@
                     success: function (data) {
                         if(data.status=="1"){
                         	 $.each(data.data, function(key, val) {  
-                                 $("#smPanKou").append("<option data-seq='"+ val.seq +"' value='"+val.codeVal+"'>"+val.remark+"</option>");
+                        		 $("#smPanKou").append("<option data-seq='"+ val.seq +"' value='"+val.codeVal+"'>"+val.remark+"</option>");
                              })
                         }else{
                             alert(getErroe(data.error_code));
@@ -137,21 +137,18 @@
                 var qq=document.getElementById('qq').value;
                 var wechat=document.getElementById('wechat').value;
                 var email=document.getElementById('email').value;
-                var xyAmount = document.getElementById('xyAmount').value;
-                var xyPayoutRate = document.getElementById('xyPayoutRate').value;
-                var isHiddenPlan = document.getElementById('isHiddenPlan').value;
                 var panKou = $("#smPanKou option:selected").attr("data-seq");
                 
                 if(userType == 7){
-                	if(typeof xyAmount == 'undefined' || xyAmount == null || xyAmount.length == 0){                		
-                		$("#xyAmount_error").text("请输入信誉额度!");
+                	if(typeof panKou == 'undefined' || panKou == null || panKou.length == 0){                		
+                		$("#smPanKou_error").text("请选择盘口!");
                         return false;
                 	}
                 	
-                	if(typeof xyPayoutRate == 'undefined' || xyPayoutRate == null || xyPayoutRate.length == 0){                		
+                	/* if(typeof xyPayoutRate == 'undefined' || xyPayoutRate == null || xyPayoutRate.length == 0){                		
                 		$("#xyPayoutRate_error").text("请输入最大派奖率 0.00--1.00!");
                         return false;
-                	}
+                	} */
                 }
                 if(userName==""){
                     $("#userName1").text("请输入用户名!");
@@ -184,9 +181,6 @@
                     "wechat": wechat,
                     "email": email,
                     "userType":userType,
-                    "xyAmount":xyAmount,
-                    "xyPayoutRate":xyPayoutRate,
-                    'isHiddenPlan':isHiddenPlan,
                     'panKou':panKou
                 });
                 $.ajax({
@@ -255,9 +249,9 @@
         	<tr>
                 <th style="background-color:#ffcc99">用户类型</th>
                 <td>
-                <select id="userType" style="width:250px;height:50px" disabled>
-                	<option value="5" selected>双面玩家</option>
-                	<option value="7">信誉玩家</option>
+                <select id="userType" style="width:250px;height:50px" disabled >
+                	<option value="5">双面玩家</option>
+                	<option value="7" selected>信誉玩家</option>
                 	<option value="4">试玩玩家</option>
                 </select>
                 <span id="platRebate1" style="color:red;"></span></td>
@@ -288,26 +282,15 @@
                 <th style="background-color:#ffcc99">资金密码：</th>
                 <td><input type="password" id="fundPwd" name="fundPwd" value="" placeholder="密码为6-15位的字母或数字组成" style="width:250px;" class="login_putin" /></td>
             </tr>
+            
             <tr>
-                <th style="background-color:#ffcc99">选择盘口</th>
+                <th style="background-color:#ffcc99">选择盘口：</th>
                 <td>
-                <select id="smPanKou" style="width:250px;height:50px" ></select>
-                <span id="platRebate1" style="color:red;"></span></td>
-            </tr>
-            <tr>
-                <th style="background-color:#ffcc99">信誉额度</th>
-                <td>
-                	<input type="text" id="xyAmount" name="xyAmount" value="" style="width:250px;" class="login_putin" />
-                	<span id="xyAmount_error" style="color:red;"></span></td>
+	                <select id="smPanKou" style="width:250px;height:50px" ></select>
+	                <span id="smPanKou_error" style="color:red;"></span>
                 </td>
             </tr>
-             <tr>
-                <th style="background-color:#ffcc99">最高派奖率</th>
-                <td>
-                	<input type="number" id="xyPayoutRate" name="xyPayoutRate" value="" style="width:250px;" class="login_putin" placeholder="取值范围 0.0-1.0" />
-                	<span id="xyPayoutRate_error" style="color:red;"></span></td>
-                </td>
-            </tr>
+            
             <tr>
                 <th style="background-color:#ffcc99">手机号：</th>
                 <td><input type="text" id="phoneNum" name="phoneNum" value="" style="width:250px;" class="login_putin" /></td>
@@ -323,15 +306,6 @@
             <tr>
                 <th style="background-color:#ffcc99">邮箱：</th>
                 <td><input type="text" id="email" name="email" value="" style="width:250px;" class="login_putin" /></td>
-            </tr>
-            
-            <tr>
-                <th style="background-color:#ffcc99">隐藏计划</th>
-                <td>
-                <select id="isHiddenPlan" style="width:250px;height:50px" >
-                	<option value="0">隐藏</option>
-                	<option value="1">显示</option>
-                </select>
             </tr>
             
         </table>

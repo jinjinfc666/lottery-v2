@@ -1,6 +1,6 @@
-//var SITE="http://localhost/lottery-api";
+var SITE="http://localhost/lottery-api";
 //var SITE="http://103.117.121.146/lottery-api";
-var SITE = "http://localhost:8080/lottery-api";
+//var SITE = "http://localhost:8080/lottery-api";
 
 var querySessionIdURL = SITE+"/captchas/query-sesionid"; //获取获取会话ID
 
@@ -23,3 +23,13 @@ var queryLotteryRecordURL = SITE + "/report/loyTstRecord";
 var queryGeneralURL = SITE + "/users/queryGeneral";
 
 var mReportNextTeamSMURL = SITE + "/report/MReportNextTeamSM";
+
+var queryUserSettlementURL = SITE + "/user-settlements";
+
+var performSettlementURL = SITE + "/user-settlements/{id}";
+
+var performSettlementURL = SITE + "/user-settlements/{id}";
+
+var queryAgentXYURL = SITE + "/users/queryAllUserAgentXY";
+
+var queryUserXYURL = SITE + "/users/queryAllUserAgentXY";

@@ -62,6 +62,10 @@
                 getplat();
                 
                 searchrecord(obj['id']);
+                
+                if(obj['userType'] != '8'){
+                	$("#xyAmount_row").css({"display":"none"});  
+                }
             });
             
             function getplat(){
@@ -142,7 +146,7 @@
                             document.getElementById('loginCount').value=data.data.loginCount;
                             document.getElementById('superior').value=data.data.superior;
                             document.getElementById('rebate').value=data.data.rebate;
-                            document.getElementById('platRebate').value=data.data.platRebate;
+                            //document.getElementById('platRebate').value=data.data.platRebate;
                             document.getElementById('phoneNum').value=data.data.phoneNum;
                             document.getElementById('qq').value=data.data.qq;
                             document.getElementById('wechat').value=data.data.wechat;
@@ -150,10 +154,10 @@
                             document.getElementById('regIp').value=data.data.regIp;
                             document.getElementById('createTime').value=ConvertJSONDateToJSDateObject(""+data.data.createTime+"");
                             
-                            document.getElementById('isHiddenPlan').value=data.data.isHiddenPlan;
-                            document.getElementById('smPanKou').value=data.data.panKou;
-                            document.getElementById('xyAmount').value=data.data.xyAmount;
-                            document.getElementById('xyPayoutRate').value=data.data.xyPayoutRate;
+                            if(data.data.userType == '8'){
+                            	document.getElementById('xyAmount').value=data.data.xyAmount;
+                            }
+                            
                             
                             $("#smPanKou option").each(function(){
                             	if($(this).attr('data-seq') == data.data.panKou){
@@ -215,9 +219,7 @@
                     "phoneNum": phoneNum,
                     "email": email,
                     "userType":userType,
-                    "xyAmount":xyAmount,
-                    "xyPayoutRate":xyPayoutRate,
-                    'isHiddenPlan':isHiddenPlan
+                    "xyAmount":xyAmount
                 });
                 $.ajax({
                     url: url,
@@ -496,30 +498,14 @@
                 	<select id="smPanKou" style="width:150px;height:34px" disabled></select>
                 </td>
             </tr>
-            
-            <tr>
-                <th class="thstyle">隐藏计划：</th>
-                <td  style="text-align:left">
-                	<select id="isHiddenPlan" style="width:150px;height:34px" >
-	                	<option value="0">隐藏</option>
-	                	<option value="1">显示</option>
-                	</select>
-                </td>
-            </tr>
-            
-            <tr>
+                        
+            <tr id="xyAmount_row">
                 <th class="thstyle">信誉额度：</th>
                 <td>
                 	<input type="text" id="xyAmount" name="xyAmount" value="" style="width:150px;" class="form-control" />
                 </td>
             </tr>
-            
-            <tr>
-                <th class="thstyle">最高派奖率：</th>
-                <td>
-                	<input type="text" id="xyPayoutRate" name="xyPayoutRate" value="" style="width:150px;" class="form-control" />
-                </td>
-            </tr>            
+                     
             
         </table>
         <script>
