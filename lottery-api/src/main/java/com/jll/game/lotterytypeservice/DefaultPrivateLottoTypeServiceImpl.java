@@ -365,7 +365,8 @@ public abstract class DefaultPrivateLottoTypeServiceImpl extends DefaultLottoTyp
 		return true;
 	}
 
-	private void nonInterventional(String lottoType, String issueNum) {
+	@Override
+	public void nonInterventional(String lottoType, String issueNum) {
 		logger.debug(String.format("lottoType   %s,  issueNum  %s", lottoType, issueNum));
 		String winningNum;
 		Issue issue;

@@ -274,7 +274,7 @@ public class DwdPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		for(String singleBetNumArray : betNumArray) {
 			String[] betNumBits = splitBit(singleBetNumArray, 1);
 			
-			for(int i = 0; i < 10; i++) {				
+			for(int i = 0; i < 10; i++) {
 				if(betNumBits[0].contains(String.valueOf(i))) {
 					isMatch1 = true;
 				}

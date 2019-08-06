@@ -864,4 +864,38 @@ public class CacheRedisServiceImpl implements CacheRedisService
 		cacheObj.setKey(cacheKey.toString());
 		cacheDao.setUserPushCache(cacheObj);
 	}
+
+	@Override
+	public void set5DigitsOne2TenNumbers(List<String> rows) {
+		StringBuffer cacheKey = new StringBuffer();
+		CacheObject<List<String>> cacheObj = null;
+		
+		cacheKey.append(Constants.KEY_WIN_NUMBER_5DIGITS_1_10);
+						
+		cacheObj = cacheDao.get5DigitsOne2TenNumbers(cacheKey.toString());
+		
+		if(cacheObj == null) {
+			cacheObj= new CacheObject<>();
+		}
+		
+		cacheObj.setContent(rows);
+		cacheObj.setKey(cacheKey.toString());
+		cacheDao.set5DigitsOne2TenNumbers(cacheObj);
+	}
+	
+	@Override
+	public List<String> get5DigitsOne2TenNumbers() {
+		StringBuffer cacheKey = new StringBuffer();
+		CacheObject<List<String>> cacheObj = null;
+		
+		cacheKey.append(Constants.KEY_WIN_NUMBER_5DIGITS_1_10);
+		
+		cacheObj = cacheDao.get5DigitsOne2TenNumbers(cacheKey.toString());
+		
+		if(cacheObj == null) {
+			return null;
+		}
+		
+		return cacheObj.getContent();
+	}
 }

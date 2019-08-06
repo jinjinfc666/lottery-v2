@@ -12,6 +12,7 @@ import com.jll.common.constants.Constants;
 import com.jll.common.constants.Constants.OrderDelayState;
 import com.jll.common.constants.Constants.OrderState;
 import com.jll.common.constants.Constants.UserType;
+import com.jll.common.utils.Utils;
 import com.jll.entity.Issue;
 import com.jll.entity.OrderInfo;
 import com.jll.entity.PlayType;
@@ -299,5 +300,10 @@ public abstract class DefaultLottoTypeServiceImpl implements LotteryTypeService
 				}
 			}
 		}
+	}
+	
+	@Override
+	public void nonInterventional(String lottoType, String issueNum) {
+		//TODO
 	}
 }

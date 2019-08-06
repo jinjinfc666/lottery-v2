@@ -68,6 +68,17 @@ var messageArray = {
 				"dwd_3":"十位 {number}",
 				"dwd_4":"个位 {number}"
 			},
+			"play_type_yfb":{
+				"ds_00":"{number} 双",
+				"ds_01":"{number} 单",
+				"dx_00":"{number} 小",
+				"dx_01":"{number} 大",
+				"dwd_0":"冠军 {number}",
+				"dwd_1":"亚军 {number}",
+				"dwd_2":"季军 {number}",
+				"dwd_3":"第四名 {number}",
+				"dwd_4":"第五名 {number}"
+			},
 			"data_item_type":{
 				"0":"余额",
 				"0":"余额",

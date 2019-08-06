@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 
 import com.jll.common.cache.CacheRedisService;
 import com.jll.common.constants.Constants;
+import com.jll.common.utils.Utils;
 import com.jll.entity.IpBlackList;
 import com.jll.entity.PayChannel;
 import com.jll.entity.PayType;
@@ -54,8 +55,13 @@ public class SysInitLoader {
 		initIpBlackList();
 		initPayType();
 		initPayChannel();
+		
+		init5DigitsOne2Ten();
 	}
 	
+
+	
+
 
 	private void initSysCode() {
 		initLotteryType();
@@ -432,5 +438,12 @@ public class SysInitLoader {
 			
 			cacheServ.setSysCode(codeTypeName, sysCodes);
 		}
+	}
+	
+	private void init5DigitsOne2Ten() {
+		List<String> rows = Utils.produce5Digits1to10Number();
+		
+		cacheServ.set5DigitsOne2TenNumbers(rows);
+		
 	}
 }

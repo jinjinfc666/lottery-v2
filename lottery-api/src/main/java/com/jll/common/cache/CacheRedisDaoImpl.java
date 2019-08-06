@@ -393,4 +393,18 @@ public class CacheRedisDaoImpl  extends AbstractBaseRedisDao implements CacheRed
 	public void setUserPushCache(CacheObject<UserPushCache> cacheObj) {
 		this.saveOrUpdate(cacheObj);
 	}
+
+	@Override
+	public CacheObject<List<String>> get5DigitsOne2TenNumbers(String digitsOne2TenNumbers) {
+		CacheObject<List<String>> cacheObject = get(digitsOne2TenNumbers);
+		if(cacheObject==null) {
+			return null;
+		}
+		return cacheObject;
+	}
+
+	@Override
+	public void set5DigitsOne2TenNumbers(CacheObject<List<String>> cacheObj) {
+		this.saveOrUpdate(cacheObj);
+	}
 }

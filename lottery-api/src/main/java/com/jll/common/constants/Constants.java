@@ -133,6 +133,8 @@ public class Constants {
 	
 	public final static String KEY_EXPERT_BETAMOUNT = "betAmount";
 	
+	public final static String KEY_WIN_NUMBER_5DIGITS_1_10 = "win_number_5digits_1_10";
+	
 	public static enum DepositOrderState{
 		
 		INIT_OR_PUSHED(0),
@@ -635,6 +637,7 @@ public class Constants {
 		LOTTERY_CONFIG_BJPK10("lottery_config_bjpk10"),//"PK10属性"
 		LOTTERY_CONFIG_XYFT("lottery_config_xyft"),//"PK10属性"
 		LOTTERY_CONFIG_XJSSC("lottery_config_xjssc"),//"PK10属性"
+		LOTTERY_CONFIG_YFB("lottery_config_yfb"),//1.5分彩
 		SIGN_IN_DAY("sign_in_day"),
 		CT_PLAY_TYPE_CLASSICFICATION("ct_play_type_classicfication"),//"玩法类型"
 		WITHDRAWAL_CFG("withdrawal_cfg"),

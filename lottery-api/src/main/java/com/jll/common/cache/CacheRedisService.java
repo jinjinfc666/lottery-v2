@@ -213,4 +213,8 @@ public interface CacheRedisService {
 	 * @param userPushCache
 	 */
 	void setUserPushCache(UserInfo user, UserPushCache userPushCache);
+
+	void set5DigitsOne2TenNumbers(List<String> rows);
+
+	List<String> get5DigitsOne2TenNumbers();
 }

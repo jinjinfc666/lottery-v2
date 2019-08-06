@@ -26,92 +26,132 @@ import com.jll.game.LotteryCenterController;
 import com.jll.spring.extend.SpringContextUtil;
 
 public class Utils {
-	
-	private Logger logger = Logger.getLogger(Utils.class); 
-	
-	public static final char[] alphabet = {'a','b','c','d','e','f','g','h','i',
-											'j','k','l','m','n','o','p','q','r',
-											's','t','u','v','w','x','y','z','0',
-											'1','2','3','4','5','6','7','8','9'};
-	
+
+	private Logger logger = Logger.getLogger(Utils.class);
+
+	public static final char[] alphabet = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
+			'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+
+	private static final String[] oneToTenArray = { "01", "02", "03", "04", "05", "06", "07", "08", "09", "10" };
+
 	@Resource
-	GenSequenceService genSeqServ = (GenSequenceService)SpringContextUtil.getBean("genSequenceServiceImpl");
-	
+	GenSequenceService genSeqServ = (GenSequenceService) SpringContextUtil.getBean("genSequenceServiceImpl");
+
 	@Resource
-	CacheRedisService cacheServ = (CacheRedisService)SpringContextUtil.getBean("cacheRedisServiceImpl");
-	
+	CacheRedisService cacheServ = (CacheRedisService) SpringContextUtil.getBean("cacheRedisServiceImpl");
+
 	private static Utils utils = null;
-	
+
 	private Utils() {
-		
+
 	}
-	
+
 	public static Utils getInstance() {
-		if(utils == null) {
+		if (utils == null) {
 			utils = new Utils();
 		}
-		
+
 		return utils;
 	}
-	
+
 	public static String produce6DigitsCaptchaCode() {
 		String ret = "";
 		Random random = new Random();
-		for(int i = 0; i < 6; i++) {
+		for (int i = 0; i < 6; i++) {
 			int currIndex = random.nextInt(alphabet.length);
 			ret += alphabet[currIndex];
 		}
 		return ret;
-				
+
 	}
-	
+
 	public synchronized static String gen16DigitsSeq(Long seq) {
 		Date nowTime = new Date();
 		StringBuffer ret = new StringBuffer();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 		DecimalFormat numFormat = new DecimalFormat("000000");
-		Random random = new Random();		
-		
+		Random random = new Random();
+
 		ret.append(dateFormat.format(nowTime));
 		ret.append(numFormat.format(seq.intValue()));
-		for(int i = 0; i < 4; i++) {
+		for (int i = 0; i < 4; i++) {
 			int currIndex = random.nextInt(10);
 			ret.append(Integer.toString(currIndex));
 		}
 		return ret.toString();
-				
+
 	}
-	
+
 	public static String produce6DigitsCaptchaCodeNumber() {
 		StringBuffer ret = new StringBuffer();
 		Random random = new Random();
-		for(int i = 0; i < 6; i++) {
+		for (int i = 0; i < 6; i++) {
 			int currIndex = random.nextInt(10);
 			ret.append(Integer.toString(currIndex));
 		}
 		return ret.toString();
-				
+
 	}
-	
-	public static  String produce5Digits0to9Number() {
+
+	public static String produce5Digits0to9Number() {
 		StringBuffer ret = new StringBuffer();
 		Random random = new Random();
-		for(int i = 0; i < 5; i++) {
+		for (int i = 0; i < 5; i++) {
 			int currIndex = random.nextInt(10);
 			ret.append(Integer.toString(currIndex)).append(",");
-			
+
 			try {
 				Thread.sleep(10000);
 			} catch (InterruptedException e) {
-				
+
 			}
 		}
-		
+
 		ret.delete(ret.length() - 1, ret.length() + 1);
 		return ret.toString();
-				
+
 	}
-	
+
+	public static List<String> produce5Digits1to10Number() {
+		List<String> rows = new ArrayList<>();
+		StringBuffer row = new StringBuffer();
+		Map<String, String> rowMap = new HashMap<>();
+
+		for (int i = 0; i < 10; i++) {
+			for (int ii = 0; ii < 10; ii++) {
+				for (int iii = 0; iii < 10; iii++) {
+					for (int iiii = 0; iiii < 10; iiii++) {
+						for (int iiiii = 0; iiiii < 10; iiiii++) {
+							rowMap.clear();
+							row.delete(0, row.length());
+
+							rowMap.put(oneToTenArray[i], oneToTenArray[i]);
+							rowMap.put(oneToTenArray[ii], oneToTenArray[ii]);
+							rowMap.put(oneToTenArray[iii], oneToTenArray[iii]);
+							rowMap.put(oneToTenArray[iiii], oneToTenArray[iiii]);
+							rowMap.put(oneToTenArray[iiiii], oneToTenArray[iiiii]);
+
+							if (rowMap.size() != 5) {
+								continue;
+							}
+
+							row.append(oneToTenArray[i]).append(",")
+								.append(oneToTenArray[ii]).append(",")
+									.append(oneToTenArray[iii]).append(",")
+									.append(oneToTenArray[iiii]).append(",")
+									.append(oneToTenArray[iiiii]);
+
+							rows.add(row.toString());
+						}
+					}
+				}
+			}
+		}
+
+		return rows;
+
+	}
+
 	public static boolean validUserName(String userName) {
 		String regex = "[a-zA-Z0-9_]{6,20}";
 		return Pattern.matches(regex, userName);
@@ -128,64 +168,61 @@ public class Utils {
 	}
 
 	public static boolean validPhone(String phoneNum) {
-		 if (phoneNum.length() != 11)
-	        {
-	            return false;
-	        }else{
-	            /**
-	             * 移动号段正则表达式
-	             */
-	            String pat1 = "^((13[4-9])|(147)|(15[0-2,7-9])|(178)|(18[2-4,7-8]))\\d{8}|(1705)\\d{7}$";
-	            /**
-	             * 联通号段正则表达式
-	             */
-	            String pat2  = "^((13[0-2])|(145)|(15[5-6])|(176)|(18[5,6]))\\d{8}|(1709)\\d{7}$";
-	            /**
-	             * 电信号段正则表达式
-	             */
-	            String pat3  = "^((133)|(153)|(177)|(18[0,1,9])|(149)|(199))\\d{8}$";
-	            /**
-	             * 虚拟运营商正则表达式
-	             */
-	            String pat4 = "^((170))\\d{8}|(1718)|(1719)\\d{7}$";
+		if (phoneNum.length() != 11) {
+			return false;
+		} else {
+			/**
+			 * 移动号段正则表达式
+			 */
+			String pat1 = "^((13[4-9])|(147)|(15[0-2,7-9])|(178)|(18[2-4,7-8]))\\d{8}|(1705)\\d{7}$";
+			/**
+			 * 联通号段正则表达式
+			 */
+			String pat2 = "^((13[0-2])|(145)|(15[5-6])|(176)|(18[5,6]))\\d{8}|(1709)\\d{7}$";
+			/**
+			 * 电信号段正则表达式
+			 */
+			String pat3 = "^((133)|(153)|(177)|(18[0,1,9])|(149)|(199))\\d{8}$";
+			/**
+			 * 虚拟运营商正则表达式
+			 */
+			String pat4 = "^((170))\\d{8}|(1718)|(1719)\\d{7}$";
 
-	            
-	            boolean isMatch1 = Pattern.matches(pat1, phoneNum);
-	            if(isMatch1){
-	                return true;
-	            }	            
-	            
-	            boolean isMatch2 = Pattern.matches(pat2, phoneNum);
-	            if(isMatch2){
-	                return true;
-	            }
-	            
-	            boolean isMatch3 = Pattern.matches(pat3, phoneNum);
-	            if(isMatch3){
-	                return true;
-	            }
-	            
-	            boolean isMatch4 = Pattern.matches(pat4, phoneNum);
-	            if(isMatch4){
-	                return true;
-	            }
-	            return false; 
-	        }
+			boolean isMatch1 = Pattern.matches(pat1, phoneNum);
+			if (isMatch1) {
+				return true;
+			}
+
+			boolean isMatch2 = Pattern.matches(pat2, phoneNum);
+			if (isMatch2) {
+				return true;
+			}
+
+			boolean isMatch3 = Pattern.matches(pat3, phoneNum);
+			if (isMatch3) {
+				return true;
+			}
+
+			boolean isMatch4 = Pattern.matches(pat4, phoneNum);
+			if (isMatch4) {
+				return true;
+			}
+			return false;
+		}
 	}
 
 	public static boolean validRealName(String realName) {
-		if(StringUtils.isBlank(realName)) {
+		if (StringUtils.isBlank(realName)) {
 			return false;
 		}
-		
-		if(realName.length() <= 1 || realName.length() > 20) {
+
+		if (realName.length() <= 1 || realName.length() > 20) {
 			return false;
 		}
-		
-		
+
 		return isChinese(realName);
 	}
-	
+
 	private static boolean isChinese(char c) {
 		Character.UnicodeBlock ub = Character.UnicodeBlock.of(c);
 		if (ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS
@@ -197,13 +234,13 @@ public class Utils {
 				|| ub == Character.UnicodeBlock.GENERAL_PUNCTUATION) {
 			return true;
 		}
-		
-		if('·' == c) {
+
+		if ('·' == c) {
 			return true;
 		}
 		return false;
 	}
- 
+
 	// 完整的判断中文汉字和符号
 	public static boolean isChinese(String strName) {
 		char[] ch = strName.toCharArray();
@@ -215,50 +252,53 @@ public class Utils {
 		}
 		return true;
 	}
-	
-	public static Map<String,Object> validBankInfo(String bank){
+
+	public static Map<String, Object> validBankInfo(String bank) {
 		Map<String, Object> ret = new HashMap<String, Object>();
 		Gson json = new Gson();
-		Map<String, Object> checkResut = json.fromJson(HttpUtils.sendGetRepuest("https://ccdcapi.alipay.com/validateAndCacheCardInfo.json?_input_charset=utf-8&cardNo="+bank+"&cardBinCheck=true"), HashMap.class);
-		if(!Boolean.valueOf(checkResut.get("validated").toString())){
+		Map<String, Object> checkResut = json.fromJson(HttpUtils
+				.sendGetRepuest("https://ccdcapi.alipay.com/validateAndCacheCardInfo.json?_input_charset=utf-8&cardNo="
+						+ bank + "&cardBinCheck=true"),
+				HashMap.class);
+		if (!Boolean.valueOf(checkResut.get("validated").toString())) {
 			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
 			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_USER_INVALID_BANK_CARD.getCode());
 			ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_USER_INVALID_BANK_CARD.getErrorMes());
 			return ret;
 		}
 		ret.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
-		ret.put(Message.KEY_DATA,checkResut.get("bank").toString().toUpperCase());
+		ret.put(Message.KEY_DATA, checkResut.get("bank").toString().toUpperCase());
 		return ret;
 	}
 
-	public static Integer toInteger(Object val){
-		try{
+	public static Integer toInteger(Object val) {
+		try {
 			return Integer.valueOf(val.toString());
-		}catch (Exception e) {
+		} catch (Exception e) {
 		}
 		return 0;
 	}
-	
-	public static Double toDouble(Object val){
-		try{
+
+	public static Double toDouble(Object val) {
+		try {
 			return Double.valueOf(val.toString());
-		}catch (Exception e) {
+		} catch (Exception e) {
 		}
 		return 0.00;
 	}
-	
-	public static String toString(Object val){
-		try{
+
+	public static String toString(Object val) {
+		try {
 			return String.valueOf(val.toString());
-		}catch (Exception e) {
+		} catch (Exception e) {
 		}
 		return "";
 	}
-	
-	public static Date toDate(Object val){
-		try{
+
+	public static Date toDate(Object val) {
+		try {
 			return DateUtil.fmtYmdHisToDate(val.toString());
-		}catch (Exception e) {
+		} catch (Exception e) {
 		}
 		return null;
 	}
@@ -272,182 +312,173 @@ public class Utils {
 		String regex = "((0[1-9])|(10)|(11)){1,11}";
 		return Pattern.matches(regex, betNumTemp);
 	}
-	
-	public static List<Map<String,String>> parseQszuxZsBetNumber(String betNum){
-		List<Map<String,String>> betNumList = new ArrayList<>();
+
+	public static List<Map<String, String>> parseQszuxZsBetNumber(String betNum) {
+		List<Map<String, String>> betNumList = new ArrayList<>();
 		String[] betNumArray = betNum.split(";");
 		List<String[]> arrangements = new ArrayList<>();
 		List<String[]> finalRet = new ArrayList<>();
-		
-		for(String singleBetNumArray : betNumArray) {
+
+		for (String singleBetNumArray : betNumArray) {
 			String[] betNumBits = new String[singleBetNumArray.length()];
-			for(int i = 0; i < singleBetNumArray.length(); i++) {
+			for (int i = 0; i < singleBetNumArray.length(); i++) {
 				betNumBits[i] = singleBetNumArray.substring(i, i + 1);
 			}
 			List<String[]> combinations = new ArrayList<>();
 			MathUtil.combinationSelect(betNumBits, 2, combinations);
-			
-			
-			for(String[] combination : combinations) {
+
+			for (String[] combination : combinations) {
 				MathUtil.arrangementSelect(combination, 2, arrangements);
-				for(String[] arrangement : arrangements) {
+				for (String[] arrangement : arrangements) {
 					String repeatBit = arrangement[0];
 					String[] extendArrangement = new String[3];
 					extendArrangement[0] = repeatBit;
 					extendArrangement[1] = arrangement[0];
 					extendArrangement[2] = arrangement[1];
 					finalRet.add(extendArrangement);
-					
+
 					String[] extendArrangement1 = new String[3];
 					extendArrangement1[0] = arrangement[0];
 					extendArrangement1[1] = arrangement[1];
 					extendArrangement1[2] = repeatBit;
 					finalRet.add(extendArrangement1);
-					
+
 					String repeatBit2 = arrangement[1];
 					String[] extendArrangement2 = new String[3];
 					extendArrangement2[0] = repeatBit2;
 					extendArrangement2[1] = arrangement[0];
 					extendArrangement2[2] = arrangement[1];
 					finalRet.add(extendArrangement2);
-					
+
 					String[] extendArrangement3 = new String[3];
 					extendArrangement3[0] = arrangement[0];
 					extendArrangement3[1] = arrangement[1];
 					extendArrangement3[2] = repeatBit2;
 					finalRet.add(extendArrangement3);
-					
-					
+
 				}
 			}
-			
-			
-			for(String[] temp : finalRet) {
+
+			for (String[] temp : finalRet) {
 				StringBuffer buffer = new StringBuffer();
-				for(String tempBit : temp) {
+				for (String tempBit : temp) {
 					buffer.append(tempBit);
 				}
 				String tempStr = buffer.toString();
-				if(!isExisting(betNumList, tempStr)) {
+				if (!isExisting(betNumList, tempStr)) {
 					Map<String, String> row = new HashMap<String, String>();
 					row.put(Constants.KEY_FACADE_BET_NUM, tempStr);
 					row.put(Constants.KEY_FACADE_PATTERN, tempStr + "[0-9]{2}");
 					row.put(Constants.KEY_FACADE_BET_NUM_SAMPLE, tempStr + "00");
 					betNumList.add(row);
-					//betNumList.add(tempStr);
+					// betNumList.add(tempStr);
 				}
 			}
 		}
-		
+
 		return betNumList;
 	}
-	
+
 	private static boolean isExisting(List<Map<String, String>> betNumList, String tempStr) {
-		for(Map<String, String> temp : betNumList) {
+		for (Map<String, String> temp : betNumList) {
 			String betNum = temp.get(Constants.KEY_FACADE_BET_NUM);
-			if(StringUtils.isBlank(betNum)) {
+			if (StringUtils.isBlank(betNum)) {
 				return false;
 			}
-			
-			if(betNum.equals(tempStr)) {
+
+			if (betNum.equals(tempStr)) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 
-	public static List<Map<String, String>> parseQszuxZLBetNumber(String betNum){
+	public static List<Map<String, String>> parseQszuxZLBetNumber(String betNum) {
 		List<Map<String, String>> betNumList = new ArrayList<>();
 		String[] betNumArray = betNum.split(";");
 		List<String[]> arrangements = new ArrayList<>();
-		
-		for(String singleBetNumArray : betNumArray) {
+
+		for (String singleBetNumArray : betNumArray) {
 			String[] betNumBits = new String[singleBetNumArray.length()];
-			for(int i = 0; i < singleBetNumArray.length(); i++) {
+			for (int i = 0; i < singleBetNumArray.length(); i++) {
 				betNumBits[i] = singleBetNumArray.substring(i, i + 1);
 			}
 			List<String[]> combinations = new ArrayList<>();
 			MathUtil.combinationSelect(betNumBits, 3, combinations);
-			
-			
-			for(String[] combination : combinations) {
-				MathUtil.arrangementSelect(combination, 3, arrangements);				
+
+			for (String[] combination : combinations) {
+				MathUtil.arrangementSelect(combination, 3, arrangements);
 			}
-			
-			
-			for(String[] temp : arrangements) {
+
+			for (String[] temp : arrangements) {
 				StringBuffer buffer = new StringBuffer();
-				for(String tempBit : temp) {
+				for (String tempBit : temp) {
 					buffer.append(tempBit);
 				}
-				
-				//buffer.append("**");
+
+				// buffer.append("**");
 				String tempStr = buffer.toString();
-				if(!isExisting(betNumList, tempStr)) {
+				if (!isExisting(betNumList, tempStr)) {
 					Map<String, String> row = new HashMap<String, String>();
 					row.put(Constants.KEY_FACADE_BET_NUM, tempStr);
 					row.put(Constants.KEY_FACADE_PATTERN, tempStr + "[0-9]{2}");
-					row.put(Constants.KEY_FACADE_BET_NUM_SAMPLE, tempStr + "00");				
+					row.put(Constants.KEY_FACADE_BET_NUM_SAMPLE, tempStr + "00");
 					betNumList.add(row);
-					//betNumList.add(tempStr);
+					// betNumList.add(tempStr);
 				}
 			}
 		}
-		
+
 		return betNumList;
 	}
-	
-	
+
 	public Long getSeq() {
 		int bettingBlockTimes = 3000;
 		int bettingBlockCounter = 0;
 		String keyLock = Constants.KEY_LOCK_SEQ;
 		Date lockStart = null;
 		Date lockEnd = null;
-				
+
 		while (bettingBlockCounter < bettingBlockTimes) {
 			logger.debug(
-					String.format("Thread Id %s    loker  %s   entering", 
-							Thread.currentThread().getId(), 
-							keyLock));
-			
+					String.format("Thread Id %s    loker  %s   entering", Thread.currentThread().getId(), keyLock));
+
 			if (cacheServ.lock(keyLock, keyLock, Constants.LOCK_BETTING_EXPIRED)) {
 				lockStart = new Date();
 				GenSequence seq = genSeqServ.querySeqVal();
-				if(seq == null) {
+				if (seq == null) {
 					return null;
 				}
-				
-				if(seq.getSeqVal() + 1 > 9999999) {
+
+				if (seq.getSeqVal() + 1 > 9999999) {
 					seq.setSeqVal(1L);
-				}else {
+				} else {
 					seq.setSeqVal(seq.getSeqVal() + 1);
 				}
-				
+
 				genSeqServ.saveSeq(seq);
-				
+
 				lockEnd = new Date();
-				logger.debug(String.format("Thread ID %s release locker , consume %s ms", 
-						Thread.currentThread().getId(),
-						lockEnd.getTime() - lockStart.getTime()));
-				
+				logger.debug(String.format("Thread ID %s release locker , consume %s ms",
+						Thread.currentThread().getId(), lockEnd.getTime() - lockStart.getTime()));
+
 				return seq.getSeqVal();
 			}
-				
+
 			bettingBlockCounter++;
 			try {
-					Thread.sleep(100);
+				Thread.sleep(100);
 			} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-			}finally {
-				
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} finally {
+
 				cacheServ.releaseLock(keyLock);
 			}
 		}
-		
+
 		return null;
-		
+
 	}
 }

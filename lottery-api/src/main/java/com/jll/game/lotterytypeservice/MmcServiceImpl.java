@@ -262,7 +262,8 @@ public class MmcServiceImpl extends DefaultPrivateLottoTypeServiceImpl
 		cacheServ.publishMessage(Constants.TOPIC_PAY_OUT, lottoType +"|"+ issueNum);
 	}
 
-	private void nonInterventional(String lottoType, String issueNum) {
+	@Override
+	public void nonInterventional(String lottoType, String issueNum) {
 		String winningNum;
 		Issue issue;
 		

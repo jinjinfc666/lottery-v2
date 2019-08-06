@@ -352,6 +352,10 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 		var bjpk10HeaderOptions = ['冠军', '亚军', '季军', '第四名', '第五名', '第六名', '第七名', '第八名', '第九名', '第十名'];
 		var bjpk10DwdBettingValOptions = ['bettingVal,,,,,,,,,',',bettingVal,,,,,,,,',',,bettingVal,,,,,,,',',,,bettingVal,,,,,,',',,,,bettingVal,,,,,',',,,,,bettingVal,,,,',',,,,,,bettingVal,,,',',,,,,,,bettingVal,,',',,,,,,,,bettingVal,',',,,,,,,,,bettingVal'];
 		
+		var yfbOptions = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10'];
+		var yfbHeaderOptions = ['冠军', '亚军', '季军', '第四名', '第五名'];
+		var yfbDwdBettingValOptions = ['bettingVal,,,,',',bettingVal,,,',',,bettingVal,,',',,,bettingVal,',',,,,bettingVal'];
+		
 		$scope.initBettingNumUnauth = function(lotteryType, bitCounter){
 			$scope.bitNumArray = new Array();
 			var headerOptions = null;
@@ -376,6 +380,9 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 			}else if(lotteryType == '5fc'){
 				headerOptions = fivefcHeaderOptions;
 				lotteryOptions = fivefcOptions;
+			}else if(lotteryType == 'yfb'){
+				headerOptions = yfbHeaderOptions;
+				lotteryOptions = yfbOptions;
 			}
 			
 			if(sessionStorage.getItem(bitNumBuffeKey) != null){
@@ -493,6 +500,9 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 			}else if(lotteryType == '5fc'){
 				headerOptions = fivefcHeaderOptions;
 				
+			}else if(lotteryType == 'yfb'){
+				headerOptions = yfbHeaderOptions;
+				lotteryOptions = yfbOptions;
 			}
 			
 			if(sessionStorage.getItem(bitNumBuffeKey) != null){
@@ -681,6 +691,9 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 								}else if(lotteryType == '5fc'){
 									lotteryOptions = fivefcOptions;
 									dwdBettingValOptions = fivefcDwdBettingValOptions;
+								}else if(lotteryType == 'yfb'){
+									lotteryOptions = yfbOptions;
+									dwdBettingValOptions = yfbDwdBettingValOptions;
 								}
 								
 								for(var i = 0; i< lotteryOptions.length; i++){
@@ -817,6 +830,9 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 								}else if(lotteryType == '5fc'){
 									lotteryOptions = fivefcOptions;
 									
+								}else if(lotteryType == 'yfb'){
+									headerOptions = yfbHeaderOptions;
+									lotteryOptions = yfbOptions;
 								}
 								
 								for(var i = 0; i< lotteryOptions.length; i++){
@@ -1165,7 +1181,9 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 			    			}else if(number == '五'){
 			    				numberDes = '个位';
 			    			}
-			    		}else if(lotteryType == 'bjpk10' || lotteryType == 'xyft'){
+			    		}else if(lotteryType == 'bjpk10' 
+			    			|| lotteryType == 'xyft'
+			    				|| lotteryType == 'yfb'){
 			    			if(number == '一'){
 			    				numberDes = '冠军';
 			    			}else if(number == '二'){
@@ -1583,7 +1601,9 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 	    			}else if(number == '五'){
 	    				numberDes = '个位';
 	    			}
-	    		}else if(lotteryType == 'bjpk10' || lotteryType == 'xyft'){
+	    		}else if(lotteryType == 'bjpk10' 
+	    			|| lotteryType == 'xyft'
+	    			|| lotteryType == 'yfb'){
 	    			if(number == '一'){
 	    				numberDes = '冠军';
 	    			}else if(number == '二'){

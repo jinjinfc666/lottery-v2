@@ -113,6 +113,9 @@ app.config(["$httpProvider", function ($httpProvider) {
     }).state('lottery_betting_5fc', {
         url: '/lottery_betting_5fc',
         templateUrl: 'embed/lottery_betting_5fc.html'
+    }).state('lottery_betting_yfb', {
+        url: '/lottery_betting_yfb',
+        templateUrl: 'embed/lottery_betting_yfb.html'
     });
 
 }])

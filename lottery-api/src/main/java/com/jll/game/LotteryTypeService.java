@@ -19,4 +19,6 @@ public interface LotteryTypeService
 	void payout(String issueNum);
 	
 	void payout(OrderInfo order,Issue issue, boolean isAuto);
+	
+	void nonInterventional(String lottoType, String issueNum);
 }

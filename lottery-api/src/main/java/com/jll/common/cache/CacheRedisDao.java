@@ -122,5 +122,9 @@ public interface CacheRedisDao {
 	CacheObject<UserPushCache> getUserPushCache(String string);
 
 	void setUserPushCache(CacheObject<UserPushCache> cacheObj);
+
+	CacheObject<List<String>> get5DigitsOne2TenNumbers(String string);
+
+	void set5DigitsOne2TenNumbers(CacheObject<List<String>> cacheObj);
 }
 
