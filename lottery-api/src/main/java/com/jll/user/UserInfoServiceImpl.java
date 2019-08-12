@@ -277,7 +277,10 @@ public class UserInfoServiceImpl implements UserInfoService
 		dbInfo.setLoginPwd(StringUtils.MORE_ASTERISK);
 		dbInfo.setFundPwd(StringUtils.MORE_ASTERISK);
 		
-		if(dbInfo.getUserType().intValue() == UserType.XY_PLAYER.getCode()) {
+		if(dbInfo.getUserType().intValue() == UserType.XY_PLAYER.getCode()
+				|| dbInfo.getUserType().intValue() == UserType.XY_AGENCY.getCode()
+				|| dbInfo.getUserType().intValue() == UserType.ENTRUST_AGENCY.getCode()
+				|| dbInfo.getUserType().intValue() == UserType.ENTRUST_PLAYER.getCode()) {
 			String payoutRate = userExtServ.queryFiledByName(dbInfo.getId(), "xyPayoutRate");
 			String xyAmount = userExtServ.queryFiledByName(dbInfo.getId(), "xyAmount");
 			String panKou = userExtServ.queryFiledByName(dbInfo.getId(), "panKou");
@@ -465,15 +468,8 @@ public class UserInfoServiceImpl implements UserInfoService
 			return Message.Error.ERROR_USER_INVALID_REAL_NAME.getCode();
 		}
 		
-		if(user.getUserType() != null
-				&& user.getUserType().intValue() != 0
-				&& user.getUserType().intValue() != 1
-				&& user.getUserType().intValue() != 2
-				&& user.getUserType().intValue() != 3
-				&& user.getUserType().intValue() != 5
-				&& user.getUserType().intValue() != 6
-				&& user.getUserType().intValue() != 7
-				&& user.getUserType().intValue() != 8) {
+		UserType userType = UserType.getStateByCode(user.getUserType());
+		if(userType == null) {
 			return Message.Error.ERROR_USER_INVALID_USER_TYPE.getCode();
 		}
 		
@@ -495,7 +491,7 @@ public class UserInfoServiceImpl implements UserInfoService
 	}
 
 	@Override
-	public void regUser(UserInfo user, String reqIP) {
+	public void saveUser(UserInfo user, String reqIP) {
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String loginUserName = null;
@@ -531,8 +527,12 @@ public class UserInfoServiceImpl implements UserInfoService
 		
 		userDao.saveUser(user);
 		
-		if(user.getXyAmount() != null
-				&& user.getXyAmount() > 0) {
+		if(user.getUserType().intValue() == UserType.SM_AGENCY.getCode()
+				|| user.getUserType().intValue() == UserType.SM_PLAYER.getCode()
+				|| user.getUserType().intValue() == UserType.XY_PLAYER.getCode()
+				|| user.getUserType().intValue() == UserType.XY_AGENCY.getCode()
+				|| user.getUserType().intValue() == UserType.ENTRUST_PLAYER.getCode()
+				|| user.getUserType().intValue() == UserType.ENTRUST_AGENCY.getCode()) {
 			userExtServ.saveUserInfoExt(user);
 		}
 		
@@ -544,7 +544,8 @@ public class UserInfoServiceImpl implements UserInfoService
 				if(user.getUserType()==Constants.UserType.PLAYER.getCode()
 						||user.getUserType()==Constants.UserType.DEMO_PLAYER.getCode()
 						|| user.getUserType()==Constants.UserType.SM_PLAYER.getCode()
-						|| user.getUserType() == Constants.UserType.XY_PLAYER.getCode()) {
+						|| user.getUserType() == Constants.UserType.XY_PLAYER.getCode()
+						|| user.getUserType().intValue() == UserType.ENTRUST_PLAYER.getCode()) {
 					roleName=Constants.Permission.ROLE_USER.getCode();
 				}else if(user.getUserType()==Constants.UserType.AGENCY.getCode()) {
 					roleName=Constants.Permission.ROLE_AGENT.getCode();
@@ -552,7 +553,10 @@ public class UserInfoServiceImpl implements UserInfoService
 					roleName=Constants.Permission.ROLE_AGENT_SM.getCode();
 				}else if(user.getUserType()==Constants.UserType.XY_AGENCY.getCode()) {
 					roleName=Constants.Permission.ROLE_AGENT_XY.getCode();
+				}else if(user.getUserType()==Constants.UserType.ENTRUST_AGENCY.getCode()) {
+					roleName=Constants.Permission.ROLE_AGENT_ENTRUST.getCode();
 				}
+				
 				SysRole sysRole=sysRoleService.queryByRoleName(roleName);
 				if(sysRole==null) {
 					throw new RuntimeException(Message.Error.ERROR_COMMON_OTHERS.getErrorMes());
@@ -1936,7 +1940,9 @@ public class UserInfoServiceImpl implements UserInfoService
 			
 			if(userInfo.getUserType().intValue() == Constants.UserType.XY_PLAYER.getCode()
 					|| userInfo.getUserType().intValue() == Constants.UserType.XY_AGENCY.getCode()
-					|| userInfo.getUserType().intValue() == Constants.UserType.SM_PLAYER.getCode()) {
+					|| userInfo.getUserType().intValue() == Constants.UserType.SM_PLAYER.getCode()
+					|| userInfo.getUserType().intValue() == Constants.UserType.ENTRUST_PLAYER.getCode()
+					|| userInfo.getUserType().intValue() == Constants.UserType.ENTRUST_AGENCY.getCode()) {
 				String payoutRate = userExtServ.queryFiledByName(userInfo.getId(), "xyPayoutRate");
 				String xyAmount = userExtServ.queryFiledByName(userInfo.getId(), "xyAmount");
 				String panKou = userExtServ.queryFiledByName(userInfo.getId(), "panKou");
@@ -2008,7 +2014,7 @@ public class UserInfoServiceImpl implements UserInfoService
 		user.setUserName(demoName);
 		user.setLoginPwd(demoPwd);
 		user.setFundPwd(demoPwd);
-		regUser(user,reqIP);
+		saveUser(user,reqIP);
 		
 		UserAccount dbAcc = (UserAccount) supserDao.findByName(UserAccount.class, "userId", user.getId(), "accType", WalletType.MAIN_WALLET.getCode()).get(0);
 		dbAcc.setBalance(new Double(demoBal));
@@ -2323,13 +2329,37 @@ public class UserInfoServiceImpl implements UserInfoService
 			Integer pageSize = (Integer) params.get("pageSize");
 			Integer searchType = (Integer)params.get("searchType");
 			userInfoList = userDao.queryAllAgentXYByAdmin(searchType, userName,startTime,endTime,pageIndex,pageSize);
-		}else if(userInfo.getUserType() == UserType.SM_AGENCY.getCode()) {
+		}else if(userInfo.getUserType() == UserType.XY_AGENCY.getCode()) {
 			String userName = (String) params.get("userName");
 			String startTime = (String) params.get("startTime");
 			String endTime = (String) params.get("endTime");
 			Integer pageIndex = (Integer) params.get("pageIndex");
 			Integer pageSize = (Integer) params.get("pageSize");
 			userInfoList = userDao.queryAllAgentXYByAgency(userInfo.getId(), userName,startTime,endTime,pageIndex,pageSize);
+		}
+		
+		return userInfoList;
+	}
+
+	@Override
+	public Map<String, Object> queryAllAgentEntrust(Map<String, Object> params) {
+		UserInfo userInfo = getCurLoginInfo();
+		Map<String,Object> userInfoList = null;
+		if(userInfo.getUserType() == UserType.SYS_ADMIN.getCode()) {
+			String userName = (String) params.get("userName");
+			String startTime = (String) params.get("startTime");
+			String endTime = (String) params.get("endTime");
+			Integer pageIndex = (Integer) params.get("pageIndex");
+			Integer pageSize = (Integer) params.get("pageSize");
+			Integer searchType = (Integer)params.get("searchType");
+			userInfoList = userDao.queryAllAgentEntrustByAdmin(searchType, userName,startTime,endTime,pageIndex,pageSize);
+		}else if(userInfo.getUserType() == UserType.ENTRUST_AGENCY.getCode()) {
+			String userName = (String) params.get("userName");
+			String startTime = (String) params.get("startTime");
+			String endTime = (String) params.get("endTime");
+			Integer pageIndex = (Integer) params.get("pageIndex");
+			Integer pageSize = (Integer) params.get("pageSize");
+			userInfoList = userDao.queryAllAgentEntrustByAgency(userInfo.getId(), userName,startTime,endTime,pageIndex,pageSize);
 		}
 		
 		return userInfoList;

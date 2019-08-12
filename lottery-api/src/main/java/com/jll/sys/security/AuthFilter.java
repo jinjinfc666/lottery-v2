@@ -122,7 +122,9 @@ public class AuthFilter extends ClientCredentialsTokenEndpointFilter {
 				Integer userType = user.getUserType();
 				if(userType == null 
 						|| (userType.intValue() != Constants.UserType.SYS_ADMIN.getCode()
-						&& userType.intValue() != Constants.UserType.SM_AGENCY.getCode())) {
+						&& userType.intValue() != Constants.UserType.SM_AGENCY.getCode()
+						&& userType.intValue() != Constants.UserType.XY_AGENCY.getCode()
+						&& userType.intValue() != Constants.UserType.ENTRUST_AGENCY.getCode())) {
 					throw new CusAuthenticationException(Message.Error.ERROR_COMMON_NO_PERMISSION.getCode());  
 				}
 			}else if(Constants.KEY_CLIENT_ID_CLIENT.equals(clientId)) {

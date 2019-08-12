@@ -28,8 +28,12 @@ var queryUserSettlementURL = SITE + "/user-settlements";
 
 var performSettlementURL = SITE + "/user-settlements/{id}";
 
-var performSettlementURL = SITE + "/user-settlements/{id}";
-
 var queryAgentXYURL = SITE + "/users/queryAllUserAgentXY";
 
 var queryUserXYURL = SITE + "/users/queryAllUserAgentXY";
+
+var queryAgentEntrustURL = SITE + "/users/queryAllUserAgentEntrust";
+
+var queryUserEntrustURL = SITE + "/users/queryAllUserAgentEntrust";
+
+var queryUserInfoURL = SITE + "/users/queryUserInfo";

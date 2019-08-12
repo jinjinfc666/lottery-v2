@@ -1,6 +1,5 @@
 package com.jll.common.utils;
 
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,7 +21,6 @@ import com.jll.common.constants.Constants;
 import com.jll.common.constants.Message;
 import com.jll.common.utils.sequence.GenSequenceService;
 import com.jll.entity.GenSequence;
-import com.jll.game.LotteryCenterController;
 import com.jll.spring.extend.SpringContextUtil;
 
 public class Utils {
@@ -122,26 +120,48 @@ public class Utils {
 				for (int iii = 0; iii < 10; iii++) {
 					for (int iiii = 0; iiii < 10; iiii++) {
 						for (int iiiii = 0; iiiii < 10; iiiii++) {
-							rowMap.clear();
-							row.delete(0, row.length());
+							for (int iiiiii = 0; iiiiii < 10; iiiiii++) {
+								for (int iiiiiii = 0; iiiiiii < 10; iiiiiii++) {
+									for (int iiiiiiii = 0; iiiiiiii < 10; iiiiiiii++) {
+										for (int iiiiiiiii = 0; iiiiiiiii < 10; iiiiiiiii++) {
+											for (int iiiiiiiiii = 0; iiiiiiiiii < 10; iiiiiiiiii++) {
+												rowMap.clear();
+												row.delete(0, row.length());
 
-							rowMap.put(oneToTenArray[i], oneToTenArray[i]);
-							rowMap.put(oneToTenArray[ii], oneToTenArray[ii]);
-							rowMap.put(oneToTenArray[iii], oneToTenArray[iii]);
-							rowMap.put(oneToTenArray[iiii], oneToTenArray[iiii]);
-							rowMap.put(oneToTenArray[iiiii], oneToTenArray[iiiii]);
+												rowMap.put(oneToTenArray[i], oneToTenArray[i]);
+												rowMap.put(oneToTenArray[ii], oneToTenArray[ii]);
+												rowMap.put(oneToTenArray[iii], oneToTenArray[iii]);
+												rowMap.put(oneToTenArray[iiii], oneToTenArray[iiii]);
+												rowMap.put(oneToTenArray[iiiii], oneToTenArray[iiiii]);
+												rowMap.put(oneToTenArray[iiiiii], oneToTenArray[iiiiii]);
+												rowMap.put(oneToTenArray[iiiiiii], oneToTenArray[iiiiiii]);
+												rowMap.put(oneToTenArray[iiiiiiii], oneToTenArray[iiiiiiii]);
+												rowMap.put(oneToTenArray[iiiiiiiii], oneToTenArray[iiiiiiiii]);
+												rowMap.put(oneToTenArray[iiiiiiiiii], oneToTenArray[iiiiiiiiii]);
 
-							if (rowMap.size() != 5) {
-								continue;
-							}
+												if (rowMap.size() != 10) {
+													continue;
+												}
 
-							row.append(oneToTenArray[i]).append(",")
-								.append(oneToTenArray[ii]).append(",")
-									.append(oneToTenArray[iii]).append(",")
-									.append(oneToTenArray[iiii]).append(",")
-									.append(oneToTenArray[iiiii]);
+												row.append(oneToTenArray[i]).append(",")
+													.append(oneToTenArray[ii]).append(",")
+													.append(oneToTenArray[iii]).append(",")
+													.append(oneToTenArray[iiii]).append(",")
+													.append(oneToTenArray[iiiii]).append(",")
+													.append(oneToTenArray[iiiiii]).append(",")
+													.append(oneToTenArray[iiiiiii]).append(",")
+													.append(oneToTenArray[iiiiiiii]).append(",")
+													.append(oneToTenArray[iiiiiiiii]).append(",")
+													.append(oneToTenArray[iiiiiiiiii]);
 
-							rows.add(row.toString());
+												rows.add(row.toString());
+												
+												System.out.println(String.format("number %s,  counter: %s", row.toString(), rows.size()));
+											}
+										}
+									}
+								}
+							}							
 						}
 					}
 				}

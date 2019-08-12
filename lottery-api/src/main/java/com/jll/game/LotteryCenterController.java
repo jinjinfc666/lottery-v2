@@ -260,7 +260,7 @@ public class LotteryCenterController {
 					}
 					
 					//new function for xy player
-					if(user.getUserType().intValue() == UserType.XY_PLAYER.getCode()) {
+					if(user.getUserType().intValue() == UserType.ENTRUST_PLAYER.getCode()) {
 						String payoutRate = userExtServ.queryFiledByName(user.getId(), "xyPayoutRate");
 						String xyAmount = userExtServ.queryFiledByName(user.getId(), "xyAmount");
 						
@@ -352,6 +352,10 @@ public class LotteryCenterController {
 		
 		
 		for(OrderInfo order : orders) {
+			if(order.getIsPrize() == null) {
+				continue;
+			}
+			
 			if(order.getIsPrize() == 1) {
 				Map<String, Object> params = new HashMap<>();
 				params.put("betNum", order.getBetNum());

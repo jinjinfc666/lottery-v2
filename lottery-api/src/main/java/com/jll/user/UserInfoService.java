@@ -75,7 +75,7 @@ public interface UserInfoService
 	 *		   Message.status.SUCCESS or
 	 *         Message.Error
 	 */
-	void regUser(UserInfo user, String reqIP);
+	void saveUser(UserInfo user, String reqIP);
 
 	/**
 	 * query the general agency which is unique in the system
@@ -176,4 +176,6 @@ public interface UserInfoService
 	PageBean<UserInfo> queryXYUsers(PageBean<UserInfo> page);
 	
 	Map<String, Object> queryAllAgentXY(Map<String, Object> params);
+	
+	Map<String, Object> queryAllAgentEntrust(Map<String, Object> ret);
 }

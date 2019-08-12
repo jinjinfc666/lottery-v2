@@ -64,6 +64,22 @@ var messageArray = {
 				"dwd_3":"十位 {number}",
 				"dwd_4":"个位 {number}"
 			},
+			"play_type_yfb":{
+				"ds_00":"{number} 双",
+				"ds_01":"{number} 单",
+				"dx_00":"{number} 小",
+				"dx_01":"{number} 大",
+				"dwd_0":"冠军 {number}",
+				"dwd_1":"亚军 {number}",
+				"dwd_2":"季军 {number}",
+				"dwd_3":"第四名 {number}",
+				"dwd_4":"第五名 {number}",
+				"dwd_5":"第六名 {number}",
+				"dwd_6":"第七名 {number}",
+				"dwd_7":"第八名 {number}",
+				"dwd_8":"第九名 {number}",
+				"dwd_9":"第十名 {number}"
+			},
 			"data_item_type":{
 				"0":"余额",
 				"0":"余额",
@@ -96,7 +112,9 @@ function getBettingNum(lotteryType, playType, bettingNum) {
     			}else if(number == '五'){
     				numberDes = '个位';
     			}
-    		}else if(lotteryType == 'bjpk10' || lotteryType == 'xyft'){
+    		}else if(lotteryType == 'bjpk10' 
+    			|| lotteryType == 'xyft'
+    			|| lotteryType == 'yfb'){
     			if(number == '一'){
     				numberDes = '冠军';
     			}else if(number == '二'){

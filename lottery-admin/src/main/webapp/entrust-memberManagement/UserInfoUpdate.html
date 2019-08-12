@@ -51,6 +51,8 @@
         <script type="text/javascript" src="../js/jquery-1.10.2.min.js"></script>
         <script language="javascript" src="../js/layer/layer.min.js"></script>
         <script src="../js/self_js.js" type="text/javascript"></script>
+        <script type="text/javascript" src="../js/site.js"></script>
+        
         <script type="text/javascript">
             $(document).ready(function () {
                 var obj = {};
@@ -63,8 +65,11 @@
                 
                 searchrecord(obj['id']);
                 
-                if(obj['userType'] != '8'){
-                	$("#xyAmount_row").css({"display":"none"});  
+                if(obj['userType'] != '9'){
+                	$("#payoutRate_row").css({"display":"none"});  
+                	$("#creditAmount_row").css({"display":"none"});
+                	$("#isHiddenPlan_row").css({"display":"none"});
+                	$("#smPanKou_row").css({"display":"none"});
                 }
             });
             
@@ -107,9 +112,7 @@
                 updateToken();
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
-//                var tableid = $("#tableTRTD").attr("id");
-                var domain=parseDomain();
-                var url=domain+"/lottery-api/users/queryUserInfo";
+                var url = queryUserInfoURL;
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -146,7 +149,7 @@
                             document.getElementById('loginCount').value=data.data.loginCount;
                             document.getElementById('superior').value=data.data.superior;
                             document.getElementById('rebate').value=data.data.rebate;
-                            //document.getElementById('platRebate').value=data.data.platRebate;
+                            document.getElementById('platRebate').value=data.data.platRebate;
                             document.getElementById('phoneNum').value=data.data.phoneNum;
                             document.getElementById('qq').value=data.data.qq;
                             document.getElementById('wechat').value=data.data.wechat;
@@ -154,10 +157,10 @@
                             document.getElementById('regIp').value=data.data.regIp;
                             document.getElementById('createTime').value=ConvertJSONDateToJSDateObject(""+data.data.createTime+"");
                             
-                            if(data.data.userType == '8'){
-                            	document.getElementById('xyAmount').value=data.data.xyAmount;
-                            }
-                            
+                            document.getElementById('isHiddenPlan').value=data.data.isHiddenPlan;
+                            document.getElementById('smPanKou').value=data.data.panKou;
+                            document.getElementById('creditAmount').value=data.data.xyAmount;
+                            document.getElementById('payoutRate').value=data.data.xyPayoutRate;
                             
                             $("#smPanKou option").each(function(){
                             	if($(this).attr('data-seq') == data.data.panKou){
@@ -201,9 +204,9 @@
                 var state=$("input[name='state']:checked").val();
                 //var userType=$("input[name='userType']:checked").val();
                 var userType=$("#userType").val();
-                var xyAmount = document.getElementById('xyAmount').value;
-               // var xyPayoutRate = document.getElementById('xyPayoutRate').value;
-                //var isHiddenPlan = document.getElementById('isHiddenPlan').value;
+                var creditAmount = document.getElementById('creditAmount').value;
+                var payoutRate = document.getElementById('payoutRate').value;
+                var isHiddenPlan = document.getElementById('isHiddenPlan').value;
                 
                 
                 var domain=parseDomain();
@@ -219,7 +222,9 @@
                     "phoneNum": phoneNum,
                     "email": email,
                     "userType":userType,
-                    "xyAmount":xyAmount
+                    "xyAmount":creditAmount,
+                    "xyPayoutRate":payoutRate,
+                    'isHiddenPlan':isHiddenPlan
                 });
                 $.ajax({
                     url: url,
@@ -413,6 +418,8 @@
 	                	<option value="6">双面代理</option>
 	                	<option value="7">信誉玩家</option>
 	                	<option value="8">信誉代理</option>
+	                	<option value="9">委托投注玩家</option>
+	                	<option value="10">委托投注代理</option>
                 	</select>
                 </td>
             </tr>
@@ -492,20 +499,36 @@
                 <td><input type="text" id="createTime" name="createTime" value="" style="width:150px;" class="form-control" readonly /></td>
             </tr>
             
-             <tr>
+             <tr id="smPanKou_row">
                 <th style="thstyle">选择盘口</th>
                 <td style="text-align:left">
                 	<select id="smPanKou" style="width:150px;height:34px" disabled></select>
                 </td>
             </tr>
-                        
-            <tr id="xyAmount_row">
-                <th class="thstyle">信誉额度：</th>
-                <td>
-                	<input type="text" id="xyAmount" name="xyAmount" value="" style="width:150px;" class="form-control" />
+            
+            <tr id="isHiddenPlan_row">
+                <th class="thstyle">隐藏计划：</th>
+                <td  style="text-align:left">
+                	<select id="isHiddenPlan" style="width:150px;height:34px" >
+	                	<option value="0">隐藏</option>
+	                	<option value="1">显示</option>
+                	</select>
                 </td>
             </tr>
-                     
+            
+            <tr id="creditAmount_row">
+                <th class="thstyle">信誉额度：</th>
+                <td>
+                	<input type="text" id="creditAmount" name="creditAmount" value="" style="width:150px;" class="form-control" />
+                </td>
+            </tr>
+            
+            <tr id="payoutRate_row">
+                <th class="thstyle">最高派奖率：</th>
+                <td>
+                	<input type="text" id="payoutRate" name="payoutRate" value="" style="width:150px;" class="form-control" />
+                </td>
+            </tr>            
             
         </table>
         <script>

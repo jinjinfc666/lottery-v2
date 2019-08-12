@@ -90,4 +90,10 @@ public interface UserInfoDao
 	
 	Map<String, Object> queryAllAgentXYByAgency(Integer id, String userName, String startTime, String endTime,
 			Integer pageIndex, Integer pageSize);
+	
+	Map<String, Object> queryAllAgentEntrustByAdmin(Integer searchType, String userName, String startTime,
+			String endTime, Integer pageIndex, Integer pageSize);
+	
+	Map<String, Object> queryAllAgentEntrustByAgency(Integer id, String userName, String startTime, String endTime,
+			Integer pageIndex, Integer pageSize);
 }

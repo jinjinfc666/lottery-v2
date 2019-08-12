@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>添加下级用户</title>
+        <title>添加下级代理</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style type="text/css">
@@ -9,11 +9,18 @@
             margin:20px auto;
             border-radius: 5px;
         }
-        table th,table td{
-            padding:5px;
-            text-align: center;
+        table th{
+            padding:5 20 5 5;
+            text-align: right;
             border: 1px solid #999999;
         }
+        
+        table td{
+            padding:5 5 5 20;
+            text-align: left;
+            border: 1px solid #999999;
+        }
+        
         table tr:hover{
             background-color: #ccccff;
         }
@@ -63,11 +70,12 @@
                 var obj = {};
                 obj=getValue();
                 document.getElementById('agentId').value=obj['agentId'];
-                /*document.getElementById('loginPwd').value='111111';
-                document.getElementById('fundPwd').value='111111';*/
+                //document.getElementById('loginPwd').value='111111';
+                //document.getElementById('fundPwd').value='111111';
                 getplat();
                 // if(a){
-               // changenum();
+                //changenum();
+                // }
             });
             function getplat(){
                 updateToken();
@@ -75,6 +83,8 @@
                 var token="Bearer " + access_token;
                 var domain=parseDomain();
                 var url=domain+"/lottery-api/settings/querySmPanKou";
+                var userId = $("#agentId").val();
+                
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -85,18 +95,35 @@
                     beforeSend: function (XMLHttpRequest) {
                         //XMLHttpRequest.setRequestHeader("Authorization", token);
                     },
-                    error: function (jqXHR,textStatus,errorThrown) {
-                        if(typeof jqXHR != 'undefined' 
-                        		&& typeof jqXHR.status != 'undefined' 
-                        		&& jqXHR.status == 401){
-                        	
-                        }
+                    error: function () {
+                    	 if(typeof jqXHR != 'undefined' 
+                     		&& typeof jqXHR.status != 'undefined' 
+                     		&& jqXHR.status == 401){
+                     	
+                     	 }
                     },
                     success: function (data) {
                         if(data.status=="1"){
-                        	 $.each(data.data, function(key, val) {  
-                        		 $("#smPanKou").append("<option data-seq='"+ val.seq +"' value='"+val.codeVal+"'>"+val.remark+"</option>");
-                             })
+                        	var maxPlatPoint = 0;
+                        	$.each(data.data, function(key, val) {
+                        		if(val.codeVal > maxPlatPoint){
+                        			maxPlatPoint = val.codeVal;
+                        		}                                
+                            })
+                            
+                            //var userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
+                            var deffered = $.Deferred();
+                        	deffered.done(function(userInfo){
+                        		
+                        		var htmlStr = "返点范围:" + maxPlatPoint +"    到     " + userInfo.platRebate;
+                                $("#platRebate1").text(htmlStr);
+                                $("#platRebate").attr("data-minimum", maxPlatPoint);
+                                $("#platRebate").attr("data-maximum", maxPlatPoint);
+                        	});
+                        	
+                            queryUserInfo(deffered, userId);
+                            
+                        	
                         }else{
                             alert(getErroe(data.error_code));
                         }
@@ -124,32 +151,18 @@
             }
             function add(){
                 updateToken();
-                var userType = document.getElementById('userType').value;
                 var agentId=document.getElementById('agentId').value;
                 var realName=document.getElementById('realName').value;
                 var userName=document.getElementById('userName').value;
                 var userId=document.getElementById('userId').value;
                 var loginPwd=document.getElementById('loginPwd').value;
                 var fundPwd=document.getElementById('fundPwd').value;
-                //var platRebate=document.getElementById('platRebate').value;
-                var platRebate = $("#smPanKou option:selected").val();
+                var platRebate=document.getElementById('platRebate').value;
                 var phoneNum=document.getElementById('phoneNum').value;
                 var qq=document.getElementById('qq').value;
                 var wechat=document.getElementById('wechat').value;
                 var email=document.getElementById('email').value;
-                var panKou = $("#smPanKou option:selected").attr("data-seq");
-                
-                if(userType == 7){
-                	if(typeof panKou == 'undefined' || panKou == null || panKou.length == 0){                		
-                		$("#smPanKou_error").text("请选择盘口!");
-                        return false;
-                	}
-                	
-                	/* if(typeof xyPayoutRate == 'undefined' || xyPayoutRate == null || xyPayoutRate.length == 0){                		
-                		$("#xyPayoutRate_error").text("请输入最大派奖率 0.00--1.00!");
-                        return false;
-                	} */
-                }
+                var userType = document.getElementById('userType').value;
                 if(userName==""){
                     $("#userName1").text("请输入用户名!");
                     return false;
@@ -165,6 +178,12 @@
                     return false;
                 }
                 $("#platRebate1").text("");
+                
+                if(userType==""){
+                    $("#userType_error").text("请选择用户类型!");
+                    return false;
+                }
+                
                 var domain=parseDomain();
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
@@ -180,8 +199,7 @@
                     "qq": qq,
                     "wechat": wechat,
                     "email": email,
-                    "userType":userType,
-                    'panKou':panKou
+                    "userType":userType
                 });
                 $.ajax({
                     url: url,
@@ -197,9 +215,14 @@
                     beforeSend: function (XMLHttpRequest) {
          		XMLHttpRequest.setRequestHeader("Authorization", token);
                     },
-                    error: function () {
-                        alert("系统错误");
-                    },
+                    error: function (jqXHR,textStatus,errorThrown) {
+                     	if(typeof jqXHR != 'undefined' 
+                     		&& typeof jqXHR.status != 'undefined' 
+                     		&& jqXHR.status == 401){
+     	                	var url = "index.html";
+     	                    window.location.href = url;
+                     	}
+                     },
                     success: function (data) {
                         if(data.status===1){
                             alert("添加成功！！！");
@@ -208,7 +231,7 @@
                             parent.layer.close(wz);
                         }else if(data.status==0){
                             alert(getErroe(data.error_code));
-                        }       
+                        }                    
                     }
                 });
             }
@@ -241,73 +264,114 @@
                     obj.value= parseFloat(obj.value); 
                 } 
             }
+            
+            function queryUserInfo(deffered, userId){
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/users/queryUserInfo";
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    async: false, // 设置同步方式
+                    data: {
+                        userId: userId
+                    },
+                    dataType: "json",
+                    beforeSend: function (XMLHttpRequest) {
+                        XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function (jqXHR,textStatus,errorThrown) {
+                        if(typeof jqXHR != 'undefined' 
+                        		&& typeof jqXHR.status != 'undefined' 
+                        		&& jqXHR.status == 401){
+                        	var url = "index.html";
+                            window.location.href = url;
+                        }
+                    },
+                    success: function (data) {
+                        if(data.status=="1"){
+                            deffered.resolve(data.data);
+                        }else{
+                        	deffered.reject(-1);
+                        }
+                    }
+                });
+            }
         </script>
     </head>
     <body>
         <input type="hidden" id="agentId" name="agentId" value="" />
         <table width="600px" cellspacing="0" cellpadding="5">
-        	<tr>
-                <th style="background-color:#ffcc99">用户类型</th>
+			<tr>
+                <th class="thstyle">代理类型：</th>
                 <td>
-                <select id="userType" style="width:250px;height:50px" disabled >
-                	<option value="5">双面玩家</option>
-                	<option value="7" selected>信誉玩家</option>
-                	<option value="4">试玩玩家</option>
-                </select>
-                <span id="platRebate1" style="color:red;"></span></td>
+                    <select id="userType" name="userType" style="width:250px;" class="form-control" disabled>
+			        	<option value=""></option>
+			            <option value="6">双面代理</option>
+			            <option value="8">信誉代理</option>
+			            <option value="10" selected>委托投注代理</option>
+			        </select>
+			        <span id="userType_error" style="color:red;"></span>
+                </td>
             </tr>
+            
             <tr>
-                <th style="background-color:#ffcc99">真实姓名：</th>
+                <th class="thstyle">真实姓名：</th>
                 <td>
                     <input type="text" id="realName" name="realName" value="" placeholder="只能填写中文" onkeyup="value=value.replace(/[^\u4E00-\u9FA5]/g,'')" onbeforepaste="clipboardData.setData('text',clipboardData.getData('text').replace(/[^\u4E00-\u9FA5]/g,''))" style="width:250px;" class="login_putin" />
                 </td>
             </tr>
             <tr>
-                <th style="background-color:#ffcc99">用户名：</th>
+                <th class="thstyle">用户名：</th>
                 <td>
                     <input type="text" id="userName" name="userName" value="" placeholder="密码为6-20位的字母或数字组成"  style="width:250px;" class="login_putin" />
                     <span id="userName1" style="color:red;"></span>
                 </td>
             </tr>
             <tr>
-                <th style="background-color:#ffcc99">身份证：</th>
+                <th class="thstyle">身份证：</th>
                 <td><input type="text" id="userId" name="userId" value="" style="width:250px;" class="login_putin" /></td>
             </tr>
             <tr>
-                <th style="background-color:#ffcc99">登录密码：</th>
+                <th class="thstyle">登录密码：</th>
                 <td><input type="password" id="loginPwd" name="loginPwd" value="" placeholder="密码为6-15位的字母或数字组成" style="width:250px;" class="login_putin" />
                 <span id="loginPwd1" style="color:red;"></span></td>
             </tr>
             <tr>
-                <th style="background-color:#ffcc99">资金密码：</th>
+                <th class="thstyle">资金密码：</th>
                 <td><input type="password" id="fundPwd" name="fundPwd" value="" placeholder="密码为6-15位的字母或数字组成" style="width:250px;" class="login_putin" /></td>
             </tr>
-            
             <tr>
-                <th style="background-color:#ffcc99">选择盘口：</th>
+                <th class="thstyle">下级返点：</th>
                 <td>
-	                <select id="smPanKou" style="width:250px;height:50px" ></select>
-	                <span id="smPanKou_error" style="color:red;"></span>
+                	<input type="text" id="platRebate" name="platRebate" 
+                		value="" placeholder="下级返点不能大于上级的返点" 
+                		style="width:250px;" 
+                		class="login_putin" 
+                		onkeyup="clearNoNum(this)" 
+                		onkeypress="if(/\.\d\d{3}$/.test(value))event.returnValue=false" 
+                		data-minimum=""
+                		data-maximum=""/>
+                	<span id="platRebate1" style="color:red;"></span>
                 </td>
             </tr>
-            
             <tr>
-                <th style="background-color:#ffcc99">手机号：</th>
+                <th class="thstyle">手机号：</th>
                 <td><input type="text" id="phoneNum" name="phoneNum" value="" style="width:250px;" class="login_putin" /></td>
             </tr>
             <tr>
-                <th style="background-color:#ffcc99">QQ：</th>
+                <th class="thstyle">QQ：</th>
                 <td><input type="text" id="qq" name="qq" value="" style="width:250px;" class="login_putin" /></td>
             </tr>
             <tr>
-                <th style="background-color:#ffcc99">微信：</th>
+                <th class="thstyle">微信：</th>
                 <td><input type="text" id="wechat" name="wechat" value="" style="width:250px;" class="login_putin" /></td>
             </tr>
             <tr>
-                <th style="background-color:#ffcc99">邮箱：</th>
+                <th class="thstyle">邮箱：</th>
                 <td><input type="text" id="email" name="email" value="" style="width:250px;" class="login_putin" /></td>
             </tr>
-            
         </table>
         <script>
             var wz = parent.layer.getFrameIndex(window.name);

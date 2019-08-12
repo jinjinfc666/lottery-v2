@@ -441,9 +441,25 @@ public class SysInitLoader {
 	}
 	
 	private void init5DigitsOne2Ten() {
-		List<String> rows = Utils.produce5Digits1to10Number();
+		List<String> rows = cacheServ.get5DigitsOne2TenNumbers();
+		if(rows != null && rows.size() > 0) {
+			return ;
+		}
 		
-		cacheServ.set5DigitsOne2TenNumbers(rows);
+		Thread produceNumThread = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				List<String> rows = Utils.produce5Digits1to10Number();
+				
+				cacheServ.set5DigitsOne2TenNumbers(rows);
+			}
+			
+		});
+		
+		produceNumThread.start();
+		
+		
 		
 	}
 }

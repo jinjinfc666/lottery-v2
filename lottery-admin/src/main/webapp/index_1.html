@@ -167,6 +167,13 @@
                                     document.getElementById("report").style.display="inline";
                                 }
                             	
+                            	if(val=='ROLE_CUSTOMER_SERVICE'
+                        			|| val=='ROLE_MANAGER'
+                        			|| val=='ROLE_FINANCE'
+                        			|| val == 'ROLE_AGENT_SM'){
+                                	document.getElementById("sm_report").style.display="inline";
+                            	}
+                            	
                                 if(val=='ROLE_ADMIN'){
                                 	document.getElementById("administrator").style.display="inline";
                                 }
@@ -210,11 +217,24 @@
                                 
                                 if(val=='ROLE_CUSTOMER_SERVICE'|| val=='ROLE_AGENT_SM'){
                                     document.getElementById("sm_member_management").style.display="inline";
-                                    document.getElementById("sm_system_operation").style.display="inline";
+                                    if(val=='ROLE_CUSTOMER_SERVICE'){
+                                    	document.getElementById("sm_system_operation").style.display="inline";
+                                    }
+                                    
                                 }
                                 
                                 if(val=='ROLE_CUSTOMER_SERVICE'|| val=='ROLE_AGENT_XY'){
-                                    document.getElementById("xy_member_management").style.display="inline";
+                                    document.getElementById("xy_member_management").style.display="inline";                                    
+                                    if(val=='ROLE_CUSTOMER_SERVICE'){
+                                    	document.getElementById("xy_system_operation").style.display="inline";
+                                    	document.getElementById("user_settlement").style.display="inline";
+                                    }
+                                }
+                                
+                                
+                                if(val=='ROLE_CUSTOMER_SERVICE'|| val=='ROLE_AGENT_ENTRUST'){
+                                    document.getElementById("entrust_member_management").style.display="inline";                                    
+                                    
                                 }
                                 
                             });
@@ -291,7 +311,7 @@
                             </li>
                         </ul>
                     </li>
-                     <li id="report" style="display: block;">
+                     <li id="sm_report" style="display: none;">
                         <a  class="J_menuItem"  >
                             <i class="fa fa-columns"></i> 
                             <span class="nav-label">双面报表</span>
@@ -433,6 +453,19 @@
                         </ul>
                     </li>
                     
+                    <li id="entrust_member_management" style="display: none;">
+                        <a class="J_menuItem">
+                            <i class="fa fa-edit"></i> 
+                            <span class="nav-label">委托投注会员管理</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level">                           
+                            <li id="agent_maintaince" style="display: block;">
+                                <a class="J_menuItem"  href="entrust-memberManagement/agent.html?v=4.0">代理维护</a>
+                            </li>
+                        </ul>
+                    </li>
+                    
                     <li id="system_operation" style="display: none;">
                         <a class="J_menuItem">
                             <i class="fa fa-edit"></i> 
@@ -471,11 +504,25 @@
                             <li id="betting_order" style="display: block;">
                                 <a class="J_menuItem"  href="sm-report/lottery_transaction.html?v=4.0">投注订单</a>
                             </li>
-                            <li id="user_settlement" style="display: block;">
-                                <a class="J_menuItem"  href="sm-report/user_settlement.html">用户结算</a>
+                        </ul>
+                    </li>
+                    
+                     <li id="xy_system_operation" style="display: none;">
+                        <a class="J_menuItem">
+                            <i class="fa fa-edit"></i> 
+                            <span class="nav-label">信誉系统操作</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level">
+                            <li id="betting_order" style="display: block;">
+                                <a class="J_menuItem"  href="xy-sys-operation/lottery_transaction.html?v=4.0">投注订单</a>
+                            </li>
+                            <li id="user_settlement" style="display: none;">
+                                <a class="J_menuItem"  href="xy-sys-operation/user_settlement.html">用户结算</a>
                             </li>
                         </ul>
                     </li>
+                    
                     
                     
                     <li>

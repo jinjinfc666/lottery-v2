@@ -553,7 +553,9 @@ public class Constants {
 		SM_PLAYER(5, "双面玩家"),
 		SM_AGENCY(6, "双面代理"),
 		XY_PLAYER(7, "信誉玩家"),
-		XY_AGENCY(8, "信誉代理");
+		XY_AGENCY(8, "信誉代理"),
+		ENTRUST_PLAYER(9, "委托玩家"),
+		ENTRUST_AGENCY(10, "委托代理");
 		
 		private int code;
 		
@@ -2508,6 +2510,7 @@ public class Constants {
 		ROLE_AGENT("ROLE_AGENT"),
 		ROLE_AGENT_SM("ROLE_AGENT_SM"),
 		ROLE_AGENT_XY("ROLE_AGENT_XY"),
+		ROLE_AGENT_ENTRUST("ROLE_AGENT_ENTRUST"),
 		ROLE_ADMIN("ROLE_ADMIN"),
 		ROLE_MANAGER("ROLE_MANAGER"),
 		ROLE_CUSTOMER_SERVICE("ROLE_CUSTOMER_SERVICE"),

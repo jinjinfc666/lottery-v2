@@ -15,6 +15,8 @@
 	href="common/template/lottery/jimei/css/balls.css?v=2019022317110511"
 	type="text/css">
 
+
+
 <style type="text/css">
 #ticket-base-info .tb-sub {
 	width: 75px;
@@ -132,19 +134,21 @@
 </style>
 
 <script src="js/lib/jquery-1.10.2.min.js?v=01"></script>
+
+
 </head>
 <body class="index-bg">
-	<div class="frame_"   ng-controller="lotteryCtrl" ng-init="queryBulletinBoard('xyft')">
+	<div class="frame_"   ng-controller="lotteryCtrl" ng-init="queryBulletinBoard('yfb')">
 		<div class="placeholdersArea">
-			<div class="sidebar index-sidebar ng-scope">
-				<div class="user-info ng-scope">
-					<div class="user-line user-info-name aside-block-top" style="padding-left: 5px">
+			<div class="sidebar index-sidebar ng-scope" style="background:#d9534f;">
+				<div class="user-info ng-scope" style="background:#d9534f;">
+					<div class="user-line user-info-name aside-block-top" style="padding-left: 5px;background:#d9534f;">
 						会员：
 						<b class="text-danger ng-binding accountName" id="account" ng-if="isLogin">{{userInfo.userName}}</b>
 						<a href="javascript:void(0)" target="_blank" id="isLogin" style="font-size: 10px; margin-left: 5px;color:#ffcc00" ng-click="" ng-if="!isLogin">[立即登录]</a>
 					</div>
 					<div class="user-line user-info-money aside-block-bottom"
-						style="padding-left: 5px">
+						style="padding-left: 5px;background:#d9534f;">
 						余额： 
 						<b id="nowMoney" onclick="refreshMoney()"
 							style="cursor: pointer; text-decoration: underline;"
@@ -182,9 +186,9 @@
 				</div>
 			</div>
 			
-			<div id="lotteryV2_content" class="sidebar index-sidebar ng-scope" ng-init="queryIssueRecBrief('xyft',1)">
+			<div id="lotteryV2_content" class="sidebar index-sidebar ng-scope" ng-init="queryIssueRecBrief('yfb',1)" style="background-color: #d9534f;">
 			<table class="table table-bordered table-bet pull-left ng-scope" style="background-color:white">
-							<thead>
+							<thead  style="background:#d9534f;">
 								<tr>
 									<th class="ng-binding">期号</th>
 									<th class="ng-binding">开奖号码</th>
@@ -200,7 +204,7 @@
 							</tbody>
 						</table>
 						
-						<div class="dataTables_paginate paging_simple_numbers" id="DataTables_Table_4_paginate" style="background-color: #267671;text-align:right;padding:0 10px 10px 0">                                    
+						<div class="dataTables_paginate paging_simple_numbers" id="DataTables_Table_4_paginate" style="background-color: #d9534f;text-align:right;padding:0 10px 10px 0">                                    
                         	<span></span>
                         	<a style="color:white" href="qushitu/trendAnysis.html?lotteryType=cqssc" target="view_window_cqssc">>>更多</a>
                         </div>
@@ -213,13 +217,13 @@
 		<div class="header_nav_bg ng-scope">
 			<div class="header_nav">
 				<header class="index-header ng-scope" id="ticket-base">
-					<div class="tb-body">
-						<div id="ticket-base-info" class="tb-b-column">
+					<div class="tb-body" style="background-color: #d9534f;">
+						<div id="ticket-base-info" class="tb-b-column"  style="background-color: #d9534f;">
 							<div class="tb-sub">
-								<img id="lottery_logoImg" src="images/lottery/xyft-logo.png">
+								<img id="lottery_logoImg" src="images/lottery/yfb-logo.png">
 							</div>
 						</div>
-						<div class="tb-b-column" id="ticket-cutdown">
+						<div class="tb-b-column" id="ticket-cutdown"  style="background-color: #d9534f;">
 							<div class="tb-sub">
 								<div class="sub tc-refer title">
 									<span>第<em id="curIssueNumberId">{{bulletinBoard.currIssue.issueNum}}</em>期
@@ -234,7 +238,7 @@
 								</div>
 							</div>
 						</div>
-						<div id="ticker-drawing-last" class="tb-b-column">
+						<div id="ticker-drawing-last" class="tb-b-column"  style="background-color: #d9534f;">
 							<div class="tb-sub menu1">
 								<div class="sub title">
 									<em>第<i id="lotteryV2_Title">{{bulletinBoard.lastIssue.issueNum}}</i>期</em> 
@@ -248,7 +252,7 @@
 									</a>
 								</div>
 								<div class="sub option">
-									<a class="tdl-o-chart" href="qushitu/trendAnysis.html?lotteryType=xyft" target="view_window_xyft">号码走势
+									<a class="tdl-o-chart" href="qushitu/trendAnysis.html?lotteryType=yfb" target="view_window_yfb">号码走势
 										<i>&nbsp;</i>
 									</a> 
 									<a class="tdl-o-remark" javascript="void(0)" onclick="rule();" style="cursor: pointer;">游戏说明
@@ -271,7 +275,7 @@
 			<div class="main ng-scope" id="_main_view" ng-controller="lotteryUICtrl" ng-init="iniCqsscUI()">
 				<section class="ng-scope">
 					<div id="lotteryV2_group" class="ng-scope" >
-						<ul class="twoNav ng-scope">
+						<ul class="twoNav ng-scope" style="background-color: #d9534f;">
 							<li ng-class="{'ng-scope':true,'active':isZHActive}" ng-click="changeFocus(0)">
 								<a class="ng-binding" lot_code="zhenghe" stid="33">整合</a>
 							</li>
@@ -305,16 +309,16 @@
 										value="" 
 										disabled>
 							</div>
-							<button class="btn btn-danger ml10 resetBtn" style="background: #267671; border-color: #455964;" type="button">重置</button>
+							<button class="btn btn-danger ml10 resetBtn" style="background: #0075bb;" type="button">重置</button>
 							<button type="button" class="btn btn-danger ml10 ng-scope lotteryV2Btn">提交注单</button>
-							<div class="pull-right clock ng-scope" id="currentQiHaoAndTime" ng-init="queryExpertPushNum('xyft')">
+							<div class="pull-right clock ng-scope" id="currentQiHaoAndTime" ng-init="queryExpertPushNum('yfb')">
 								<span id="flushTime" style="font-size: 14px; float: right; width: 40px; text-align: right; margin-top: 4px; margin-left: 6px">
 								</span>								
 							</div>
 						</div>
 						
 						<div >
-						<div id="lotteryV2_content" class="ng-scope ssc_ball" style="width: 100%; display: inline-block;" ng-init="initBettingNumUnauth('xyft', 10)">
+						<div id="lotteryV2_content" class="ng-scope ssc_ball" style="width: 100%; display: inline-block;" ng-init="initBettingNumUnauth('yfb', 10)">
 							<table class="table table-bordered table-bet" style="display:none">
 								<thead>
 									<tr>
@@ -382,7 +386,7 @@
 							</table>
 	
 							<table ng-repeat="row in bitNumArray"  class="table table-bordered table-bet pull-left w20 ng-scope">
-								<thead>
+								<thead style="background: #d9534f;">
 									<tr>
 										<th colspan="3" class="ng-binding">{{row.header}}</th>
 									</tr>
@@ -418,9 +422,9 @@
 										maxlength="6" 
 										value="">
 							</div>
-							<button class="btn btn-danger ml10 resetBtn" style="background: #267671; border-color: #455964;" type="button">重置</button>
+							<button class="btn btn-danger ml10 resetBtn" style="background: #0075bb;" type="button">重置</button>
 							<button type="button" class="btn btn-danger ml10 ng-scope lotteryV2Btn">提交注单</button>
-							<div class="pull-right clock ng-scope" id="currentQiHaoAndTime" ng-init="queryExpertPushNum('xyft')">
+							<div class="pull-right clock ng-scope" id="currentQiHaoAndTime" ng-init="queryExpertPushNum('yfb')">
 								<span id="flushTime" style="font-size: 14px; float: right; width: 40px; text-align: right; margin-top: 4px; margin-left: 6px">
 								</span>								
 							</div>
@@ -436,7 +440,7 @@
 										value="" 
 										disabled>
 							</div>
-							<button class="btn btn-danger ml10 resetBtn" style="background: #267671; border-color: #455964;" type="button">重置</button>
+							<button class="btn btn-danger ml10 resetBtn" style="background: #0075bb; " type="button">重置</button>
 							<button type="button" class="btn btn-danger ml10 ng-scope lotteryV2Btn">提交注单</button>
 							<div class="pull-right clock ng-scope" id="currentQiHaoAndTime">
 								<span id="flushTime" style="font-size: 14px; float: right; width: 40px; text-align: right; margin-top: 4px; margin-left: 6px"></span>
@@ -457,15 +461,15 @@
 										value="">
 							</div>
 							<button class="btn btn-danger ml10 resetBtn" 
-									style="background: #267671;border-color: #455964;" 
+									style="background: #0075bb;" 
 									type="button" 
 									ng-click='resetBettingAmount()'>
 									重置
 							</button>
 							<button type="button" class="btn btn-danger ml10 ng-scope lotteryV2Btn"
-									ng-click='betting("xyft")'>提交注单</button>
+									ng-click='betting("yfb")'>提交注单</button>
 									
-							<button type="button" class="btn btn-danger ml10 ng-scope lotteryV2Btn" ng-if="userInfo.userType == 9"
+							<button type="button" class="btn btn-danger ml10 ng-scope lotteryV2Btn" ng-if="userInfo.isHiddenPlan == 1"
 									ng-click='changeProduceScheduleState(1)'>生成计划</button>
 									
 							<div class="pull-right clock ng-scope" id="currentQiHaoAndTime">
@@ -475,7 +479,7 @@
 						
 						<div id="lotteryV2_content" class="ng-scope ssc_ball"
 							style="width: 100%; display: inline-block;"
-								ng-init="initBettingNumAuth('xyft', 10)">
+								ng-init="initBettingNumAuth('yfb', 10)">
 	
 							<table class="table table-bordered table-bet" style="display:none">
 								<thead>
@@ -544,7 +548,7 @@
 	
 							<table ng-repeat="row in bitNumArray" 
 								class="table table-bordered table-bet pull-left w20 ng-scope">
-								<thead>
+								<thead style="background: #d9534f;">
 									<tr>
 										<th colspan="3" class="ng-binding">{{row.header}}</th>
 									</tr>
@@ -583,13 +587,13 @@
 										value="">
 							</div>
 							<button class="btn btn-danger ml10 resetBtn" 
-									style="background: #267671;border-color: #455964;" 
+									style="background: #0075bb;" 
 									type="button"
 									ng-click='resetBettingAmount()'>
 									重置
 							</button>
 							<button type="button" class="btn btn-danger ml10 ng-scope lotteryV2Btn"
-									ng-click='betting("xyft")'>提交注单</button>
+									ng-click='betting("yfb")'>提交注单</button>
 									
 							<div class="pull-right clock ng-scope" id="currentQiHaoAndTime">
 								<span id="flushTime" style="font-size: 14px; float: right; width: 40px; text-align: right; margin-top: 4px; margin-left: 6px"></span>
@@ -606,7 +610,7 @@
 										value="" 
 										disabled>
 							</div>
-							<button class="btn btn-danger ml10 resetBtn" style="background: #267671; border-color: #455964;" type="button">重置</button>
+							<button class="btn btn-danger ml10 resetBtn" style="background: #0075bb;" type="button">重置</button>
 							<button type="button" class="btn btn-danger ml10 ng-scope lotteryV2Btn">提交注单</button>
 							<div class="pull-right clock ng-scope" id="currentQiHaoAndTime">
 								<span id="flushTime" style="font-size: 14px; float: right; width: 40px; text-align: right; margin-top: 4px; margin-left: 6px"></span>
@@ -621,9 +625,9 @@
 	
 		</div>
 	
-		<div id="lotteryV2_content" class="betRecArea ng-scope ssc_ball" style="height:1203px" ng-init="queryBettingRecBrief('xyft',1)">	
+		<div id="lotteryV2_content" class="betRecArea ng-scope ssc_ball" style="height:1203px;" ng-init="queryBettingRecBrief('yfb',1)">	
 			<table class="table table-bordered table-bet pull-left ng-scope" style="background-color:white">
-							<thead>
+							<thead style="background:#d9534f;">
 								<tr>
 									<th class="ng-binding">期号</th>
 									<th class="ng-binding">投注号码</th>
@@ -643,7 +647,7 @@
 							</tbody>
 						</table>
 						
-						<div class="dataTables_paginate paging_simple_numbers" id="DataTables_Table_4_paginate" style="background-color: #267671;text-align:right;padding:0 10px 10px 0">                                    
+						<div class="dataTables_paginate paging_simple_numbers" id="DataTables_Table_4_paginate" style="background:#d9534f;text-align:right;padding:0 10px 10px 0">                                    
                         	<span></span>
                         	<a style="color:white" ui-sref="userCenter.hisRecord">>>更多</a>
                         </div>
@@ -651,8 +655,8 @@
 		</div>
 		
 		<aside class="register ng-scope" id="schedule_tab" ng-class="{'ng-scope':true,'displayNone':!isProduceSchedule,'displayBlock':isProduceSchedule}">
-			<div class="register_content" style="overflow-y: auto;  min-height: 500px; height: 600px;">
-				<div class="r_title">
+			<div class="register_content" style="overflow-y: auto;  min-height: 500px; height: 600px;width: 1100px;" >
+				<div class="r_title" style=" background: #d9534f;">
 					<p>投注计划</p>
 					<span class="close j-close" num="6" ng-click='changeProduceScheduleState(0)'></span>
 				</div>
@@ -660,15 +664,17 @@
 					<div class="bar-bet">
 									<div class="input-group pull-left w150 ml20">
 										<span id="basic-addon1" class="input-group-addon">赛道</span> 
-										<select name="bitIndex" id="bitIndex" class="j-bankCard"  ng-model="bitIndex_" ng-change="selRowFun()">
+										<select name="bitIndex" id="bitIndex" class="j-bankCard"  ng-model="bitIndex_" ng-change="selRowFun()"  style="height: 28px;width: 70px">
 											<option value="{{row.bitIndex}}" ng-repeat="row in bitNumArray">{{row.header}}</option>
 										</select>
 									</div>
 									<div class="input-group pull-left w150 ml20">
 										<span id="basic-addon1" class="input-group-addon">选号</span> 
-										<select  name="playTypeId_" id="playTypeId_" class="j-bankCard"  ng-model="playTypeId_" ng-change="selPlayTypeFunc()">
+										<!--select  name="playTypeId_" id="playTypeId_" class="j-bankCard"  ng-model="playTypeId_" ng-change="selPlayTypeFunc()" style="height: 28px;width: 60px">
 											<option value="{{v.playTypeId}}" ng-repeat="v in selRow.bitNum">{{v.bettingNumKey}}</option>
-										</select>
+											
+										</select>  -->
+										<div ng-dropdown-multiselect="" options="selRow" selected-model="playTypeId_" extra-settings="example8settings"></div>
 										<input type="hidden" id="bettingNum_" name="bettingNum_">
 									</div>
 									<div class="input-group pull-left w150 ml20">
@@ -688,22 +694,22 @@
 												value="1">
 									</div>
 									
-									<div class="input-group pull-left w150 ml20">
+									<!-- div class="input-group pull-left w150 ml20">
 										<span id="basic-addon1" class="input-group-addon">是否递增</span> 
 										<input type="checkbox" id="isIncrease" name="isIncrease" class="bet-input ng-pristine ng-untouched ng-valid" name="sel_{{$index}}">
-									</div>
+									</div> -->
 									
 									<div class="input-group pull-left w150 ml20" style="width: 100px;">
-										<button class="btn btn-danger ml10 resetBtn" style="background: #267671; border-color: #455964;" type="button" ng-click="produceSchedule()">生成计划</button>
+										<button class="btn btn-danger ml10 resetBtn" style="background: #0075bb; border-color: #455964;" type="button" ng-click="produceSchedule()">生成计划</button>
 									</div>
 									<div class="input-group pull-left w150 ml20">
-										<button class="btn btn-danger ml10 resetBtn" style="background: #267671; border-color: #455964;" type="button" ng-click="submitSchedule('xyft')">提交计划</button>
+										<button class="btn btn-danger ml10 resetBtn" style="background: #0075bb; border-color: #455964;" type="button" ng-click="submitSchedule('yfb')">提交计划</button>
 									</div>
 								</div>
 								
-								<div id="lotteryV2_content" class="ng-scope ssc_ball" style="width: 100%; display: inline-block;" ng-init="queryZhIssue('xyft')">
+								<div id="lotteryV2_content" class="ng-scope ssc_ball" style="width: 100%; display: inline-block;" ng-init="queryZhIssue('yfb')">
 									<table  class="table table-bordered table-bet pull-left w20 ng-scope" style="width: 100%;">
-										<thead>
+										<thead style=" background: #d9534f;">
 											<tr>
 												<th class="ng-binding" style="width:25%">期次号</th>
 												<th class="ng-binding" style="width:25%">金额</th>

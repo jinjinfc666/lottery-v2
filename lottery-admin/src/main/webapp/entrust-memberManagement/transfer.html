@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>添加下级用户</title>
+        <title>转账</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style type="text/css">
@@ -9,9 +9,15 @@
             margin:20px auto;
             border-radius: 5px;
         }
-        table th,table td{
-            padding:5px;
-            text-align: center;
+        table th{
+            padding:5 20 5 5;
+            text-align: right;
+            border: 1px solid #999999;
+        }
+        
+        table td{
+            padding:5 5 5 20;
+            text-align: left;
             border: 1px solid #999999;
         }
         table tr:hover{
@@ -65,7 +71,7 @@
                 document.getElementById('agentId').value=obj['agentId'];
                 /*document.getElementById('loginPwd').value='111111';
                 document.getElementById('fundPwd').value='111111';*/
-                getplat();
+                //getplat();
                 // if(a){
                // changenum();
             });
@@ -83,7 +89,7 @@
                     },
                     dataType: "json",
                     beforeSend: function (XMLHttpRequest) {
-                        //XMLHttpRequest.setRequestHeader("Authorization", token);
+                        XMLHttpRequest.setRequestHeader("Authorization", token);
                     },
                     error: function (jqXHR,textStatus,errorThrown) {
                         if(typeof jqXHR != 'undefined' 
@@ -95,7 +101,7 @@
                     success: function (data) {
                         if(data.status=="1"){
                         	 $.each(data.data, function(key, val) {  
-                        		 $("#smPanKou").append("<option data-seq='"+ val.seq +"' value='"+val.codeVal+"'>"+val.remark+"</option>");
+                                 $("#smPanKou").append("<option value='"+val.codeVal+"'>"+val.remark+"</option>");
                              })
                         }else{
                             alert(getErroe(data.error_code));
@@ -122,67 +128,35 @@
                 }
                 return domain;
             }
-            function add(){
+            function transfer(){
                 updateToken();
-                var userType = document.getElementById('userType').value;
-                var agentId=document.getElementById('agentId').value;
-                var realName=document.getElementById('realName').value;
-                var userName=document.getElementById('userName').value;
-                var userId=document.getElementById('userId').value;
-                var loginPwd=document.getElementById('loginPwd').value;
-                var fundPwd=document.getElementById('fundPwd').value;
-                //var platRebate=document.getElementById('platRebate').value;
-                var platRebate = $("#smPanKou option:selected").val();
-                var phoneNum=document.getElementById('phoneNum').value;
-                var qq=document.getElementById('qq').value;
-                var wechat=document.getElementById('wechat').value;
-                var email=document.getElementById('email').value;
-                var panKou = $("#smPanKou option:selected").attr("data-seq");
+                var amount = $('#amount').val();
+                var obj = {};
+                obj=getValue();
+                var toUser = obj['toUser'];
+                var fromUserObj = JSON.parse(sessionStorage.getItem("userInfo"));
+                var fromUser = null;
+                if(fromUserObj.userType == 6){
+                	fromUser = fromUserObj.userName;
+                }
                 
-                if(userType == 7){
-                	if(typeof panKou == 'undefined' || panKou == null || panKou.length == 0){                		
-                		$("#smPanKou_error").text("请选择盘口!");
-                        return false;
-                	}
-                	
-                	/* if(typeof xyPayoutRate == 'undefined' || xyPayoutRate == null || xyPayoutRate.length == 0){                		
-                		$("#xyPayoutRate_error").text("请输入最大派奖率 0.00--1.00!");
-                        return false;
-                	} */
-                }
-                if(userName==""){
-                    $("#userName1").text("请输入用户名!");
+                if(amount == null
+                		|| amount == ""){
+                    $("#amount_mes").text("请输入转账金额 !");
                     return false;
                 }
-                $("#userName1").text("");
-                if(loginPwd==""){
-                    $("#loginPwd1").text("登录密码不能为空!!!");
-                    return false;
-                }
-                $("#loginPwd1").text("");
-                if(platRebate==""){
-                    $("#platRebate1").text("下级返点不能为空!");
-                    return false;
-                }
-                $("#platRebate1").text("");
+                
                 var domain=parseDomain();
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
-                var url=domain+"/lottery-api/users/agents/"+agentId;
+                var url=domain+"/lottery-api/users/amount/transfer";
+                
                 var data=JSON.stringify({
-                    "realName": realName,
-                    "userName": userName,
-                    "userId": userId,
-                    "loginPwd": loginPwd,
-                    "fundPwd": fundPwd,
-                    "platRebate": platRebate,
-                    "phoneNum": phoneNum,
-                    "qq": qq,
-                    "wechat": wechat,
-                    "email": email,
-                    "userType":userType,
-                    'panKou':panKou
+                    "amount": amount,
+                    "fromUser": fromUser,
+                    "toUser": toUser
                 });
+                
                 $.ajax({
                     url: url,
                     type: "POST",
@@ -197,12 +171,12 @@
                     beforeSend: function (XMLHttpRequest) {
          		XMLHttpRequest.setRequestHeader("Authorization", token);
                     },
-                    error: function () {
-                        alert("系统错误");
+                    error: function (XMLHttpRequest,textStatus) {
+                    	 checkError(XMLHttpRequest,textStatus);
                     },
                     success: function (data) {
                         if(data.status===1){
-                            alert("添加成功！！！");
+                            alert("转账成功！！！");
                             var wz = parent.layer.getFrameIndex(window.name);
                             parent.location.reload();
                             parent.layer.close(wz);
@@ -246,74 +220,19 @@
     <body>
         <input type="hidden" id="agentId" name="agentId" value="" />
         <table width="600px" cellspacing="0" cellpadding="5">
-        	<tr>
-                <th style="background-color:#ffcc99">用户类型</th>
-                <td>
-                <select id="userType" style="width:250px;height:50px" disabled >
-                	<option value="5">双面玩家</option>
-                	<option value="7" selected>信誉玩家</option>
-                	<option value="4">试玩玩家</option>
-                </select>
-                <span id="platRebate1" style="color:red;"></span></td>
-            </tr>
             <tr>
-                <th style="background-color:#ffcc99">真实姓名：</th>
+                <th style="background-color:#ffcc99">转账：</th>
                 <td>
-                    <input type="text" id="realName" name="realName" value="" placeholder="只能填写中文" onkeyup="value=value.replace(/[^\u4E00-\u9FA5]/g,'')" onbeforepaste="clipboardData.setData('text',clipboardData.getData('text').replace(/[^\u4E00-\u9FA5]/g,''))" style="width:250px;" class="login_putin" />
+                    <input type="number" id="amount" name="amount" value="" placeholder="转账金额" style="width:250px;" class="login_putin" />
+                    <span id="amount_mes" style="color:red;"></span>
                 </td>
-            </tr>
-            <tr>
-                <th style="background-color:#ffcc99">用户名：</th>
-                <td>
-                    <input type="text" id="userName" name="userName" value="" placeholder="密码为6-20位的字母或数字组成"  style="width:250px;" class="login_putin" />
-                    <span id="userName1" style="color:red;"></span>
-                </td>
-            </tr>
-            <tr>
-                <th style="background-color:#ffcc99">身份证：</th>
-                <td><input type="text" id="userId" name="userId" value="" style="width:250px;" class="login_putin" /></td>
-            </tr>
-            <tr>
-                <th style="background-color:#ffcc99">登录密码：</th>
-                <td><input type="password" id="loginPwd" name="loginPwd" value="" placeholder="密码为6-15位的字母或数字组成" style="width:250px;" class="login_putin" />
-                <span id="loginPwd1" style="color:red;"></span></td>
-            </tr>
-            <tr>
-                <th style="background-color:#ffcc99">资金密码：</th>
-                <td><input type="password" id="fundPwd" name="fundPwd" value="" placeholder="密码为6-15位的字母或数字组成" style="width:250px;" class="login_putin" /></td>
-            </tr>
-            
-            <tr>
-                <th style="background-color:#ffcc99">选择盘口：</th>
-                <td>
-	                <select id="smPanKou" style="width:250px;height:50px" ></select>
-	                <span id="smPanKou_error" style="color:red;"></span>
-                </td>
-            </tr>
-            
-            <tr>
-                <th style="background-color:#ffcc99">手机号：</th>
-                <td><input type="text" id="phoneNum" name="phoneNum" value="" style="width:250px;" class="login_putin" /></td>
-            </tr>
-            <tr>
-                <th style="background-color:#ffcc99">QQ：</th>
-                <td><input type="text" id="qq" name="qq" value="" style="width:250px;" class="login_putin" /></td>
-            </tr>
-            <tr>
-                <th style="background-color:#ffcc99">微信：</th>
-                <td><input type="text" id="wechat" name="wechat" value="" style="width:250px;" class="login_putin" /></td>
-            </tr>
-            <tr>
-                <th style="background-color:#ffcc99">邮箱：</th>
-                <td><input type="text" id="email" name="email" value="" style="width:250px;" class="login_putin" /></td>
-            </tr>
-            
+            </tr>            
         </table>
         <script>
             var wz = parent.layer.getFrameIndex(window.name);
         </script>
         <div style="margin-left:500px;">
-            <button class="btn btn-primary" type="submit" onclick="add()">提交</button>
+            <button class="btn btn-primary" type="submit" onclick="transfer()">提交</button>
         </div>
     </body>
 </html>

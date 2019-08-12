@@ -163,7 +163,7 @@ public class OrderServiceImpl implements OrderService
 			orderDao.saveOrders(order);
 			
 			//extend the xy function
-			if(user.getUserType().intValue() == Constants.UserType.XY_PLAYER.getCode()) {
+			if(user.getUserType().intValue() == Constants.UserType.ENTRUST_PLAYER.getCode()) {
 				if(order.getIsPrize() == null) {
 					order.setIsPrize(0);
 				}

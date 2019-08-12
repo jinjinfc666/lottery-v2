@@ -75,7 +75,7 @@
 				<ref bean="makeAPlanTrigger"/>
 				<ref bean="processScheduleIssueCronTrigger"/>
 				<ref bean="statProfitServiceImplJobDetailCtronTrigger"/>
-				<!-- <ref bean="settlementServiceImplJobDetailCtronTrigger"/> -->
+				<ref bean="settlementServiceImplJobDetailCtronTrigger"/>
 			</list>
 		</property>
 	</bean>
