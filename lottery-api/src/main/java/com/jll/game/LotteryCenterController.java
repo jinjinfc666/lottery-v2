@@ -351,12 +351,17 @@ public class LotteryCenterController {
 		totalPayoutAmount = ((BigDecimal)(profitRec[8])).doubleValue();
 		
 		
+		int counter = 0 ;
+		
 		for(OrderInfo order : orders) {
 			if(order.getIsPrize() == null) {
 				continue;
 			}
 			
 			if(order.getIsPrize() == 1) {
+				
+				counter++;
+				
 				Map<String, Object> params = new HashMap<>();
 				params.put("betNum", order.getBetNum());
 				params.put("times", order.getTimes());
@@ -365,9 +370,11 @@ public class LotteryCenterController {
 				
 				Map<String, Object> preBetRec = PreBet(lotteryType, params);
 				Double winAmount = new Double((Float)((HashMap<String, Object>)preBetRec.get("data")).get("maxWinAmount"));
-				totalPayoutAmount += MathUtil.add(totalPayoutAmount, winAmount, Double.class);
+				totalPayoutAmount = MathUtil.add(totalPayoutAmount, winAmount, Double.class);
 			}
 		}
+		
+		System.out.print(String.format("counter : %s", counter));
 		
 		if(totalPayoutAmount >= maxPayoutAmount) {
 			return false;
@@ -632,7 +639,8 @@ public class LotteryCenterController {
 			user = userServ.getCurLoginInfo();
 		}
 		
-		if(user.getUserType().intValue() != Constants.UserType.AGENCY.getCode()
+		boolean isAgency = UserType.isAgency(UserType.getStateByCode(user.getUserType()));
+		if(!isAgency
 				&& user.getUserType().intValue() != Constants.UserType.GENERAL_AGENCY.getCode()) {
 			resp.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
 			resp.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_USER_INVALID_USER_TYPE.getCode());

@@ -1,16 +1,14 @@
 package com.jll.user;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 import com.jll.dao.PageBean;
 import com.jll.dao.PageQueryDao;
 import com.jll.entity.SiteMessFeedback;
 import com.jll.entity.SiteMessage;
-import com.jll.entity.TbUser;
 import com.jll.entity.UserAccount;
 import com.jll.entity.UserAccountDetails;
 import com.jll.entity.UserBankCard;
@@ -96,7 +94,7 @@ public interface UserInfoService
 	void saveOrUpdateFundPwd(UserInfo user);
 	//用户状态修改
 	void updateUserType(UserInfo user);
-	
+		
 	double getUserTotalDepostAmt(Date startDate,Date endDate,UserInfo user);
 	double getUserTotalBetAmt(Date startDate,Date endDate,UserInfo user);
 	double getUserTotalWithdrawAmt(Date startDate,Date endDate,UserInfo user);
@@ -150,7 +148,7 @@ public interface UserInfoService
 	Map<String, Object> updateDemoUserDisableLogin();
 	
 	//判断返点
-	boolean verifRebate(UserInfo userInfo);	
+	BigDecimal calRebate(UserInfo userInfo);	
 	
 	/**
 	 * query the receiver of site msg
@@ -178,4 +176,6 @@ public interface UserInfoService
 	Map<String, Object> queryAllAgentXY(Map<String, Object> params);
 	
 	Map<String, Object> queryAllAgentEntrust(Map<String, Object> ret);
+	
+	boolean scanChilderen(UserInfo user, BigDecimal platRebate);
 }

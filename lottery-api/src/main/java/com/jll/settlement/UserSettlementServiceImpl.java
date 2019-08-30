@@ -117,8 +117,8 @@ public class UserSettlementServiceImpl implements UserSettlementService
 	}
 
 	@Override
-	public boolean isPendingExisting(UserInfo user) {
-		return settlementDao.isPendingExisting(user);
+	public UserSettlement queryPendingExisting(UserInfo user) {
+		return settlementDao.queryPendingExisting(user);
 	}
 
 	

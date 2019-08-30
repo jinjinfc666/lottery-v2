@@ -41,7 +41,20 @@
 			<appender-ref ref="Console" />
 		</root>
 		
+		<logger name="com.jll.pay" level="debug" additivity="false">
+			<AppenderRef ref="Console"/>
+			<AppenderRef ref="ROOT"/>
+		</logger>
 		
+		<logger name="com.jll.user" level="debug" additivity="false">
+			<AppenderRef ref="Console"/>
+			<AppenderRef ref="ROOT"/>
+		</logger>
+		
+		<logger name="com.jll.common.utils" level="error" additivity="false">
+			<AppenderRef ref="Console"/>
+			<AppenderRef ref="ROOT"/>
+		</logger>
 		
 		<logger name="com.jll.game.mesqueue" level="error" additivity="false">
 			<AppenderRef ref="Console"/>

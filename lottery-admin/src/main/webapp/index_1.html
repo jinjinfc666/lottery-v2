@@ -180,8 +180,22 @@
                             	
                                 if(val=='ROLE_CUSTOMER_SERVICE' 
                                 		|| val=='ROLE_FINANCE' 
-                                		|| val=='ROLE_MANAGER'){                                    
+                                		|| val=='ROLE_MANAGER'
+                                		|| val=='ROLE_AGENT_SM'
+                                		|| val=='ROLE_AGENT_XY'
+                                		|| val=='ROLE_AGENT_ENTRUST'
+                                		|| val=='ROLE_AGENT'){                                    
                                     document.getElementById("member_management").style.display="inline";
+                                    document.getElementById("agent_maintaince").style.display="inline";
+                                    
+                                    if(val=='ROLE_CUSTOMER_SERVICE' 
+                                		|| val=='ROLE_FINANCE' 
+                                    	|| val=='ROLE_MANAGER'){
+                                    	document.getElementById("user_management").style.display="inline";
+                                    	document.getElementById("account_management").style.display="inline";
+                                    }
+                                    
+                                    
                                 }
                                 
                                 if(val=='ROLE_CUSTOMER_SERVICE'||val=='ROLE_MANAGER'){
@@ -213,30 +227,8 @@
                                 
                                 if(val=='ROLE_CUSTOMER_SERVICE'){
                                     document.getElementById("siteMessage").style.display="inline";
-                                }
-                                
-                                if(val=='ROLE_CUSTOMER_SERVICE'|| val=='ROLE_AGENT_SM'){
-                                    document.getElementById("sm_member_management").style.display="inline";
-                                    if(val=='ROLE_CUSTOMER_SERVICE'){
-                                    	document.getElementById("sm_system_operation").style.display="inline";
-                                    }
-                                    
-                                }
-                                
-                                if(val=='ROLE_CUSTOMER_SERVICE'|| val=='ROLE_AGENT_XY'){
-                                    document.getElementById("xy_member_management").style.display="inline";                                    
-                                    if(val=='ROLE_CUSTOMER_SERVICE'){
-                                    	document.getElementById("xy_system_operation").style.display="inline";
-                                    	document.getElementById("user_settlement").style.display="inline";
-                                    }
-                                }
-                                
-                                
-                                if(val=='ROLE_CUSTOMER_SERVICE'|| val=='ROLE_AGENT_ENTRUST'){
-                                    document.getElementById("entrust_member_management").style.display="inline";                                    
-                                    
-                                }
-                                
+                                }                                
+                               
                             });
                         }
                     }else{
@@ -415,10 +407,10 @@
                             <span class="fa arrow"></span>
                         </a>
                         <ul class="nav nav-second-level">
-                            <li>
+                            <li id="user_management" style="display: none;">
                                 <a class="J_menuItem"  href="MemberManagement/UserInfo.html?v=4.0">会员信息</a>
                             </li>
-                            <li>
+                            <li id="account_management" style="display: none;">
                                 <a class="J_menuItem"  href="MemberManagement/UserAccount.html?v=4.0">会员账户</a>
                             </li>
                             <li id="agent_maintaince" style="display: none;">
@@ -426,46 +418,7 @@
                             </li>
                         </ul>
                     </li>
-                    
-                     <li id="sm_member_management" style="display: none;">
-                        <a class="J_menuItem">
-                            <i class="fa fa-edit"></i> 
-                            <span class="nav-label">双面会员管理</span>
-                            <span class="fa arrow"></span>
-                        </a>
-                        <ul class="nav nav-second-level">                           
-                            <li id="agent_maintaince" style="display: block;">
-                                <a class="J_menuItem"  href="sm-memberManagement/agent.html?v=4.0">代理维护</a>
-                            </li>
-                        </ul>
-                    </li>
-                    
-                    <li id="xy_member_management" style="display: none;">
-                        <a class="J_menuItem">
-                            <i class="fa fa-edit"></i> 
-                            <span class="nav-label">信誉会员管理</span>
-                            <span class="fa arrow"></span>
-                        </a>
-                        <ul class="nav nav-second-level">                           
-                            <li id="agent_maintaince" style="display: block;">
-                                <a class="J_menuItem"  href="xy-memberManagement/agent.html?v=4.0">代理维护</a>
-                            </li>
-                        </ul>
-                    </li>
-                    
-                    <li id="entrust_member_management" style="display: none;">
-                        <a class="J_menuItem">
-                            <i class="fa fa-edit"></i> 
-                            <span class="nav-label">委托投注会员管理</span>
-                            <span class="fa arrow"></span>
-                        </a>
-                        <ul class="nav nav-second-level">                           
-                            <li id="agent_maintaince" style="display: block;">
-                                <a class="J_menuItem"  href="entrust-memberManagement/agent.html?v=4.0">代理维护</a>
-                            </li>
-                        </ul>
-                    </li>
-                    
+                                        
                     <li id="system_operation" style="display: none;">
                         <a class="J_menuItem">
                             <i class="fa fa-edit"></i> 

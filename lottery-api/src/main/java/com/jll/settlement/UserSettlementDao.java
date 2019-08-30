@@ -19,5 +19,5 @@ public interface UserSettlementDao
 
 	UserSettlement queryUserSettlementById(Integer settlementId);
 
-	boolean isPendingExisting(UserInfo user);
+	UserSettlement queryPendingExisting(UserInfo user);
 }

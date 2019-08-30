@@ -76,12 +76,49 @@ public class SettlementServiceImpl implements SettlementService
 					users = page.getContent();
 					
 					for(UserInfo user : users) {
-						boolean isPenndingExisting = userSettlementServ.isPendingExisting(user);
-						if(isPenndingExisting) {
+						UserSettlement settlement = userSettlementServ.queryPendingExisting(user);
+												
+						UserSettlement settlementNew = produceStatement(user);
+						
+						//已经存在
+						if(settlement != null
+								&& settlementNew != null 
+								&& settlementNew.getAvailableCredit().doubleValue() == settlement.getAvailableCredit().doubleValue()) {
 							continue;
 						}
 						
-						produceStatement(user);
+						if(settlement == null
+								&& settlementNew != null) {
+							settlement = settlementNew;
+						}else if(settlement != null
+								&& settlementNew != null
+								&& settlementNew.getAvailableCredit().doubleValue() != settlement.getAvailableCredit().doubleValue()) {
+							settlement.setAvailableCredit(settlementNew.getAvailableCredit());
+						}
+						
+						
+						if(settlement != null) {
+							userSettlementServ.saveSettlement(settlement);
+						}
+						
+						
+						Map<String, Object> param = new HashMap<>();
+						param.put("userId", user.getId());
+						Map<String, Object> accs = walletServ.queryByUserIdUserAccount(param);
+						if(accs != null) {
+							List accList = (List)accs.get("data");
+							if(accList != null && accList.size() > 0) {
+								for(Object accObj : accList) {
+									UserAccount acc = (UserAccount)accObj;
+									if(acc.getState().intValue() == WalletState.FROZEN.getCode()) {
+										continue;
+									}
+									acc.setState(WalletState.FROZEN.getCode());
+									
+									walletServ.updateWallet(acc);
+								}
+							}
+						}
 					}
 					
 					page.setPageIndex(page.getPageIndex()+1);
@@ -103,7 +140,7 @@ public class SettlementServiceImpl implements SettlementService
 		
 	}
 
-	private void produceStatement(UserInfo user) {
+	private UserSettlement produceStatement(UserInfo user) {
 		if(user.getUserType().intValue() == UserType.XY_AGENCY.getCode()) {
 			Date today = new Date();
 			Date yesterday = DateUtil.addDay(today, -1);
@@ -118,10 +155,13 @@ public class SettlementServiceImpl implements SettlementService
 			settlement.setUserId(user.getId());
 			settlement.setUserName(user.getUserName());
 			
-			userSettlementServ.saveSettlement(settlement);
+			return settlement;
+			//userSettlementServ.saveSettlement(settlement);
 		}		
 		
-		Map<String, Object> param = new HashMap<>();
+		return null;
+		
+		/*Map<String, Object> param = new HashMap<>();
 		param.put("userId", user.getId());
 		Map<String, Object> accs = walletServ.queryByUserIdUserAccount(param);
 		if(accs != null) {
@@ -137,6 +177,6 @@ public class SettlementServiceImpl implements SettlementService
 					walletServ.updateWallet(acc);
 				}
 			}
-		}
+		}*/
 	}
 }

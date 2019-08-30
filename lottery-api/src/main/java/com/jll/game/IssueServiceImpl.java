@@ -599,7 +599,7 @@ public class IssueServiceImpl implements IssueService
 		
 		boolean isMatch = isMatchWinningNum(issue, order);
 		
-		if(user.getUserType().intValue() == Constants.UserType.XY_PLAYER.getCode()) {
+		if(user.getUserType().intValue() == Constants.UserType.ENTRUST_PLAYER.getCode()) {
 			List<OrderInfoExt> orderInfoExts = orderInfoExtServ.queryOrderInfoExt(order.getId());
 			if(orderInfoExts == null || orderInfoExts.size() == 0) {
 				order.setIsPrize(0);

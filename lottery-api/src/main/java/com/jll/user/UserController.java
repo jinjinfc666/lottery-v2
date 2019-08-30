@@ -1127,36 +1127,11 @@ public class UserController {
 		Map<String, Object> ret = new HashMap<>();
 		try {
 			String realName=userInfo.getRealName();
-			Integer userId=userInfo.getId();
-			Integer state=userInfo.getState();
-			Integer userType=userInfo.getUserType();
 			String phoneNum=userInfo.getPhoneNum();
 			String email=userInfo.getEmail();
-			Integer isHiddenPlan = userInfo.getIsHiddenPlan();
 			BigDecimal platRebate=userInfo.getPlatRebate();
-			Integer panKou = userInfo.getPanKou();
-			Double xyPayoutRate = userInfo.getXyPayoutRate();
-			Double xyAmount = userInfo.getXyAmount();
-			UserInfo user = userInfoService.getUserById(userId);
-			if(userType!=null) {
-				user.setUserType(userType);
-			}
+			UserInfo user = userInfoService.getUserById(userInfo.getId());
 			
-			if(isHiddenPlan != null) {
-				user.setIsHiddenPlan(isHiddenPlan);
-			}
-			
-			if(panKou != null) {
-				user.setPanKou(panKou);
-			}
-			
-			if(xyAmount != null) {
-				user.setXyAmount(xyAmount);
-			}
-			
-			if(xyPayoutRate != null) {
-				user.setXyPayoutRate(xyPayoutRate);
-			}
 			
 			if(!StringUtils.isBlank(email)
 					&& !Utils.validEmail(email)) {
@@ -1179,33 +1154,18 @@ public class UserController {
 				ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_USER_INVALID_REAL_NAME.getErrorMes());
 				return ret; 
 			}
-			if(!StringUtils.isBlank(realName)) {
-				user.setRealName(realName);
+			
+			if(platRebate != null && platRebate.compareTo(user.getPlatRebate()) == -1) {
+				boolean isAllowed = userInfoService.scanChilderen(user, platRebate);
+				if(!isAllowed) {
+					ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+					ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_USER_INVALID_PLAT_REBATE.getCode());
+					ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_USER_INVALID_PLAT_REBATE.getErrorMes());
+					return ret; 
+				}				
 			}
-			if(!StringUtils.isBlank(phoneNum)&&!phoneNum.equals(user.getPhoneNum())) {
-				user.setPhoneNum(phoneNum);
-				user.setIsValidPhone(Constants.PhoneValidState.UNVERIFIED.getCode());
-			}
-			if(!StringUtils.isBlank(email)&&!email.equals(user.getEmail())) {
-				user.setEmail(email);
-				user.setIsValidEmail(Constants.EmailValidState.UNVERIFIED.getCode());
-			}
-			if(state!=null) {
-				user.setState(state);
-			}
-			if(user.getUserType()!=Constants.UserType.GENERAL_AGENCY.getCode()) {
-				if(platRebate!=null) {
-					user.setPlatRebate(platRebate);
-					if(!userInfoService.verifRebate(user)) {
-						ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
-						ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_USER_PLATREBATE_WRONG.getCode());
-						ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_USER_PLATREBATE_WRONG.getErrorMes());
-						return ret; 
-					}
-				}
-			}
-			ret.clear();
-			userInfoService.updateUserType(user);
+			
+			userInfoService.updateUserType(userInfo);
 			ret.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
 			return ret; 
 		}catch(Exception e){
@@ -1281,9 +1241,11 @@ public class UserController {
 	//查询所有代理
 	@RequestMapping(value={"/queryAllUserAgent"}, method={RequestMethod.GET}, produces=MediaType.APPLICATION_JSON_VALUE)
 	public Map<String, Object> queryAllUserAgent(@RequestParam(name = "userName", required = false) String userName,
+			  @RequestParam(name = "userType", required = false) Integer userType,
 			  @RequestParam(name = "startTime", required = false) String startTime,
 			  @RequestParam(name = "endTime", required = false) String endTime,
 			  @RequestParam(name = "pageIndex", required = true) Integer pageIndex,//当前请求页
+			  @RequestParam(name = "searchType", required = true) Integer searchType,
 			  HttpServletRequest request) {
 		Map<String, Object> ret = new HashMap<>();
 		Map<String, Object> map = new HashMap<>();
@@ -1299,8 +1261,10 @@ public class UserController {
 		ret.put("pageSize", pageSize);
 		ret.put("pageIndex", pageIndex);
 		ret.put("userName", userName);
+		ret.put("userType", userType);
 		ret.put("startTime", startTime);
 		ret.put("endTime", endTime);
+		ret.put("searchType", searchType);
 		try {
 			map=userInfoService.queryAllAgent(ret);
 			map.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());

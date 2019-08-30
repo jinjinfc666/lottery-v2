@@ -9,11 +9,18 @@
             margin:20px auto;
             border-radius: 5px;
         }
-        table th,table td{
-            padding:5px;
-            text-align: center;
+        table th{
+            padding:5 20 5 5;
+            text-align: right;
             border: 1px solid #999999;
         }
+        
+        table td{
+            padding:5 5 5 20;
+            text-align: left;
+            border: 1px solid #999999;
+        }
+        
         table tr:hover{
             background-color: #ccccff;
         }
@@ -49,6 +56,11 @@
                 -moz-border-radius: 5px;
                 border-radius: 5px;
             }
+            
+            .displayNone{
+            	display:none;
+            }
+            
         </style>
         <link href="../css/bootstrap.min14ed.css" rel="stylesheet">
         <script type="text/javascript" src="../js/jquery-1.10.2.min.js"></script>
@@ -56,54 +68,34 @@
         <script src="../js/self_js.js" type="text/javascript"></script>
         <link rel="stylesheet" href="../js/huakuai/main.css">
         <link rel="stylesheet" href="../js/huakuai/rangeslider.css">
-        <!--<script src="../js/huakuai/jquery.min.js"></script>-->
         <script src="../js/huakuai/rangeslider.min.js"></script>
+        <script src="../js/site.js" type="text/javascript"></script>
+        
         <script type="text/javascript">
             $(document).ready(function () {
                 var obj = {};
                 obj=getValue();
                 document.getElementById('agentId').value=obj['agentId'];
-                document.getElementById('loginPwd').value='111111';
-                document.getElementById('fundPwd').value='111111';
+                                
+                changePrizeRate();
+                
                 getplat();
-                // if(a){
-                changenum();
-                // }
-            });
-            function getplat(){
-                updateToken();
-                var access_token=sessionStorage.getItem("access_token");
-                var token="Bearer " + access_token;
-                var domain=parseDomain();
-                var url=domain+"/lottery-api/users/querySystemConfiguration";
-                $.ajax({
-                    url: url,
-                    type: "GET",
-                    async: false, // 设置同步方式
-                    data: {
-                    },
-                    dataType: "json",
-//                    beforeSend: function(xhr) {
-//                        xhr.setRequestHeader("Authorization");
-//                    },
-//                    headers:{"Authorization":token},
-                    beforeSend: function (XMLHttpRequest) {
-                        XMLHttpRequest.setRequestHeader("Authorization", token);
-                    },
-                    error: function () {
-                        alert("系统错误");
-                    },
-                    success: function (data) {
-                        if(data.status=="1"){
-                            document.getElementById("maxPlatRebate").value=data.data.maxPlatRebate;
-                            document.getElementById("startPlat").value=data.data.startPlat;
-                            document.getElementById("endPlat").value=data.data.endPlat;
-                        }else{
-                            alert(getErroe(data.error_code));
-                        }
-                    }
+                
+                $("#userType option").each(function(){
+                	                	
+                	if($(this).val() == obj['agentUserType']){
+                		$(this).attr('selected', true);
+                		$('#userType').attr('disabled', true);
+                		
+                		$("#userType").trigger("change");
+                		
+                		//break;
+                		return false;
+                	}
                 });
-            }
+                
+            });
+            
             function parseDomain() {
                 var currURL = location.href;
                 var domain = '';
@@ -123,6 +115,7 @@
                 }
                 return domain;
             }
+            
             function add(){
                 updateToken();
                 var agentId=document.getElementById('agentId').value;
@@ -136,6 +129,16 @@
                 var qq=document.getElementById('qq').value;
                 var wechat=document.getElementById('wechat').value;
                 var email=document.getElementById('email').value;
+                var userType = document.getElementById('userType').value;
+                
+                var xyAmount = null;
+                var panKou = null;
+                
+                var access_token = sessionStorage.getItem("access_token");
+                var token = "Bearer " + access_token;
+                var url = createAgentURL.replace("{agentId}", agentId);
+                var data = null;
+                
                 if(userName==""){
                     $("#userName1").text("请输入用户名!");
                     return false;
@@ -151,23 +154,58 @@
                     return false;
                 }
                 $("#platRebate1").text("");
-                var domain=parseDomain();
-                var access_token=sessionStorage.getItem("access_token");
-                var token="Bearer " + access_token;
-                var url=domain+"/lottery-api/users/agents/"+agentId;
-                var data=JSON.stringify({
-                    "realName": realName,
-                    "userName": userName,
-                    "userId": userId,
-                    "loginPwd": loginPwd,
-                    "fundPwd": fundPwd,
-                    "platRebate": platRebate,
-                    "phoneNum": phoneNum,
-                    "qq": qq,
-                    "wechat": wechat,
-                    "email": email,
-                    "userType":1
-                });
+                
+                if(userType==""){
+                    $("#userType_error").text("请选择用户类型!");
+                    return false;
+                }
+                
+                if(userType == '8' || userType == '7'){
+                	xyAmount = document.getElementById('xyAmount').value;
+                    panKou = $("#smPanKou option:selected").attr("data-seq");
+                    platRebate = $("#smPanKou option:selected").val();
+                    
+                    if(xyAmount == null || xyAmount == ''){
+                    	$("#xyAmount_error").text("请输入信誉额度!");
+                        return false;
+                    }
+                    
+					if(panKou == null || panKou == ''){
+						$("#smPanKou_error").text("请选择盘口!");
+	                    return false;
+                    }
+					
+					data=JSON.stringify({
+	                    "realName": realName,
+	                    "userName": userName,
+	                    "userId": userId,
+	                    "loginPwd": loginPwd,
+	                    "fundPwd": fundPwd,
+	                    "platRebate": platRebate,
+	                    "phoneNum": phoneNum,
+	                    "qq": qq,
+	                    "wechat": wechat,
+	                    "email": email,
+	                    "userType":userType,
+	                    "xyAmount":xyAmount,
+	                    'panKou':panKou
+	                });
+                }else{
+                	data=JSON.stringify({
+                        "realName": realName,
+                        "userName": userName,
+                        "userId": userId,
+                        "loginPwd": loginPwd,
+                        "fundPwd": fundPwd,
+                        "platRebate": platRebate,
+                        "phoneNum": phoneNum,
+                        "qq": qq,
+                        "wechat": wechat,
+                        "email": email,
+                        "userType":userType
+                    });
+                }
+                
                 $.ajax({
                     url: url,
                     type: "POST",
@@ -175,12 +213,8 @@
                     data: data,
                     dataType: "json",
                     contentType:"application/json", 
-//                    beforeSend: function(xhr) {
-//                        xhr.setRequestHeader("Authorization");
-//                    },
-//                    headers:{"Authorization":token},
                     beforeSend: function (XMLHttpRequest) {
-         		XMLHttpRequest.setRequestHeader("Authorization", token);
+         				XMLHttpRequest.setRequestHeader("Authorization", token);
                     },
                     error: function () {
                         alert("系统错误");
@@ -226,56 +260,262 @@
                     obj.value= parseFloat(obj.value); 
                 } 
             }
+            
+            function queryUserInfo(deffered, userId){
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/users/queryUserInfo";
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    async: false, // 设置同步方式
+                    data: {
+                        userId: userId
+                    },
+                    dataType: "json",
+                    beforeSend: function (XMLHttpRequest) {
+                        XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function (jqXHR,textStatus,errorThrown) {
+                        if(typeof jqXHR != 'undefined' 
+                        		&& typeof jqXHR.status != 'undefined' 
+                        		&& jqXHR.status == 401){
+                        	var url = "index.html";
+                            window.location.href = url;
+                        }
+                    },
+                    success: function (data) {
+                        if(data.status=="1"){
+                            deffered.resolve(data.data);
+                        }else{
+                        	deffered.reject(-1);
+                        }
+                    }
+                });
+            }
+            
+            function changePlatRebate(){
+            	var myRangeVal = $('#myRange').val();
+                $('#platRebates_rate').val(myRangeVal);
+            }
+            
+            function changePrizeRate(){            	
+            	var deffered = $.Deferred();
+            	deffered.done(function(template){
+            		$("#platRebates_rate").val(template.currT + '  /  ' + template.currR);
+            		$("#platRebate").val(template.currR);
+            		$("#myRange").attr('min',template.minT);
+            		$("#myRange").attr('max',template.maxT);
+            		$("#myRange").val(template.currT);
+                    $("#min_val").text(template.minT);
+                    $("#max_val").text(template.maxT);
+            	});
+               
+            	var superior = $("#agentId").val();
+            	var currT = $("#myRange").val();
+            	if(currT != null && currT*1 < 1700){
+            		currT = null;
+            	}
+            	queryPrizeTemplate(deffered, superior, currT)
+            }
+            
+            function queryPrizeTemplate(deffered, superior, currTamplate){
+            	var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var url= queryPrizeTemplateURL;
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    async: false, // 设置同步方式
+                    data: {
+                    	superior: superior,
+                    	currT: currTamplate
+                    },
+                    dataType: "json",
+                    beforeSend: function (XMLHttpRequest) {
+                        XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function (jqXHR,textStatus,errorThrown) {
+                        if(typeof jqXHR != 'undefined' 
+                        		&& typeof jqXHR.status != 'undefined' 
+                        		&& jqXHR.status == 401){
+                        	var url = "index.html";
+                            window.location.href = url;
+                        }
+                    },
+                    success: function (data) {
+                    	if(data.status=="1"){
+                            deffered.resolve(data.data);
+                        }else{
+                        	deffered.reject(-1);
+                        }
+                    }
+                });
+            }
+            
+            function initUI(){
+            	var selUserType = $('#userType').val();
+            	if(selUserType == '1'){
+            		$("tr[name='row_xy']").each(function(){
+        				$(this).addClass("displayNone");
+        			});
+            		
+            		$("tr[name='row_sm']").each(function(){
+            			$(this).removeClass("displayNone"); 				
+        			});
+            	}else if(selUserType == '6'){
+            		$("tr[name='row_xy']").each(function(){
+        				$(this).addClass("displayNone");
+        			});
+            		
+            		$("tr[name='row_sm']").each(function(){
+            			$(this).removeClass("displayNone"); 				
+        			});
+            	}else if(selUserType == '8'){
+            		$("tr[name='row_xy']").each(function(){
+        				$(this).removeClass("displayNone");
+        			});
+            		
+            		$("tr[name='row_sm']").each(function(){
+            			$(this).addClass("displayNone"); 				
+        			});
+            	}else if(selUserType == '10'){
+            		$("tr[name='row_xy']").each(function(){
+        				$(this).addClass("displayNone");
+        			});
+            		
+            		$("tr[name='row_sm']").each(function(){
+            			$(this).removeClass("displayNone"); 				
+        			});
+            	}
+            }
+            
+            function getplat(){
+                updateToken();
+                var access_token=sessionStorage.getItem("access_token");
+                var token="Bearer " + access_token;
+                var domain=parseDomain();
+                var url=domain+"/lottery-api/settings/querySmPanKou";
+                var userId = $("#agentId").val();
+                
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    async: false, // 设置同步方式
+                    data: {
+                    },
+                    dataType: "json",
+                    beforeSend: function (XMLHttpRequest) {
+                        //XMLHttpRequest.setRequestHeader("Authorization", token);
+                    },
+                    error: function () {
+                    	 if(typeof jqXHR != 'undefined' 
+                     		&& typeof jqXHR.status != 'undefined' 
+                     		&& jqXHR.status == 401){
+                     	
+                     	 }
+                    },
+                    success: function (data) {
+                    	if(data.status=="1"){
+                       	 $.each(data.data, function(key, val) {  
+                       		$("#smPanKou").append("<option data-seq='"+ val.seq +"' value='"+val.codeVal+"'>"+val.remark+"</option>");
+                            })
+                       }else{
+                           alert(getErroe(data.error_code));
+                       }
+                    }
+                });
+            }
         </script>
     </head>
     <body>
         <input type="hidden" id="agentId" name="agentId" value="" />
         <table width="600px" cellspacing="0" cellpadding="5">
+			<tr>
+                <th class="thstyle">代理类型</th>
+                <td>
+                    <select id="userType" name="userType" style="width:250px;" class="form-control" onchange="initUI()">
+			        	<option value="1" selected>线上代理</option>
+			            <option value="6">双面代理</option>
+			            <option value="8">信誉代理</option>
+			            <option value="10">委托投注代理</option>
+			        </select>
+			        <span id="userType_error" style="color:red;"></span>
+                </td>
+            </tr>
+            
             <tr>
-                <th style="background-color:#ffcc99">真实姓名：</th>
+                <th class="thstyle">真实姓名</th>
                 <td>
                     <input type="text" id="realName" name="realName" value="" placeholder="只能填写中文" onkeyup="value=value.replace(/[^\u4E00-\u9FA5]/g,'')" onbeforepaste="clipboardData.setData('text',clipboardData.getData('text').replace(/[^\u4E00-\u9FA5]/g,''))" style="width:250px;" class="login_putin" />
                 </td>
             </tr>
             <tr>
-                <th style="background-color:#ffcc99">用户名：</th>
+                <th class="thstyle">用户名</th>
                 <td>
                     <input type="text" id="userName" name="userName" value="" placeholder="密码为6-20位的字母或数字组成"  style="width:250px;" class="login_putin" />
                     <span id="userName1" style="color:red;"></span>
                 </td>
             </tr>
             <tr>
-                <th style="background-color:#ffcc99">身份证：</th>
+                <th class="thstyle">身份证</th>
                 <td><input type="text" id="userId" name="userId" value="" style="width:250px;" class="login_putin" /></td>
             </tr>
             <tr>
-                <th style="background-color:#ffcc99">登录密码：</th>
-                <td><input type="text" id="loginPwd" name="loginPwd" value="" placeholder="密码为6-15位的字母或数字组成" style="width:250px;" class="login_putin" />
+                <th class="thstyle">登录密码</th>
+                <td><input type="password" id="loginPwd" name="loginPwd" value="" placeholder="密码为6-15位的字母或数字组成" style="width:250px;" class="login_putin" />
                 <span id="loginPwd1" style="color:red;"></span></td>
             </tr>
             <tr>
-                <th style="background-color:#ffcc99">资金密码：</th>
-                <td><input type="text" id="fundPwd" name="fundPwd" value="" placeholder="密码为6-15位的字母或数字组成" style="width:250px;" class="login_putin" /></td>
+                <th class="thstyle">资金密码</th>
+                <td><input type="password" id="fundPwd" name="fundPwd" value="" placeholder="密码为6-15位的字母或数字组成" style="width:250px;" class="login_putin" /></td>
             </tr>
-            <tr>
-                <th style="background-color:#ffcc99">下级返点：</th>
-                <td><input type="text" id="platRebate" name="platRebate" value="" placeholder="下级返点不能大于上级的返点" style="width:250px;" class="login_putin" onkeyup="clearNoNum(this)" onkeypress="if(/\.\d\d{3}$/.test(value))event.returnValue=false" />
-                <span id="platRebate1" style="color:red;"></span></td>
+            
+            <tr name="row_xy" class="displayNone">
+                <th class="thstyle">选择盘口</th>
+                <td>
+                	<select id="smPanKou" style="width:250px;height:50px"></select>
+                	<span id="smPanKou_error" style="color:red;"></span>
+                </td>
             </tr>
+            <tr name="row_xy" class="displayNone">
+                <th class="thstyle">信誉额度</th>
+                <td>
+                	<input type="text" id="xyAmount" name="xyAmount" value="" style="width:250px;" class="login_putin" />
+                	<span id="xyAmount_error" style="color:red;"></span>
+                </td>
+            </tr>
+            
+            
+            <tr name="row_sm">
+                <th class="thstyle">下级返点</th>
+                <td>                	
+                	<input type="text" style="width:110px" name="platRebates_rate" id="platRebates_rate"  disabled>
+					<input type="hidden" name="platRebate" id="platRebate">
+					<input type="range" name="myRange" id="myRange" oninput="changePlatRebate()" step="1" onmouseup="changePrizeRate()" style="width:250px;" >
+					<div  style="width:250px;" >
+						<span id="min_val" style="float:left"></span>
+						<span id="max_val" style="float:right"></span>
+					</div>					
+                </td>
+            </tr>
+            
+            
             <tr>
-                <th style="background-color:#ffcc99">手机号：</th>
+                <th class="thstyle">手机号</th>
                 <td><input type="text" id="phoneNum" name="phoneNum" value="" style="width:250px;" class="login_putin" /></td>
             </tr>
             <tr>
-                <th style="background-color:#ffcc99">QQ：</th>
+                <th class="thstyle">QQ</th>
                 <td><input type="text" id="qq" name="qq" value="" style="width:250px;" class="login_putin" /></td>
             </tr>
             <tr>
-                <th style="background-color:#ffcc99">微信：</th>
+                <th class="thstyle">微信</th>
                 <td><input type="text" id="wechat" name="wechat" value="" style="width:250px;" class="login_putin" /></td>
             </tr>
             <tr>
-                <th style="background-color:#ffcc99">邮箱：</th>
+                <th class="thstyle">邮箱</th>
                 <td><input type="text" id="email" name="email" value="" style="width:250px;" class="login_putin" /></td>
             </tr>
         </table>
@@ -283,7 +523,7 @@
             var wz = parent.layer.getFrameIndex(window.name);
         </script>
         <div style="margin-left:500px;">
-            <button class="btn btn-primary" type="submit" onclick="add()">提交</button>
+            <button class="btn btn-primary" type="submit" onclick="add()" style="width:80px">提交</button>
         </div>
     </body>
 </html>

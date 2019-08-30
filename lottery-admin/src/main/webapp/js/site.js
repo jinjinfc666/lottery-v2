@@ -37,3 +37,9 @@ var queryAgentEntrustURL = SITE + "/users/queryAllUserAgentEntrust";
 var queryUserEntrustURL = SITE + "/users/queryAllUserAgentEntrust";
 
 var queryUserInfoURL = SITE + "/users/queryUserInfo";
+
+var queryAgentURL = SITE + "/users/queryAllUserAgent";
+
+var queryPrizeTemplateURL = SITE + "/lotteries/prize-templates";
+
+var createAgentURL = SITE + "/users/agents/{agentId}";

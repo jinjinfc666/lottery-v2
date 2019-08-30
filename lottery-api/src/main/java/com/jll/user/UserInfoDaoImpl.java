@@ -300,36 +300,139 @@ public class UserInfoDaoImpl extends DefaultGenericDaoImpl<UserInfo> implements 
 	}
 	//查询所有的代理
 	@Override
-	public Map<String, Object> queryAllAgent(String userName,String startTime,String endTime, Integer pageIndex, Integer pageSize) {
+	public Map<String, Object> queryAllAgent(Map<String, Object> params, UserInfo loginUser) {
+				
+		String userName = (String) params.get("userName");
+		Integer userType = (Integer) params.get("userType");
+		String startTime = (String) params.get("startTime");
+		String endTime = (String) params.get("endTime");
+		Integer pageIndex = (Integer) params.get("pageIndex");
+		Integer pageSize = (Integer) params.get("pageSize");
+		Integer searchType = (Integer)params.get("searchType");
+		
 		Map<String,Object> map=new HashMap<String,Object>();
-		Integer userType=Constants.UserType.SYS_ADMIN.getCode();
-		Integer userTypea=Constants.UserType.PLAYER.getCode();
-		Integer userTypeb=Constants.UserType.DEMO_PLAYER.getCode();
-		map.put("userType", userType);
-		map.put("userTypea", userTypea);
-		map.put("userTypeb", userTypeb);
-		String hql="";
-		String userNameSql="";
-		if(!StringUtils.isBlank(userName)) {
-			userNameSql=" and LOCATE(:userName, userName)>0 ";
+		Integer generalAgency = Constants.UserType.GENERAL_AGENCY.getCode();
+		UserInfo superior = null;
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("from UserInfo where 1 = 1");
+		
+		
+		
+		if(loginUser.getUserType() ==  UserType.SYS_ADMIN.getCode()
+				&& !StringUtils.isBlank(userName) 
+				&& searchType != null 
+				&& searchType.intValue() == 0) {
+			buffer.append(" and userName=:userName ");
 			map.put("userName", userName);
+			if(userType != null) {
+				UserType agency = UserType.getStateByCode(userType);
+				UserType player = UserType.getPlayerByAgency(agency);
+				buffer.append(" and (userType=:agency or userType=:player or userType=:generalAngecy)");
+				map.put("agency", agency.getCode());
+				map.put("player", player.getCode());
+				map.put("generalAngecy", UserType.GENERAL_AGENCY.getCode());
+			}
+		}else if(loginUser.getUserType() ==  UserType.SYS_ADMIN.getCode()
+				&& !StringUtils.isBlank(userName) 
+				&& searchType != null 
+				&& searchType.intValue() == 1) {
+			superior = getUserByUserName(userName);
+			if(superior != null) {
+				buffer.append(" and  FIND_IN_SET(:superior,superior) = 1");
+				
+				map.put("superior", superior.getId());				
+			}
+			
+			if(userType != null) {
+				UserType agency = UserType.getStateByCode(userType);
+				UserType player = UserType.getPlayerByAgency(agency);
+				buffer.append(" and (userType=:agency or userType=:player)");
+				map.put("agency", agency.getCode());
+				map.put("player", player.getCode());
+			}
+			
+		}else if(loginUser.getUserType() ==  UserType.SYS_ADMIN.getCode()
+				&& StringUtils.isBlank(userName) ){			
+			
+			if(userType != null) {
+				UserType agency = UserType.getStateByCode(userType);
+				UserType player = UserType.getPlayerByAgency(agency);
+				buffer.append(" and (userType=:agency or userType=:player)");
+				map.put("agency", agency.getCode());
+				map.put("player", player.getCode());
+			}else {
+				buffer.append(" and userType =:generalAgency ");
+				map.put("generalAgency", generalAgency);
+			}
+		}else {
+			superior = loginUser;
+			buffer.append(" and FIND_IN_SET(:superior,superior) = 1 ");
+			map.put("superior", superior.getId());
+			
+			if(!StringUtils.isBlank(userName) ) {
+				buffer.append(" and userName=:userName ");
+				map.put("userName", userName);
+			}
+			
 		}
-		String timeSql="";
+		/*if(loginUser.getUserType() ==  UserType.SYS_ADMIN.getCode()) {
+			if(!StringUtils.isBlank(userName)) {
+				//查用户
+				if(searchType.intValue() == 0) {
+					buffer.append(" and userName=:userName ");
+					map.put("userName", userName);
+					if(userType != null) {
+						buffer.append(" and userType=:userType ");
+						map.put("userType", userType);
+					}
+				}else {//查下级
+					superior = getUserByUserName(userName);
+					if(superior != null) {
+						buffer.append(" and  FIND_IN_SET(:superior,superior) = 1");
+						
+						map.put("superior", superior.getId());
+						
+						if(userType != null) {
+							buffer.append(" and userType=:userType ");
+							map.put("userType", userType);
+						}
+					}
+				}
+			}else {
+				buffer.append(" and userType =:generalAgency ");
+				map.put("generalAgency", generalAgency);
+			}
+		}else {
+			superior = loginUser; 
+			if(!StringUtils.isBlank(userName)) {
+				buffer.append(" and FIND_IN_SET(:superior,superior) = 1 and userName=:userName ");
+				map.put("superior", superior.getId());
+				map.put("userName", userName);
+			}else {
+				buffer.append(" and FIND_IN_SET(:superior,superior) = 1 ");
+				map.put("superior", superior.getId());
+			}
+		}*/
+		
+		
 		if(!StringUtils.isBlank(startTime)&&!StringUtils.isBlank(endTime)) {
-			timeSql=" and createTime>=:startTime and createTime < :endTime";
+			buffer.append(" and createTime>=:startTime and createTime < :endTime ");
 			Date beginDate = DateUtil.fmtYmdHisToDate(startTime);
 		    Date endDate = DateUtil.fmtYmdHisToDate(endTime);
 			map.put("startTime", beginDate);
 			map.put("endTime", endDate);
 		}
-		hql=("from UserInfo where userType !=:userType and userType !=:userTypea AND userType!=:userTypeb "+userNameSql+timeSql);
+		
+		buffer.append(" order by createTime desc");
+		
 		PageBean page=new PageBean();
 		page.setPageIndex(pageIndex);
 		page.setPageSize(pageSize);
-		PageBean pageBean=queryByPagination(page,hql,map);
+		PageBean pageBean=queryByPagination(page,buffer.toString(),map);
 		map.clear();
 		map.put("data", pageBean);
 		return map;
+		
 	}
 	//通过用户Id查询用户银行卡数量
 	@Override

@@ -909,17 +909,71 @@ public class UserInfoServiceImpl implements UserInfoService
 	}
 	//修改用户
 	@Override
-	public void updateUserType(UserInfo user) {
-		Integer state=user.getState();
+	public void updateUserType(UserInfo userInfo) {
+		String realName=userInfo.getRealName();
+		Integer userId=userInfo.getId();
+		Integer state=userInfo.getState();
+		Integer userType=userInfo.getUserType();
+		String phoneNum=userInfo.getPhoneNum();
+		String email=userInfo.getEmail();
+		Integer isHiddenPlan = userInfo.getIsHiddenPlan();
+		BigDecimal platRebate=userInfo.getPlatRebate();
+		Integer panKou = userInfo.getPanKou();
+		Double xyPayoutRate = userInfo.getXyPayoutRate();
+		Double xyAmount = userInfo.getXyAmount();
+		UserInfo user = getUserById(userId);
+		BigDecimal oldPlatRebate = user.getPlatRebate();
+		
+		if(userType!=null) {
+			user.setUserType(userType);
+		}
+		
+		if(isHiddenPlan != null) {
+			user.setIsHiddenPlan(isHiddenPlan);
+		}
+		
+		if(panKou != null) {
+			user.setPanKou(panKou);
+		}
+		
+		if(xyAmount != null) {
+			user.setXyAmount(xyAmount);
+		}
+		
+		if(xyPayoutRate != null) {
+			user.setXyPayoutRate(xyPayoutRate);
+		}		
+		
+		if(!StringUtils.isBlank(realName)) {
+			user.setRealName(realName);
+		}
+		
+		if(!StringUtils.isBlank(phoneNum)&&!phoneNum.equals(user.getPhoneNum())) {
+			user.setPhoneNum(phoneNum);
+			user.setIsValidPhone(Constants.PhoneValidState.UNVERIFIED.getCode());
+		}
+		
+		if(!StringUtils.isBlank(email)&&!email.equals(user.getEmail())) {
+			user.setEmail(email);
+			user.setIsValidEmail(Constants.EmailValidState.UNVERIFIED.getCode());
+		}
+		
+		if(state != null) {
+			user.setState(state);
+		}
+		
+		
+		if(platRebate != null && platRebate.compareTo(oldPlatRebate) != 0) {
+			user.setPlatRebate(platRebate);
+			user.setRebate(calRebate(user));			
+		}
+		
 		Calendar calendar = new GregorianCalendar();
 		Date date = new Date();
 		if(state==0) {
 			user.setFailLoginCount(0);
 			user.setUnlockTime(date);
 		}else if(state==1){
-//			calendar.setTime(date);
-//			calendar.add(calendar.YEAR, 10);//把日期往后增加一年.整数往后推,负数往前移动
-//			date=calendar.getTime();
 			user.setUnlockTime(null);
 		}else if(state==2) {
 			calendar.setTime(date);
@@ -929,11 +983,28 @@ public class UserInfoServiceImpl implements UserInfoService
 		}
 		userDao.saveUser(user);
 		
+		if(platRebate != null && platRebate.compareTo(oldPlatRebate) != 0) {
+			modifyChildrenPlatRebate(user);
+		}
+		
 		if(user.getXyAmount() != null
 				&& user.getXyAmount() > 0) {
 			userExtServ.saveUserInfoExt(user);
 		}
 	}
+	
+	private void modifyChildrenPlatRebate(UserInfo user) {
+		List<UserInfo> children = userDao.queryAllAgent(user.getId());
+		for(UserInfo userInfo : children) {
+			BigDecimal superiorPlatRebate = user.getPlatRebate();
+			BigDecimal platRebate = userInfo.getPlatRebate();
+			BigDecimal rebate = superiorPlatRebate.subtract(platRebate);
+			
+			userInfo.setRebate(rebate);
+			userDao.saveUser(userInfo);
+		}
+	}
+
 	//查询所有的用户
 	@Override
 	public Map<String,Object> queryAllUserInfo(Map<String, Object> map) {
@@ -959,12 +1030,34 @@ public class UserInfoServiceImpl implements UserInfoService
 	//查询所有的代理
 	@Override
 	public Map<String,Object> queryAllAgent(Map<String, Object> map) {
-		String userName=(String) map.get("userName");
+		/*String userName=(String) map.get("userName");
 		String startTime=(String) map.get("startTime");
 		String endTime=(String) map.get("endTime");
 		Integer pageIndex=(Integer) map.get("pageIndex");
 		Integer pageSize=(Integer) map.get("pageSize");
 		Map<String,Object> userInfoList=userDao.queryAllAgent( userName,startTime,endTime,pageIndex,pageSize);
+		return userInfoList;*/
+		
+		UserInfo userInfo = getCurLoginInfo();
+		Map<String,Object> userInfoList = null;
+		/*if(userInfo.getUserType() == UserType.SYS_ADMIN.getCode()) {
+			String userName = (String) map.get("userName");
+			String startTime = (String) map.get("startTime");
+			String endTime = (String) map.get("endTime");
+			Integer pageIndex = (Integer) map.get("pageIndex");
+			Integer pageSize = (Integer) map.get("pageSize");
+			Integer searchType = (Integer)map.get("searchType");
+			userInfoList = userDao.queryAllAgentSMByAdmin(searchType, userName,startTime,endTime,pageIndex,pageSize);
+		}else if(userInfo.getUserType() == UserType.SM_AGENCY.getCode()) {
+			String userName = (String) map.get("userName");
+			String startTime = (String) map.get("startTime");
+			String endTime = (String) map.get("endTime");
+			Integer pageIndex = (Integer) map.get("pageIndex");
+			Integer pageSize = (Integer) map.get("pageSize");
+			userInfoList = userDao.queryAllAgentSMByAgency(userInfo.getId(), userName,startTime,endTime,pageIndex,pageSize);
+		}*/
+		
+		userInfoList = userDao.queryAllAgent(map, userInfo);
 		return userInfoList;
 	}
 	
@@ -1931,7 +2024,7 @@ public class UserInfoServiceImpl implements UserInfoService
 				}
 			}
 			String str2 = StringUtils.join(stringSuperior, ",");
-			userInfo.setSuperior(str2);
+			userInfo.setSuperiorDes(str2);
 			
 			
 			userInfo.setLoginPwd(StringUtils.MORE_ASTERISK);
@@ -2070,20 +2163,24 @@ public class UserInfoServiceImpl implements UserInfoService
 	}
 
 	@Override
-	public boolean verifRebate(UserInfo userInfo) {
-		String superior=userInfo.getSuperior();
-		String first=StringUtils.substringBefore(superior,",");
-		Integer lastAgentId=Integer.valueOf(first);
-		if(lastAgentId==Constants.VAL_SUPERIOR) {
-			lastAgentId=userDao.getGeneralAgency().getId();
+	public BigDecimal calRebate(UserInfo userInfo) {
+		String superior = userInfo.getSuperior();
+		String[] superiorArray = superior.split(",");
+		if(superiorArray == null || superiorArray.length == 0) {
+			return null;
 		}
-		BigDecimal lastAgentPlatRebate=this.getUserById(lastAgentId).getPlatRebate();
-		BigDecimal selfPlatRebate=userInfo.getRebate().add(userInfo.getPlatRebate());
-		int a=lastAgentPlatRebate.compareTo(selfPlatRebate);
-		if(a==0) {
-			return true;
+		
+		
+		Integer superiorId = Integer.valueOf(superiorArray[0]);
+		if(superiorId.intValue() == Constants.VAL_SUPERIOR.intValue()) {
+			superiorId = userDao.getGeneralAgency().getId();
 		}
-		return false;
+		
+		BigDecimal superiorPlatRebate = this.getUserById(superiorId).getPlatRebate();
+		BigDecimal platRebate = userInfo.getPlatRebate();
+		BigDecimal rebate = superiorPlatRebate.subtract(platRebate);
+		
+		return rebate;
 	}
 
 	@Override
@@ -2363,5 +2460,17 @@ public class UserInfoServiceImpl implements UserInfoService
 		}
 		
 		return userInfoList;
+	}
+
+	@Override
+	public boolean scanChilderen(UserInfo user, BigDecimal platRebate) {
+		List<UserInfo> children = userDao.queryAllAgent(user.getId());
+		for(UserInfo userInfo : children) {
+			if(userInfo.getPlatRebate().compareTo(platRebate) == 1) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 }

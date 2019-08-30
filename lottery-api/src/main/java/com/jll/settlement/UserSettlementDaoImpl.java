@@ -103,19 +103,19 @@ public class UserSettlementDaoImpl
 
 
 	@Override
-	public boolean isPendingExisting(UserInfo user) {
-		String sql = "select count(*) from UserSettlement where state = 0 and userId=?";
+	public UserSettlement queryPendingExisting(UserInfo user) {
+		String sql = "from UserSettlement where state = 0 and userId=?";
 		List<Object> params = new ArrayList<>();
-		Long count = null;
+		List<UserSettlement> ret = null;
 		
 		params.add(user.getId());
 		
-		count = queryCount(sql, params);
+		ret = query(sql, params, UserSettlement.class);
 		
-		if(count == null || count.longValue() == 0) {
-			return false;
+		if(ret == null || ret.size() == 0) {
+			return null;
 		}
 		
-		return true;
+		return ret.get(0);
 	}
 }

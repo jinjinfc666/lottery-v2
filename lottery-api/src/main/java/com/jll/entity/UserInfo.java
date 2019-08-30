@@ -22,6 +22,7 @@ public class UserInfo implements java.io.Serializable {
 	private Date unlockTime;
 	private Integer userType;
 	private String superior;
+	private String superiorDes;
 	private BigDecimal rebate;
 	private BigDecimal platRebate;
 	private String phoneNum;
@@ -176,6 +177,14 @@ public class UserInfo implements java.io.Serializable {
 		this.superior = superior;
 	}
 
+	public String getSuperiorDes() {
+		return this.superiorDes;
+	}
+
+	public void setSuperiorDes(String superiorDes) {
+		this.superiorDes = superiorDes;
+	}
+	
 	public BigDecimal getRebate() {
 		return this.rebate;
 	}

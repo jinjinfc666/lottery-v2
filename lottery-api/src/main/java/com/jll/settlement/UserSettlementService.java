@@ -1,9 +1,5 @@
 package com.jll.settlement;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import com.jll.dao.PageBean;
 import com.jll.entity.UserInfo;
 import com.jll.entity.UserSettlement;
@@ -18,7 +14,7 @@ public interface UserSettlementService
 
 	boolean isSettleMentExisting(Integer settlementId);
 
-	boolean isPendingExisting(UserInfo user);
+	UserSettlement queryPendingExisting(UserInfo user);
 	
 	
 }

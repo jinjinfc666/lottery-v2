@@ -583,6 +583,34 @@ public class Constants {
 			}
 			return null;
 		}
+		
+		public static UserType getPlayerByAgency(UserType agency) {
+			if(agency.getCode() == AGENCY.getCode()) {
+				return PLAYER;
+			}else if(agency.getCode() == SM_AGENCY.getCode()) {
+				return SM_PLAYER;
+			}else if(agency.getCode() == XY_AGENCY.getCode()) {
+				return XY_PLAYER;
+			}else if(agency.getCode() == ENTRUST_AGENCY.getCode()) {
+				return ENTRUST_PLAYER;
+			}
+			
+			return null;
+		}
+		
+		public static boolean isAgency(UserType agency) {
+			if(agency.getCode() == AGENCY.getCode()) {
+				return true;
+			}else if(agency.getCode() == SM_AGENCY.getCode()) {
+				return true;
+			}else if(agency.getCode() == XY_AGENCY.getCode()) {
+				return true;
+			}else if(agency.getCode() == ENTRUST_AGENCY.getCode()) {
+				return true;
+			}
+			
+			return false;
+		}
 	}
 	
 	public static enum UserLevel{

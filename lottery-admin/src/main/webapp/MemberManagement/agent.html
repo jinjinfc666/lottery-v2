@@ -13,6 +13,14 @@
             .thCenter{
                 text-align: center;
             }
+            
+            .displayEle{
+            	display: block;
+            }
+            
+            .hideEle{
+            	display: none;
+            }
         </style>
         <link href="../css/bootstrap.min14ed.css" rel="stylesheet">
         <link href="../css/font-awesome.min93e3.css" rel="stylesheet">
@@ -24,40 +32,46 @@
         <script src="../js/plugins/layer/layer.min.js" type="text/javascript"></script>
         <script src="../js/content.min.js" type="text/javascript"></script>
         <script src="../js/self_js.js" type="text/javascript"></script>
+        <script src="../js/site.js" type="text/javascript"></script>
         <script language="javascript" src="../js/layer/layer.min.js"></script>
         <script type="text/javascript">
             var m =new Map();
             $(document).ready(function () {
                 searchrecord('search');
+                
+                var userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
+                if(userInfo.userType == '2'){
+	                $("#btn_addAgent").css({"display":"none"});
+	                $("#btn_addPlayer").css({"display":"none"});
+	                
+	                
+                }else{
+                	$("#agent_type").css({"display":"none"});
+                }
             });
-            function parseDomain() {
-                var currURL = location.href;
-                var domain = '';
-                if (currURL.indexOf("http") >= 0) {
-                    if (currURL.indexOf("/", currURL.indexOf("http") + 7) > 0) {
-                        domain = currURL.substring(0, currURL.indexOf("/", currURL
-                                .indexOf("http") + 7));
-                    } else {
-                        domain = currURL;
-                    }
-                }
-                if (typeof domain == 'undefined' || domain.length == 0) {
-                    return '';
-                }
-                if (domain.indexOf(":", 7) > 0) {
-                    domain = domain.substring(0, domain.indexOf(":", 7));
-                }
-                return domain;
-            }
-            function updateUserInfo(id){
-                var url = "UserInfoUpdate.html?id="+id;
+            
+            function updateUserInfo(id, userType){
+                var url = "UserInfoUpdate.html?id="+id +'&userType=' + userType;            
+                /* if(userType == '1' || userType == '0'){
+                	url = "../sm-memberManagement/UserInfoUpdate.html?id="+id +'&userType=' + userType;
+                }else if(userType == '2'){
+                	 url = "UserInfoUpdate.html?id="+id +'&userType=' + userType;
+                }else if(userType == '5' || userType == '6'){
+                	 url = "../sm-memberManagement/UserInfoUpdate.html?id="+id +'&userType=' + userType;
+                }if(userType == '7' || userType == '8'){
+                	 url = "../xy-memberManagement/UserInfoUpdate.html?id="+id +'&userType=' + userType;
+                }if(userType == '9' || userType == '10'){
+                	 url = "../entrust-memberManagement/UserInfoUpdate.html?id="+id +'&userType=' + userType;
+                } */
+                
+                //var url = "UserInfoUpdate.html?id="+id +'&userType=' + userType;
                 $.layer({
                     type: 2,
-                    title: '修改状态',
+                    title: '修改用户信息',
                     maxmin: false,
                     shift: 'top',
                     shadeClose: false,
-                    area: ['400px', '420px'],
+                    area: ['650px', '500px'],
                     offset: ['50px', ''],
                     close: function (index) {
                         
@@ -65,6 +79,15 @@
                     iframe: {src: encodeURI(url)}
                 });
             }
+            
+            function clickSearchBtn(str){
+            	$("#searchType").val("0");
+            	$('#agentUrl').html('');
+            	
+            	
+            	searchrecord(str);
+            }
+            
             function searchrecord(str){
                 updateToken();
                 var pageIndex=page(str);
@@ -74,8 +97,11 @@
                 var token="Bearer " + access_token;
                 var userName=document.getElementById('userName').value;
                 var tableid = $("#tableTRTD").attr("id");
-                var domain=parseDomain();
-                var url=domain+"/lottery-api/users/queryAllUserAgent";
+                var url = queryAgentURL;
+                var userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
+                var searchType = $("#searchType").val();
+                var userType =  $("#userType").val();
+                
                 if (startTime != '' || endTime != '') {
                     startTime=startTimeStr(startTime);
                     endTime=endTimeStr(endTime);
@@ -88,7 +114,9 @@
                         userName:userName,
                         pageIndex:pageIndex,
                         startTime:startTime,
-                        endTime:endTime
+                        endTime:endTime,
+                        searchType:searchType,
+                        userType:userType
                     },
                     dataType: "json",
 //                    beforeSend: function(xhr) {
@@ -102,11 +130,28 @@
                         alert("系统错误");
                     },
                     success: function (data) {
-                        document.getElementById('agentUrl').innerHTML="";
+                        //document.getElementById('agentUrl').innerHTML="";
                         if(data.status==1){
                             document.getElementById('totalNumber').value = data.data.totalNumber;
                             document.getElementById('totalPages').value = data.data.totalPages;
                             document.getElementById('pageIndex_button').value = data.data.pageIndex;
+                            
+                            if(data.data.pageIndex == 1){
+                            	$('#mainP').attr('disabled',true);
+                            	$('#preP').attr('disabled',true);
+                            }else{
+                            	$('#mainP').attr('disabled',false);
+                            	$('#preP').attr('disabled',false);
+                            }
+                            
+                            if(data.data.pageIndex == data.data.totalPages){
+                            	$('#nextP').attr('disabled',true);
+                            	$('#lastP').attr('disabled',true);
+                            }else{
+                            	$('#nextP').attr('disabled',false);
+                            	$('#lastP').attr('disabled',false);
+                            }
+                            
                             $("#" + tableid + "tr").remove();
                             $("#" + tableid).empty();
                             $.each(data.data.content, function(key, val) {
@@ -120,31 +165,44 @@
                                 }
                                 var operating="";
                                 var userType="";
-                                if(val.userType=='0'){
-                                    userType="平台客户";
-                                    operating="无法执行任何操作";
-                                }else if(val.userType=='1'){
-                                    userType="代理";
-                                    operating="<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"addUser('"+val.id+"')\">添加下级用户</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"addAgent('"+val.id+"')\">添加下级代理</button>";
-                                }else if(val.userType=='2'){
-                                    userType="系统用户";
-                                    operating="<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"addUser('"+val.id+"')\">添加下级用户</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"addAgent('"+val.id+"')\">添加下级代理</button>";
-                                }else if(val.userType=='3'){
+                                if(val.userType=='3'){
                                     userType="总代";
-                                    operating="<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"addAgent('"+val.id+"')\">添加下级代理";
+                                    if(userInfo.userType == '2'){
+                                    	operating="<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"addAgent('"+val.id+"','" + val.userType + "')\">添加下级代理</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                    }
+                                }else if(val.userType=='0' || val.userType=='5' || val.userType=='7' || val.userType=='9'){
+                                    userType="用户";
+                                    
+                                    operating += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"transfer('"+val.userName+"')\">转账</button>";
+                                }else if(val.userType=='1' || val.userType=='6' || val.userType=='8' || val.userType=='10'){
+                                    userType="代理";
+                                    if(userInfo.userType == '2'){
+                                    	operating = "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"addUser('"+val.id+"','" + val.userType + "')\">添加下级用户</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                    	operating += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"addAgent('"+val.id+"','" + val.userType + "')\">添加下级代理</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                    }
+                                    
+                                    operating += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"transfer('"+val.userName+"')\">转账</button>";
+                                    
                                 }
                                 var rebate=val.rebate==null?"":val.rebate;
                                 var platRebate=val.platRebate==null?"":val.platRebate;
-                                $("#" + tableid).append("<tr>\n\
-                                    <td class=\"thCenter\"><a onclick=\"updateUserInfo("+val.id+")\">"+val.id+"</a></td>\n\
-                                    <td><a onclick=\"searchAgent('"+val.id+"','"+val.userName+"','1')\">"+val.userName+"</a></td>\n\
-                                    <td class=\"thCenter\">"+ConvertJSONDateToJSDateObject(""+val.createTime+"")+"</td>\n\
-                                    <td class=\"thCenter\">"+state+"</td>\n\
-                                    <td class=\"thCenter\">"+userType+"</td>\n\
-                                    <td class=\"thCenter\">"+rebate+"</td>\n\
-                                    <td class=\"thCenter\">"+platRebate+"</td>\n\
-                                    <td class=\"thCenter\">"+val.regIp+"</td>\n\
-                                    <td class=\"thCenter\">"+operating+"</td></tr>"); 
+                                
+                                var row = "<tr>";
+                                row += "<td class=\"thCenter\"><a onclick=\"updateUserInfo("+val.id+','+val.userType+")\">"+val.id+"</a></td>";
+                                if(userInfo.userType == '2' && (val.userType == '1' || val.userType == '3' || val.userType == '6' || val.userType == '8' || val.userType == '10')){
+                                	row += "<td><a onclick=\"searchAgent('"+val.id+"','"+val.userName+"','1')\">"+val.userName+"</a></td>";
+                                }else{
+                                	row += "<td>"+val.userName+"</td>";
+                                }
+                                
+                                row += "<td class=\"thCenter\">"+ConvertJSONDateToJSDateObject(""+val.createTime+"")+"</td>";
+                                row += "<td class=\"thCenter\">"+state+"</td>";
+                                row += "<td class=\"thCenter\">"+userType+"</td>";
+                                row += "<td class=\"thCenter\">"+rebate+"</td>";
+                                row += "<td class=\"thCenter\">"+platRebate+"</td>";
+                                row += "<td class=\"thCenter\">"+val.regIp+"</td>";
+                                row += "<td class=\"thCenter\">"+operating+"</td></tr>";
+                                $("#" + tableid).append(row); 
                             });
                         }else if(data.status==0){
                             alert(getErroe(data.error_code));
@@ -157,14 +215,31 @@
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
                 var tableid = $("#tableTRTD").attr("id");
-                var domain=parseDomain();
-                var url=domain+"/lottery-api/users/queryAgentByAgent";
+                var startTime = document.getElementById('startTime').value;
+                var endTime = document.getElementById('endTime').value;
+                
+                if (startTime != '' || endTime != '') {
+                    startTime=startTimeStr(startTime);
+                    endTime=endTimeStr(endTime);
+                }
+                
+                $("#searchType").val(1);
+                $("#userName").val(userName);
+                var userType =  $("#userType").val();
+                //var url = queryUserEntrustURL;
+                var url = queryAgentURL;
+                
                 $.ajax({
                     url: url,
                     type: "GET",
                     async: false, // 设置同步方式
                     data: {
-                        id:id
+                    	userName:userName,
+                    	pageIndex:1,
+                    	searchType:1,
+                    	userType:userType,
+                    	startTime:startTime,
+                        endTime:endTime,
                     },
                     dataType: "json",
 //                    beforeSend: function(xhr) {
@@ -179,63 +254,100 @@
                     },
                     success: function (data) {
                         if(data.status==1){
-                            document.getElementById('totalNumber').value = '';
-                            document.getElementById('totalPages').value = '';
-                            document.getElementById('pageIndex_button').value = '';
+                        	 document.getElementById('totalNumber').value = data.data.totalNumber;
+                             document.getElementById('totalPages').value = data.data.totalPages;
+                             document.getElementById('pageIndex_button').value = data.data.pageIndex;
+                             
+                             if(data.data.pageIndex == 1){
+                             	$('#mainP').attr('disabled',true);
+                             	$('#preP').attr('disabled',true);
+                             }else{
+                             	$('#mainP').attr('disabled',false);
+                             	$('#preP').attr('disabled',false);
+                             }
+                             
+                             if(data.data.pageIndex == data.data.totalPages){
+                             	$('#nextP').attr('disabled',true);
+                             	$('#lastP').attr('disabled',true);
+                             }else{
+                             	$('#nextP').attr('disabled',false);
+                             	$('#lastP').attr('disabled',false);
+                             }
+                             
                             if(data.data!=null){
 
                                 // var agentUrl=document.getElementById('agentUrl').innerHTML;
                                 var agentUrlValue=document.getElementById('agentUrl');
                                 var string="<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"searchAgent('"+id+"','"+userName+"','2')\">"+userName+"</button>";
-//                                alert(m);
-                                if(type==1){
-                                    m.put(id,string);
-                                }else if(type==2){
-                                    m.remove(id);
-                                }
-//                                alert(m);
+                                
+                                m.put(id,string);
                                 var s ="";
+                                var delKeys = new Array();
                                 m.each(function(key,value,index){
-                                    s +=value;
-                                    var lgh=m.size()-1;
-                                    if(index<lgh&&m.size()>1){
-                                        s+="<img src='../img/jiantou.png' />";
-                                    }
+                                	if(typeof key != 'undefined' && key*1 <= id*1){
+                                		if(index > 0){
+                                			s+="<img src='../img/jiantou.png' />";
+                                		}
+                                		 s +=value;
+                                         /* var lgh=m.size()-1;
+                                         if(index<lgh&&m.size()>1){
+                                             s+="<img src='../img/jiantou.png' />";
+                                         } */
+                                	}else{
+                                		//m.remove(key);
+                                		delKeys[delKeys.length] = key;
+                                	}
                                 });
+                                
+                                for(var ind = 0; ind < delKeys.length; ind++){
+                                	m.remove(delKeys[ind]);
+                                }
+                                
                                 agentUrlValue.innerHTML=s;
                                 $("#" + tableid + "tr").remove();
                                 $("#" + tableid).empty();
-                                $.each(data.data, function(key, val) {
+                                $.each(data.data.content, function(key, val) {
                                     var state="";
                                     if(val.state=='0'){
                                         state="正常";
                                     }else if(val.state=='1'){
                                         state="锁定";
+                                    }else if(val.state=='2'){
+                                        state="销毁";
                                     }
                                     var operating="";
                                     var userType="";
-                                    if(val.userType=='0'){
-                                        userType="平台客户";
-                                    }else if(val.userType=='1'){
-                                        userType="代理";
-                                        operating="<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"addUser('"+val.id+"','"+val.platRebate+"')\">添加下级用户</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"addAgent('"+val.id+"','"+val.platRebate+"')\">添加下级代理</button>";
-                                    }else if(val.userType=='2'){
-                                        userType="系统用户";
-                                        operating="<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"addUser('"+val.id+"','"+val.platRebate+"')\">添加下级用户</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"addAgent('"+val.id+"','"+val.platRebate+"')\">添加下级代理</button>";
-                                    }else if(val.userType=='3'){
+                                    if(val.userType=='3'){
                                         userType="总代";
-                                        operating="<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"addAgent('"+val.id+"','"+val.platRebate+"')\">添加下级代理";
+                                      	operating="<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"addAgent('"+val.id+"','" + val.userType + "')\">添加下级代理</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                      	operating += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"transfer('"+val.userName+"')\">转账</button>";
+                                    }else if(val.userType=='0' || val.userType=='5' || val.userType == '7' || val.userType == '9'){
+                                        userType="用户";
+                                        operating += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"transfer('"+val.userName+"')\">转账</button>";
+                                    }else if(val.userType=='1' || val.userType=='6' || val.userType=='8' || val.userType=='10'){
+                                        userType="代理";
+                                      	operating = "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"addUser('"+val.id+"','" + val.userType + "')\">添加下级用户</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                        operating +="<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"addAgent('"+val.id+"','" + val.userType + "')\">添加下级代理</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                        operating += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"transfer('"+val.userName+"')\">转账</button>";
                                     }
-                                    $("#" + tableid).append("<tr>\n\
-                                        <td class=\"thCenter\"><a onclick=\"updateUserInfo("+val.id+")\">"+val.id+"</a></td>\n\
-                                        <td class=\"thCenter\"><a onclick=\"searchAgent('"+val.id+"','"+val.userName+"','1')\">"+val.userName+"</a></td>\n\
-                                        <td class=\"thCenter\">"+ConvertJSONDateToJSDateObject(""+val.createTime+"")+"</td>\n\
-                                        <td class=\"thCenter\">"+state+"</td>\n\
-                                        <td class=\"thCenter\">"+userType+"</td>\n\
-                                        <td class=\"thCenter\">"+val.rebate+"</td>\n\
-                                        <td class=\"thCenter\">"+val.platRebate+"</td>\n\
-                                        <td class=\"thCenter\">"+val.regIp+"</td>\n\
-                                        <td class=\"thCenter\">"+operating+"</td></tr>"); 
+                                    
+                                    var row = "<tr>";
+                                    row += "<td class=\"thCenter\"><a onclick=\"updateUserInfo("+val.id+','+val.userType+")\">"+val.id+"</a></td>";
+                                    if(val.userType == '1' || val.userType == '3' || val.userType == '6' || val.userType == '8' || val.userType == '10'){
+                                    	row += "<td><a onclick=\"searchAgent('"+val.id+"','"+val.userName+"','1')\">"+val.userName+"</a></td>";
+                                    }else{
+                                    	row += "<td>"+val.userName+"</td>";
+                                    }
+                                    
+                                    row += "<td class=\"thCenter\">"+ConvertJSONDateToJSDateObject(""+val.createTime+"")+"</td>";
+                                    row += "<td class=\"thCenter\">"+state+"</td>";
+                                    row += "<td class=\"thCenter\">"+userType+"</td>";
+                                    row += "<td class=\"thCenter\">"+val.rebate+"</td>";
+                                    row += "<td class=\"thCenter\">"+val.platRebate+"</td>";
+                                    row += "<td class=\"thCenter\">"+val.regIp+"</td>";
+                                    row += "<td class=\"thCenter\">"+operating+"</td></tr>";
+                                    $("#" + tableid).append(row); 
+                                    
                                 });
                             }
                         }else if(data.status==0){
@@ -244,15 +356,40 @@
                     }
                 });
             }
-            function addAgent(agentId){
-                var url = "agentAdd.html?agentId="+agentId;
+            
+            function addMember(userType){
+            	var userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
+                if(userType == 5){
+                	addUser(userInfo.id, userInfo.userType);
+                }else if(userType == 6){
+                	addAgent(userInfo.id, userInfo.userType);
+                }
+            }
+            
+            
+            function addAgent(agentId, agentUserType){
+                var url = url = "agentAdd.html?agentId="+agentId+"&&agentUserType="+agentUserType;       
+                /* if(agentUserType == '1'){
+                	url = "../sm-memberManagement/agentAdd.html?agentId="+agentId+"&&agentUserType="+agentUserType;
+                }else if(agentUserType == '2'){
+                	 url = "agentAdd.html?agentId="+agentId;
+                }else if(agentUserType == '3'){
+                	url = "../sm-memberManagement/agentAdd.html?agentId="+agentId+"&&agentUserType="+agentUserType;
+                }else if(agentUserType == '6'){
+                	 url = "../sm-memberManagement/agentAdd.html?agentId="+agentId+"&&agentUserType="+agentUserType;
+                }if(agentUserType == '8'){
+                	 url = "../xy-memberManagement/agentAdd.html?agentId="+agentId+"&&agentUserType="+agentUserType;
+                }if(agentUserType == '10'){
+                	 url = "../entrust-memberManagement/agentAdd.html?agentId="+agentId+"&&agentUserType="+agentUserType;
+                } */
+                
                 $.layer({
                     type: 2,
                     title: '添加下级代理',
                     maxmin: false,
                     shift: 'top',
                     shadeClose: false,
-                    area: ['400px', '420px'],
+                    area: ['670px', '500px'],
                     offset: ['50px', ''],
                     close: function (index) {
                         
@@ -260,15 +397,29 @@
                     iframe: {src: encodeURI(url)}
                 });
             }
-            function addUser(agentId){
-                var url = "agentUser.html?agentId="+agentId;
+            
+            function addUser(agentId, agentUserType){
+            	var userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
+            	var url = "agentUser.html?agentId="+agentId +'&agentUserType=' + agentUserType;
+                /* var url = '';                
+                if(agentUserType == '1'){
+                	url = "../sm-memberManagement/agentUser.html?agentId="+agentId +'&agentUserType=' + agentUserType;
+                }else if(agentUserType == '6'){
+                	 url = "../sm-memberManagement/agentUser.html?agentId="+agentId +'&agentUserType=' + agentUserType;
+                }if(agentUserType == '8'){
+                	 url = "../xy-memberManagement/agentUser.html?agentId="+agentId;
+                }if(agentUserType == '10'){
+                	 url = "../entrust-memberManagement/agentUser.html?agentId="+agentId;
+                } */
+                
+                //var url = "agentUser.html?agentId="+agentId;
                 $.layer({
                     type: 2,
-                    title: '添加下级代理',
+                    title: '添加下级用户',
                     maxmin: false,
                     shift: 'top',
                     shadeClose: false,
-                    area: ['400px', '420px'],
+                    area: ['650px', '500px'],
                     offset: ['50px', ''],
                     close: function (index) {
                         
@@ -348,11 +499,13 @@
                     var a=null;
                     for (var i = 0; i < this.keys.length; i++) {
                         if (this.keys[i] == key) {
-                            a=i+1;
+                            //a=i+1;
+                        	this.data[this.keys[i]] = null;
+                        	this.keys.splice(i, 1);
                         }
-                        if(a!=null){
+                        /* if(a!=null){
                             this.data[this.keys[a]] = null;
-                        }
+                        } */
                     }
                 };
                 /**
@@ -422,6 +575,23 @@
                     }
                 };
             }
+            
+            function transfer(userName){
+            	 var url = "transfer.html?toUser="+userName;
+                 $.layer({
+                     type: 2,
+                     title: '转账',
+                     maxmin: false,
+                     shift: 'top',
+                     shadeClose: false,
+                     area: ['650px', '200px'],
+                     offset: ['50px', ''],
+                     close: function (index) {
+                         
+                     },
+                     iframe: {src: encodeURI(url)}
+                 });
+            }
         </script>
         <script type="text/javascript" src="../js/showdate.js"></script>
     </head>
@@ -430,11 +600,28 @@
         <div class="row  border-bottom white-bg dashboard-header">
             <form class="form-horizontal" method="get">
                 <div class="input-group" style="margin-left: 20px;">
-                    代理名称：<input type="text" class="form-control" id="userName" name="userName" style="width:150px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                              用户名称：<input type="text" class="form-control" id="userName" name="userName" style="width:150px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <input type="hidden" class="form-control" id="searchType" name="searchType" value="0">
+                    <div id="agent_type" style="display:inline">
+                    	代理类型：
+                 		<select id="userType" name="userType" style="width:250px;" class="form-control">
+				        	<option value=""></option>
+				        	<option value="1" >在线代理</option>
+				            <option value="6" >双面代理</option>
+				            <option value="8">信誉代理</option>
+				            <option value="10">委托投注代理</option>
+			        	</select>
+			        	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </div>
+                     
                     开始时间：<input type="text" id="startTime" placeholder="选择开始时间" onClick="return Calendar('startTime');" class="text_time" name="startTime" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     结束时间：<input type="text" id="endTime" placeholder="选择结束时间" onClick="return Calendar('endTime');" class="text_time" name="endTime" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <span> 
-                        <button type="button" class="btn btn-primary" style="height:32px;" onclick="searchrecord('search')">搜索
+                        <button type="button" class="btn btn-primary" style="height:32px;" onclick="clickSearchBtn('search')">搜索
+                        </button>
+                         <button type="button" class="btn btn-primary" id="btn_addAgent" style="height:32px;" onclick="addMember(6)">添加下级 代理
+                        </button> 
+                        <button type="button" class="btn btn-primary" id="btn_addPlayer" style="height:32px;" onclick="addMember(5)">添加下级玩家
                         </button> 
                     </span>
                 </div>
@@ -450,9 +637,9 @@
                             <th class="thCenter">用户名</th>
                             <th class="thCenter">注册时间</th>
                             <th class="thCenter">状态</th>
-                            <th class="thCenter">用户类型</th>
-                            <th class="thCenter">平台点数</th>
-                            <th class="thCenter">系统返点</th>
+                            <th class="thCenter">用户类型</th>                            
+                            <th class="thCenter">上级返点</th>
+                            <th class="thCenter">下级返点</th>
                             <th class="thCenter">注册Ip</th>
                             <th class="thCenter">操作</th>
                         </tr>
@@ -465,12 +652,12 @@
                 <div class="input-group" style="width: 850px; float: right">
                     总记录数：<input type="text" class="form-control" value="" id="totalNumber" style="width:50px;" readonly="readonly">
                     总页数：<input type="text" class="form-control" value="" id="totalPages" style="width:50px;" readonly="readonly">&nbsp;&nbsp;&nbsp;&nbsp;
-                    <button type="button" class="btn btn-primary" onclick="searchrecord('search')">首页</button>&nbsp;&nbsp;&nbsp;&nbsp;
-                    <button type="button" class="btn btn-primary" onclick="searchrecord('upPage')">上一页</button>&nbsp;&nbsp;&nbsp;&nbsp;
-                    <button type="button" class="btn btn-primary" onclick="searchrecord('downPage')">下一页</button>&nbsp;&nbsp;&nbsp;&nbsp;
-                    <button type="button" class="btn btn-primary" onclick="searchrecord('finalPage')">尾页</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" id="mainP" class="btn btn-primary" onclick="searchrecord('search')">首页</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" id="preP"  class="btn btn-primary" onclick="searchrecord('upPage')">上一页</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" id="nextP" class="btn btn-primary" onclick="searchrecord('downPage')">下一页</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" id="lastP" class="btn btn-primary" onclick="searchrecord('finalPage')">尾页</button>&nbsp;&nbsp;&nbsp;&nbsp;
                     <input type="text" class="form-control" value="" id="pageIndex_button" style="width:90px;" onkeyup="this.value = this.value.replace(/[^0-9]+/, '');" size="3">
-                        <button type="button" class="btn btn-primary" onclick="return checkButton()">跳到</button>
+                    <button type="button" class="btn btn-primary" onclick="return checkButton()">跳到</button>
                 </div>
             </div>
         </div>
