@@ -51,20 +51,7 @@
             });
             
             function updateUserInfo(id, userType){
-                var url = "UserInfoUpdate.html?id="+id +'&userType=' + userType;            
-                /* if(userType == '1' || userType == '0'){
-                	url = "../sm-memberManagement/UserInfoUpdate.html?id="+id +'&userType=' + userType;
-                }else if(userType == '2'){
-                	 url = "UserInfoUpdate.html?id="+id +'&userType=' + userType;
-                }else if(userType == '5' || userType == '6'){
-                	 url = "../sm-memberManagement/UserInfoUpdate.html?id="+id +'&userType=' + userType;
-                }if(userType == '7' || userType == '8'){
-                	 url = "../xy-memberManagement/UserInfoUpdate.html?id="+id +'&userType=' + userType;
-                }if(userType == '9' || userType == '10'){
-                	 url = "../entrust-memberManagement/UserInfoUpdate.html?id="+id +'&userType=' + userType;
-                } */
-                
-                //var url = "UserInfoUpdate.html?id="+id +'&userType=' + userType;
+                var url = "UserInfoUpdate.html?id="+id +'&userType=' + userType;
                 $.layer({
                     type: 2,
                     title: '修改用户信息',
@@ -169,16 +156,21 @@
                                     userType="总代";
                                     if(userInfo.userType == '2'){
                                     	operating="<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"addAgent('"+val.id+"','" + val.userType + "')\">添加下级代理</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                    	operating += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"showDetails('"+ val.userName + "')\">用户详细</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
                                     }
                                 }else if(val.userType=='0' || val.userType=='5' || val.userType=='7' || val.userType=='9'){
                                     userType="用户";
                                     
                                     operating += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"transfer('"+val.userName+"')\">转账</button>";
+                                    if(userInfo.userType == '2'){
+                                    	operating += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"addAgent('"+ val.userName + "')\">用户详细</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                    }
                                 }else if(val.userType=='1' || val.userType=='6' || val.userType=='8' || val.userType=='10'){
                                     userType="代理";
                                     if(userInfo.userType == '2'){
                                     	operating = "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"addUser('"+val.id+"','" + val.userType + "')\">添加下级用户</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
                                     	operating += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"addAgent('"+val.id+"','" + val.userType + "')\">添加下级代理</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                    	operating += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"showDetails('"+ val.userName + "')\">用户详细</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
                                     }
                                     
                                     operating += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"transfer('"+val.userName+"')\">转账</button>";
@@ -320,14 +312,17 @@
                                     if(val.userType=='3'){
                                         userType="总代";
                                       	operating="<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"addAgent('"+val.id+"','" + val.userType + "')\">添加下级代理</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                      	operating += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"showDetails('"+val.userName + "')\">用户详细</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
                                       	operating += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"transfer('"+val.userName+"')\">转账</button>";
                                     }else if(val.userType=='0' || val.userType=='5' || val.userType == '7' || val.userType == '9'){
                                         userType="用户";
+                                        operating += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"showDetails('"+val.userName + "')\">用户详细</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
                                         operating += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"transfer('"+val.userName+"')\">转账</button>";
                                     }else if(val.userType=='1' || val.userType=='6' || val.userType=='8' || val.userType=='10'){
                                         userType="代理";
                                       	operating = "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"addUser('"+val.id+"','" + val.userType + "')\">添加下级用户</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
                                         operating +="<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"addAgent('"+val.id+"','" + val.userType + "')\">添加下级代理</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                        operating += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"showDetails('"+val.userName + "')\">用户详细</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
                                         operating += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"transfer('"+val.userName+"')\">转账</button>";
                                     }
                                     
@@ -368,20 +363,7 @@
             
             
             function addAgent(agentId, agentUserType){
-                var url = url = "agentAdd.html?agentId="+agentId+"&&agentUserType="+agentUserType;       
-                /* if(agentUserType == '1'){
-                	url = "../sm-memberManagement/agentAdd.html?agentId="+agentId+"&&agentUserType="+agentUserType;
-                }else if(agentUserType == '2'){
-                	 url = "agentAdd.html?agentId="+agentId;
-                }else if(agentUserType == '3'){
-                	url = "../sm-memberManagement/agentAdd.html?agentId="+agentId+"&&agentUserType="+agentUserType;
-                }else if(agentUserType == '6'){
-                	 url = "../sm-memberManagement/agentAdd.html?agentId="+agentId+"&&agentUserType="+agentUserType;
-                }if(agentUserType == '8'){
-                	 url = "../xy-memberManagement/agentAdd.html?agentId="+agentId+"&&agentUserType="+agentUserType;
-                }if(agentUserType == '10'){
-                	 url = "../entrust-memberManagement/agentAdd.html?agentId="+agentId+"&&agentUserType="+agentUserType;
-                } */
+                var url = url = "agentAdd.html?agentId="+agentId+"&&agentUserType="+agentUserType;
                 
                 $.layer({
                     type: 2,
@@ -401,18 +383,6 @@
             function addUser(agentId, agentUserType){
             	var userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
             	var url = "agentUser.html?agentId="+agentId +'&agentUserType=' + agentUserType;
-                /* var url = '';                
-                if(agentUserType == '1'){
-                	url = "../sm-memberManagement/agentUser.html?agentId="+agentId +'&agentUserType=' + agentUserType;
-                }else if(agentUserType == '6'){
-                	 url = "../sm-memberManagement/agentUser.html?agentId="+agentId +'&agentUserType=' + agentUserType;
-                }if(agentUserType == '8'){
-                	 url = "../xy-memberManagement/agentUser.html?agentId="+agentId;
-                }if(agentUserType == '10'){
-                	 url = "../entrust-memberManagement/agentUser.html?agentId="+agentId;
-                } */
-                
-                //var url = "agentUser.html?agentId="+agentId;
                 $.layer({
                     type: 2,
                     title: '添加下级用户',
@@ -591,6 +561,16 @@
                      },
                      iframe: {src: encodeURI(url)}
                  });
+            }
+            
+            function showDetails(userName){
+            	var url = 'MemberManagement/UserInfo.html?v=4.0';
+            	            	
+            	if(typeof url != 'undefined' && url.length != 0){
+            		url += "&userName=" + userName;
+	            	$("#agent_btn", window.parent.document).attr("data-addurl", url);
+	            	$("#agent_btn", window.parent.document).click();            		
+            	}
             }
         </script>
         <script type="text/javascript" src="../js/showdate.js"></script>

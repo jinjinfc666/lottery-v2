@@ -923,6 +923,8 @@ public class UserInfoServiceImpl implements UserInfoService
 		Double xyAmount = userInfo.getXyAmount();
 		UserInfo user = getUserById(userId);
 		BigDecimal oldPlatRebate = user.getPlatRebate();
+		String qq = userInfo.getQq();
+		String weChat = userInfo.getWechat();
 		
 		if(userType!=null) {
 			user.setUserType(userType);
@@ -981,6 +983,15 @@ public class UserInfoServiceImpl implements UserInfoService
 			date=calendar.getTime();
 			user.setUnlockTime(date);
 		}
+		
+		if(qq != null) {
+			user.setQq(qq);
+		}
+		
+		if(weChat != null) {
+			user.setWechat(weChat);
+		}
+		
 		userDao.saveUser(user);
 		
 		if(platRebate != null && platRebate.compareTo(oldPlatRebate) != 0) {
@@ -1015,6 +1026,9 @@ public class UserInfoServiceImpl implements UserInfoService
 		String endTime=(String) map.get("endTime");
 		Integer pageIndex=(Integer) map.get("pageIndex");
 		Integer pageSize=(Integer) map.get("pageSize");
+		Integer userType = (Integer) map.get("userType");
+		Integer userStatus = (Integer) map.get("userStatus");
+		
 		UserInfo userInfo=userDao.getUserByUserName(proxyName);
 		Integer proxyId=null;
 		if(userInfo!=null) {
@@ -1024,7 +1038,7 @@ public class UserInfoServiceImpl implements UserInfoService
 				proxyId=userInfo.getId();
 			}
 		}
-		Map<String,Object> userInfoList=userDao.queryAllUserInfo(id, userName, proxyId, startTime, endTime,pageIndex,pageSize);
+		Map<String,Object> userInfoList = userDao.queryAllUserInfo(id, userName, proxyId, startTime, endTime,userType, userStatus, pageIndex,pageSize);
 		return userInfoList;
 	}
 	//查询所有的代理

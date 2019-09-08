@@ -70,22 +70,10 @@ public class WalletServiceImpl implements WalletService
 	@Override
 	public Map<String,Object> queryUserAccount(Map<String, Object> ret) {
 		String userName=(String) ret.get("userName");
-//		String startTime=(String) ret.get("startTime");
-//		String endTime=(String) ret.get("endTime");
+		Integer walletType = (Integer) ret.get("walletType");
 		Integer pageIndex=(Integer) ret.get("pageIndex");
 		Integer pageSize=(Integer) ret.get("pageSize");
-//		Map<String,Object> map=new HashMap<String,Object>();
-//		if(!StringUtils.isBlank(userName)) {
-//			boolean isNull=userInfoService.isUserInfo(userName);
-//			if(!isNull) {
-//				map.clear();
-//				map.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
-//				map.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_USER_NO_VALID_USER.getCode());
-//				map.put(Message.KEY_ERROR_MES, Message.Error.ERROR_USER_NO_VALID_USER.getErrorMes());
-//				return map;
-//			}
-//		}
-		Map<String,Object> userAccountLists=walletDao.queryUserAccount(userName,pageIndex,pageSize);
+		Map<String,Object> userAccountLists=walletDao.queryUserAccount(userName, walletType, pageIndex,pageSize);
 		userAccountLists.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
 		return userAccountLists;
 	}

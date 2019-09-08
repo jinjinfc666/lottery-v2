@@ -15,9 +15,13 @@ public class TransferApplication implements java.io.Serializable {
 	private Integer id;
 	private String orderNum;
 	private Integer sourceUser;
+	private String sourceUserName;
 	private Integer sourceWalletId;
+	private String sourceWalletName;
 	private Integer dstUser;
+	private String dstUserName;
 	private Integer dstWalletId;
+	private String dstWalletName;
 	private Double amount;
 	private Integer state;
 	private Date createTime;
@@ -128,4 +132,38 @@ public class TransferApplication implements java.io.Serializable {
 	public void setCreator(Integer creator) {
 		this.creator = creator;
 	}
+
+	public String getSourceUserName() {
+		return sourceUserName;
+	}
+
+	public void setSourceUserName(String sourceUserName) {
+		this.sourceUserName = sourceUserName;
+	}
+
+	public String getSourceWalletName() {
+		return sourceWalletName;
+	}
+
+	public void setSourceWalletName(String sourceWalletName) {
+		this.sourceWalletName = sourceWalletName;
+	}
+
+	public String getDstUserName() {
+		return dstUserName;
+	}
+
+	public void setDstUserName(String dstUserName) {
+		this.dstUserName = dstUserName;
+	}
+
+	public String getDstWalletName() {
+		return dstWalletName;
+	}
+
+	public void setDstWalletName(String dstWalletName) {
+		this.dstWalletName = dstWalletName;
+	}
+	
+	
 }

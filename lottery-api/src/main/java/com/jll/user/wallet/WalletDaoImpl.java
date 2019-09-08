@@ -64,26 +64,26 @@ public class WalletDaoImpl extends DefaultGenericDaoImpl<UserAccount> implements
 	}
 	//通过用户名(false)或时间去查询(true)
 	@Override
-	public Map<String,Object> queryUserAccount(String userName,Integer pageIndex,Integer pageSize) {
+	public Map<String,Object> queryUserAccount(String userName, Integer walletType, Integer pageIndex,Integer pageSize) {
 		Map<String,Object> map=new HashMap<String,Object>();
-		String userNameSql="";
+		StringBuffer sqlBuffer = new StringBuffer();
+		sqlBuffer.append("from UserInfo a,UserAccount b where a.id=b.userId and a.userType!=:userType and a.userType!=:userTypea ");
 		if(!StringUtils.isBlank(userName)) {
-			userNameSql=" and LOCATE(:userName, a.userName)>0 ";
+			sqlBuffer.append("and LOCATE(:userName, a.userName)>0 ");
 			map.put("userName", userName);
 		}
-//		if(!StringUtils.isBlank(startTime)&&!StringUtils.isBlank(endTime)) {
-//			Date beginDate = java.sql.Date.valueOf(startTime);
-//		    Date endDate = java.sql.Date.valueOf(endTime);
-//			map.put("startTime", beginDate);
-//			map.put("endTime", endDate);
-//		}
+		
+		if(walletType != null) {
+			sqlBuffer.append("and b.accType=:walletType ");
+			map.put("walletType", walletType);
+		}
+		
 		map.put("userType", Constants.UserType.SYS_ADMIN.getCode());
 		map.put("userTypea", Constants.UserType.DEMO_PLAYER.getCode());
-		String sql="from UserInfo a,UserAccount b where a.id=b.userId and a.userType!=:userType and a.userType!=:userTypea "+userNameSql+" order by b.userId";
 		PageBean page=new PageBean();
 		page.setPageIndex(pageIndex);
 		page.setPageSize(pageSize);
-		PageBean pageBean=queryByPagination(page,sql,map);
+		PageBean pageBean=queryByPagination(page, sqlBuffer.toString(), map);
 		map.clear();
 		map.put("data", pageBean);
 		return map;

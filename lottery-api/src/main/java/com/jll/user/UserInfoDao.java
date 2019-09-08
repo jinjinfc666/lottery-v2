@@ -97,4 +97,7 @@ public interface UserInfoDao
 	
 	Map<String, Object> queryAllAgentEntrustByAgency(Integer id, String userName, String startTime, String endTime,
 			Integer pageIndex, Integer pageSize);
+	
+	Map<String, Object> queryAllUserInfo(Integer id, String userName, Integer proxyId, String startTime, String endTime,
+			Integer userType, Integer userStatus, Integer pageIndex, Integer pageSize);
 }

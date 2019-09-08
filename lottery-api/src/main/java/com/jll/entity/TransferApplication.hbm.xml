@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Generated 2018-8-14 16:52:58 by Hibernate Tools 5.2.10.Final --><!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping auto-import="true" default-access="property" default-cascade="none" default-lazy="true">
-    <class catalog="lottery" dynamic-insert="false" dynamic-update="false" mutable="true" name="com.jll.entity.TransferApplication" optimistic-lock="version" polymorphism="implicit" select-before-update="false" table="transfer_application">
+    <class catalog="lottery" dynamic-insert="false" dynamic-update="false" mutable="true" name="com.jll.entity.TransferApplication" optimistic-lock="version" polymorphism="implicit" select-before-update="false" table="v_transfer_application">
         <id name="id" type="java.lang.Integer">
             <column name="id"/>
             <generator class="identity"/>
@@ -15,8 +15,18 @@
                 <comment>�û�id</comment>
             </column>
         </property>
+        <property generated="never" lazy="false" name="sourceUserName" optimistic-lock="true" type="java.lang.String" unique="false">
+            <column name="source_user_name">
+                <comment>�û�id</comment>
+            </column>
+        </property>
         <property generated="never" lazy="false" name="sourceWalletId" optimistic-lock="true" type="java.lang.Integer" unique="false">
             <column name="source_wallet_id">
+                <comment>�û�id</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="sourceWalletName" optimistic-lock="true" type="java.lang.String" unique="false">
+            <column name="source_wallet_name">
                 <comment>�û�id</comment>
             </column>
         </property>
@@ -25,8 +35,18 @@
                 <comment>�û�id</comment>
             </column>
         </property>
+        <property generated="never" lazy="false" name="dstUserName" optimistic-lock="true" type="java.lang.String" unique="false">
+            <column name="dst_user_name">
+                <comment>�û�id</comment>
+            </column>
+        </property>
         <property generated="never" lazy="false" name="dstWalletId" optimistic-lock="true" type="java.lang.Integer" unique="false">
             <column name="dst_wallet_id">
+                <comment>�û�id</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="dstWalletName" optimistic-lock="true" type="java.lang.String" unique="false">
+            <column name="dst_wallet_name">
                 <comment>�û�id</comment>
             </column>
         </property>

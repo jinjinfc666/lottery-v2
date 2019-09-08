@@ -38,6 +38,11 @@
     				$('#orderId').val(orderId);
     			}
     			
+    			var userName = parseParam(parentUrl, 'userName');
+    			if(typeof userName != 'undefined' && userName.length != 0){
+    				$('#userName').val(userName);
+    			}
+    			
                 queryType();
                 // queryisZh();
                 querystate();
@@ -176,7 +181,7 @@
                 var isZh=null;
                 var zhTrasactionNum = document.getElementById('zhTrasactionNum').value;
                 var state = document.getElementById('state').value;
-                var terminalType = document.getElementById('terminalType').value;
+                //var terminalType = document.getElementById('terminalType').value;
                 var startTime = document.getElementById('startTime').value;
                 var endTime = document.getElementById('endTime').value;
                 var issueNum = document.getElementById('issueNum').value;
@@ -233,7 +238,6 @@
                         isZh: isZh,
                         zhTrasactionNum:zhTrasactionNum,
                         state:state,
-                        terminalType:terminalType,
                         startTime:startTime,
                         endTime:endTime,
                         issueNum:issueNum,
@@ -260,6 +264,9 @@
                             document.getElementById('totalNumber').value = data.data.totalNumber;
                             document.getElementById('totalPages').value = data.data.totalPages;
                             document.getElementById('pageIndex_button').value = data.data.pageIndex;
+                            
+                            initPageing(data.data);
+                            
                             $.each(data.data.content, function(key, val) {
                                 var state=null;
                                 if(val[0].state==0){
@@ -578,25 +585,21 @@
             <form class="form-horizontal" method="get">
                 <div class="form_box" style="width: 100%;">
                     <div class="input-group" style="margin-left: 20px;">
-                        彩种：<select id="lotteryType" name="lotteryType" style="width:100px;" class="form-control">
-                            <option value=""></option>
-                        </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <!--是否追号：<select id="isZh" name="isZh" style="width:100px;" class="form-control">-->
-                            <!--<option value=""></option>-->
-                        <!--</select>&nbsp;&nbsp;&nbsp;&nbsp;-->
-                        追号编号:<input type="text" class="form-control" id="zhTrasactionNum" name="zhTrasactionNum" style="width:100px;">
-                        中奖情况：<select id="state" name="state" style="width:100px;" class="form-control">
-                            <option value=""></option>
-                        </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        订单来源：<select id="terminalType" name="terminalType" style="width:100px;" class="form-control">
-                            <option value=""></option>
-                        </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        开始时间：<input type="text" id="startTime" placeholder="选择开始时间" onClick="return Calendar('startTime');" class="text_time" name="startTime" readonly/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        结束时间：<input type="text" id="endTime" placeholder="选择结束时间" onClick="return Calendar('endTime');" class="text_time" name="endTime" readonly/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        用户名：<input type="text" class="form-control" id="userName" name="userName" style="width:100px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        期次号：<input type="text" class="form-control" id="issueNum" name="issueNum" style="width:100px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        订单号：<input type="text" class="form-control" id="orderNum" name="orderNum" style="width:100px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                       <input type="hidden" class="form-control" id="orderId" name="orderId" style="width:100px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				                        用户名：<input type="text" class="form-control" id="userName" name="userName" style="width:100px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				                        期次号：<input type="text" class="form-control" id="issueNum" name="issueNum" style="width:100px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				                        订单号：<input type="text" class="form-control" id="orderNum" name="orderNum" style="width:100px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				                <input type="hidden" class="form-control" id="orderId" name="orderId" style="width:100px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				                        彩种：<select id="lotteryType" name="lotteryType" style="width:100px;" class="form-control">
+				                   <option value=""></option>
+				               </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				                        追号编号:<input type="text" class="form-control" id="zhTrasactionNum" name="zhTrasactionNum" style="width:100px;">
+				                        中奖情况：<select id="state" name="state" style="width:100px;" class="form-control">
+				                      <option value=""></option>
+				                  </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				                        
+				                        开始时间：<input type="text" id="startTime" placeholder="选择开始时间" onClick="return Calendar('startTime');" class="text_time" name="startTime" readonly/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				                        结束时间：<input type="text" id="endTime" placeholder="选择结束时间" onClick="return Calendar('endTime');" class="text_time" name="endTime" readonly/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                       
                         <span> 
                             <button type="button" class="btn btn-primary" style="height:32px;" onclick="searchrecord('search')">搜索
                             </button> 
@@ -649,10 +652,10 @@
                 <div class="input-group" style="width: 850px; float: right">
                     总记录数：<input type="text" class="form-control" value="" id="totalNumber" style="width:50px;" readonly="readonly">
                     总页数：<input type="text" class="form-control" value="" id="totalPages" style="width:50px;" readonly="readonly">&nbsp;&nbsp;&nbsp;&nbsp;
-                    <button type="button" class="btn btn-primary" onclick="searchrecord('search')">首页</button>&nbsp;&nbsp;&nbsp;&nbsp;
-                    <button type="button" class="btn btn-primary" onclick="searchrecord('upPage')">上一页</button>&nbsp;&nbsp;&nbsp;&nbsp;
-                    <button type="button" class="btn btn-primary" onclick="searchrecord('downPage')">下一页</button>&nbsp;&nbsp;&nbsp;&nbsp;
-                    <button type="button" class="btn btn-primary" onclick="searchrecord('finalPage')">尾页</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" id="mainP" class="btn btn-primary" onclick="searchrecord('search')">首页</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" id="preP"  class="btn btn-primary" onclick="searchrecord('upPage')">上一页</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" id="nextP" class="btn btn-primary" onclick="searchrecord('downPage')">下一页</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" id="lastP" class="btn btn-primary" onclick="searchrecord('finalPage')">尾页</button>&nbsp;&nbsp;&nbsp;&nbsp;
                     <input type="text" class="form-control" value="" id="pageIndex_button" style="width:90px;" onkeyup="this.value = this.value.replace(/[^0-9]+/, '');" size="3">
                         <button type="button" class="btn btn-primary" onclick="return checkButton()">跳到</button>
                 </div>

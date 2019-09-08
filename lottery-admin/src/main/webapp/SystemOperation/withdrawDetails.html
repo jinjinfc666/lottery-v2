@@ -33,6 +33,11 @@
     				$('#orderId').val(orderId);
     			}
     			
+    			var userName = parseParam(parentUrl, 'userName');
+    			if(typeof userName != 'undefined' && userName.length != 0){
+    				$('#userName').val(userName);
+    			}
+    			
                 queryType();
                 //change();
                 /* document.getElementById('startTime').value=getNowFormatDate();
@@ -186,12 +191,15 @@
                             document.getElementById('totalNumber').value = data.data.totalNumber;
                             document.getElementById('totalPages').value = data.data.totalPages;
                             document.getElementById('pageIndex_button').value = data.data.pageIndex;
+                            
+                            initPageing(data.data);
+                            
                             $("#" + tableid + "tr").remove();
                             $("#" + tableid).empty();
                             $.each(data.data.content, function(key, val) {
                                     $("#" + sumAmount + "tr").remove();
                                     $("#" + sumAmount).empty();
-                                    $("#" + sumAmount).append("<tr><th></th><th>变动金额总计："+data.sumAmount+"</th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th></tr>");
+                                    //$("#" + sumAmount).append("<tr><th></th><th>变动金额总计："+data.sumAmount+"</th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th></tr>");
                                     if(val[0].state==0){
                                         state="<a onclick=\"updateStateW('"+val[0].orderNum+"')\">等待付款</a>";
                                     }else if(val[0].state==1){
@@ -417,10 +425,10 @@
                 <div class="input-group" style="width: 850px; float: right">
                     总记录数：<input type="text" class="form-control" value="" id="totalNumber" style="width:50px;" readonly="readonly">
                     总页数：<input type="text" class="form-control" value="" id="totalPages" style="width:50px;" readonly="readonly">&nbsp;&nbsp;&nbsp;&nbsp;
-                    <button type="button" class="btn btn-primary" onclick="searchrecord('search')">首页</button>&nbsp;&nbsp;&nbsp;&nbsp;
-                    <button type="button" class="btn btn-primary" onclick="searchrecord('upPage')">上一页</button>&nbsp;&nbsp;&nbsp;&nbsp;
-                    <button type="button" class="btn btn-primary" onclick="searchrecord('downPage')">下一页</button>&nbsp;&nbsp;&nbsp;&nbsp;
-                    <button type="button" class="btn btn-primary" onclick="searchrecord('finalPage')">尾页</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" id="mainP" class="btn btn-primary" onclick="searchrecord('search')">首页</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" id="preP"  class="btn btn-primary" onclick="searchrecord('upPage')">上一页</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" id="nextP" class="btn btn-primary" onclick="searchrecord('downPage')">下一页</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" id="lastP" class="btn btn-primary" onclick="searchrecord('finalPage')">尾页</button>&nbsp;&nbsp;&nbsp;&nbsp;
                     <input type="text" class="form-control" value="" id="pageIndex_button" style="width:90px;" onkeyup="this.value = this.value.replace(/[^0-9]+/, '');" size="3">
                         <button type="button" class="btn btn-primary" onclick="return checkButton()">跳到</button>
                 </div>

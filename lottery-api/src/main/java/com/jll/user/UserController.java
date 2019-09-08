@@ -1199,6 +1199,8 @@ public class UserController {
 			  @RequestParam(name = "startTime", required = false) String startTime,
 			  @RequestParam(name = "endTime", required = false) String endTime,
 			  @RequestParam(name = "pageIndex", required = true) Integer pageIndex,//当前请求页
+			  @RequestParam(name = "userType", required = false) Integer userType,
+			  @RequestParam(name = "userStatus", required = false) Integer userStatus,
 			  HttpServletRequest request) {
 		Map<String, Object> ret = new HashMap<>();
 		Map<String, Object> map = new HashMap<>();
@@ -1226,6 +1228,8 @@ public class UserController {
 		ret.put("proxyName", proxyName);
 		ret.put("startTime", startTime);
 		ret.put("endTime", endTime);
+		ret.put("userType", userType);
+		ret.put("userStatus", userStatus);
 		try {
 			map=userInfoService.queryAllUserInfo(ret);
 			map.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());

@@ -782,4 +782,110 @@ public class UserInfoDaoImpl extends DefaultGenericDaoImpl<UserInfo> implements 
 		map.put("data", pageBean);
 		return map;
 	}
+
+	@Override
+	public Map<String, Object> queryAllUserInfo(Integer id, String userName, Integer proxyId, String startTime,
+			String endTime, Integer userType, Integer userStatus, Integer pageIndex, Integer pageSize) {
+
+		Map<String,Object> map=new HashMap<String,Object>();
+		Integer userTypeAdmin = Constants.UserType.SYS_ADMIN.getCode();
+		Integer userTypeaDemo = Constants.UserType.DEMO_PLAYER.getCode();
+		
+		String hql="";
+		StringBuffer sql = new StringBuffer();
+		sql.append("from UserInfo where 1=1 ");
+		
+		if(proxyId!=null) {			
+			sql.append("and FIND_IN_SET(:proxyId,superior) = 1 ");
+			map.put("proxyId", proxyId);
+			
+			/*String timeSql="";
+			if(!StringUtils.isBlank(startTime)&&!StringUtils.isBlank(endTime)) {
+				timeSql=" and a.create_time>=:startTime and a.create_time<:endTime";
+				Date beginDate = DateUtil.fmtYmdHisToDate(startTime);
+			    Date endDate = DateUtil.fmtYmdHisToDate(endTime);
+				map.put("startTime", beginDate);
+				map.put("endTime", endDate);
+			}
+			hql=("select a.* from (select *,FIND_IN_SET(:proxyId,superior) as aa from user_info)a where a.aa=1 and a.user_type !=:userType and a.user_type!=:userTypea"+timeSql);
+			map.put("proxyId", proxyId);
+			PageBean<UserInfo> page=new PageBean<>();
+			page.setPageIndex(pageIndex);
+			page.setPageSize(pageSize);
+			page.setPageIndex(pageIndex);
+			PageBean<UserInfo> pageBean=queryBySqlClazzPagination(page,hql,map,UserInfo.class);
+			map.clear();
+			map.put("data", pageBean);
+			return map;*/
+		}/*else {
+			String userNameSql="";
+			String idSql="";
+			if(id!=null) {
+				idSql=" and id=:id";
+				map.put("id", id);
+			}
+			if(!StringUtils.isBlank(userName)) {
+				userNameSql=" and LOCATE(:userName, userName)>0";
+				map.put("userName", userName);
+			}
+			String timeSql="";
+			if(!StringUtils.isBlank(startTime)&&!StringUtils.isBlank(endTime)) {
+				timeSql=" and createTime >=:startTime and createTime <:endTime";
+				Date beginDate = DateUtil.fmtYmdHisToDate(startTime);
+			    Date endDate = DateUtil.fmtYmdHisToDate(endTime);
+				map.put("startTime", beginDate);
+				map.put("endTime", endDate);
+			}
+			hql=("from UserInfo where userType !=:userType and userType !=:userTypea"+timeSql+idSql+userNameSql);
+			PageBean page=new PageBean();
+			page.setPageIndex(pageIndex);
+			page.setPageSize(pageSize);
+			PageBean pageBean=queryByPagination(page,hql,map);
+			map.clear();
+			map.put("data", pageBean);
+			return map;
+		}*/	
+		
+		if(id != null) {
+			sql.append("and id=:id ");
+			map.put("id", id);
+		}
+		
+		if(userType!=null) {
+			sql.append("and userType=:userType ");
+			map.put("userType", userType);
+		}else {
+			sql.append("and userType !=:userType and userType !=:userTypea ");
+			map.put("userType", userTypeAdmin);
+			map.put("userTypea", userTypeaDemo);
+		}
+		
+		if(userStatus!=null) {
+			sql.append("and state=:userStatus ");
+			map.put("userStatus", userStatus);
+		}
+		
+		
+		if(!StringUtils.isBlank(userName)) {
+			sql.append("and LOCATE(:userName, userName)>0 ");
+			map.put("userName", userName);
+		}
+		
+		if(!StringUtils.isBlank(startTime)&&!StringUtils.isBlank(endTime)) {
+			sql.append("and create_time>=:startTime and create_time<:endTime ");
+			Date beginDate = DateUtil.fmtYmdHisToDate(startTime);
+		    Date endDate = DateUtil.fmtYmdHisToDate(endTime);
+			map.put("startTime", beginDate);
+			map.put("endTime", endDate);
+		}
+		
+		PageBean page=new PageBean();
+		page.setPageIndex(pageIndex);
+		page.setPageSize(pageSize);
+		PageBean pageBean=queryByPagination(page, sql.toString(), map);
+		map.clear();
+		map.put("data", pageBean);
+		return map;
+		
+	}
 }

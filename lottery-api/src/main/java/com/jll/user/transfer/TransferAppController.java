@@ -55,45 +55,67 @@ import com.terran4j.commons.api2doc.annotations.ApiComment;
 @Api2Doc(id = "userInfo", name = "user Info")
 @ApiComment(seeClass = UserInfo.class)
 @RestController
-@RequestMapping({ "/users" })
+@RequestMapping({ "/transfers" })
 @Configuration
 @PropertySource("classpath:sys-setting.properties")
 public class TransferAppController {
 	
 	private Logger logger = Logger.getLogger(TransferAppController.class);
 	
-	@Value("${sys_reset_pwd_default_pwd}")
-	String defaultPwd;
-	
 	@Resource
-	TransferAppService userInfoService;
+	TransferAppService transferServ;
 	
 	@Resource
 	UserBankCardService userBankCardService;
-	
-	@Resource
-	SMSService smsServ;
-	
-	@Resource
-	EmailService emailServ;
-	
+		
 	@Resource
 	HttpServletRequest request;
 	
 	@Resource
-	CacheRedisService cacheRedisService;
-	
-	@Resource
-	SysSiteMsgService sysSiteMsgService;
-	
-	@Value("${sys_captcha_code_expired_time}")
-	private int captchaCodeExpiredTime;
-	
-	@Resource
-	CacheRedisService cacheServ;
-	
-	@Resource
 	WalletService walletServ;
 	
-	
+	@RequestMapping(method={RequestMethod.GET}, produces=MediaType.APPLICATION_JSON_VALUE)
+	public Map<String, Object> queryTransfers(@RequestParam(name = "orderNum", required = false) String orderNum,
+			  @RequestParam(name = "sourceUser", required = false) String sourceUser,
+			  @RequestParam(name = "dstUser", required = false) String dstUser,
+			  @RequestParam(name = "state", required = false) Integer state,
+			  @RequestParam(name = "startTime", required = false) String startTime,
+			  @RequestParam(name = "endTime", required = false) String endTime,
+			  @RequestParam(name = "pageIndex", required = true) Integer pageIndex,
+			  HttpServletRequest request) {
+		Map<String, Object> ret = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
+		PageBean data = null;
+		
+		if(!StringUtils.isBlank(startTime)||!StringUtils.isBlank(endTime)) {
+			if(!DateUtil.isValidDate(startTime)||!DateUtil.isValidDate(endTime)) {
+				ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+				ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_ERROR_PARAMS.getCode());
+				ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_ERROR_PARAMS.getErrorMes());
+		    	return ret;
+			}
+		}
+		Integer pageSize=Constants.Pagination.SUM_NUMBER.getCode();
+		ret.put("pageSize", pageSize);
+		ret.put("pageIndex", pageIndex);
+		ret.put("sourceUser", sourceUser);
+		ret.put("state", state);
+		ret.put("dstUser", dstUser);
+		ret.put("startTime", startTime);
+		ret.put("endTime", endTime);
+		ret.put("orderNum", orderNum);
+		try {
+			data = transferServ.queryTransfer(ret);
+			
+			map.put(Message.KEY_DATA, data);
+			map.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
+			return map;
+		}catch(Exception e){
+			ret.clear();
+			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_OTHERS.getCode());
+			ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_OTHERS.getErrorMes());
+			return ret;
+		}
+	}
 }

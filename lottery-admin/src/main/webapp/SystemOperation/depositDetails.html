@@ -26,10 +26,22 @@
         <script language="javascript" src="../js/layer/layer.min.js"></script>
         <script type="text/javascript">
             $(document).ready(function () {
-                queryType();
+            	var parentUrl = window.location.href;
+            	var userName = parseParam(parentUrl, 'userName');
+    			if(typeof userName != 'undefined' && userName.length != 0){
+    				$('#userName').val(userName);
+    			}
+    			
+    			 document.getElementById('startTime').value=getNowFormatDate();
+                 document.getElementById('endTime').value=getNowFormatDate();
+                 
+                 
+                //queryType();
                 change();
-                document.getElementById('startTime').value=getNowFormatDate();
-                document.getElementById('endTime').value=getNowFormatDate();
+               
+                
+                
+    			
                 searchrecord("search");
             });
             function change(){
@@ -40,8 +52,8 @@
                 var sumAmount = $("#sumAmount").attr("id");
                 $("#" + sumAmount + "tr").remove();
                 $("#" + sumAmount).empty();
-                var type = document.getElementById('type').value;
-                if(type==1){
+                //var type = document.getElementById('type').value;
+                //if(type==1){
                     var tableid = $("#totalTRTD").attr("id");
                     $("#" + tableid + "tr").remove();
                     $("#" + tableid).empty();
@@ -59,7 +71,7 @@
                     <th class=\"thCenter\">状态</th>\n\
                     <th class=\"thCenter\">更改状态</th>\n\
                     <th class=\"thCenter\">备注</th></tr>"); 
-                }else if(type==2){
+                /* }else if(type==2){
                     var tableid = $("#totalTRTD").attr("id");
                     $("#" + tableid + "tr").remove();
                     $("#" + tableid).empty();
@@ -75,7 +87,7 @@
                     <th class=\"thCenter\">最后更新时间</th>\n\
                     <th class=\"thCenter\">状态</th>\n\
                     <th class=\"thCenter\">备注</th></tr>"); 
-                }
+                } */
             }
             function queryType(){
                 var access_token=sessionStorage.getItem("access_token");
@@ -113,7 +125,8 @@
             function querystate(){
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
-                var type=document.getElementById('type').value;
+                //var type=document.getElementById('type').value;
+                var type = 1;
                 var state = $("#state").attr("id");
                 var domain=parseDomain();
                 var url=domain+"/lottery-api/report/DWD/DWDState";
@@ -172,7 +185,7 @@
                 var pageIndex=page(str);
                 var tableid = $("#tableTRTD").attr("id");
                 var sumAmount = $("#sumAmount").attr("id");
-                var type = document.getElementById('type').value;
+                //var type = document.getElementById('type').value;
                 var state = document.getElementById('state').value;
                 var userName = document.getElementById('userName').value;
                 var orderNum = document.getElementById('orderNum').value;
@@ -191,7 +204,7 @@
                     type: "GET",
                     async: false, // 设置同步方式
                     data: {
-                        type: type, 
+                        type: 1, 
                         state: state,
                         userName:userName,
                         orderNum:orderNum,
@@ -219,13 +232,16 @@
                             document.getElementById('totalNumber').value = data.data.totalNumber;
                             document.getElementById('totalPages').value = data.data.totalPages;
                             document.getElementById('pageIndex_button').value = data.data.pageIndex;
+                            
+                            initPageing(data.data);
+                            
                             $("#" + tableid + "tr").remove();
                             $("#" + tableid).empty();
                             $.each(data.data.content, function(key, val) {  
-                                if(type==1){
+                                //if(type==1){
                                     $("#" + sumAmount + "tr").remove();
                                     $("#" + sumAmount).empty();
-                                    $("#" + sumAmount).append("<tr><th></th><th>变动金额总计："+data.sumAmount+"</th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th></th><th></th><th></th></tr>");
+                                    //$("#" + sumAmount).append("<tr><th></th><th>变动金额总计："+data.sumAmount+"</th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th></th><th></th><th></th></tr>");
                                     if(val[0].state==0){
                                         state1="等待充值";
                                         upstate="<a helf=\"#\" onclick=\"updateStateSucess('"+val[0].orderNum+"')\">充值成功</a>||<a helf=\"#\" onclick=\"updateState('"+val[0].id+"',2)\">充值失败</a>";
@@ -256,7 +272,7 @@
                                     <td class=\"thCenter\">"+state1+"</td>\n\
                                     <td class=\"thCenter\">"+upstate+"</td>\n\
                                     <td class=\"thCenter\">"+remark+"</td></tr>");
-                                }else if(type==2){
+                                /* }else if(type==2){
                                     $("#" + sumAmount + "tr").remove();
                                     $("#" + sumAmount).empty();
                                     $("#" + sumAmount).append("<tr><th></th><th>变动金额总计："+data.sumAmount+"</th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th></tr>");
@@ -291,7 +307,7 @@
                                     <td class=\"thCenter\">"+updateTimeNew+"</td>\n\
                                     <td class=\"thCenter\">"+state+"</td>\n\
                                     <td class=\"thCenter\">"+remark+"</td></tr>");
-                                }
+                                } */
                                 
                             });
                         }else if(data.status==0){
@@ -428,13 +444,12 @@
             <form class="form-horizontal" method="get">
                 <div class="form_box" style="width: 100%;">
                     <div class="input-group" style="margin-left: 20px;">
-                        存取款类别：<select id="type" name="type" style="width:100px;" class="form-control" onchange="change()">
-                        </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        状态：<select id="state" name="state" style="width:100px;" class="form-control">
+                    	 用户名：<input type="text" class="form-control" id="userName" name="userName" style="width:100px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				                        订单号：<input type="text" class="form-control" id="orderNum" name="orderNum" style="width:100px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;                     
+				                        状态：<select id="state" name="state" style="width:100px;" class="form-control">
                             <option value=""></option>
                         </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        用户名：<input type="text" class="form-control" id="userName" name="userName" style="width:100px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        订单号：<input type="text" class="form-control" id="orderNum" name="orderNum" style="width:100px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                       
                         最小金额：<input type="text" class="form-control" id="amountStart" name="amountStart" style="width:150px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         最大金额：<input type="text" class="form-control" id="amountEnd" name="amountEnd" style="width:150px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         开始时间：<input type="text" id="startTime" placeholder="选择开始时间" onClick="return Calendar('startTime');" class="text_time" name="startTime" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -474,10 +489,10 @@
                 <div class="input-group" style="width: 850px; float: right">
                     总记录数：<input type="text" class="form-control" value="" id="totalNumber" style="width:50px;" readonly="readonly">
                     总页数：<input type="text" class="form-control" value="" id="totalPages" style="width:50px;" readonly="readonly">&nbsp;&nbsp;&nbsp;&nbsp;
-                    <button type="button" class="btn btn-primary" onclick="searchrecord('search')">首页</button>&nbsp;&nbsp;&nbsp;&nbsp;
-                    <button type="button" class="btn btn-primary" onclick="searchrecord('upPage')">上一页</button>&nbsp;&nbsp;&nbsp;&nbsp;
-                    <button type="button" class="btn btn-primary" onclick="searchrecord('downPage')">下一页</button>&nbsp;&nbsp;&nbsp;&nbsp;
-                    <button type="button" class="btn btn-primary" onclick="searchrecord('finalPage')">尾页</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" id="mainP" class="btn btn-primary" onclick="searchrecord('search')">首页</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" id="preP"  class="btn btn-primary" onclick="searchrecord('upPage')">上一页</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" id="nextP" class="btn btn-primary" onclick="searchrecord('downPage')">下一页</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" id="lastP" class="btn btn-primary" onclick="searchrecord('finalPage')">尾页</button>&nbsp;&nbsp;&nbsp;&nbsp;
                     <input type="text" class="form-control" value="" id="pageIndex_button" style="width:90px;" onkeyup="this.value = this.value.replace(/[^0-9]+/, '');" size="3">
                         <button type="button" class="btn btn-primary" onclick="return checkButton()">跳到</button>
                 </div>

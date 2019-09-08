@@ -202,6 +202,14 @@
                                     document.getElementById("betting_order").style.display="inline";
                                 }
                                 
+                                if(val=='ROLE_CUSTOMER_SERVICE'
+                                		||val=='ROLE_MANAGER'
+                                		|| val == 'ROLE_AGENT_SM'
+                                		|| val == 'ROLE_AGENT_XY'
+                                		|| val == 'ROLE_AGENT_ENTRUST'){
+                                    document.getElementById("betting_order_xy").style.display="inline";
+                                }
+                                
                                 if(val=='ROLE_MANAGER'){
                                     document.getElementById("agent_maintaince").style.display="inline";
                                 }
@@ -211,7 +219,7 @@
                                 		|| val=='ROLE_FINANCE'){
                                     document.getElementById("system_operation").style.display="inline";
                                 }
-                                
+                                                                
                                 if(val=='ROLE_ADMIN'||val=='ROLE_RISK_MANAGEMENT'){
                                     document.getElementById("login_log").style.display="inline";
                                 }
@@ -408,7 +416,7 @@
                         </a>
                         <ul class="nav nav-second-level">
                             <li id="user_management" style="display: none;">
-                                <a class="J_menuItem"  href="MemberManagement/UserInfo.html?v=4.0">会员信息</a>
+                                <a class="J_menuItem"  href="MemberManagement/UserInfo.html?v=4.0" data-id="MemberManagement/UserInfo.html">会员信息</a>
                             </li>
                             <li id="account_management" style="display: none;">
                                 <a class="J_menuItem"  href="MemberManagement/UserAccount.html?v=4.0">会员账户</a>
@@ -430,16 +438,19 @@
                                 <a class="J_menuItem"  href="SystemOperation/UnifiedWwithdrawal.html?v=4.0">期次处理</a>
                             </li>
                             <li id="betting_order" style="display: none;">
-                                <a class="J_menuItem"  href="report/lottery_transaction.html?v=4.0">投注订单</a>
+                                <a class="J_menuItem"  href="SystemOperation/lottery_transaction.html?v=4.0" data-id="SystemOperation/lottery_transaction.html">投注订单-在线</a>
+                            </li>
+                             <li id="betting_order_xy" style="display: none;">
+                                <a class="J_menuItem"  href="SystemOperation/lottery_transaction_xy.html?v=4.0" data-id="SystemOperation/lottery_transaction_xy.html">投注订单</a>
                             </li>
                             <li>
-                                <a class="J_menuItem"  href="report/depositDetails.html?v=4.0">存款明细列表</a>
+                                <a class="J_menuItem"  href="SystemOperation/depositDetails.html?v=4.0">存款明细列表</a>
                             </li>
                             <li>
-                                <a class="J_menuItem"  href="report/withdrawDetails.html?v=4.0">取款明细列表</a>
+                                <a class="J_menuItem"  href="SystemOperation/withdrawDetails.html?v=4.0">取款明细列表</a>
                             </li>
                             <li>
-                                <a class="J_menuItem"  href="report/transferDetails.html?v=4.0">转账明细列表</a>
+                                <a class="J_menuItem"  href="SystemOperation/transferDetails.html?v=4.0">转账明细列表</a>
                             </li>
 <!--                            <li>
                                 <a class="J_menuItem"  href="updatePWD.html?v=4.0">修改密码</a>

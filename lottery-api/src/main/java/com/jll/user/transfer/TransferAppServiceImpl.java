@@ -162,6 +162,11 @@ public class TransferAppServiceImpl implements TransferAppService
 	public void saveTransferApplication(TransferApplication transferApp) {
 		transferAppDao.saveTransferApplication(transferApp);
 	}
+
+	@Override
+	public PageBean queryTransfer(Map<String, Object> params) {
+		return transferAppDao.queryTransfer(params);
+	}
 	
 	
 }

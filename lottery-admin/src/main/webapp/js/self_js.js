@@ -380,3 +380,21 @@ function parseParam(url, paraName) {
 	}
 	return userName;
 }
+
+function initPageing(data){
+	if(data.pageIndex == 1){
+    	$('#mainP').attr('disabled',true);
+    	$('#preP').attr('disabled',true);
+    }else{
+    	$('#mainP').attr('disabled',false);
+    	$('#preP').attr('disabled',false);
+    }
+    
+    if(data.pageIndex == data.totalPages){
+    	$('#nextP').attr('disabled',true);
+    	$('#lastP').attr('disabled',true);
+    }else{
+    	$('#nextP').attr('disabled',false);
+    	$('#lastP').attr('disabled',false);
+    }
+}

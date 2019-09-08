@@ -43,3 +43,5 @@ var queryAgentURL = SITE + "/users/queryAllUserAgent";
 var queryPrizeTemplateURL = SITE + "/lotteries/prize-templates";
 
 var createAgentURL = SITE + "/users/agents/{agentId}";
+
+var queryTransferURL = SITE + "/transfers";

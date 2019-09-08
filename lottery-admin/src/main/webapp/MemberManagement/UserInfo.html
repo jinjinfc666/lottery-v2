@@ -30,6 +30,14 @@
             $(document).ready(function () {
 //                document.getElementById('startTime').value=getNowFormatDate();
 //                document.getElementById('endTime').value=tomorrow();
+
+            	var parentUrl = window.location.href;
+
+    			var userName = parseParam(parentUrl, 'userName');
+    			if(typeof userName != 'undefined' && userName.length != 0){
+    				$('#userName').val(userName);
+    			}
+    			
                 searchrecord("search");
             });
             function parseDomain() {
@@ -55,7 +63,7 @@
                 var url = "UserInfoUpdate.html?id="+id;
                 $.layer({
                     type: 2,
-                    title: '修改状态',
+                    title: '用户详细信息',
                     maxmin: false,
                     shift: 'top',
                     shadeClose: false,
@@ -74,6 +82,8 @@
                 var proxyName=document.getElementById('proxyName').value;
                 var startTime = document.getElementById('startTime').value;
                 var endTime = document.getElementById('endTime').value;
+                var userType = $('#userType').val();
+                var userStatus = $('#userStatus').val();
                 var tableid = $("#tableTRTD").attr("id");
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
@@ -92,7 +102,9 @@
                         proxyName:proxyName,
                         startTime:startTime,
                         endTime:endTime,
-                        pageIndex:pageIndex
+                        pageIndex:pageIndex,
+                        userType:userType,
+                        userStatus:userStatus
                     },
                     dataType: "json",
 //                    beforeSend: function(xhr) {
@@ -110,10 +122,15 @@
                             document.getElementById('totalNumber').value = data.data.totalNumber;
                             document.getElementById('totalPages').value = data.data.totalPages;
                             document.getElementById('pageIndex_button').value = data.data.pageIndex;
+                            
+                            initPageing(data.data);
+                            
                             $("#" + tableid + "tr").remove();
                             $("#" + tableid).empty();
                             $.each(data.data.content, function(key, val) {
                                 var state="";
+                                var userType="";
+                                
                                 if(val.state=='0'){
                                     state="正常";
                                 }else if(val.state=='1'){
@@ -121,16 +138,20 @@
                                 }else if(val.state=='2'){
                                     state="销毁";
                                 }
-                                var userType="";
-                                if(val.userType=='0'){
-                                    userType="平台客户";
-                                }else if(val.userType=='1'){
+                                                                                           
+                                if(val.userType=='3'){
+                                    userType="总代";
+                                  	
+                                }else if(val.userType=='0' || val.userType=='5' || val.userType == '7' || val.userType == '9'){
+                                    userType="用户";
+                                    
+                                }else if(val.userType=='1' || val.userType=='6' || val.userType=='8' || val.userType=='10'){
                                     userType="代理";
+                                  	
                                 }else if(val.userType=='2'){
                                     userType="系统用户";
-                                }else if(val.userType=='3'){
-                                    userType="总代";
                                 }
+                                
                                 var isValidPhone="";
                                  if(val.isValidPhone=='0'){
                                     isValidPhone="未验证";
@@ -143,21 +164,29 @@
                                 }else if(val.isValidEmail=='1'){
                                     isValidEmail="未验证";
                                 }
-                                $("#" + tableid).append("<tr>\n\
-                                    <td class=\"thCenter\"><a onclick=\"updateUserInfo("+val.id+")\">"+val.userName+"</a></td>\n\
-                                    <td class=\"thCenter\">"+val.realName+"</td>\n\
-                                    <td class=\"thCenter\">"+ConvertJSONDateToJSDateObject(""+val.createTime+"")+"</td>\n\
-                                    <td class=\"thCenter\">"+state+"</td>\n\
-                                    <td class=\"thCenter\">"+userType+"</td>\n\
-                                    <td class=\"thCenter\">"+val.platRebate+"</td>\n\
-                                    <td class=\"thCenter\">"+isValidEmail+"</td>\n\
-                                    <td class=\"thCenter\">"+isValidPhone+"</td>\n\
-                                    <td class=\"thCenter\">"+val.regIp+"</td>\n\
-                                    <td class=\"thCenter\">\n\
-                                    <button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"queryBank('"+val.id+"')\">查看银行卡</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n\
-                                    <button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"resetLoginPwd('"+val.id+"')\">用户登录密码重置</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n\
-                                    <button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"queryUserAccount('"+val.id+"')\">查看用户账户</button>\n\
-                                    </td></tr>"); 
+                                 
+                                var row = "<tr>";
+                                row += "<td class=\"thCenter\">"+val.userName+"</td>";
+                                row += "<td class=\"thCenter\">"+val.realName+"</td>";
+                                row += "<td class=\"thCenter\">"+state+"</td>";
+                                row += "<td class=\"thCenter\">"+userType+"</td>";
+                                row += "<td class=\"thCenter\">"+val.rebate+"</td>";
+                                row += "<td class=\"thCenter\">"+val.platRebate+"</td>";
+                                row += "<td class=\"thCenter\">"+isValidEmail+"</td>";
+                                row += "<td class=\"thCenter\">"+isValidPhone+"</td>";
+                                row += "<td class=\"thCenter\">"+val.qq+"</td>";
+                                row += "<td class=\"thCenter\">"+val.wechat+"</td>";
+                                row += "<td class=\"thCenter\">";
+                                row += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"updateUserInfo('"+val.id+"')\">用户详情</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                row += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"queryBank('"+val.id+"')\">银行卡</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                row += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"showDetails('acc','"+val.userName+"','"+val.userType+"')\">用户账户</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                row += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"showDetails('order','"+val.userName+"','"+val.userType+"')\">订单</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                row += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"showDetails('deposit','"+val.userName+"','"+val.userType+"')\">存款</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                row += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"showDetails('withdraw','"+val.userName+"','"+val.userType+"')\">取款</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                row += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"showDetails('transfer','"+val.userName+"','"+val.userType+"')\">砖帐</button>";
+                                row += "</td></tr>";
+                                $("#" + tableid).append(row);
+                              
                             });
                         }else if(data.status==0){
                             alert(getErroe(data.error_code));
@@ -265,6 +294,30 @@
                    searchrecord('button');
                }
             }
+            
+            function showDetails(actionType, userName, userType){
+            	var url = null;
+            	if(actionType == 'acc'){
+            		url = 'MemberManagement/UserAccount.html?v=4.0';
+            	}else if(actionType == 'order'){
+                    if(userType == '5' || userType == '7' || userType == '9'){
+                    	url = 'SystemOperation/lottery_transaction_xy.html?v=4.0';
+                    }else{
+                    	url = 'SystemOperation/lottery_transaction.html?v=4.0';
+                    }
+            	}else if(actionType == 'deposit'){
+            		url = 'SystemOperation/depositDetails.html?v=4.0';
+            	}else if(actionType == 'withdraw'){
+            		url = 'SystemOperation/withdrawDetails.html?v=4.0';
+            	}else if(actionType == 'transfer'){
+            		url = 'SystemOperation/transferDetails.html?v=4.0';
+            	}
+            	if(typeof url != 'undefined' && url.length != 0){
+            		url += "&userName=" + userName;
+	            	$("#agent_btn", window.parent.document).attr("data-addurl", url);
+	            	$("#agent_btn", window.parent.document).click();            		
+            	}
+            }
         </script>
         <script type="text/javascript" src="../js/showdate.js"></script>
     </head>
@@ -273,34 +326,62 @@
         <div class="row  border-bottom white-bg dashboard-header">
             <form class="form-horizontal" method="get">
                 <div class="input-group" style="margin-left: 20px;">
-                    用户名：<input type="text" class="form-control" id="userName" name="userName" style="width:150px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    上级代理名称：<input type="text" class="form-control" id="proxyName" name="proxyName" style="width:150px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    开始时间：<input type="text" id="startTime" placeholder="选择开始时间" onClick="return Calendar('startTime');" class="text_time" name="startTime" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    结束时间：<input type="text" id="endTime" placeholder="选择结束时间" onClick="return Calendar('endTime');" class="text_time" name="endTime" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <span> 
-                        <button type="button" class="btn btn-primary" style="height:32px;" onclick="searchrecord('search')">搜索
-                        </button> 
-                    </span>
+			                    用户名：<input type="text" class="form-control" id="userName" name="userName" style="width:150px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			                    上级代理名称：<input type="text" class="form-control" id="proxyName" name="proxyName" style="width:150px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			         <div id="agent_type" style="display:inline">
+                    	用户类型：
+                 		<select id="userType" style="width:120px;height:34px">
+                 			<option></option>
+	                		<option value="0">玩家</option>
+	                		<option value="1">在线代理</option>
+	                		<option value="2">系统用户</option>
+	                		<option value="3">总代</option>
+	                		<option value="4">试玩玩家</option>
+		                	<option value="5">双面玩家</option>
+		                	<option value="6">双面代理</option>
+		                	<option value="7">信誉玩家</option>
+		                	<option value="8">信誉代理</option>
+		                	<option value="9">委托投注玩家</option>
+		                	<option value="10">委托投注代理</option>
+                		</select>
+			        	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </div>
+                    <div id="agent_type" style="display:inline">
+                    	用户状态：
+                 		<select id="userStatus" style="width:120px;height:34px">
+                 			<option></option>
+	                		<option value="0">正常</option>
+	                		<option value="1">锁定</option>
+	                		<option value="2">销毁</option>
+                		</select>
+			        	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </div>
+			                    开始时间：<input type="text" id="startTime" placeholder="选择开始时间" onClick="return Calendar('startTime');" class="text_time" name="startTime" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			                    结束时间：<input type="text" id="endTime" placeholder="选择结束时间" onClick="return Calendar('endTime');" class="text_time" name="endTime" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			         <span> 
+			         	<button type="button" class="btn btn-primary" style="height:32px;" onclick="searchrecord('search')">搜索</button> 
+			         </span>
                 </div>
             </form>
             </br >
             </br >
             </br >
-            <div class="ibox-content">
-                <table class="table table-striped table-bordered table-hover dataTables-example">
-                    <thead id="totalTRTD">
+            <div class="ibox-content" style="overflow-x:scroll;">
+                <table class="table table-striped table-bordered table-hover dataTables-example resizable-table">
+                    <thead>
                         <tr>
                             <!--<th>ID</th>-->
-                            <th class="thCenter">用户名</th>
-                            <th class="thCenter">真实姓名</th>
-                            <th class="thCenter">注册时间</th>
-                            <th class="thCenter">状态</th>
-                            <th class="thCenter">用户类型</th>
-                            <th class="thCenter">返点</th>
-                            <th class="thCenter">邮箱是否验证</th>
-                            <th class="thCenter">手机号是否验证</th>
-                            <th class="thCenter">注册Ip</th>
-                            <th class="thCenter">操作</th>
+                            <th class="thCenter" style="width:140px">用户名</th>
+                            <th class="thCenter" style="width:120px">真实姓名</th>
+                            <th class="thCenter" style="width:80px">状态</th>
+                            <th class="thCenter" style="width:110px">用户类型</th>
+                            <th class="thCenter" style="width:110px">上级返点</th>
+                            <th class="thCenter" style="width:110px">下级返点</th>
+                            <th class="thCenter" style="width:140px">邮箱是否验证</th>
+                            <th class="thCenter" style="width:140px">手机是否验证</th>
+                            <th class="thCenter" style="width:100px">QQ</th>
+                            <th class="thCenter" style="width:100px">微信</th>
+                            <th class="thCenter" style="width:600px">操作</th>
                         </tr>
                     </thead>
                     <tbody id="tableTRTD">
@@ -311,14 +392,16 @@
                 <div class="input-group" style="width: 850px; float: right">
                     总记录数：<input type="text" class="form-control" value="" id="totalNumber" style="width:50px;" readonly="readonly">
                     总页数：<input type="text" class="form-control" value="" id="totalPages" style="width:50px;" readonly="readonly">&nbsp;&nbsp;&nbsp;&nbsp;
-                    <button type="button" class="btn btn-primary" onclick="searchrecord('search')">首页</button>&nbsp;&nbsp;&nbsp;&nbsp;
-                    <button type="button" class="btn btn-primary" onclick="searchrecord('upPage')">上一页</button>&nbsp;&nbsp;&nbsp;&nbsp;
-                    <button type="button" class="btn btn-primary" onclick="searchrecord('downPage')">下一页</button>&nbsp;&nbsp;&nbsp;&nbsp;
-                    <button type="button" class="btn btn-primary" onclick="searchrecord('finalPage')">尾页</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" id="mainP" class="btn btn-primary" onclick="searchrecord('search')">首页</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" id="preP"  class="btn btn-primary" onclick="searchrecord('upPage')">上一页</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" id="nextP" class="btn btn-primary" onclick="searchrecord('downPage')">下一页</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" id="lastP" class="btn btn-primary" onclick="searchrecord('finalPage')">尾页</button>&nbsp;&nbsp;&nbsp;&nbsp;
                     <input type="text" class="form-control" value="" id="pageIndex_button" style="width:90px;" onkeyup="this.value = this.value.replace(/[^0-9]+/, '');" size="3">
-                        <button type="button" class="btn btn-primary" onclick="return checkButton()">跳到</button>
+                    <button type="button" class="btn btn-primary" onclick="return checkButton()">跳到</button>
                 </div>
             </div>
         </div>
     </body>
+    
+    <script src="../js/colResizable-1.6.js" type="text/javascript"></script>
 </html>

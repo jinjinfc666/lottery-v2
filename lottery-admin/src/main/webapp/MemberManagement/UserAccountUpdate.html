@@ -227,41 +227,41 @@
             }
         </script>
     </head>
-    <body style="background-color: #f3f3f4;">
+    <body>
         <table width="600px" cellspacing="0" cellpadding="5">
             <tr>
-                <th class="thstyle">用户名：</th>
-                <td><input type="hidden" id="userId" ><input type="text" id="userName" name="userName" value="" style="width:150px;" class="form-control" readonly /></td>
+                <th class="thstyle">用户名</th>
+                <td><input type="hidden" id="userId" ><input type="text" id="userName" name="userName" value="" style="width:250px;" class="form-control" readonly /></td>
             </tr>
             <tr>
-                <th class="thstyle">余额：</th>
-                <td><input type="text" id="balance" name="balance" value="" style="width:150px;" class="form-control" readonly /></td>
+                <th class="thstyle">余额</th>
+                <td><input type="text" id="balance" name="balance" value="" style="width:250px;" class="form-control" readonly /></td>
             </tr>
             <tr>
-                <th class="thstyle">冻结资金：</th>
-                <td><input type="text" id="freeze" name="freeze" value="" style="width:150px;" class="form-control" readonly /></td>
+                <th class="thstyle">冻结资金</th>
+                <td><input type="text" id="freeze" name="freeze" value="" style="width:250px;" class="form-control" readonly /></td>
             </tr>
             <tr>
-                <th class="thstyle">奖金：</th>
-                <td><input type="text" id="prize" name="prize" value="" style="width:150px;" class="form-control" readonly /></td>
+                <th class="thstyle">奖金</th>
+                <td><input type="text" id="prize" name="prize" value="" style="width:250px;" class="form-control" readonly /></td>
             </tr>
             <tr>
-                <th class="thstyle">操作类别：</th>
+                <th class="thstyle">操作类别</th>
                 <td>
-                    <select id="operationType" name="operationType" style="width:150px;" class="form-control">
+                    <select id="operationType" name="operationType" style="width:250px;" class="form-control">
                         <option value=""></option>
                     </select>
                 </td>
             </tr>
             <tr>
-                <th class="thstyle">操作金额：</th>
-                <td><input type="text" id="amount" name="amount" value="" style="width:150px;" class="form-control"  /></td>
+                <th class="thstyle">操作金额</th>
+                <td><input type="text" id="amount" name="amount" value="" style="width:250px;" class="form-control"  /></td>
             </tr>
         </table>
         <script>
             var wz = parent.layer.getFrameIndex(window.name);
         </script>
-        <div style="margin-left:330px;">
+        <div style="margin-left:450px;">
             <button class="btn btn-primary" style="width: 100px;" type="submit" onclick="update()">提交</button>
         </div>
     </body>
