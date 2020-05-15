@@ -12,7 +12,7 @@
 	<properties>
 		<spring-version>4.3.6.RELEASE</spring-version>
 		<log4j-version>2.8.1</log4j-version>
-		<jackson-version>2.6.3</jackson-version>
+		<jackson-version>2.9.10.4</jackson-version>
 		<redis-version>2.9.0</redis-version>
 		<spring-data-redis-version>1.8.0.RELEASE</spring-data-redis-version>
 		<jetty-version>9.4.2.v20170220</jetty-version>
