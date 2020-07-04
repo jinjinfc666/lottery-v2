@@ -53,6 +53,7 @@
 		<module>lottery-api</module>
 		<module>lottery-admin</module>
 		<module>lottery-ui-smp</module>
+		<module>lottery-ui-sfgj</module>
 	</modules>
 			
 	

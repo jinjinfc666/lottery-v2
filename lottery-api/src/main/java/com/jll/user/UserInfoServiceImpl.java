@@ -1029,15 +1029,15 @@ public class UserInfoServiceImpl implements UserInfoService
 		Integer userType = (Integer) map.get("userType");
 		Integer userStatus = (Integer) map.get("userStatus");
 		
-		UserInfo userInfo=userDao.getUserByUserName(proxyName);
+		UserInfo userInfo = null;
 		Integer proxyId=null;
-		if(userInfo!=null) {
-			if(userInfo.getUserType()==Constants.UserType.GENERAL_AGENCY.getCode()) {
-				proxyId=0;
-			}else {
+		if(!StringUtils.isEmpty(proxyName)) {
+			userInfo=userDao.getUserByUserName(proxyName);
+			if(userInfo != null){
 				proxyId=userInfo.getId();
 			}
 		}
+		
 		Map<String,Object> userInfoList = userDao.queryAllUserInfo(id, userName, proxyId, startTime, endTime,userType, userStatus, pageIndex,pageSize);
 		return userInfoList;
 	}

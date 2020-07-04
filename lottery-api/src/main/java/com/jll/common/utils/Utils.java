@@ -117,13 +117,37 @@ public class Utils {
 
 		for (int i = 0; i < 10; i++) {
 			for (int ii = 0; ii < 10; ii++) {
+				if(ii == i){
+					continue;
+				}
 				for (int iii = 0; iii < 10; iii++) {
+					if(iii == ii || iii == i){
+						continue;
+					}
 					for (int iiii = 0; iiii < 10; iiii++) {
+						if(iiii == iii || iiii == ii || iiii == i){
+							continue;
+						}
 						for (int iiiii = 0; iiiii < 10; iiiii++) {
+							if(iiiii == iiii || iiiii == iii || iiiii == ii || iiiii == i){
+								continue;
+							}
 							for (int iiiiii = 0; iiiiii < 10; iiiiii++) {
+								if(iiiiii == iiiii || iiiiii == iiii || iiiiii == iii || iiiiii == ii || iiiiii == i){
+									continue;
+								}
 								for (int iiiiiii = 0; iiiiiii < 10; iiiiiii++) {
+									if(iiiiiii == iiiiii || iiiiiii == iiiii || iiiiiii == iiii || iiiiiii == iii || iiiiiii == ii || iiiiiii == i){
+										continue;
+									}
 									for (int iiiiiiii = 0; iiiiiiii < 10; iiiiiiii++) {
+										if(iiiiiiii == iiiiiii || iiiiiiii == iiiiii || iiiiiiii == iiiii || iiiiiiii == iiii || iiiiiiii == iii || iiiiiiii == ii || iiiiiiii == i){
+											continue;
+										}
 										for (int iiiiiiiii = 0; iiiiiiiii < 10; iiiiiiiii++) {
+											if(iiiiiiiii == iiiiiiii || iiiiiiiii == iiiiiii || iiiiiiiii == iiiiii || iiiiiiiii == iiiii || iiiiiiiii == iiii || iiiiiiiii == iii || iiiiiiiii == ii || iiiiiiiii == i){
+												continue;
+											}
 											for (int iiiiiiiiii = 0; iiiiiiiiii < 10; iiiiiiiiii++) {
 												rowMap.clear();
 												row.delete(0, row.length());

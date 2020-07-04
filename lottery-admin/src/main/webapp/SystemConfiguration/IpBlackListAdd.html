@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>添加代码类型</title>
+        <title>添加黑名单</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style type="text/css">
@@ -48,6 +48,7 @@
         <script type="text/javascript" src="../js/jquery-1.10.2.min.js"></script>
         <script language="javascript" src="../js/layer/layer.min.js"></script>
         <script src="../js/self_js.js" type="text/javascript"></script>
+        <script src="../js/site.js" type="text/javascript"></script>
         <script type="text/javascript">
             function parseDomain() {
                 var currURL = location.href;
@@ -76,7 +77,7 @@
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/ip-black-lists/addIpBlackList";
+                var url= addIpBlackListURL;
                 $.ajax({
                     url: url,
                     type: "POST",

@@ -421,7 +421,7 @@ public class UserController {
 			return resp;
 		}
 		if(generalAgency.getUserType()==Constants.UserType.GENERAL_AGENCY.getCode()) {
-			user.setSuperior(Integer.toString(Constants.VAL_SUPERIOR));
+			user.setSuperior(String.valueOf(generalAgency.getId()));
 		}else {
 			if(StringUtils.isBlank(generalAgency.getSuperior())) {
 				user.setSuperior(Integer.toString(generalAgency.getId()));

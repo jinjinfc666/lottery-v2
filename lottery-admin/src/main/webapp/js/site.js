@@ -8,6 +8,8 @@ var queryCaptchaCodeURL = SITE+"/captchas/verification-code-Img;jsessionid={sess
 
 var loginURL = SITE+"/oauth/token;jsessionid={sessionId}"; //用户登录
 
+var refreshTokenURL = SITE + "/oauth/token";
+
 var queryNowUserInfoURL = SITE + "/users/queryNowUserInfo";
 
 var queryUserURL = SITE + "/SysUser/queryGetByUserId";
@@ -45,3 +47,16 @@ var queryPrizeTemplateURL = SITE + "/lotteries/prize-templates";
 var createAgentURL = SITE + "/users/agents/{agentId}";
 
 var queryTransferURL = SITE + "/transfers";
+
+var queryAllIpBlackListURL = SITE + "/ip-black-lists/queryAllIpBlackList";
+
+var addIpBlackListURL = SITE + "/ip-black-lists/addIpBlackList";
+
+var deleteIpBlackListURL = SITE + "/ip-black-lists/{blackListId}";
+
+var queryPlayTypeURL = SITE + "/settingPlayType/queryPlayType";
+
+var querySysUserURL = SITE + "/SysUser/querySysUser";
+
+var queryByUserId = SITE + "/SysUser/byUserId";
+

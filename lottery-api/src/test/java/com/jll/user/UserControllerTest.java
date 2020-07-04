@@ -28,7 +28,7 @@ public class UserControllerTest extends ControllerJunitBase{
 		super(name);
 	}	
 	
-	public void ItestSelfRegUser() throws Exception{
+	public void testSelfRegUser() throws Exception{
 		/*String userName = "agent001";
 		String pwd = "agent001";
 		String clientId = "lottery-client";

@@ -30,7 +30,7 @@ public class ReportControllerTest extends ControllerJunitBase {
 	 * 
 	 * @throws Exception
 	 */
-	public void ItestPayOrderToSystem() throws Exception {
+	public void testPayOrderToSystem() throws Exception {
 		String userName = "test001";
 		String pwd = "test001";
 		String clientId = "lottery-client";

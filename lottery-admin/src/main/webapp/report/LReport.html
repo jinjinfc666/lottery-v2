@@ -24,6 +24,7 @@
         <script src="../js/plugins/layer/layer.min.js" type="text/javascript"></script>
         <script src="../js/content.min.js" type="text/javascript"></script>
         <script src="../js/self_js.js" type="text/javascript"></script>
+        <script src="../js/site.js" type="text/javascript"></script>
         <script type="text/javascript">
             $(document).ready(function () {
                 queryType();
@@ -36,7 +37,7 @@
                 var token="Bearer " + access_token;
                 var lotteryType = $("#lotteryType").attr("id");
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/report/loyTstRecord/lotteTypes";
+                var url = queryLotteTypesURL;
                 $.ajax({
                     url: url,
                     type: "GET",

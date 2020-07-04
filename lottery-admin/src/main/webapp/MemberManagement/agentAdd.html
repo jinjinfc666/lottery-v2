@@ -149,11 +149,7 @@
                     return false;
                 }
                 $("#loginPwd1").text("");
-                if(platRebate==""){
-                    $("#platRebate1").text("下级返点不能为空!");
-                    return false;
-                }
-                $("#platRebate1").text("");
+                
                 
                 if(userType==""){
                     $("#userType_error").text("请选择用户类型!");
@@ -191,6 +187,12 @@
 	                    'panKou':panKou
 	                });
                 }else{
+                	if(platRebate==""){
+                        $("#platRebate1").text("下级返点不能为空!");
+                        return false;
+                    }
+                    $("#platRebate1").text("");
+                    
                 	data=JSON.stringify({
                         "realName": realName,
                         "userName": userName,

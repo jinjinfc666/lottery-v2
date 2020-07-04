@@ -156,13 +156,13 @@
                                  if(val.isValidPhone=='0'){
                                     isValidPhone="未验证";
                                 }else if(val.isValidPhone=='1'){
-                                    isValidPhone="未验证";
+                                    isValidPhone="已验证";
                                 }
                                 var isValidEmail="";
                                  if(val.isValidEmail=='0'){
                                     isValidEmail="未验证";
                                 }else if(val.isValidEmail=='1'){
-                                    isValidEmail="未验证";
+                                    isValidEmail="已验证";
                                 }
                                  
                                 var row = "<tr>";
@@ -178,12 +178,14 @@
                                 row += "<td class=\"thCenter\">"+val.wechat+"</td>";
                                 row += "<td class=\"thCenter\">";
                                 row += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"updateUserInfo('"+val.id+"')\">用户详情</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-                                row += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"queryBank('"+val.id+"')\">银行卡</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-                                row += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"showDetails('acc','"+val.userName+"','"+val.userType+"')\">用户账户</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-                                row += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"showDetails('order','"+val.userName+"','"+val.userType+"')\">订单</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-                                row += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"showDetails('deposit','"+val.userName+"','"+val.userType+"')\">存款</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-                                row += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"showDetails('withdraw','"+val.userName+"','"+val.userType+"')\">取款</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-                                row += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"showDetails('transfer','"+val.userName+"','"+val.userType+"')\">转帐</button>";
+                                if(val.userType!='3' && val.userType!='2'){
+                                	row += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"queryBank('"+val.id+"')\">银行卡</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                    row += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"showDetails('acc','"+val.userName+"','"+val.userType+"')\">用户账户</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                    row += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"showDetails('order','"+val.userName+"','"+val.userType+"')\">订单</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                    row += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"showDetails('deposit','"+val.userName+"','"+val.userType+"')\">存款</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                    row += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"showDetails('withdraw','"+val.userName+"','"+val.userType+"')\">取款</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                    row += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"showDetails('transfer','"+val.userName+"','"+val.userType+"')\">转帐</button>";
+                                }                                
                                 row += "</td></tr>";
                                 $("#" + tableid).append(row);
                               

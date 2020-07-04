@@ -27,6 +27,7 @@
         <script src="../js/plugins/layer/layer.min.js" type="text/javascript"></script>
         <script src="../js/content.min.js" type="text/javascript"></script>
         <script src="../js/self_js.js" type="text/javascript"></script>
+        <script src="../js/site.js" type="text/javascript"></script>
         <script type="text/javascript" src="../js/popwin.js"></script>
         <script language="javascript" src="../js/layer/layer.min.js"></script>
         <script type="text/javascript">
@@ -44,7 +45,7 @@
                 var token="Bearer " + access_token;
                 var lotteryType = $("#lotteryType").attr("id");
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/report/loyTstRecord/lotteTypes";
+                var url= queryLotteTypesURL;
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -115,7 +116,7 @@
                                     <td class=\"thCenter\"><a onclick=\"updateBigType('"+lotteryType+"','"+val.id+"','"+val.codeName+"')\">"+val.codeName+"</a></td>\n\
                                     <td class=\"thCenter\" title=\""+val.codeVal+"\">"+codeVal+"</td>\n\
                                     <td class=\"thCenter\">"+val.seq+"</td>\n\
-                                    <td class=\"thCenter\"><a onclick=\"updateState('"+lotteryType+"','"+val.id+"','"+val.codeName+"','"+val.state+"')\">"+val.stat+"</a></td>\n\
+                                    <td class=\"thCenter\"><a onclick=\"updateState('"+lotteryType+"','"+val.id+"','"+val.codeName+"','"+val.state+"')\">"+val.state+"</a></td>\n\
                                     </tr>");
                             });
                         }else if(data.status==0){

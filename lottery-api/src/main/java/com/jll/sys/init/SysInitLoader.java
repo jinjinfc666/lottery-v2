@@ -50,13 +50,14 @@ public class SysInitLoader {
 	PayChannelService payChannelService;
 	
 	public void init() {
+		init5DigitsOne2Ten();
 		initSysCode();
 		initPlayType();
 		initIpBlackList();
 		initPayType();
 		initPayChannel();
 		
-		init5DigitsOne2Ten();
+//		init5DigitsOne2Ten();
 	}
 	
 

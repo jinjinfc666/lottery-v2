@@ -24,6 +24,7 @@
         <script src="../js/plugins/layer/layer.min.js" type="text/javascript"></script>
         <script src="../js/content.min.js" type="text/javascript"></script>
         <script src="../js/self_js.js" type="text/javascript"></script>
+        <script src="../js/site.js" type="text/javascript"></script>
         <script type="text/javascript" src="../js/popwin.js"></script>
         <script language="javascript" src="../js/layer/layer.min.js"></script>
         <script type="text/javascript">
@@ -39,7 +40,7 @@
                 var token="Bearer " + access_token;
                 var lotteryType = $("#lotteryType").attr("id");
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/report/loyTstRecord/lotteTypes";
+                var url = queryLotteTypesURL;
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -75,7 +76,7 @@
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/settingPlayType/queryPlayType";
+                var url= queryPlayTypeURL;
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -192,7 +193,7 @@
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/settingPlayType/queryPlayType";
+                var url= queryPlayTypeURL;
                 $.ajax({
                     url: url,
                     type: "GET",

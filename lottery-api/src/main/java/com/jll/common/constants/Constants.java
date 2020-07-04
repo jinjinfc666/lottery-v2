@@ -1691,6 +1691,7 @@ public class Constants {
 		}
 	}
 	
+	
 	/**
 	 *账户流水 数据类型
 	 */

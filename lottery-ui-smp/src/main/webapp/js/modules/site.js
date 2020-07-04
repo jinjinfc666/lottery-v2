@@ -1,6 +1,6 @@
-//var SITE="http://localhost:8080/lottery-api";
+var SITE="http://localhost:8080/lottery-api";
 //var SITE="http://miss369.com/lottery-api";
-var SITE="http://192.168.1.9/lottery-api";
+//var SITE="http://192.168.1.9/lottery-api";
 
 var queryCaptchaCodeURL = SITE+"/captchas/verification-code-Img;jsessionid={sessionId}"; //获取验证码
 

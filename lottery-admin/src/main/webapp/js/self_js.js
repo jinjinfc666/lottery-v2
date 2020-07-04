@@ -225,7 +225,7 @@ function updateToken(){
     if(dateDiff1>=25&&dateDiff1<=30){
         var refresh_token=sessionStorage.getItem("refresh_token");
         var domain=parseDomain1();
-        var url=domain+"/lottery-api/oauth/token";
+        var url= refreshTokenURL;
         $.ajax({
             url: url,
             type: "POST",

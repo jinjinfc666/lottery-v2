@@ -24,6 +24,7 @@
         <script src="../../js/plugins/layer/layer.min.js" type="text/javascript"></script>
         <script src="../../js/content.min.js" type="text/javascript"></script>
         <script src="../../js/self_js.js" type="text/javascript"></script>
+        <script src="../../js/site.js" type="text/javascript"></script>
         <script type="text/javascript" src="../../js/popwin.js"></script>
         <script language="javascript" src="../../js/layer/layer.min.js"></script>
         <script type="text/javascript">
@@ -38,7 +39,7 @@
                 var userName=document.getElementById('userName').value;
                 var tableid = $("#tableTRTD").attr("id");
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/SysUser/querySysUser";
+                var url= querySysUserURL;
                 $.ajax({
                     url: url,
                     type: "GET",
