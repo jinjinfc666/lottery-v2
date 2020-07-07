@@ -104,6 +104,9 @@ public class BackstageSysController {
 			  @RequestParam(name = "remark", required = false) String remark,
 			  HttpServletRequest request) {
 		Map<String, Object> ret = new HashMap<>();
+		SysCode oriSysCode = null;
+		boolean isCodeTypeExisting = false;
+		
 		if(StringUtils.isBlank(codeVal)&&StringUtils.isBlank(remark)) {
 			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
 			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_ERROR_PARAMS.getCode());
@@ -111,19 +114,33 @@ public class BackstageSysController {
 	    	return ret;
 		}
 		ret.put("id", id);
+		ret.put("codeName", codeName);
 		ret.put("codeVal", codeVal);
 		ret.put("remark", remark);
 		try {
+			isCodeTypeExisting = sysCodeService.isCodeTypeExisting(id, codeName);
+			if(isCodeTypeExisting){
+				ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+				ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_SYSCODE_ALREADY_EXISTS.getCode());
+				ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_SYSCODE_ALREADY_EXISTS.getErrorMes());
+				return ret;
+			}
+			oriSysCode = sysCodeService.queryById(id);
 			sysCodeService.updateBigType(ret);
 			//存储到缓存
-			SysCode sysCode1=cacheRedisService.getSysCode(codeName, codeName);
+			SysCode sysCode1=cacheRedisService.getSysCode(oriSysCode.getCodeName(), oriSysCode.getCodeName());
+			if(!StringUtils.isBlank(codeName)) {
+				sysCode1.setCodeName(codeName);
+			}
+			
 			if(!StringUtils.isBlank(codeVal)) {
 				sysCode1.setCodeVal(codeVal);
 			}
 			if(!StringUtils.isBlank(remark)) {
 				sysCode1.setRemark(remark);
 			}
-			cacheRedisService.setSysCode(codeName, sysCode1);
+			cacheRedisService.deleteSysCode(oriSysCode.getCodeName());
+			cacheRedisService.setSysCode(sysCode1.getCodeName(), sysCode1);
 			ret.clear();
 			ret.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
 		}catch(Exception e){
@@ -240,10 +257,11 @@ public class BackstageSysController {
 		try {
 			ret.put("id", id);
 			ret.put("state", state);
-			sysCodeService.updateSmallTypeState(id, state);	
 			//存储到缓存
 			SysCode sysCode=cacheRedisService.getSysCode(bigCodeName, codeName);
 			if(sysCode!=null) {
+				state = (sysCode.getState() + 1) % 2;
+				sysCodeService.updateSmallTypeState(id, state );	
 				sysCode.setState(state);
 				cacheRedisService.setSysCode(bigCodeName, sysCode);	
 			}
@@ -413,6 +431,7 @@ public class BackstageSysController {
 			  @RequestParam(name = "remark", required = false) String remark,
 			  HttpServletRequest request) {
 		Map<String, Object> ret = new HashMap<>();
+		SysCode oriSysCode = null;
 		if(StringUtils.isBlank(codeVal)&&StringUtils.isBlank(remark)) {
 			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
 			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_ERROR_PARAMS.getCode());
@@ -421,20 +440,25 @@ public class BackstageSysController {
 		}
 		String bigCodeName=Constants.SysCodeTypes.FLOW_TYPES.getCode();
 		ret.put("id", id);
+		ret.put("codeName", codeName);
 		ret.put("codeVal", codeVal);
 		ret.put("remark", remark);
 		try {
+			oriSysCode = sysCodeService.queryById(id);
 			sysCodeService.updateSmallType(ret);
 			//存储到缓存
-			SysCode sysCode1=cacheRedisService.getSysCode(bigCodeName, codeName);
+			SysCode sysCode1=cacheRedisService.getSysCode(bigCodeName, oriSysCode.getCodeName());
 			if(sysCode1!=null) {
+				if(!StringUtils.isBlank(codeName)) {
+					sysCode1.setCodeName(codeName);
+				}				
 				if(!StringUtils.isBlank(codeVal)) {
 					sysCode1.setCodeVal(codeVal);
 				}
 				if(!StringUtils.isBlank(remark)) {
 					sysCode1.setRemark(remark);
 				}
-				cacheRedisService.setSysCode(bigCodeName, sysCode1);
+				cacheRedisService.updateSysCode(bigCodeName, sysCode1, oriSysCode);
 			}
 			ret.clear();
 			ret.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
@@ -682,6 +706,7 @@ public class BackstageSysController {
 		Map<String, Object> ret = new HashMap<>();
 		String bigCodeName=Constants.SysCodeTypes.PAYMENT_PLATFORM.getCode();
 		try {
+			state = (state + 1) % 2;
 			ret.put("id", id);
 			ret.put("state", state);
 			sysCodeService.updateSmallTypeState(id, state);	
@@ -1153,6 +1178,7 @@ public class BackstageSysController {
 		Map<String, Object> ret = new HashMap<>();
 		String lotteryConfigCodeName=Constants.KEY_LOTTO_ATTRI_PREFIX+bigCodeName;
 		try {
+			state = (state + 1) % 2;
 			ret.put("id", id);
 			ret.put("state", state);
 			sysCodeService.updateSmallTypeState(id, state);	
@@ -1534,6 +1560,7 @@ public class BackstageSysController {
 		Map<String, Object> ret = new HashMap<>();
 		String bigCodeName=Constants.SysCodeTypes.WITHDRAWAL_CFG.getCode();
 		try {
+			state = (state + 1) % 2;
 			ret.put("id", id);
 			ret.put("state", state);
 			sysCodeService.updateSmallTypeState(id, state);	
@@ -1665,6 +1692,7 @@ public class BackstageSysController {
 		Map<String, Object> ret = new HashMap<>();
 		String bigCodeName=Constants.SysCodeTypes.SYS_RUNTIME_ARGUMENT.getCode();
 		try {
+			state = (state + 1) % 2;
 			ret.put("id", id);
 			ret.put("state", state);
 			sysCodeService.updateSmallTypeState(id, state);	

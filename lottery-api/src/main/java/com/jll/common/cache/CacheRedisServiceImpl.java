@@ -193,7 +193,7 @@ public class CacheRedisServiceImpl implements CacheRedisService
 
 	@Override
 	public synchronized void setSysCode(String codeTypeName, SysCode sysCode) {
-		//CacheObject<Map<String, SysCode>> cacheObj = new CacheObject<>();asdad
+		//CacheObject<Map<String, SysCode>> cacheObj = new CacheObject<>();
 		CacheObject<Map<String, SysCode>> cacheObject=cacheDao.getSysCode(codeTypeName);
 		Map<String, SysCode> sysCodesTemp=null;
 		if(cacheObject==null) {
@@ -206,6 +206,8 @@ public class CacheRedisServiceImpl implements CacheRedisService
 		cacheObject.setContent(sysCodesTemp);
 		cacheObject.setKey(codeTypeName);
 		cacheDao.setSysCode(cacheObject);
+		
+		
 	}
 
 	@Override
@@ -897,5 +899,28 @@ public class CacheRedisServiceImpl implements CacheRedisService
 		}
 		
 		return cacheObj.getContent();
+	}
+
+	@Override
+	public void deleteSysCode(String key) {
+		cacheDao.deleteSysCode(key);
+	}
+
+	@Override
+	public void updateSysCode(String bigCodeName, SysCode sysCode, SysCode oriSysCode) {
+		CacheObject<Map<String, SysCode>> cacheObject=cacheDao.getSysCode(bigCodeName);
+		Map<String, SysCode> sysCodesTemp=null;
+		if(cacheObject==null) {
+			sysCodesTemp = new HashMap<>();
+			cacheObject= new CacheObject<>();
+		}else {
+			sysCodesTemp=cacheObject.getContent();
+		}
+		sysCodesTemp.remove(oriSysCode.getCodeName());
+		sysCodesTemp.put(sysCode.getCodeName(), sysCode);
+		cacheObject.setContent(sysCodesTemp);
+		cacheObject.setKey(bigCodeName);
+		
+		cacheDao.setSysCode(cacheObject);
 	}
 }

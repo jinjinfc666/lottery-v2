@@ -1,6 +1,7 @@
 package com.jll.sysSettings.syscode;
 
 import java.util.List;
+import java.util.Map;
 
 import com.jll.entity.SysCode;
 
@@ -44,4 +45,11 @@ public interface SysCodeDao {
 	List<SysCode> queryByCodeNameBigType(String codeName);
 	//修改排序
 	public void updateSmallTypeSeq(SysCode sysCode);
+	
+	/**
+	 * query the sysCode exclusive the id if specified
+	 * @param params
+	 * @return
+	 */
+	Long queryExistingCountExclusiveId(Integer id, String codeName);
 }

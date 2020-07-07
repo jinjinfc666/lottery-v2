@@ -57,4 +57,12 @@ public interface SysCodeService {
 	Map<String,Object> updateSmallTypeSeq(String BigcodeName,String allId);
 	//修改签到活动的排序
 	Map<String,Object> updateSmallSignInDaySeq(String BigcodeName,String allId);
+	
+	/**
+	 * if the codeName is existing after update
+	 * @param id
+	 * @param codeName
+	 * @return
+	 */
+	boolean isCodeTypeExisting(Integer id, String codeName);
 }

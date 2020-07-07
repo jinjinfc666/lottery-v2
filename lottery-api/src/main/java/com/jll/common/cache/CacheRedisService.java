@@ -217,4 +217,14 @@ public interface CacheRedisService {
 	void set5DigitsOne2TenNumbers(List<String> rows);
 
 	List<String> get5DigitsOne2TenNumbers();
+	
+	void deleteSysCode(String key);
+
+	/**
+	 * update the sysCode under specified code type
+	 * @param bigCodeName
+	 * @param sysCode1
+	 * @param oriSysCode
+	 */
+	void updateSysCode(String bigCodeName, SysCode sysCode1, SysCode oriSysCode);
 }

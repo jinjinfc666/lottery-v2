@@ -62,13 +62,19 @@
                             $("#" + tableid).empty();
                             var stateNew=null;
                             $.each(data.data, function(key, val) { 
-                                    $("#" + tableid).append("<tr>\n\
-                                    <td class=\"thCenter\">"+val.remark+"</td>\n\
-                                    <td class=\"thCenter\"><a onclick=\"updateBigType('"+val.id+"','"+val.codeName+"','"+val.codeVal+"','"+val.remark+"')\">"+val.codeName+"</a></td>\n\
-                                    <td class=\"thCenter\">"+val.codeVal+"</td>\n\
-                                    <td class=\"thCenter\">"+val.seq+"</td>\n\
-                                    <td class=\"thCenter\"><a onclick=\"updateState('"+val.id+"','"+val.codeName+"','"+val.state+"')\">"+val.state+"</a></td>\n\
-                                    </tr>"); 
+                            	var row = "<tr>";
+                            	row += "<td class=\"thCenter\">"+val.remark+"</td>";
+                            	row += "<td class=\"thCenter\"><a onclick=\"updateBigType('"+val.id+"','"+val.codeName+"','"+val.codeVal+"','"+val.remark+"')\">"+val.codeName+"</a></td>";
+                                row += "<td class=\"thCenter\">"+val.codeVal+"</td>";
+                                row += "<td class=\"thCenter\">"+val.seq+"</td>";
+                                if(val.state == 0){
+                                	row += "<td class=\"thCenter\"><a onclick=\"updateState('"+val.id+"','"+val.codeName+"','"+val.state+"')\">关闭</a></td>";
+                                }else{
+                                	row += "<td class=\"thCenter\"><a onclick=\"updateState('"+val.id+"','"+val.codeName+"','"+val.state+"')\">正常</a></td>";
+                                }
+                                
+                                row += "</tr>";
+                            	$("#" + tableid).append(row); 
                             });
                         }else if(data.status==0){
                             alert(getErroe(data.error_code));
@@ -124,7 +130,7 @@
                     },
                     success: function (data) {
                         if(data.status===1){
-                            alert("修改成功");
+                        	querySysCode();
                         }else if(data.status==0){
                             alert(getErroe(data.error_code));
                         }

@@ -272,11 +272,19 @@ public class SysCodeDaoImpl extends DefaultGenericDaoImpl<SysCode> implements Sy
 	public void updateSmallType(SysCode sysCode) {
 		Session session=getSessionFactory().getCurrentSession();
 		String hql="";
+		String codeNameSql = "";
 		String codeValSql="";
 		String remarkSql="";
+		String codeName = sysCode.getCodeName();
 		String codeVal=sysCode.getCodeVal();
 		String remark=sysCode.getRemark();
 		Map<String,Object> map=new HashMap<String,Object>();
+		
+		if(!StringUtils.isBlank(codeName)) {
+			codeNameSql="codeName=:codeName,";
+			map.put("codeName", codeName);
+		}
+		
 		if(!StringUtils.isBlank(codeVal)) {
 			codeValSql="codeVal=:codeVal,";
 			map.put("codeVal", codeVal);
@@ -285,7 +293,7 @@ public class SysCodeDaoImpl extends DefaultGenericDaoImpl<SysCode> implements Sy
 			remarkSql="remark=:remark,";
 			map.put("remark", remark);
 		}
-		String sumSql=codeValSql+remarkSql;
+		String sumSql = codeNameSql + codeValSql+remarkSql;
 		String sumSql1=sumSql.substring(0, sumSql.length()-1);
 		hql = "update SysCode set "+sumSql1+" where id=:id";
 		
@@ -342,5 +350,23 @@ public class SysCodeDaoImpl extends DefaultGenericDaoImpl<SysCode> implements Sy
 	@Override
 	public void updateSmallTypeSeq(SysCode sysCode) {
 		this.saveOrUpdate(sysCode);
+	}
+	@Override
+	public Long queryExistingCountExclusiveId(Integer id, String codeName) {
+		String sql = "select count(1) from SysCode where codeName=:codeName";
+		if(id != null){
+			sql += " and id !=:id";
+		}
+	    Query query = getSessionFactory().getCurrentSession().createQuery(sql);
+	    query.setParameter("codeName", codeName);
+	    if(id != null){
+	    	query.setParameter("id", id);
+	    }
+	    Object count = query.getSingleResult();
+	    if(count == null){
+	    	return 0L;
+	    }else{
+	    	return (Long)count;
+	    }
 	}
 }

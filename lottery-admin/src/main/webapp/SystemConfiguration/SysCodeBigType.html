@@ -60,11 +60,18 @@
                             $("#" + tableid + "tr").remove();
                             $("#" + tableid).empty();
                             $.each(data.data, function(key, val) { 
-                                $("#" + tableid).append("<tr>\n\
-                                <td class=\"thCenter\">"+val.remark+"</td>\n\
-                                <td class=\"thCenter\"><a onclick=\"updateBigType('"+val.id+"','"+val.codeName+"','"+val.codeVal+"','"+val.remark+"')\">"+val.codeName+"</a></td>\n\
-                                <td class=\"thCenter\">"+val.codeVal+"</td>\n\
-                                <td class=\"thCenter\">"+val.state+"</td></tr>");
+                                var row = "<tr>";
+                                row += "<td class=\"thCenter\">"+val.remark+"</td>";
+                                row += "<td class=\"thCenter\"><a onclick=\"updateBigType('"+val.id+"','"+val.codeName+"','"+val.codeVal+"','"+val.remark+"')\">"+val.codeName+"</a></td>";
+                                row += "<td class=\"thCenter\">"+val.codeVal+"</td>";
+                                
+                                if(val.state == '1'){
+                                	row += "<td class=\"thCenter\">正常</td></tr>";
+                                }else if(val.state == '0'){
+                                	row += "<td class=\"thCenter\">关闭</td></tr>";
+                                }
+                                
+                                $("#" + tableid).append(row);
                             });
                         }else if(data.status==0){
                             alert(getErroe(data.error_code));
@@ -135,9 +142,10 @@
                     maxmin: false,
                     shift: 'top',
                     shadeClose: false,
-                    area: ['600px', '400px'],
+                    area: ['600px', '300px'],
                     offset: ['50px', ''],
                     close: function (index) {
+                    	querySysCode();
                     },
                     iframe: {src: encodeURI(url)}
                 });
@@ -153,6 +161,7 @@
                     area: ['500px', '300px'],
                     offset: ['50px', ''],
                     close: function (index) {
+                    	querySysCode();
                     },
                     iframe: {src: url}
                 });

@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -209,10 +210,14 @@ public class SysCodeServiceImpl implements SysCodeService {
 	@Override
 	public void updateSmallType(Map<String,Object> ret) {
 		Integer id=(Integer)ret.get("id");
+		String codeName = (String)ret.get("codeName");
 		String codeVal=(String)ret.get("codeVal");
 		String remark=(String)ret.get("remark");
 		SysCode sysCode=new SysCode();
 		sysCode.setId(id);
+		if(!StringUtils.isEmpty(codeName)){
+			sysCode.setCodeName(codeName);
+		}
 		sysCode.setCodeVal(codeVal);
 		sysCode.setRemark(remark);
 		sysCodeDao.updateSmallType(sysCode);
@@ -221,11 +226,13 @@ public class SysCodeServiceImpl implements SysCodeService {
 	//修改某个大类
 	@Override
 	public void updateBigType(Map<String, Object> ret) {
+		String codeName = (String)ret.get("codeName");
 		String codeVal=(String)ret.get("codeVal");
 		String remark=(String)ret.get("remark");
 		Integer id=(Integer) ret.get("id");
 		SysCode sysCode=new SysCode();
 		sysCode.setId(id);
+		sysCode.setCodeName(codeName);
 		sysCode.setCodeVal(codeVal);
 		sysCode.setRemark(remark);
 		sysCodeDao.updateSmallType(sysCode);
@@ -336,6 +343,14 @@ public class SysCodeServiceImpl implements SysCodeService {
 			map.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_ERROR_PARAMS.getErrorMes());
 			return map;
 		}
+	}
+	@Override
+	public boolean isCodeTypeExisting(Integer id, String codeName) {
+		Long counter = sysCodeDao.queryExistingCountExclusiveId(id, codeName);
+		if(counter != null && counter > 0){
+			return true;
+		}
+		return false;
 	}
 	
 	

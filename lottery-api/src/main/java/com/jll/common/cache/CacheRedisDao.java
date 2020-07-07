@@ -126,5 +126,7 @@ public interface CacheRedisDao {
 	CacheObject<List<String>> get5DigitsOne2TenNumbers(String string);
 
 	void set5DigitsOne2TenNumbers(CacheObject<List<String>> cacheObj);
+
+	void deleteSysCode(String key);
 }
 

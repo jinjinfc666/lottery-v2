@@ -111,9 +111,50 @@ public abstract class AbstractBaseRedisDao implements GenericDaoIf<CacheObject>{
 	}
 
 	@Override
-	public boolean delete(String id) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean delete(String key) {
+		boolean ret = redisTemplate.execute(new RedisCallback<Boolean>() {
+			public Boolean doInRedis(RedisConnection connection) throws DataAccessException {
+				boolean ret = false;
+
+				RedisSerializer<String> serializer = getRedisSerializer();
+				
+				ByteArrayOutputStream boos = null;
+				ObjectOutputStream oos = null;
+				try {
+					boos = new ByteArrayOutputStream();
+					oos = new ObjectOutputStream(boos);
+//					oos.writeObject(entity);
+					connection.del(serializer.serialize(key));
+										
+					ret = true;
+				} catch (IOException e) {
+					e.printStackTrace();
+					//return false;
+				}finally {
+					if(oos != null) {
+						try {
+							oos.close();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					
+					if(boos != null) {
+						try {
+							boos.close();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}
+
+				return ret;
+			}
+		});
+		
+		return ret;
 	}
 
 	@Override

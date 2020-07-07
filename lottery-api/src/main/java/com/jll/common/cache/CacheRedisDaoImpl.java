@@ -407,4 +407,9 @@ public class CacheRedisDaoImpl  extends AbstractBaseRedisDao implements CacheRed
 	public void set5DigitsOne2TenNumbers(CacheObject<List<String>> cacheObj) {
 		this.saveOrUpdate(cacheObj);
 	}
+
+	@Override
+	public void deleteSysCode(String key) {
+		this.delete(key);
+	}
 }

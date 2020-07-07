@@ -111,13 +111,19 @@
                                     }else{
                                         codeVal=val.codeVal;
                                     }
-                                    $("#" + tableid).append("<tr>\n\
-                                    <td class=\"thCenter\">"+val.remark+"</td>\n\
-                                    <td class=\"thCenter\"><a onclick=\"updateBigType('"+lotteryType+"','"+val.id+"','"+val.codeName+"')\">"+val.codeName+"</a></td>\n\
-                                    <td class=\"thCenter\" title=\""+val.codeVal+"\">"+codeVal+"</td>\n\
-                                    <td class=\"thCenter\">"+val.seq+"</td>\n\
-                                    <td class=\"thCenter\"><a onclick=\"updateState('"+lotteryType+"','"+val.id+"','"+val.codeName+"','"+val.state+"')\">"+val.state+"</a></td>\n\
-                                    </tr>");
+                                                                       
+                                    var row = "<tr>";
+                                    row += "<td class=\"thCenter\">"+val.remark+"</td>";
+                                    row += "<td class=\"thCenter\"><a onclick=\"updateBigType('"+lotteryType+"','"+val.id+"','"+val.codeName+"')\">"+val.codeName+"</a></td>";
+                                    row += "<td class=\"thCenter\" title=\""+val.codeVal+"\">"+codeVal+"</td>";
+                                    row += "<td class=\"thCenter\">"+val.seq+"</td>";
+                                    if(val.state == '1'){
+                                    	row += "<td class=\"thCenter\"><a onclick=\"updateState('"+lotteryType+"','"+val.id+"','"+val.codeName+"','"+val.state+"')\">正常</a></td>";
+                                    }else{
+                                    	row += "<td class=\"thCenter\"><a onclick=\"updateState('"+lotteryType+"','"+val.id+"','"+val.codeName+"','"+val.state+"')\">关闭</a></td>";
+                                    }
+                                    row += "</tr>";
+                                    $("#" + tableid).append(row);
                             });
                         }else if(data.status==0){
                             alert(getErroe(data.error_code));
@@ -146,7 +152,7 @@
             }
             function updateState(bigCodeName,id,codeName,state){
                 updateToken();
-                var state1=1;
+                var state1=state;
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
                 var domain=parseDomain();
@@ -174,7 +180,7 @@
                     },
                     success: function (data) {
                         if(data.status===1){
-                            alert("修改成功");
+                        	querySysCode();
                         }else if(data.status==0){
                             alert(getErroe(data.error_code));
                         }
@@ -192,6 +198,7 @@
                     area: ['600px', '400px'],
                     offset: ['50px', ''],
                     close: function (index) {
+                    	querySysCode();
                     },
                     iframe: {src: encodeURI(url)}
                 });
@@ -208,6 +215,7 @@
                     area: ['500px', '300px'],
                     offset: ['50px', ''],
                     close: function (index) {
+                    	querySysCode();
                     },
                     iframe: {src: url}
                 });
