@@ -224,9 +224,9 @@
                     success: function (data) {
                         if(data.status===1){
                             alert("添加成功！！！");
-                            var wz = parent.layer.getFrameIndex(window.name);
+                            /* var wz = parent.layer.getFrameIndex(window.name);
                             parent.location.reload();
-                            parent.layer.close(wz);
+                            parent.layer.close(wz); */
                         }else if(data.status==0){
                             alert(getErroe(data.error_code));
                         }                    
@@ -298,8 +298,8 @@
             }
             
             function changePlatRebate(){
-            	var myRangeVal = $('#myRange').val();
-                $('#platRebates_rate').val(myRangeVal);
+            	/* var myRangeVal = $('#myRange').val();
+                $('#platRebates_rate').val(myRangeVal); */
             }
             
             function changePrizeRate(){            	

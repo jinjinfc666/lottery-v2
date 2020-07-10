@@ -546,7 +546,7 @@ public class Constants {
 	
 	public static enum UserType{
 		PLAYER(0, "玩家"),
-		AGENCY(1, "代理"),
+		AGENCY(1, "现金网代理"),
 		SYS_ADMIN(2, "系统用户"),
 		GENERAL_AGENCY(3, "总代"),
 		DEMO_PLAYER(4, "试玩玩家"),
@@ -606,6 +606,8 @@ public class Constants {
 			}else if(agency.getCode() == XY_AGENCY.getCode()) {
 				return true;
 			}else if(agency.getCode() == ENTRUST_AGENCY.getCode()) {
+				return true;
+			}else if(agency.getCode() == GENERAL_AGENCY.getCode()){
 				return true;
 			}
 			

@@ -309,17 +309,49 @@
                                     }
                                     var operating="";
                                     var userType="";
-                                    if(val.userType=='3'){
+                                    if(val.userType=='2'){
+                                    	userType="系统用户";
+                                    }else if(val.userType=='3'){
                                         userType="总代";
                                       	operating="<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"addAgent('"+val.id+"','" + val.userType + "')\">添加下级代理</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
                                       	operating += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"showDetails('"+val.userName + "')\">用户详细</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
                                       	operating += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"transfer('"+val.userName+"')\">转账</button>";
-                                    }else if(val.userType=='0' || val.userType=='5' || val.userType == '7' || val.userType == '9'){
-                                        userType="用户";
+                                    }else if(val.userType=='0'){
+                                        userType="现金网玩家";
                                         operating += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"showDetails('"+val.userName + "')\">用户详细</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
                                         operating += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"transfer('"+val.userName+"')\">转账</button>";
-                                    }else if(val.userType=='1' || val.userType=='6' || val.userType=='8' || val.userType=='10'){
-                                        userType="代理";
+                                    }else if(val.userType=='5'){
+                                        userType="双面玩家";
+                                        operating += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"showDetails('"+val.userName + "')\">用户详细</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                        operating += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"transfer('"+val.userName+"')\">转账</button>";
+                                    }else if(val.userType == '7'){
+                                        userType="信誉玩家";
+                                        operating += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"showDetails('"+val.userName + "')\">用户详细</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                        operating += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"transfer('"+val.userName+"')\">转账</button>";
+                                    }else if(val.userType == '9'){
+                                        userType="委托玩家";
+                                        operating += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"showDetails('"+val.userName + "')\">用户详细</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                        operating += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"transfer('"+val.userName+"')\">转账</button>";
+                                    }else if(val.userType=='1'){
+                                        userType="现金网代理";
+                                      	operating = "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"addUser('"+val.id+"','" + val.userType + "')\">添加下级用户</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                        operating +="<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"addAgent('"+val.id+"','" + val.userType + "')\">添加下级代理</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                        operating += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"showDetails('"+val.userName + "')\">用户详细</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                        operating += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"transfer('"+val.userName+"')\">转账</button>";
+                                    }else if(val.userType=='6'){
+                                        userType="双面代理";
+                                      	operating = "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"addUser('"+val.id+"','" + val.userType + "')\">添加下级用户</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                        operating +="<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"addAgent('"+val.id+"','" + val.userType + "')\">添加下级代理</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                        operating += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"showDetails('"+val.userName + "')\">用户详细</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                        operating += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"transfer('"+val.userName+"')\">转账</button>";
+                                    }else if(val.userType=='8'){
+                                        userType="信誉代理";
+                                      	operating = "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"addUser('"+val.id+"','" + val.userType + "')\">添加下级用户</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                        operating +="<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"addAgent('"+val.id+"','" + val.userType + "')\">添加下级代理</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                        operating += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"showDetails('"+val.userName + "')\">用户详细</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                        operating += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"transfer('"+val.userName+"')\">转账</button>";
+                                    }else if(val.userType=='10'){
+                                        userType="委托代理";
                                       	operating = "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"addUser('"+val.id+"','" + val.userType + "')\">添加下级用户</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
                                         operating +="<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"addAgent('"+val.id+"','" + val.userType + "')\">添加下级代理</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
                                         operating += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"showDetails('"+val.userName + "')\">用户详细</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
@@ -374,7 +406,6 @@
                     area: ['670px', '500px'],
                     offset: ['50px', ''],
                     close: function (index) {
-                        
                     },
                     iframe: {src: encodeURI(url)}
                 });

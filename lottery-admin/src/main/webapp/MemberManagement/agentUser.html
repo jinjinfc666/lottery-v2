@@ -159,10 +159,7 @@
                     return false;
                 }
                 $("#loginPwd1").text("");
-                if(platRebate==""){
-                    $("#platRebate1").text("下级返点不能为空!");
-                    return false;
-                }
+                
                 $("#platRebate1").text("");
                 var domain=parseDomain();
                 var access_token=sessionStorage.getItem("access_token");
@@ -241,6 +238,13 @@
 	                    'isHiddenPlan':isHiddenPlan
 	                });
                 }else{
+                	
+                	if(platRebate==""){
+                        $("#platRebate1").text("下级返点不能为空!");
+                        return false;
+                    }
+                	$("#platRebate1").text("");
+                	
                 	data=JSON.stringify({
                         "realName": realName,
                         "userName": userName,
@@ -277,9 +281,9 @@
                     success: function (data) {
                         if(data.status===1){
                             alert("添加成功！！！");
-                            var wz = parent.layer.getFrameIndex(window.name);
+                            /* var wz = parent.layer.getFrameIndex(window.name);
                             parent.location.reload();
-                            parent.layer.close(wz);
+                            parent.layer.close(wz); */
                         }else if(data.status==0){
                             alert(getErroe(data.error_code));
                         }       
@@ -317,8 +321,8 @@
             }
             
             function changePlatRebate(){
-            	var myRangeVal = $('#myRange').val();
-                $('#platRebates_rate').val(myRangeVal);
+            	/* var myRangeVal = $('#myRange').val();
+                $('#platRebates_rate').val(myRangeVal); */
             }
             
             function changePrizeRate(){            	

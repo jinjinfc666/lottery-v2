@@ -177,9 +177,9 @@
                     success: function (data) {
                         if(data.status===1){
                             alert("转账成功！！！");
-                            var wz = parent.layer.getFrameIndex(window.name);
+                            /* var wz = parent.layer.getFrameIndex(window.name);
                             parent.location.reload();
-                            parent.layer.close(wz);
+                            parent.layer.close(wz); */
                         }else if(data.status==0){
                             alert(getErroe(data.error_code));
                         }       
@@ -221,7 +221,7 @@
         <input type="hidden" id="agentId" name="agentId" value="" />
         <table width="600px" cellspacing="0" cellpadding="5">
             <tr>
-                <th style="background-color:#ffcc99">转账：</th>
+                <th >金额：</th>
                 <td>
                     <input type="number" id="amount" name="amount" value="" placeholder="转账金额" style="width:250px;" class="login_putin" />
                     <span id="amount_mes" style="color:red;"></span>

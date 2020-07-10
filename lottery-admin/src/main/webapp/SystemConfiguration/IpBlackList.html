@@ -131,7 +131,7 @@
                     },
                     success: function (data) {
                         if(data.status===1){
-                            alert("删除成功!!!");
+                        	searchre("search");
                         }else if(data.status==0){
                             alert(getErroe(data.error_code));
                         }
@@ -149,6 +149,7 @@
                     area: ['600px', '400px'],
                     offset: ['50px', ''],
                     close: function (index) {
+                    	searchre("search");
                     },
                     iframe: {src: encodeURI(url)}
                 });
@@ -164,6 +165,7 @@
                     area: ['450px', '250px'],
                     offset: ['50px', ''],
                     close: function (index) {
+                    	searchre("search");
                     },
                     iframe: {src: url}
                 });

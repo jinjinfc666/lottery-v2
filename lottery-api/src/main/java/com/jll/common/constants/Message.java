@@ -184,7 +184,10 @@ public class Message {
 		
 		
 		/*************************User settlement module******************************/
-		ERROR_SETTLEMENT_NON_EXISTING("190001","Specified Id is not existing!!!");
+		ERROR_SETTLEMENT_NON_EXISTING("190001","Specified Id is not existing!!!"),
+		
+		/*************************withdraw******************************/
+		ERROR_TRANSFER_VALID_FROM_USER("200001","System user can't transfer money to others!!!");
 		
 		private String code;
 		

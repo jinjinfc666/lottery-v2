@@ -1453,6 +1453,13 @@ public class UserInfoServiceImpl implements UserInfoService
 			return ret;
 		}
 		
+		if(fromUserInfo.getUserType().intValue() == UserType.SYS_ADMIN.getCode()){
+			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_TRANSFER_VALID_FROM_USER.getCode());
+			ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_TRANSFER_VALID_FROM_USER.getErrorMes());
+			return ret;
+		}
+		
 		UserAccount mainAcc = (UserAccount) supserDao.findByName(UserAccount.class, "userId", fromUserInfo.getId(), "accType", WalletType.MAIN_WALLET.getCode()).get(0);
 		if(amount < 0){
 			amount = mainAcc.getBalance().doubleValue();

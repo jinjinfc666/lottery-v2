@@ -72,36 +72,68 @@
                             $("#" + tableid + "tr").remove();
                             $("#" + tableid).empty();
                             $.each(data.data.content, function(key, val) {
-                                $("#" + tableid).append("<tr>\n\
-                                <td class=\"thCenter\">"+val.userName+"</td.>\n\
-                                <td class=\"thCenter\">"+val.userType+"</td>\n\
-                                <td class=\"thCenter\">"+val.state+"</td>\n\
-                                <td class=\"thCenter\">"+ConvertJSONDateToJSDateObject(""+val.createTime+"")+"</td>\n\
-                                <td class=\"thCenter\">\n\
-                                <button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"resetLoginPwd('"+val.id+"')\">重置用户密码</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n\
-                                <button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"updateState('"+val.id+"')\">修改用户状态</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n\
-                                <button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"updateUserRole('"+val.id+"','"+val.userName+"')\">修改用户权限</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n\
-                                <button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"updateUserPW('"+val.id+"')\">修改用户密码</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n\
-                                </td></tr>"); 
-                            });
-                            
-                            if(data.data.pageIndex == 0){
-	                            $('#btn_main').attr("disabled",true);
-	                            $('#btn_previous').attr("disabled",true);
-                            }else{
-                            	$('#btn_main').attr("disabled",false);
-                            	$('#btn_previous').attr("disabled",false);
-                            }
-                                                        
-                            if(data.data.pageIndex == (data.data.totalPages - 1)){
-	                            $('#btn_last').attr("disabled",true);
+	                            var row = "<tr>";
+	                            row += "<td class=\"thCenter\">"+val.userName+"</td>";
+	                            if(val.userType == '0'){
+	                            	row += "<td class=\"thCenter\">玩家</td>";
+	                            }else if(val.userType == '1'){
+	                            	row += "<td class=\"thCenter\">代理</td>";
+	                            }else if(val.userType == '2'){
+	                            	row += "<td class=\"thCenter\">系统用户</td>";
+	                            }else if(val.userType == '3'){
+	                            	row += "<td class=\"thCenter\">总代</td>";
+	                            }else if(val.userType == '4'){
+	                            	row += "<td class=\"thCenter\">试玩玩家</td>";
+	                            }else if(val.userType == '5'){
+	                            	row += "<td class=\"thCenter\">双面玩家</td>";
+	                            }else if(val.userType == '6'){
+	                            	row += "<td class=\"thCenter\">双面代理</td>";
+	                            }else if(val.userType == '7'){
+	                            	row += "<td class=\"thCenter\">信誉玩家</td>";
+	                            }else if(val.userType == '8'){
+	                            	row += "<td class=\"thCenter\">信誉代理</td>";
+	                            }else if(val.userType == '9'){
+	                            	row += "<td class=\"thCenter\">委托玩家</td>";
+	                            }else if(val.userType == '10'){
+	                            	row += "<td class=\"thCenter\">委托代理</td>";
+	                            }
 	                            
-	                            $('#btn_next').attr("disabled",true);
-                            }else{
-                            	$('#btn_last').attr("disabled",false);
-                            	$('#btn_next').attr("disabled",false);
-                            }
-                            
+	                            if(val.state == '0'){
+	                            	row += "<td class=\"thCenter\">正常</td>";
+	                            }else if(val.state == '1'){
+	                            	row += "<td class=\"thCenter\">锁定</td>";
+	                            }else if(val.state == '2'){
+	                            	row += "<td class=\"thCenter\">销毁</td>";
+	                            }
+	                            
+	                            row += "<td class=\"thCenter\">"+ConvertJSONDateToJSDateObject(""+val.createTime+"")+"</td>";
+	                            row += "<td class=\"thCenter\">";
+	                            row += "<td class=\"thCenter\">";
+	                            row += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"resetLoginPwd('"+val.id+"')\">重置用户密码</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+	                            row += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"updateState('"+val.id+"')\">修改用户状态</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+	                            row += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"updateUserRole('"+val.id+"','"+val.userName+"')\">修改用户权限</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+	                            row += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"updateUserPW('"+val.id+"')\">修改用户密码</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+	                            
+	                            row += "</td></tr>";
+	                            
+	                            $("#" + tableid).append(row);
+	                            if(data.data.pageIndex == 0){
+		                            $('#btn_main').attr("disabled",true);
+		                            $('#btn_previous').attr("disabled",true);
+	                            }else{
+	                            	$('#btn_main').attr("disabled",false);
+	                            	$('#btn_previous').attr("disabled",false);
+	                            }
+	                                                        
+	                            if(data.data.pageIndex == (data.data.totalPages - 1)){
+		                            $('#btn_last').attr("disabled",true);
+		                            
+		                            $('#btn_next').attr("disabled",true);
+	                            }else{
+	                            	$('#btn_last').attr("disabled",false);
+	                            	$('#btn_next').attr("disabled",false);
+	                            }
+                            })
                         }else if(data.status==0){
                             alert(getErroe(data.error_code));
                         }

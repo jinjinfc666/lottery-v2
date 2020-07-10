@@ -173,19 +173,44 @@
                                 update="不可撤单";
                                 var createTimeNew=val.startTime==null?"":ConvertJSONDateToJSDateObject(""+val.startTime+"");
                                 var updateTimeNew=val.endTime==null?"":ConvertJSONDateToJSDateObject(""+val.endTime+"");
-                                $("#" + tableid).append("<tr>\n\
-                                <td class=\"thCenter\">"+arr[1]+"</td>\n\
-                                <td class=\"thCenter\">"+val.issueNum+"</td>\n\
-                                <td class=\"thCenter\">"+val.retNum+"</td>\n\
-                                <td class=\"thCenter\">"+val.state+"</td>\n\
-                                <td class=\"thCenter\">"+createTimeNew+"</td>\n\
-                                <td class=\"thCenter\">"+updateTimeNew+"</td>\n\
-                                <td class=\"thCenter\">\n\
-                                <button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"withdrawal('"+val.state+"','"+val.issueNum+"','"+arr[0]+"')\">期次作废</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n\
-                                <button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"manualOpening('"+val.state+"','"+arr[0]+"','"+val.issueNum+"','"+updateTimeNew+"')\">人工开奖</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n\
-                                <button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"ward('"+val.state+"','"+arr[0]+"','"+val.issueNum+"')\">派奖</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n\
-                                <button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"reAward('"+val.state+"','"+arr[0]+"','"+val.issueNum+"')\">重新派奖</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n\
-                                </td></tr>"); 
+                                
+                                var row = "<tr>";
+                                row += "<td class=\"thCenter\">"+arr[1]+"</td>";
+                                row += "<td class=\"thCenter\">"+val.issueNum+"</td>";
+                                if(val.retNum == '' || val.retNum == 'null' || val.retNum == null){
+                                	row += "<td class=\"thCenter\"></td>";
+                                }else{
+                                	row += "<td class=\"thCenter\">"+val.retNum+"</td>";
+                                }
+                                
+                                if(val.state == '0'){
+                                	row += "<td class=\"thCenter\">初始状态</td>";
+                                }else if(val.state == '1'){
+                                	row += "<td class=\"thCenter\">投注状态</td>";
+                                }else if(val.state == '2'){
+                                	row += "<td class=\"thCenter\">结束投注</td>";
+                                }else if(val.state == '3'){
+                                	row += "<td class=\"thCenter\">期次结束</td>";
+                                }else if(val.state == '4'){
+                                	row += "<td class=\"thCenter\">已开奖</td>";
+                                }else if(val.state == '5'){
+                                	row += "<td class=\"thCenter\">已派奖</td>";
+                                }else if(val.state == '6'){
+                                	row += "<td class=\"thCenter\">重新派奖</td>";
+                                }else if(val.state == '7'){
+                                	row += "<td class=\"thCenter\">期次作废</td>";
+                                }
+                                
+                                row += "<td class=\"thCenter\">"+createTimeNew+"</td>";
+                                row += "<td class=\"thCenter\">"+updateTimeNew+"</td>";
+                                row += "<td class=\"thCenter\">";
+                                row += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"withdrawal('"+val.state+"','"+val.issueNum+"','"+arr[0]+"')\">期次作废</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                row += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"manualOpening('"+val.state+"','"+arr[0]+"','"+val.issueNum+"','"+updateTimeNew+"')\">人工开奖</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                row += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"ward('"+val.state+"','"+arr[0]+"','"+val.issueNum+"')\">派奖</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                row += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"reAward('"+val.state+"','"+arr[0]+"','"+val.issueNum+"')\">重新派奖</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                row += "</td></tr>";
+                                $("#" + tableid).append(row);
+                                
                             });
                             // <a helf=\"#\" onclick=\"update('"+val.state+"','"+arr[0]+"','"+val.issueNum+"','"+updateTimeNew+"')\">操作</a>\n\
                         }else if(data.status==0){
@@ -326,7 +351,7 @@
                     },
                     success: function (data) {
                         if(data.status==1){
-                            alert("期次作废成功！！！");
+                        	searchrecord('search');
                         }else if(data.status==0){
                             alert(getErroe(data.error_code));
                         }
