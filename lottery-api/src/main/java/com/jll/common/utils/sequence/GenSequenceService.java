@@ -12,7 +12,11 @@ public interface GenSequenceService
 
 	GenSequence queryPK10SeqVal();
 	
+	GenSequence queryTC3DSeqVal();
+	
 	void saveSeq(GenSequence seq);
+
+	GenSequence queryFC3DSeqVal();
 	
 	
 	

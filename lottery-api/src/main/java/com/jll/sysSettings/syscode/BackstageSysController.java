@@ -290,21 +290,32 @@ public class BackstageSysController {
 	    	return ret;
 		}
 		String bigCodeName=Constants.SysCodeTypes.LOTTERY_TYPES.getCode();
+		SysCode oriSysCode = null;
+		
 		ret.put("id", id);
+		ret.put("codeName", codeName);
 		ret.put("codeVal", codeVal);
 		ret.put("remark", remark);
 		try {
+			oriSysCode = sysCodeService.queryById(id);
 			sysCodeService.updateSmallType(ret);
+			
+			
 			//存储到缓存
-			SysCode sysCode1=cacheRedisService.getSysCode(bigCodeName, codeName);
+			SysCode sysCode1=cacheRedisService.getSysCode(bigCodeName, oriSysCode.getCodeName());
 			if(sysCode1!=null) {
+				if(!StringUtils.isBlank(codeName)) {
+					sysCode1.setCodeName(codeName);
+				}
+				
 				if(!StringUtils.isBlank(codeVal)) {
 					sysCode1.setCodeVal(codeVal);
 				}
 				if(!StringUtils.isBlank(remark)) {
 					sysCode1.setRemark(remark);
 				}
-				cacheRedisService.setSysCode(bigCodeName, sysCode1);
+//				cacheRedisService.setSysCode(bigCodeName, sysCode1);
+				cacheRedisService.updateSysCode(bigCodeName, sysCode1, oriSysCode);
 			}
 			ret.clear();
 			ret.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());

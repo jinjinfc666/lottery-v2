@@ -46,5 +46,30 @@ public class GenSequenceDaoImpl extends DefaultGenericDaoImpl<GenSequence> imple
 		return seqs.get(0);
 	}
 
+	@Override
+	public GenSequence queryTC3DSeqVal() {
+		String sql = "from GenSequence where seqName='seq_num_tc3d'";
+		List<Object> params = new ArrayList<>();
+		
+		List<GenSequence> seqs = this.query(sql, params, GenSequence.class);
+		if(seqs == null || seqs.size() == 0) {
+			return null;
+		}
+		
+		return seqs.get(0);
+	}
+
+	@Override
+	public GenSequence queryFC3DSeqVal() {
+		String sql = "from GenSequence where seqName='seq_num_fc3d'";
+		List<Object> params = new ArrayList<>();
+		
+		List<GenSequence> seqs = this.query(sql, params, GenSequence.class);
+		if(seqs == null || seqs.size() == 0) {
+			return null;
+		}
+		
+		return seqs.get(0);
+	}
 	
 }

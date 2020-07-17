@@ -35,5 +35,15 @@ public class GenSequenceServiceImpl implements GenSequenceService
 	public GenSequence queryPK10SeqVal() {
 		return genSeqDao.queryPK10SeqVal();
 	}
+	
+	@Override
+	public GenSequence queryTC3DSeqVal() {
+		return genSeqDao.queryTC3DSeqVal();
+	}
+
+	@Override
+	public GenSequence queryFC3DSeqVal() {
+		return genSeqDao.queryFC3DSeqVal();
+	}
 		
 }

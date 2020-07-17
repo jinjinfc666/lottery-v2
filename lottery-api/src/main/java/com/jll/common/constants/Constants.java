@@ -2294,7 +2294,9 @@ public class Constants {
 		MMC("mmc"),
 		BJPK10("bjpk10"),
 		XYFT("xyft"),
-		XJSSC("xjssc");
+		XJSSC("xjssc"),
+		FC3D("fc3d"),
+		TC3("tc3");
 		
 		private String code;
 		
