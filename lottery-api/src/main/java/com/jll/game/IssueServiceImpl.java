@@ -568,6 +568,8 @@ public class IssueServiceImpl implements IssueService
 	
 	
 	public void payoutOrder(OrderInfo order, Issue issue, boolean isAuto) {
+		BigDecimal platProfit = null;
+		
 		if(issue == null){
 			issue = getIssueById(order.getIssueId());
 		}
@@ -593,39 +595,15 @@ public class IssueServiceImpl implements IssueService
 		if(wallet.getAccType().intValue() != Constants.WalletType.RED_PACKET_WALLET.getCode()
 				&& UserType.DEMO_PLAYER.getCode() != user.getUserType().intValue()
 				&& order.getState().intValue() != Constants.OrderState.RE_PAYOUT.getCode()){
-			//TODO 暂时取消反水
-			//rebate(issue, user, order);
+			
+			rebate(issue, user, order);
 		}
 		
 		boolean isMatch = isMatchWinningNum(issue, order);
 		
-		if(user.getUserType().intValue() == Constants.UserType.ENTRUST_PLAYER.getCode()) {
-			List<OrderInfoExt> orderInfoExts = orderInfoExtServ.queryOrderInfoExt(order.getId());
-			if(orderInfoExts == null || orderInfoExts.size() == 0) {
-				order.setIsPrize(0);
-			}else {
-				order.setIsPrize(1);
-			}
-			
-			Date startTime = issue.getStartTime();
-			Random random = new Random();
-			int extraTime = random.nextInt(30) + 1;
-			Date createTime = DateUtil.addSeconds(startTime, extraTime);
-			order.setCreateTime(createTime);
-			
-			if(isMatch && order.getIsPrize().intValue() == 0) {
-				
-				modifyBettingNum(issue, order, false);
-				isMatch = false;
-			}else if(!isMatch && order.getIsPrize().intValue() == 1) {				
-				modifyBettingNum(issue, order, true);
-				isMatch = true;
-			}
-			
-		}
 		
 		if(isMatch) {//赢
-			//TODO 发奖金
+			//发奖金
 			Map<String, Object> ret = calPrize(issue, order, user);
 			BigDecimal prize = new BigDecimal((Float)ret.get(Constants.KEY_WIN_AMOUNT));
 			
@@ -640,9 +618,9 @@ public class IssueServiceImpl implements IssueService
 			}
 			//试玩用户跳过派奖
 			if(UserType.DEMO_PLAYER.getCode() != user.getUserType()){
-				//TODO 增加账户流水
+				//增加账户流水
 				addUserAccountDetails(order, user, issue, prize, Constants.AccOperationType.PAYOUT);
-				//TODO 修改用户余额
+				//修改用户余额
 				modifyBal(order, user, prize);
 				
 				//追号是否停止
@@ -661,43 +639,18 @@ public class IssueServiceImpl implements IssueService
 				}
 			}
 			
-			//TODO 修改订单状态
+			//修改订单状态
 			modifyOrderState(order, Constants.OrderState.WINNING, ret);
+			//member win the betting, platform's profit = bet amount - prize 
+			platProfit = new BigDecimal(order.getBetAmount()).subtract(prize);
 		}else {
-			//TODO 修改订单状态
+			//修改订单状态
 			modifyOrderState(order, Constants.OrderState.LOSTING, null);
+			//member lost the betting, platform's profit = bet amount;
+			platProfit = new BigDecimal(order.getBetAmount());
 		}
 		
-	}
-	
-	private boolean modifyBettingNum(Issue issue, OrderInfo order, boolean isMatch) {
-		PlayType playType = null;
-		String playTypeName = null;
-		PlayTypeFacade playTypeFacade = null;
-		
-		Integer playTypeId = order.getPlayType();
-		playType = playTypeServ.queryById(playTypeId);
-		if(playType == null) {
-			return false;
-		}
-				
-		if(playType.getPtName().equals("fs")) {
-			playTypeName = playType.getClassification() + "/fs";
-		}else if(playType.getPtName().equals("ds")){
-			playTypeName = playType.getClassification() + "/ds";
-		}else {
-			playTypeName = playType.getClassification() + "/" + playType.getPtName();
-		}
-		playTypeFacade = PlayTypeFactory.getInstance().getPlayTypeFacade(playTypeName);
-		
-		if(playTypeFacade == null) {
-			return false;
-		}
-		
-		boolean isSuccess = playTypeFacade.modifyBettingNum(issue, order, isMatch);
-		
-		return isSuccess;
-		
+		calZc(order, issue, user, platProfit);
 	}
 
 	private boolean isMatchWinningNum(Issue issue, OrderInfo order) {
@@ -804,17 +757,16 @@ public class IssueServiceImpl implements IssueService
 		orderInfoServ.saveOrder(order);
 	}
 	
+	/**
+	 * The parent refund money to child 
+	 * amount of refund = betting amount * ts
+	 * @param issue
+	 * @param user
+	 * @param order
+	 */
 	private void rebate(Issue issue, UserInfo user, OrderInfo order) {
 		String superior = user.getSuperior();
 		BigDecimal prize = null;
-		//BigDecimal selfPrize = null;
-		if(UserType.SM_PLAYER.getCode() == user.getUserType().intValue()){
-			prize = calSelfRebate(user, order);
-			addUserAccountDetails(order, user, issue, prize, 
-					Constants.AccOperationType.REBATE);
-			
-			modifyBal(order, user, prize);
-		}
 		
 		if(StringUtils.isBlank(superior) || "0".equals(superior)) {
 			return ;
@@ -824,6 +776,10 @@ public class IssueServiceImpl implements IssueService
 		
 		superior = superiors[0];
 		UserInfo superiorUser = userServ.getUserById(Integer.parseInt(superior));
+		if(superiorUser == null){
+			return ;
+		}
+		//calculate the refund from parent
 		prize = calRebate(user, order);
 		
 		if(prize == null 
@@ -831,20 +787,34 @@ public class IssueServiceImpl implements IssueService
 			return ;
 		}
 		
+		addUserAccountDetails(order, user, issue, prize, 
+				Constants.AccOperationType.TS);
+		
+		modifyBal(order, user, prize);
+		
+		prize = prize.multiply(new BigDecimal(-1));
 		addUserAccountDetails(order, superiorUser, issue, prize, 
-				Constants.AccOperationType.REBATE);
+				Constants.AccOperationType.TS);
 		
 		modifyBal(order, superiorUser, prize);
 		
 		rebate(issue, superiorUser, order);
 	}
 
+	/**
+	 * calculate the tui shui
+	 * @param user
+	 * @param order
+	 * @return
+	 */
 	private BigDecimal calRebate(UserInfo user, OrderInfo order) {
 		BigDecimal rebate = null;
-		BigDecimal rebateRate = user.getRebate();
+		BigDecimal rebateRate = user.getTs();
+		if(rebateRate == null){
+			return null;
+		}
 		rebateRate = rebateRate.multiply(new BigDecimal(0.01F));
 		BigDecimal betAmount = new BigDecimal(order.getBetAmount());
-		
 		rebate = betAmount.multiply(rebateRate);
 		return rebate;
 	}
@@ -921,4 +891,38 @@ public class IssueServiceImpl implements IssueService
 		return issueDao.queryRecentBetBrief(lotteryType,startTime, endTime, pageIndex, pageSize);
 	}
 	
+	/**
+	 * 占成
+	 * if user lost betting, then the agents share the betting amount
+	 * if user win betting, then the agents share the loss 
+	 * @param user
+	 * @param platProfit platform's profit
+	 */
+	private void calZc(OrderInfo order, Issue issue, UserInfo user, BigDecimal platProfit) {
+		String superior = user.getSuperior();
+		BigDecimal zc = null;
+		BigDecimal shareProfit = null;
+		
+		if(StringUtils.isBlank(superior) || "0".equals(superior)) {
+			return ;
+		}
+		
+		String[] superiors = superior.split(",");
+		
+		superior = superiors[0];
+		UserInfo superiorUser = userServ.getUserById(Integer.parseInt(superior));
+		if(superiorUser == null){
+			return ;
+		}
+		
+		zc = superiorUser.getZc();
+		shareProfit = platProfit.multiply(zc);
+		
+		addUserAccountDetails(order, superiorUser, issue, shareProfit, 
+				Constants.AccOperationType.ZC);
+		
+		modifyBal(order, superiorUser, shareProfit);
+		
+		calZc(order, issue, superiorUser, platProfit);
+	}
 }

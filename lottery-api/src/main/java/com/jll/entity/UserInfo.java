@@ -40,6 +40,16 @@ public class UserInfo implements java.io.Serializable {
 	private Double xyPayoutRate;
 	private Integer isHiddenPlan;
 	
+	/**
+	 * 占成
+	 */
+	private BigDecimal zc;
+	
+	/**
+	 * 退水
+	 */
+	private BigDecimal ts;
+	
 	public UserInfo() {
 	}
 
@@ -275,6 +285,22 @@ public class UserInfo implements java.io.Serializable {
 
 	public Integer getPanKou() {
 		return panKou;
+	}
+
+	public BigDecimal getZc() {
+		return zc;
+	}
+
+	public void setZc(BigDecimal zc) {
+		this.zc = zc;
+	}
+
+	public BigDecimal getTs() {
+		return ts;
+	}
+
+	public void setTs(BigDecimal ts) {
+		this.ts = ts;
 	}
 
 	public void setPanKou(Integer panKou) {

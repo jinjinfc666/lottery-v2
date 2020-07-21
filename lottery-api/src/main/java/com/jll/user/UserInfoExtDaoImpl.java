@@ -80,6 +80,26 @@ public class UserInfoExtDaoImpl extends DefaultGenericDaoImpl<UserInfoExt> imple
 					
 				this.saveOrUpdate(ext);
 			}
+			
+			if(user.getZc() != null){
+				ext = new UserInfoExt();
+				ext.setUserId(user.getId());
+				ext.setExtFieldName("zc");
+				ext.setExtFieldVal(String.valueOf(user.getZc()));
+				ext.setCreateTime(today);
+					
+				this.saveOrUpdate(ext);
+			}
+			
+			if(user.getTs() != null){
+				ext = new UserInfoExt();
+				ext.setUserId(user.getId());
+				ext.setExtFieldName("ts");
+				ext.setExtFieldVal(String.valueOf(user.getTs()));
+				ext.setCreateTime(today);
+					
+				this.saveOrUpdate(ext);
+			}
 		}else {
 			for(UserInfoExt ext_ : exts) {
 				if(ext_.getExtFieldName().equals("panKou") && user.getPanKou() != null) {
@@ -94,6 +114,12 @@ public class UserInfoExtDaoImpl extends DefaultGenericDaoImpl<UserInfoExt> imple
 					this.saveOrUpdate(ext_);
 				}else if(ext_.getExtFieldName().equals("isHiddenPlan")) {
 					ext_.setExtFieldVal(String.valueOf(user.getIsHiddenPlan()));
+					this.saveOrUpdate(ext_);
+				}else if(ext_.getExtFieldName().equals("zc") && user.getZc() != null) {
+					ext_.setExtFieldVal(String.valueOf(user.getZc()));
+					this.saveOrUpdate(ext_);
+				}else if(ext_.getExtFieldName().equals("ts") && user.getTs() != null) {
+					ext_.setExtFieldVal(String.valueOf(user.getTs()));
 					this.saveOrUpdate(ext_);
 				}
 			}
