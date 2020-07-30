@@ -914,14 +914,23 @@ public class IssueServiceImpl implements IssueService
 		if(superiorUser == null){
 			return ;
 		}
-		
-		zc = superiorUser.getZc();
-		shareProfit = platProfit.multiply(zc);
-		
-		addUserAccountDetails(order, superiorUser, issue, shareProfit, 
-				Constants.AccOperationType.ZC);
-		
-		modifyBal(order, superiorUser, shareProfit);
+		//agent share the profit with superior 
+		if(user.getUserType().intValue() == UserType.XY_AGENCY.getCode()){
+			zc = user.getZc();
+			shareProfit = platProfit.multiply(zc);
+			// agent get the zc
+			addUserAccountDetails(order, user, issue, shareProfit, 
+					Constants.AccOperationType.ZC);
+			
+			modifyBal(order, user, shareProfit);
+			
+			//superior minus the zc
+			addUserAccountDetails(order, superiorUser, issue, shareProfit, 
+					Constants.AccOperationType.ZC);
+			
+			modifyBal(order, superiorUser, shareProfit);
+			
+		}
 		
 		calZc(order, issue, superiorUser, platProfit);
 	}

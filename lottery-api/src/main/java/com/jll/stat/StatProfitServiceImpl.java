@@ -143,6 +143,7 @@ public class StatProfitServiceImpl implements StatProfitService
 			boolean isInherit) {
 		TeamPlReport profit = null;
 		BigDecimal profitVal = null;
+		BigDecimal settlementAmount = null;
 		
 		profit = reportServ.queryProfitByUser(userInfo.getId(), 
 				trg.getCreateTime(), 
@@ -154,7 +155,7 @@ public class StatProfitServiceImpl implements StatProfitService
 			profit.setUserId(userInfo.getId());
 			profit.setUserName(userInfo.getUserName());
 			profit.setUserType(userType);
-			
+			profit.setSettlementFlag(Constants.SettlementState.pending.getCode());
 		}
 		
 		if(trg.getOperationType().equals(Constants.AccOperationType.DEPOSIT.getCode())) {
@@ -220,37 +221,76 @@ public class StatProfitServiceImpl implements StatProfitService
 						profit.getSysBonus().add(new BigDecimal(trg.getAmount()));
 					
 			profit.setSysBonus(sysBonus);
+		}else if(trg.getOperationType().equals(Constants.AccOperationType.TS.getCode())) {
+			BigDecimal tsAmount = profit.getTsAmount() == null?
+					new BigDecimal(trg.getAmount()):
+						profit.getTsAmount().add(new BigDecimal(trg.getAmount()));
+					
+			profit.setTsAmount(tsAmount);
+		}else if(trg.getOperationType().equals(Constants.AccOperationType.ZC.getCode())) {
+			BigDecimal zcAmount = profit.getZcAmount() == null?
+					new BigDecimal(trg.getAmount()):
+						profit.getZcAmount().add(new BigDecimal(trg.getAmount()));
+					
+			profit.setZcAmount(zcAmount);
 		}
 		
-		profitVal = profit.getConsumption() == null?
-				new BigDecimal(0):
-					profit.getConsumption();
-		profitVal = profitVal.subtract(profit.getCancelAmount() == null?
-										new BigDecimal(0):
-											profit.getCancelAmount());
-		profitVal = profitVal.subtract(profit.getReturnPrize() == null?
-				new BigDecimal(0):
-					profit.getReturnPrize());		
-		profitVal = profitVal.subtract(profit.getRebate() == null?
-				new BigDecimal(0):
-					profit.getRebate());
-		
-		if(profit.getSysBonus() != null) {
-			profitVal = profitVal.subtract(profit.getSysBonus() == null?
+		profit.setUsedCreditLimit(userInfo.getUsedCreditAmount());
+		profit.setRemainCreditLimit(new BigDecimal(userInfo.getXyAmount()).subtract(userInfo.getUsedCreditAmount()));
+		if(userType.intValue() == UserType.XY_AGENCY.getCode()){				
+			profitVal = profit.getTsAmount() == null?
 					new BigDecimal(0):
-						profit.getSysBonus());
-		}
+						profit.getTsAmount();
+			
+			profitVal = profitVal.add(profit.getZcAmount() == null?
+					new BigDecimal(0):
+						profit.getZcAmount());			
+			profit.setProfit(profitVal);
+			
+			settlementAmount = profit.getTsAmount() == null?new BigDecimal(0):profit.getTsAmount();
+			BigDecimal tempVal = profitVal.add(profit.getConsumption() == null?
+					new BigDecimal(0):
+						profit.getConsumption());
+			tempVal = tempVal.subtract(profit.getCancelAmount() == null?
+					new BigDecimal(0):
+						profit.getCancelAmount());
+			
+			//agent team ts
+			settlementAmount = settlementAmount.add(tempVal.multiply(userInfo.getTs() == null?
+					new BigDecimal(0):
+						userInfo.getTs()));
+			
+			tempVal = tempVal.subtract(profit.getReturnPrize() == null?
+					new BigDecimal(0):
+						profit.getReturnPrize());
+			//agent team prize
+			settlementAmount = settlementAmount.add(tempVal.multiply(new BigDecimal(-1)));
+			tempVal = tempVal.multiply(userInfo.getZc() == null?
+					new BigDecimal(0):
+						userInfo.getZc());
+			//agent team zc
+			settlementAmount = settlementAmount.add(tempVal);
+			
+			profit.setSettlementAmount(settlementAmount);
+		}else if(userType.intValue() == UserType.XY_PLAYER.getCode()){
+			profitVal = profit.getReturnPrize() == null?
+					new BigDecimal(0):
+						profit.getReturnPrize();
+			profitVal = profitVal.add(profit.getCancelAmount() == null?
+											new BigDecimal(0):
+												profit.getCancelAmount());
+			profitVal = profitVal.subtract(profit.getConsumption() == null?
+					new BigDecimal(0):
+						profit.getConsumption());		
+			profitVal = profitVal.add(profit.getTsAmount() == null?
+					new BigDecimal(0):
+						profit.getTsAmount());
+			
+			profit.setProfit(profitVal);
+			profit.setSettlementAmount(profitVal);
+		}		
 		
-		//个人用户利润 和 团队利润是正好相反的
-		if(userType == Constants.UserType.PLAYER.getCode()
-				|| userType == Constants.UserType.SM_PLAYER.getCode()
-				|| userType == Constants.UserType.XY_PLAYER.getCode()
-				|| userType == Constants.UserType.ENTRUST_PLAYER.getCode()) {
-			
-			
-			profitVal = profitVal.multiply(new BigDecimal(-1));
-		}
-		profit.setProfit(profitVal);
+		
 		reportServ.saveOrUpdateProfit(profit);
 	}
 	

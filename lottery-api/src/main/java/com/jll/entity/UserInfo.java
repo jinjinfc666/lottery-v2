@@ -50,6 +50,8 @@ public class UserInfo implements java.io.Serializable {
 	 */
 	private BigDecimal ts;
 	
+	private BigDecimal usedCreditAmount;
+	
 	public UserInfo() {
 	}
 
@@ -329,6 +331,14 @@ public class UserInfo implements java.io.Serializable {
 
 	public void setIsHiddenPlan(Integer isHiddenPlan) {
 		this.isHiddenPlan = isHiddenPlan;
+	}
+
+	public BigDecimal getUsedCreditAmount() {
+		return usedCreditAmount;
+	}
+
+	public void setUsedCreditAmount(BigDecimal usedCreditAmount) {
+		this.usedCreditAmount = usedCreditAmount;
 	}
 
 	

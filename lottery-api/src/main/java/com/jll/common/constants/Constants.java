@@ -1613,7 +1613,10 @@ public class Constants {
 		ACTIVITY_GIFT_RED("activity_gift_red","活动红包礼金",1),
 		RECOVERY_PAYOUT("recovery_payout","派奖回收",-1),
 		TS("TS","退水",-1),
-		ZC("ZC","占成",-1);
+		ZC("ZC","占成",-1),
+		USED_CREDIT_LIMIT("used_credit_limit","已用信用额度",-1),
+		REMAIN_CREDIT_LIMIT("remain_credit_limit","剩余信用额度",-1);
+		
 //		USER_RED_BAG_WITHDRAWAL("user_red_bag_withdrawal","用户红包提现",-1);
 //		USER_RED_ENVELOPE_WITHDRAWAL_DEDUCTION("user_red_envelope_withdrawal_deduction","用户红包提现扣除",-1);
 		

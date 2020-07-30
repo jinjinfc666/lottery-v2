@@ -28,6 +28,24 @@ public class TeamPlReport implements java.io.Serializable {
 	private BigDecimal profit;
 	private Integer userType;
 
+	//退水
+	private BigDecimal tsAmount;
+	
+	//占成
+	private BigDecimal zcAmount;
+	
+	//已用信用额度
+	private BigDecimal usedCreditLimit;
+	
+	//剩余信用额度
+	private BigDecimal remainCreditLimit;
+	
+	//结算金额
+	private BigDecimal settlementAmount;
+	
+	//结算标识 0 未结算  1 已结算
+	private Integer settlementFlag;
+	
 	public TeamPlReport() {
 	}
 
@@ -201,6 +219,54 @@ public class TeamPlReport implements java.io.Serializable {
 
 	public void setSysBonus(BigDecimal sysBonus) {
 		this.sysBonus = sysBonus;
+	}
+
+	public BigDecimal getTsAmount() {
+		return tsAmount;
+	}
+
+	public void setTsAmount(BigDecimal tsAmount) {
+		this.tsAmount = tsAmount;
+	}
+
+	public BigDecimal getZcAmount() {
+		return zcAmount;
+	}
+
+	public void setZcAmount(BigDecimal zcAmount) {
+		this.zcAmount = zcAmount;
+	}
+
+	public BigDecimal getUsedCreditLimit() {
+		return usedCreditLimit;
+	}
+
+	public void setUsedCreditLimit(BigDecimal usedCreditLimit) {
+		this.usedCreditLimit = usedCreditLimit;
+	}
+
+	public BigDecimal getRemainCreditLimit() {
+		return remainCreditLimit;
+	}
+
+	public void setRemainCreditLimit(BigDecimal remainCreditLimit) {
+		this.remainCreditLimit = remainCreditLimit;
+	}
+
+	public BigDecimal getSettlementAmount() {
+		return settlementAmount;
+	}
+
+	public void setSettlementAmount(BigDecimal settlementAmount) {
+		this.settlementAmount = settlementAmount;
+	}
+
+	public Integer getSettlementFlag() {
+		return settlementFlag;
+	}
+
+	public void setSettlementFlag(Integer settlementFlag) {
+		this.settlementFlag = settlementFlag;
 	}
 
 	
