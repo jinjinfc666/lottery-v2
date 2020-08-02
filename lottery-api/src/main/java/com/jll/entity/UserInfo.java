@@ -43,12 +43,12 @@ public class UserInfo implements java.io.Serializable {
 	/**
 	 * 占成
 	 */
-	private BigDecimal zc;
+	private BigDecimal zcAmount;
 	
 	/**
 	 * 退水
 	 */
-	private BigDecimal ts;
+	private BigDecimal tsAmount;
 	
 	private BigDecimal usedCreditAmount;
 	
@@ -289,20 +289,20 @@ public class UserInfo implements java.io.Serializable {
 		return panKou;
 	}
 
-	public BigDecimal getZc() {
-		return zc;
+	public BigDecimal getZcAmount() {
+		return zcAmount;
 	}
 
-	public void setZc(BigDecimal zc) {
-		this.zc = zc;
+	public void setZcAmount(BigDecimal zcAmount) {
+		this.zcAmount = zcAmount;
 	}
 
-	public BigDecimal getTs() {
-		return ts;
+	public BigDecimal getTsAmount() {
+		return tsAmount;
 	}
 
-	public void setTs(BigDecimal ts) {
-		this.ts = ts;
+	public void setTsAmount(BigDecimal tsAmount) {
+		this.tsAmount = tsAmount;
 	}
 
 	public void setPanKou(Integer panKou) {

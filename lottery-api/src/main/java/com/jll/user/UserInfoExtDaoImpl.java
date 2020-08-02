@@ -1,6 +1,7 @@
 package com.jll.user;
 
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -81,21 +82,21 @@ public class UserInfoExtDaoImpl extends DefaultGenericDaoImpl<UserInfoExt> imple
 				this.saveOrUpdate(ext);
 			}
 			
-			if(user.getZc() != null){
+			if(user.getZcAmount() != null){
 				ext = new UserInfoExt();
 				ext.setUserId(user.getId());
-				ext.setExtFieldName("zc");
-				ext.setExtFieldVal(String.valueOf(user.getZc()));
+				ext.setExtFieldName("zcAmount");
+				ext.setExtFieldVal(String.valueOf(user.getZcAmount().divide(new BigDecimal(100))));
 				ext.setCreateTime(today);
 					
 				this.saveOrUpdate(ext);
 			}
 			
-			if(user.getTs() != null){
+			if(user.getTsAmount() != null){
 				ext = new UserInfoExt();
 				ext.setUserId(user.getId());
-				ext.setExtFieldName("ts");
-				ext.setExtFieldVal(String.valueOf(user.getTs()));
+				ext.setExtFieldName("tsAmount");
+				ext.setExtFieldVal(String.valueOf(user.getTsAmount().divide(new BigDecimal(100))));
 				ext.setCreateTime(today);
 					
 				this.saveOrUpdate(ext);
@@ -115,11 +116,11 @@ public class UserInfoExtDaoImpl extends DefaultGenericDaoImpl<UserInfoExt> imple
 				}else if(ext_.getExtFieldName().equals("isHiddenPlan")) {
 					ext_.setExtFieldVal(String.valueOf(user.getIsHiddenPlan()));
 					this.saveOrUpdate(ext_);
-				}else if(ext_.getExtFieldName().equals("zc") && user.getZc() != null) {
-					ext_.setExtFieldVal(String.valueOf(user.getZc()));
+				}else if(ext_.getExtFieldName().equals("zcAmount") && user.getZcAmount() != null) {
+					ext_.setExtFieldVal(String.valueOf(user.getZcAmount().multiply(new BigDecimal(0.01))));
 					this.saveOrUpdate(ext_);
-				}else if(ext_.getExtFieldName().equals("ts") && user.getTs() != null) {
-					ext_.setExtFieldVal(String.valueOf(user.getTs()));
+				}else if(ext_.getExtFieldName().equals("tsAmount") && user.getTsAmount() != null) {
+					ext_.setExtFieldVal(String.valueOf(user.getTsAmount().multiply(new BigDecimal(0.01))));
 					this.saveOrUpdate(ext_);
 				}
 			}

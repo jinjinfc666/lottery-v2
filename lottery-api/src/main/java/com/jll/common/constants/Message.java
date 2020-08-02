@@ -108,6 +108,9 @@ public class Message {
 		ERROR_USER_BANK_CARD_REAL_NAME("010052","Please fill in your real name before you can add a bank card.! ! !"),
 		ERROR_USER_CONSUMPTION_LESS_THAN_LIMITION("010053","The consumption amount is less than limit!!!!"),
 		ERROR_USER_NO_PUSH_CONFIG("010054", "Have not push number configuration yet!!"),
+		ERROR_USER_NO_TS_ZC("010055", "Please input the ts amount & zc amount!!"),
+		ERROR_USER_ERROR_TS_ZC("010056", "ts and zc should be less than ts and zc of superior"),
+		ERROR_USER_ERROR_TS_ZC_LESS_THAN_ZERO("010057", "ts and zc should be greater than 0"),
 		
 		/**************third party*************************/
 		ERROR_TP_INVALID_SMS("020001", "Invalid SMS!!"),

@@ -809,7 +809,7 @@ public class IssueServiceImpl implements IssueService
 	 */
 	private BigDecimal calRebate(UserInfo user, OrderInfo order) {
 		BigDecimal rebate = null;
-		BigDecimal rebateRate = user.getTs();
+		BigDecimal rebateRate = user.getTsAmount();
 		if(rebateRate == null){
 			return null;
 		}
@@ -916,7 +916,7 @@ public class IssueServiceImpl implements IssueService
 		}
 		//agent share the profit with superior 
 		if(user.getUserType().intValue() == UserType.XY_AGENCY.getCode()){
-			zc = user.getZc();
+			zc = user.getZcAmount();
 			shareProfit = platProfit.multiply(zc);
 			// agent get the zc
 			addUserAccountDetails(order, user, issue, shareProfit, 

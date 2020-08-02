@@ -256,18 +256,18 @@ public class StatProfitServiceImpl implements StatProfitService
 						profit.getCancelAmount());
 			
 			//agent team ts
-			settlementAmount = settlementAmount.add(tempVal.multiply(userInfo.getTs() == null?
+			settlementAmount = settlementAmount.add(tempVal.multiply(userInfo.getTsAmount() == null?
 					new BigDecimal(0):
-						userInfo.getTs()));
+						userInfo.getTsAmount()));
 			
 			tempVal = tempVal.subtract(profit.getReturnPrize() == null?
 					new BigDecimal(0):
 						profit.getReturnPrize());
 			//agent team prize
 			settlementAmount = settlementAmount.add(tempVal.multiply(new BigDecimal(-1)));
-			tempVal = tempVal.multiply(userInfo.getZc() == null?
+			tempVal = tempVal.multiply(userInfo.getZcAmount() == null?
 					new BigDecimal(0):
-						userInfo.getZc());
+						userInfo.getZcAmount());
 			//agent team zc
 			settlementAmount = settlementAmount.add(tempVal);
 			

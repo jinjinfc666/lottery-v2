@@ -429,7 +429,42 @@ public class UserInfoServiceImpl implements UserInfoService
 	
 	@Override
 	public UserInfo getUserById(Integer userId) {
-		return userDao.getUserById(userId);
+		UserInfo user = userDao.getUserById(userId);
+		if(user.getUserType().intValue() == UserType.XY_PLAYER.getCode()
+				|| user.getUserType().intValue() == UserType.XY_AGENCY.getCode()
+				|| user.getUserType().intValue() == UserType.GENERAL_AGENCY.getCode()) {
+			String payoutRate = userExtServ.queryFiledByName(user.getId(), "xyPayoutRate");
+			String xyAmount = userExtServ.queryFiledByName(user.getId(), "xyAmount");
+			String tsAmount = userExtServ.queryFiledByName(user.getId(), "tsAmount");
+			String zcAmount = userExtServ.queryFiledByName(user.getId(), "zcAmount");
+			String panKou = userExtServ.queryFiledByName(user.getId(), "panKou");
+			String isHiddenPlan = userExtServ.queryFiledByName(user.getId(), "isHiddenPlan");
+			
+			if(payoutRate != null) {
+				user.setXyPayoutRate(Double.parseDouble(payoutRate));
+			}
+			
+			if(xyAmount != null) {
+				user.setXyAmount(Double.parseDouble(xyAmount));
+			}
+			
+			if(isHiddenPlan != null) {
+				user.setIsHiddenPlan(Integer.parseInt(isHiddenPlan));
+			}
+			
+			if(panKou != null) {
+				user.setPanKou(Integer.parseInt(panKou));
+			}
+			
+			if(tsAmount != null) {
+				user.setTsAmount(new BigDecimal(tsAmount).multiply(new BigDecimal(100)));
+			}
+			
+			if(zcAmount != null) {
+				user.setZcAmount(new BigDecimal(zcAmount).multiply(new BigDecimal(100)));
+			}
+		}
+		return user;
 	}
 	
 	@Override
@@ -480,7 +515,27 @@ public class UserInfoServiceImpl implements UserInfoService
 			}			
 		}
 		
-		
+		if(user.getUserType().intValue() == UserType.XY_AGENCY.getCode() 
+				|| user.getUserType().intValue() == UserType.XY_PLAYER.getCode()){
+			if(user.getTsAmount() == null || user.getZcAmount() == null){
+				return Message.Error.ERROR_USER_NO_TS_ZC.getCode();
+			}
+			
+			if(user.getTsAmount().compareTo(new BigDecimal(0)) == -1
+					|| user.getZcAmount().compareTo(new BigDecimal(0)) == -1){
+				return Message.Error.ERROR_USER_ERROR_TS_ZC_LESS_THAN_ZERO.getCode();
+			}
+			if(superior != null && superior.getZcAmount() != null && superior.getTsAmount() != null){
+				if(user.getTsAmount().compareTo(superior.getTsAmount()) != -1){
+					
+					return Message.Error.ERROR_USER_ERROR_TS_ZC.getCode();
+				}
+				
+				if(user.getZcAmount().compareTo(superior.getZcAmount()) != -1){
+					return Message.Error.ERROR_USER_ERROR_TS_ZC.getCode();
+				}
+			}
+		}
 		return Integer.toString(Message.status.SUCCESS.getCode());
 	}
 
@@ -921,6 +976,8 @@ public class UserInfoServiceImpl implements UserInfoService
 		Integer panKou = userInfo.getPanKou();
 		Double xyPayoutRate = userInfo.getXyPayoutRate();
 		Double xyAmount = userInfo.getXyAmount();
+		BigDecimal tsAmount = userInfo.getTsAmount();
+		BigDecimal zcAmount = userInfo.getZcAmount();
 		UserInfo user = getUserById(userId);
 		BigDecimal oldPlatRebate = user.getPlatRebate();
 		String qq = userInfo.getQq();
@@ -940,6 +997,14 @@ public class UserInfoServiceImpl implements UserInfoService
 		
 		if(xyAmount != null) {
 			user.setXyAmount(xyAmount);
+		}
+		
+		if(tsAmount != null) {
+			user.setTsAmount(tsAmount);
+		}
+		
+		if(zcAmount != null) {
+			user.setZcAmount(zcAmount);
 		}
 		
 		if(xyPayoutRate != null) {
@@ -2061,7 +2126,8 @@ public class UserInfoServiceImpl implements UserInfoService
 				String xyAmount = userExtServ.queryFiledByName(userInfo.getId(), "xyAmount");
 				String panKou = userExtServ.queryFiledByName(userInfo.getId(), "panKou");
 				String isHiddenPlan = userExtServ.queryFiledByName(userInfo.getId(), "isHiddenPlan");
-				
+				String zcAmount = userExtServ.queryFiledByName(userInfo.getId(), "zcAmount");
+				String tsAmount = userExtServ.queryFiledByName(userInfo.getId(), "tsAmount");
 				if(payoutRate != null) {
 					userInfo.setXyPayoutRate(Double.parseDouble(payoutRate));
 				}
@@ -2076,6 +2142,14 @@ public class UserInfoServiceImpl implements UserInfoService
 				
 				if(panKou != null) {
 					userInfo.setPanKou(Integer.parseInt(panKou));
+				}
+				
+				if(tsAmount != null) {
+					userInfo.setTsAmount(new BigDecimal(tsAmount).multiply(new BigDecimal(100)));
+				}
+				
+				if(zcAmount != null) {
+					userInfo.setZcAmount(new BigDecimal(zcAmount).multiply(new BigDecimal(100)));
 				}
 				
 			}
@@ -2394,6 +2468,41 @@ public class UserInfoServiceImpl implements UserInfoService
 		superiorIds = superiorStr.split(",");
 		if(superiorIds != null && superiorIds.length > 0) {
 			superior = getUserById(Integer.parseInt(superiorIds[0]));
+		}
+		
+		if(superior.getUserType().intValue() == Constants.UserType.XY_PLAYER.getCode()
+				|| superior.getUserType().intValue() == Constants.UserType.XY_AGENCY.getCode()
+				|| superior.getUserType().intValue() == UserType.GENERAL_AGENCY.getCode()) {
+			String payoutRate = userExtServ.queryFiledByName(superior.getId(), "xyPayoutRate");
+			String xyAmount = userExtServ.queryFiledByName(superior.getId(), "xyAmount");
+			String panKou = userExtServ.queryFiledByName(superior.getId(), "panKou");
+			String isHiddenPlan = userExtServ.queryFiledByName(superior.getId(), "isHiddenPlan");
+			String zcAmount = userExtServ.queryFiledByName(superior.getId(), "zcAmount");
+			String tsAmount = userExtServ.queryFiledByName(superior.getId(), "tsAmount");
+			if(payoutRate != null) {
+				superior.setXyPayoutRate(Double.parseDouble(payoutRate));
+			}
+			
+			if(xyAmount != null) {
+				superior.setXyAmount(Double.parseDouble(xyAmount));
+			}
+			
+			if(isHiddenPlan != null) {
+				superior.setIsHiddenPlan(Integer.parseInt(isHiddenPlan));
+			}
+			
+			if(panKou != null) {
+				superior.setPanKou(Integer.parseInt(panKou));
+			}
+			
+			if(tsAmount != null) {
+				superior.setTsAmount(new BigDecimal(tsAmount).multiply(new BigDecimal(100)));
+			}
+			
+			if(zcAmount != null) {
+				superior.setZcAmount(new BigDecimal(zcAmount).multiply(new BigDecimal(100)));
+			}
+			
 		}
 		
 		return superior;

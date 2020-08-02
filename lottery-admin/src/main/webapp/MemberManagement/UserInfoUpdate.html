@@ -189,7 +189,15 @@
                             if(data.data.xyAmount != null){
                             	$('#xyAmount').val(data.data.xyAmount);
                             }
-                                                        
+                              
+                            if(data.data.zcAmount != null){
+                            	$('#zcAmount').val(data.data.zcAmount);
+                            }
+                            
+                            if(data.data.tsAmount != null){
+                            	$('#tsAmount').val(data.data.tsAmount);
+                            }
+                            
                             if(data.data.isHiddenPlan != null){
                             	$('#isHiddenPlan').val(data.data.isHiddenPlan);
                             }
@@ -266,6 +274,8 @@
                 
                 if(userType == '8' || userType == '7'){
                 	xyAmount = document.getElementById('xyAmount').value;
+                	zcAmount = document.getElementById('zcAmount').value;
+                	tsAmount = document.getElementById('tsAmount').value;
                     panKou = $("#smPanKou option:selected").attr("data-seq");
                     platRebate = $("#smPanKou option:selected").val();
                     
@@ -273,7 +283,15 @@
                     	$("#xyAmount_error").text("请输入信誉额度!");
                         return false;
                     }
+                    if(zcAmount == null || zcAmount == ''){
+                    	$("#zcAmount_error").text("请输入占成!");
+                        return false;
+                    }
                     
+                    if(tsAmount == null || tsAmount == ''){
+                    	$("#tsAmount_error").text("请输入退水!");
+                        return false;
+                    }
 					if(panKou == null || panKou == ''){
 						$("#smPanKou_error").text("请选择盘口!");
 	                    return false;
@@ -290,6 +308,8 @@
                         "wechat": wechat,
                         "email": email,
 	                    "xyAmount":xyAmount,
+	                    "zcAmount":zcAmount,
+	                    "tsAmount":tsAmount,
 	                    'panKou':panKou
 	                });
                 }else if(userType == '9'){
@@ -759,6 +779,20 @@
                 <td>
                 	<input type="text" id="xyAmount" name="xyAmount" value="" style="width:250px;" class="login_putin" />
                 	<span id="xyAmount_error" style="color:red;"></span>
+                </td>
+            </tr>
+            <tr name="row_xy" class="displayNone">
+                <th class="thstyle">占成</th>
+                <td>
+                	<input type="text" id="zcAmount" name="zcAmount" value="" style="width:250px;" class="login_putin" />
+                	<span id="zcAmount_error" style="color:red;"></span>
+                </td>
+            </tr>
+            <tr name="row_xy" class="displayNone">
+                <th class="thstyle">退水</th>
+                <td>
+                	<input type="text" id="tsAmount" name="tsAmount" value="" style="width:250px;" class="login_putin" />
+                	<span id="tsAmount_error" style="color:red;"></span>
                 </td>
             </tr>
             <tr  name="row_sm">
