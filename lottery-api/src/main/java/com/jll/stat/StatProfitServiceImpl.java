@@ -1,5 +1,6 @@
 package com.jll.stat;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -7,10 +8,13 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jll.common.cache.CacheRedisService;
 import com.jll.common.constants.Constants;
 import com.jll.common.constants.Constants.TrgUserAccDetailsFlag;
@@ -18,13 +22,15 @@ import com.jll.common.constants.Constants.UserType;
 import com.jll.dao.PageBean;
 import com.jll.entity.TeamPlReport;
 import com.jll.entity.TrgUserAccountDetails;
+import com.jll.entity.UserAccountDetails;
 import com.jll.entity.UserInfo;
+import com.jll.game.mesqueue.kafka.KafkaConsumer;
 import com.jll.report.TReportService;
 import com.jll.user.UserInfoService;
 
 @Service
 @Transactional
-public class StatProfitServiceImpl implements StatProfitService
+public class StatProfitServiceImpl implements StatProfitService, KafkaConsumer
 {
 	private Logger logger = Logger.getLogger(StatProfitServiceImpl.class);
 
@@ -41,90 +47,51 @@ public class StatProfitServiceImpl implements StatProfitService
 	CacheRedisService cacheServ;
 	
 	@Override
-	public void exeStatistic() {
-		String keyLock = Constants.KEY_LOCK_STAT_PROFIT;
-		Date lockStart = null;
-		Date lockEnd = null;
-		
-		logger.debug(String.format("Thread ID %s try to stat profit  , waitting for locker ", 
-				Thread.currentThread().getId()));
-		//加互斥锁，防止多进程同步执行
-		if(cacheServ.lock(keyLock, keyLock, Constants.LOCK_STAT_PROFIT)) {
-			lockStart = new Date();
-			
-			logger.debug(String.format("Thread ID %s try to stat profit, successfully obtain locker ", 
-					Thread.currentThread().getId()));
-			try {
-				PageBean<TrgUserAccountDetails> page = new PageBean<>();
-				List<Object> params = new ArrayList<>();
-				List<TrgUserAccountDetails> trgUserAccDetailsList = null;
-				Integer flag = TrgUserAccDetailsFlag.pending.getCode();
-				UserInfo superior = null;
-				UserInfo user = null;
-				Integer userType = null;
-				
-				params.add(flag);
-				page.setPageIndex(1);
-				page.setPageSize(500);
-				page.setParams(params);
-				page = trgUserAccDetailServ.queryTrgUserAccDetailsByFlag(page);
-				trgUserAccDetailsList = page.getContent();
-				
-				if(trgUserAccDetailsList == null 
-						|| trgUserAccDetailsList.size() == 0) {
-					return ;
-				}
-				
-				for(TrgUserAccountDetails trg : trgUserAccDetailsList) {
-					user = userServ.getUserById(trg.getUserId());
-					userType = user.getUserType();
-					
-					if(Constants.AccOperationType.BETTING.getCode().equals(trg.getOperationType())
-							&& userType.intValue() == Constants.UserType.AGENCY.getCode()) {
-						userType = Constants.UserType.PLAYER.getCode();
-					}
-					
-					handleProfit(trg, 
-							user, 
-							userType,
-							false);
-					
-					//普通玩家的盈利直接算上级，对于代理类型用户的盈利需要从本身开始算累加盈利
-					if(user.getUserType() == Constants.UserType.PLAYER.getCode()
-							|| user.getUserType() == Constants.UserType.SM_PLAYER.getCode()
-							|| user.getUserType() == Constants.UserType.XY_PLAYER.getCode()
-							|| user.getUserType() == Constants.UserType.ENTRUST_PLAYER.getCode()) {
-						superior = userServ.querySuperior(user);						
-					}else if(user.getUserType() == Constants.UserType.AGENCY.getCode()
-							|| user.getUserType() == Constants.UserType.GENERAL_AGENCY.getCode()
-							|| user.getUserType() == Constants.UserType.SM_AGENCY.getCode()
-							|| user.getUserType() == Constants.UserType.ENTRUST_AGENCY.getCode()) {
-						superior = user;
-					}
-					
-					if(!Constants.AccOperationType.TRANSFER.getCode().equals(trg.getOperationType())) {
-						handleProfitInInherit(trg, superior);
-					}
-					
-					
-					trg.setFlag(Constants.TrgUserAccDetailsFlag.HANDLED.getCode());
-					trgUserAccDetailServ.updateTrgUserAccDetails(trg);
-				}
-				
-			}finally {
-				lockEnd = new Date();
-				logger.debug(String.format("Thread ID %s release locker , consume %s ms", 
-						Thread.currentThread().getId(),
-						lockEnd.getTime() - lockStart.getTime()));
-				cacheServ.releaseLock(keyLock);
-			}
-		}else {
-			logger.debug(String.format("Thread ID %s try to stat profit, but failed to obtain locker ", Thread.currentThread().getId()));
+	public void exeStatistic(UserAccountDetails accDetails) {
+		// try {
+		List<Object> params = new ArrayList<>();
+		Integer flag = TrgUserAccDetailsFlag.pending.getCode();
+		UserInfo superior = null;
+		UserInfo user = null;
+		Integer userType = null;
+
+		params.add(flag);
+		user = userServ.getUserById(accDetails.getUserId());
+		userType = user.getUserType();
+
+		if (Constants.AccOperationType.BETTING.getCode().equals(accDetails.getOperationType())
+				&& userType.intValue() == Constants.UserType.AGENCY.getCode()) {
+			userType = Constants.UserType.PLAYER.getCode();
 		}
-		
+
+		handleProfit(accDetails, user, userType, false);
+
+		// 普通玩家的盈利直接算上级，对于代理类型用户的盈利需要从本身开始算累加盈利
+		if (user.getUserType() == Constants.UserType.PLAYER.getCode()
+				|| user.getUserType() == Constants.UserType.SM_PLAYER.getCode()
+				|| user.getUserType() == Constants.UserType.XY_PLAYER.getCode()
+				|| user.getUserType() == Constants.UserType.ENTRUST_PLAYER.getCode()) {
+			superior = userServ.querySuperior(user);
+		} else if (user.getUserType() == Constants.UserType.AGENCY.getCode()
+				|| user.getUserType() == Constants.UserType.GENERAL_AGENCY.getCode()
+				|| user.getUserType() == Constants.UserType.SM_AGENCY.getCode()
+				|| user.getUserType() == Constants.UserType.ENTRUST_AGENCY.getCode()) {
+			superior = user;
+		}
+
+		if (!Constants.AccOperationType.TRANSFER.getCode().equals(accDetails.getOperationType())) {
+			handleProfitInInherit(accDetails, superior);
+		}
+
+		/*
+		 * } finally {
+		 * 
+		 * }
+		 */
+
 	}
 
-	private void handleProfitInInherit(TrgUserAccountDetails trg, UserInfo superior) {
+	private void handleProfitInInherit(UserAccountDetails trg, UserInfo superior) {
 		if(superior != null) {		
 			handleProfit(trg, 
 					superior, 
@@ -137,7 +104,7 @@ public class StatProfitServiceImpl implements StatProfitService
 	}
 
 
-	private void handleProfit(TrgUserAccountDetails trg, 
+	private void handleProfit(UserAccountDetails trg, 
 			UserInfo userInfo, 
 			Integer userType,
 			boolean isInherit) {
@@ -292,6 +259,23 @@ public class StatProfitServiceImpl implements StatProfitService
 		
 		
 		reportServ.saveOrUpdateProfit(profit);
+	}
+
+	@Override
+	public void onMessage(ConsumerRecord<Integer, String> arg0) {
+		String userAccDetailStr = arg0.value();
+		if(StringUtils.isEmpty(userAccDetailStr)){
+			return ;
+		}
+		
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			UserAccountDetails accDetails = mapper.readValue(userAccDetailStr, UserAccountDetails.class);
+			exeStatistic(accDetails);
+		} catch (IOException e) {
+			e.printStackTrace();
+			logger.error("Can't read the userAccountDetails from Kafka..");
+		}
 	}
 	
 }

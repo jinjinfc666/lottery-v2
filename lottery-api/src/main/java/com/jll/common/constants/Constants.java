@@ -2644,4 +2644,36 @@ public class Constants {
 			return null;
 		}
 	}
+	
+	public static enum KafkaTopics{
+		ACCOUNT_DETAILS(1, "account_details"), 
+		;
+		
+		private int code;
+		
+		private String desc;
+		
+		private KafkaTopics(int code, String desc) {
+			this.code = code;
+			this.desc = desc;
+		}
+		
+		public int getCode() {
+			return this.code;
+		}
+		
+		public String getDesc() {
+			return this.desc;
+		}
+		
+		public static WalletState geByCode(int code) {
+			WalletState[] walStates = WalletState.values();
+			for(WalletState walState: walStates) {
+				if(walState.getCode() == code) {
+					return walState;
+				}
+			}
+			return null;
+		}
+	}
 }

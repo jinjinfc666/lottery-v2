@@ -6,12 +6,17 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jll.common.constants.Constants;
+import com.jll.common.constants.Constants.KafkaTopics;
 import com.jll.common.utils.BigDecimalUtil;
 import com.jll.entity.UserAccount;
 import com.jll.entity.UserAccountDetails;
@@ -28,9 +33,25 @@ public class UserAccountDetailsServiceImpl implements UserAccountDetailsService
 	@Resource
 	UserAccountDetailsDao accDetailsDao;
 	
+	@Autowired
+	private KafkaTemplate<Integer, String> kafkaTemplate;
+	
 	@Override
 	public void saveAccDetails(UserAccountDetails userDetails) {
 		accDetailsDao.saveAccDetails(userDetails);
+		
+		ObjectMapper mapper = new ObjectMapper();
+		String msg = null;
+		try {
+			msg = mapper.writeValueAsString(userDetails);
+			kafkaTemplate.send(KafkaTopics.ACCOUNT_DETAILS.getDesc(), msg);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			logger.error(String.format("topic {} msg {} can't sent to kafka",
+					KafkaTopics.ACCOUNT_DETAILS.getDesc(),
+					msg == null?"null":msg));
+		}
+		
 	}
 
 	@Override
