@@ -203,7 +203,12 @@ public class StatProfitServiceImpl implements StatProfitService, KafkaConsumer
 		}
 		
 		profit.setUsedCreditLimit(userInfo.getUsedCreditAmount());
-		profit.setRemainCreditLimit(new BigDecimal(userInfo.getXyAmount()).subtract(userInfo.getUsedCreditAmount()));
+		BigDecimal usedCreditAmount = userInfo.getUsedCreditAmount()==null?new BigDecimal(0):userInfo.getUsedCreditAmount();
+		Double xyAmount = userInfo.getXyAmount();
+		if(xyAmount == null){
+			logger.debug("");
+		}
+		profit.setRemainCreditLimit(new BigDecimal(xyAmount).subtract(usedCreditAmount));
 		if(userType.intValue() == UserType.XY_AGENCY.getCode()){				
 			profitVal = profit.getTsAmount() == null?
 					new BigDecimal(0):

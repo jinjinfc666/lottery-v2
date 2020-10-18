@@ -438,7 +438,7 @@ public class UserInfoServiceImpl implements UserInfoService
 			String tsAmount = userExtServ.queryFiledByName(user.getId(), "tsAmount");
 			String zcAmount = userExtServ.queryFiledByName(user.getId(), "zcAmount");
 			String panKou = userExtServ.queryFiledByName(user.getId(), "panKou");
-			String isHiddenPlan = userExtServ.queryFiledByName(user.getId(), "isHiddenPlan");
+			String usedCreditAmount = userExtServ.queryFiledByName(user.getId(), "usedCreditAmount");
 			
 			if(payoutRate != null) {
 				user.setXyPayoutRate(Double.parseDouble(payoutRate));
@@ -448,8 +448,8 @@ public class UserInfoServiceImpl implements UserInfoService
 				user.setXyAmount(Double.parseDouble(xyAmount));
 			}
 			
-			if(isHiddenPlan != null) {
-				user.setIsHiddenPlan(Integer.parseInt(isHiddenPlan));
+			if(usedCreditAmount != null) {
+				user.setUsedCreditAmount(new BigDecimal(usedCreditAmount));
 			}
 			
 			if(panKou != null) {

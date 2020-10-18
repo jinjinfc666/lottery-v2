@@ -1,22 +1,31 @@
 package com.jll.sys.init;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.log4j.Logger;
 
 import com.jll.common.cache.CacheRedisService;
 import com.jll.common.constants.Constants;
+import com.jll.common.constants.Constants.LottoType;
 import com.jll.common.utils.Utils;
 import com.jll.entity.IpBlackList;
 import com.jll.entity.PayChannel;
 import com.jll.entity.PayType;
 import com.jll.entity.PlayType;
+import com.jll.entity.PlayTypeNum;
 import com.jll.entity.SysCode;
 import com.jll.game.LotteryCenterServiceImpl;
+import com.jll.game.playtype.PlayTypeNumService;
 import com.jll.game.playtype.PlayTypeService;
 import com.jll.pay.PaymentService;
 import com.jll.sys.blacklist.IpBlackListService;
@@ -49,6 +58,9 @@ public class SysInitLoader {
 	@Resource
 	PayChannelService payChannelService;
 	
+	@Resource
+	PlayTypeNumService playTypeNumServ;
+	
 	public void init() {
 		init5DigitsOne2Ten();
 		initSysCode();
@@ -56,12 +68,11 @@ public class SysInitLoader {
 		initIpBlackList();
 		initPayType();
 		initPayChannel();
-		
 //		init5DigitsOne2Ten();
 	}
-	
 
-	
+
+
 
 
 	private void initSysCode() {
@@ -78,9 +89,38 @@ public class SysInitLoader {
 		initWithdrawalCfg();
 		initDemoUserCfg();
 		initPanKou();
+		initPlayTypeNum();
 	}
 	
 	
+
+
+	private void initPlayTypeNum() {
+		String codeTypeName = Constants.KEY_PLAY_TYPE_NUM;
+		Map<String, Map<String, Map<String, PlayTypeNum>>> lotteryTypePlayTypeNums = cacheServ.queryPlayTypeNum(codeTypeName);
+		
+		if(MapUtils.isEmpty(lotteryTypePlayTypeNums)) {
+			Map<String, Map<String, Map<String, PlayTypeNum>>> lotteryTypePlayTypeNums_ = new HashMap<String, Map<String, Map<String, PlayTypeNum>>>();
+			List<PlayType> tc3PlayTypes = playTypeServ.queryPlayType(LottoType.TC3.name());
+			List<PlayType> fc3dPlayTypes = playTypeServ.queryPlayType(LottoType.FC3D.name());
+			tc3PlayTypes.addAll(fc3dPlayTypes);
+			
+			tc3PlayTypes.forEach(playType->{
+				List<PlayTypeNum> playTypeNumInList = playTypeNumServ.queryPlayTypeNum(new Long(playType.getId()));
+				Map<String, PlayTypeNum> playTypeNumInMap = playTypeNumInList.stream().collect(Collectors.toMap(PlayTypeNum::getBetNum,Function.identity()));
+				Map<String, Map<String, PlayTypeNum>> playTypePlayTypeNums = Optional.ofNullable(lotteryTypePlayTypeNums_.get(playType.getLotteryType())).orElse(new HashMap<String, Map<String, PlayTypeNum>>());
+				if(playTypePlayTypeNums.size() == 0)
+					lotteryTypePlayTypeNums_.put(playType.getLotteryType(), playTypePlayTypeNums);
+					
+				playTypePlayTypeNums.put(playType.getClassification(), playTypeNumInMap);
+			});
+			
+			cacheServ.setPlayTypeNum(codeTypeName, lotteryTypePlayTypeNums_);
+		}
+	}
+
+
+
 
 
 	//加载签到活动

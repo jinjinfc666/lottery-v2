@@ -72,16 +72,6 @@ public class UserInfoExtDaoImpl extends DefaultGenericDaoImpl<UserInfoExt> imple
 				this.saveOrUpdate(ext);
 			}
 			
-			if(user.getIsHiddenPlan() != null) {
-				ext = new UserInfoExt();
-				ext.setUserId(user.getId());
-				ext.setExtFieldName("isHiddenPlan");
-				ext.setExtFieldVal(String.valueOf(user.getIsHiddenPlan()));
-				ext.setCreateTime(today);
-					
-				this.saveOrUpdate(ext);
-			}
-			
 			if(user.getZcAmount() != null){
 				ext = new UserInfoExt();
 				ext.setUserId(user.getId());
@@ -101,6 +91,16 @@ public class UserInfoExtDaoImpl extends DefaultGenericDaoImpl<UserInfoExt> imple
 					
 				this.saveOrUpdate(ext);
 			}
+			
+			if(user.getUsedCreditAmount() != null){
+				ext = new UserInfoExt();
+				ext.setUserId(user.getId());
+				ext.setExtFieldName("usedCreditAmount");
+				ext.setExtFieldVal(String.valueOf(user.getUsedCreditAmount()));
+				ext.setCreateTime(today);
+					
+				this.saveOrUpdate(ext);
+			}
 		}else {
 			for(UserInfoExt ext_ : exts) {
 				if(ext_.getExtFieldName().equals("panKou") && user.getPanKou() != null) {
@@ -113,14 +113,14 @@ public class UserInfoExtDaoImpl extends DefaultGenericDaoImpl<UserInfoExt> imple
 				}else if(ext_.getExtFieldName().equals("xyPayoutRate")) {
 					ext_.setExtFieldVal(String.valueOf(user.getXyPayoutRate()));
 					this.saveOrUpdate(ext_);
-				}else if(ext_.getExtFieldName().equals("isHiddenPlan")) {
-					ext_.setExtFieldVal(String.valueOf(user.getIsHiddenPlan()));
-					this.saveOrUpdate(ext_);
 				}else if(ext_.getExtFieldName().equals("zcAmount") && user.getZcAmount() != null) {
 					ext_.setExtFieldVal(String.valueOf(user.getZcAmount().multiply(new BigDecimal(0.01))));
 					this.saveOrUpdate(ext_);
 				}else if(ext_.getExtFieldName().equals("tsAmount") && user.getTsAmount() != null) {
 					ext_.setExtFieldVal(String.valueOf(user.getTsAmount().multiply(new BigDecimal(0.01))));
+					this.saveOrUpdate(ext_);
+				}else if(ext_.getExtFieldName().equals("usedCreditAmount") && user.getUsedCreditAmount() != null) {
+					ext_.setExtFieldVal(String.valueOf(user.getUsedCreditAmount()));
 					this.saveOrUpdate(ext_);
 				}
 			}

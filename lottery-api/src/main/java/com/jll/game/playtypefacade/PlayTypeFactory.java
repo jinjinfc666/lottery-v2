@@ -4,6 +4,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.jll.game.playtype.PlayTypeFacade;
+import com.jll.game.playtypefacade.tc3.BdwQyPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.BwDsPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.BwDxPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.BwSZPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.BwZhPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.EwhsBgDsPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.EwhsBsDsPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.EwhsSgDsPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.GwDsPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.GwDxPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.GwSZPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.GwZhPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.SwDsPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.SwDxPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.SwSZPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.SwZhPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.SwhsDsPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.SwhsDxPlayTypeFacadeImpl;
 
 public class PlayTypeFactory {
 
@@ -113,6 +131,29 @@ public class PlayTypeFactory {
 		Pk10Dx9PlayTypeFacadeImpl pk10Dx9PlayTypeFacadeImpl = new Pk10Dx9PlayTypeFacadeImpl();
 		Pk10Dx10PlayTypeFacadeImpl pk10Dx10PlayTypeFacadeImpl = new Pk10Dx10PlayTypeFacadeImpl();
 		
+		BdwQyPlayTypeFacadeImpl tc3BdwQyPlayTypeFacadeImpl = new BdwQyPlayTypeFacadeImpl();
+		EwhsBgDsPlayTypeFacadeImpl tc3EwhsBgDsPlayTypeFacadeImpl = new EwhsBgDsPlayTypeFacadeImpl();
+		EwhsBsDsPlayTypeFacadeImpl tc3EwhsBsDsPlayTypeFacadeImpl = new EwhsBsDsPlayTypeFacadeImpl();
+		EwhsSgDsPlayTypeFacadeImpl tc3EwhsSgDsPlayTypeFacadeImpl = new EwhsSgDsPlayTypeFacadeImpl();
+		SwhsDsPlayTypeFacadeImpl tc3SwhsDsPlayTypeFacadeImpl = new SwhsDsPlayTypeFacadeImpl();
+		SwhsDxPlayTypeFacadeImpl tc3SwhsDxPlayTypeFacadeImpl = new SwhsDxPlayTypeFacadeImpl();
+		
+		BwDsPlayTypeFacadeImpl tc3BwDsPlayTypeFacadeImpl = new BwDsPlayTypeFacadeImpl();
+		BwDxPlayTypeFacadeImpl tc3BwDxPlayTypeFacadeImpl = new BwDxPlayTypeFacadeImpl();
+		BwZhPlayTypeFacadeImpl tc3BwZhPlayTypeFacadeImpl = new BwZhPlayTypeFacadeImpl();
+		
+		SwDsPlayTypeFacadeImpl tc3SwDsPlayTypeFacadeImpl = new SwDsPlayTypeFacadeImpl();
+		SwDxPlayTypeFacadeImpl tc3SwDxPlayTypeFacadeImpl = new SwDxPlayTypeFacadeImpl();
+		SwZhPlayTypeFacadeImpl tc3SwZhPlayTypeFacadeImpl = new SwZhPlayTypeFacadeImpl();
+		
+		GwDsPlayTypeFacadeImpl tc3GwDsPlayTypeFacadeImpl = new GwDsPlayTypeFacadeImpl();
+		GwDxPlayTypeFacadeImpl tc3GwDxPlayTypeFacadeImpl = new GwDxPlayTypeFacadeImpl();
+		GwZhPlayTypeFacadeImpl tc3GwZhPlayTypeFacadeImpl = new GwZhPlayTypeFacadeImpl();
+		
+		BwSZPlayTypeFacadeImpl tc3BwSZPlayTypeFacadeImpl = new BwSZPlayTypeFacadeImpl();
+		SwSZPlayTypeFacadeImpl tc3SwSZPlayTypeFacadeImpl = new SwSZPlayTypeFacadeImpl();
+		GwSZPlayTypeFacadeImpl tc3GwSZPlayTypeFacadeImpl = new GwSZPlayTypeFacadeImpl();
+		
 		playTypeFacades.add(qszxPlayTypeFacadeImpl);
 		playTypeFacades.add(qszxDsPlayTypeFacadeImpl);
 		playTypeFacades.add(zszxPlayTypeFacadeImpl);
@@ -210,6 +251,33 @@ public class PlayTypeFactory {
 		playTypeFacades.add(pk10Dx8PlayTypeFacadeImpl);
 		playTypeFacades.add(pk10Dx9PlayTypeFacadeImpl);
 		playTypeFacades.add(pk10Dx10PlayTypeFacadeImpl);
+		
+		playTypeFacades.add(tc3BdwQyPlayTypeFacadeImpl);
+		playTypeFacades.add(tc3EwhsBsDsPlayTypeFacadeImpl);
+		playTypeFacades.add(tc3EwhsBgDsPlayTypeFacadeImpl);
+		playTypeFacades.add(tc3EwhsSgDsPlayTypeFacadeImpl);
+		playTypeFacades.add(tc3SwhsDsPlayTypeFacadeImpl);
+		playTypeFacades.add(tc3SwhsDxPlayTypeFacadeImpl);
+		
+		
+		
+		
+		playTypeFacades.add(tc3BwDsPlayTypeFacadeImpl);
+		playTypeFacades.add(tc3BwDxPlayTypeFacadeImpl);
+		playTypeFacades.add(tc3BwZhPlayTypeFacadeImpl);
+		playTypeFacades.add(tc3SwDsPlayTypeFacadeImpl);
+		playTypeFacades.add(tc3SwDxPlayTypeFacadeImpl);
+		playTypeFacades.add(tc3SwZhPlayTypeFacadeImpl);
+		
+		playTypeFacades.add(tc3GwDsPlayTypeFacadeImpl);
+		playTypeFacades.add(tc3GwDxPlayTypeFacadeImpl);
+		playTypeFacades.add(tc3GwZhPlayTypeFacadeImpl);
+		
+		
+		playTypeFacades.add(tc3BwSZPlayTypeFacadeImpl);
+		playTypeFacades.add(tc3SwSZPlayTypeFacadeImpl);
+		playTypeFacades.add(tc3GwSZPlayTypeFacadeImpl);
+		
 	}
 	
 	public static PlayTypeFactory getInstance() {

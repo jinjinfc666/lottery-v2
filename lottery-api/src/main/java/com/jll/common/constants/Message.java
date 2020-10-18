@@ -137,6 +137,7 @@ public class Message {
 		ERROR_GAME_ORDER_NO_DRAW("030016", "The order corresponding to this order has not yet been awarded, so it is impossible to make a manual award!!!"),
 		ERROR_GAME_ORDER_DOES_NOT_EXIST("030017", "Order does not exist!!!"),
 		ERROR_GAME_PAYOUT_UP_LIMIT("030018", "Pay out up to limit!!!"),
+		ERROR_GAME_ORDER_ERROR_RATE("030019", "Rate is invalid!!!"),
 		
 		/*** system model****/
 		ERROR_MESSAGE_TITLE_IS_EMPTY("040001", "Message title is empty!!"),

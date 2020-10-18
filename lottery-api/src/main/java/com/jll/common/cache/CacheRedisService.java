@@ -12,6 +12,7 @@ import com.jll.entity.OrderInfo;
 import com.jll.entity.PayChannel;
 import com.jll.entity.PayType;
 import com.jll.entity.PlayType;
+import com.jll.entity.PlayTypeNum;
 import com.jll.entity.SysCode;
 import com.jll.entity.UserInfo;
 import com.jll.entity.display.UserPushCache;
@@ -227,4 +228,26 @@ public interface CacheRedisService {
 	 * @param oriSysCode
 	 */
 	void updateSysCode(String bigCodeName, SysCode sysCode1, SysCode oriSysCode);
+
+	/**
+	 * query all play type numbers of specified lottery type
+	 * @param string
+	 * @return
+	 */
+	Map<String, PlayTypeNum> queryPlayTypeNum(String lotteryType, String keyPlayTypeNum);
+
+	/**
+	 * query all play type numbers
+	 * @param codeTypeName
+	 * @return
+	 */
+	Map<String, Map<String, Map<String, PlayTypeNum>>> queryPlayTypeNum(String codeTypeName);
+
+	/**
+	 * store all bet num to cache
+	 * @param codeTypeName
+	 * @param lotteryTypePlayTypeNums
+	 */
+	void setPlayTypeNum(String codeTypeName,
+			Map<String, Map<String, Map<String, PlayTypeNum>>> lotteryTypePlayTypeNums);
 }

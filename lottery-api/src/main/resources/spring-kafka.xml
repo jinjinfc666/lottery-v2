@@ -18,6 +18,8 @@
 		     	<entry key="buffer.memory" value="33554432"/>
 		     	<entry key="key.serializer" value="org.apache.kafka.common.serialization.IntegerSerializer"/>
 		     	<entry key="value.serializer" value="org.apache.kafka.common.serialization.StringSerializer"/>
+		     	<entry key="key.deserializer" value="org.apache.kafka.common.serialization.StringDeserializer" />
+         <entry key="value.deserializer" value="org.apache.kafka.common.serialization.StringDeserializer" />
      		</map>
      	</constructor-arg>
      </bean>

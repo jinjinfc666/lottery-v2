@@ -12,11 +12,11 @@
 	<bean id="lotteryCenterServiceImpl" class="com.jll.game.LotteryCenterServiceImpl">
 	</bean>
 	
-	<bean id="statProfitServiceImpl" class="com.jll.stat.StatProfitServiceImpl">
-	</bean>
+	<!-- <bean id="statProfitServiceImpl" class="com.jll.stat.StatProfitServiceImpl">
+	</bean> -->
 
-	<bean id="settlementServiceImpl" class="com.jll.settlement.SettlementServiceImpl">
-	</bean>
+	<!-- <bean id="settlementServiceImpl" class="com.jll.settlement.SettlementServiceImpl">
+	</bean> -->
 	
 	<bean id="makeAPlanJobDetail"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
@@ -30,11 +30,11 @@
 		<property name="targetMethod" value="exeScheduleIssue" />
 	</bean>
 		
-	<bean id="statProfitServiceImplJobDetail"
+	<!-- <bean id="statProfitServiceImplJobDetail"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject" ref="statProfitServiceImpl" />
 		<property name="targetMethod" value="exeStatistic" />
-	</bean>
+	</bean> -->
 	
 	<bean id="settlementServiceImplJobDetail"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
@@ -57,11 +57,11 @@
 	</bean>
 	
 	
-	<bean id="statProfitServiceImplJobDetailCtronTrigger"
+	<!-- <bean id="statProfitServiceImplJobDetailCtronTrigger"
 		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
 		<property name="jobDetail" ref="statProfitServiceImplJobDetail"/>
 		<property name="cronExpression" value="0 0/1 * * * ?" />
-	</bean>
+	</bean> -->
 	
 	<bean id="settlementServiceImplJobDetailCtronTrigger"
 		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
@@ -74,8 +74,8 @@
 			<list>
 				<ref bean="makeAPlanTrigger"/>
 				<ref bean="processScheduleIssueCronTrigger"/>
-				<ref bean="statProfitServiceImplJobDetailCtronTrigger"/>
-				<ref bean="settlementServiceImplJobDetailCtronTrigger"/>
+				<!-- <ref bean="statProfitServiceImplJobDetailCtronTrigger"/> -->
+				<!-- <ref bean="settlementServiceImplJobDetailCtronTrigger"/> -->
 			</list>
 		</property>
 	</bean>

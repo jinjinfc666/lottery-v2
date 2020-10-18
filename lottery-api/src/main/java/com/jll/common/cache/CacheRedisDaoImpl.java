@@ -19,6 +19,7 @@ import com.jll.entity.Issue;
 import com.jll.entity.PayChannel;
 import com.jll.entity.PayType;
 import com.jll.entity.PlayType;
+import com.jll.entity.PlayTypeNum;
 import com.jll.entity.SysCode;
 import com.jll.entity.display.UserPushCache;
 import com.jll.game.BulletinBoard;
@@ -411,5 +412,19 @@ public class CacheRedisDaoImpl  extends AbstractBaseRedisDao implements CacheRed
 	@Override
 	public void deleteSysCode(String key) {
 		this.delete(key);
+	}
+
+	@Override
+	public CacheObject<Map<String, Map<String, Map<String, PlayTypeNum>>>> getPlayTypeNum(String keyPlayTypeNum) {
+		CacheObject<Map<String, Map<String, Map<String, PlayTypeNum>>>> cacheObject = get(keyPlayTypeNum);
+		if(cacheObject==null) {
+			return null;
+		}
+		return cacheObject;
+	}
+
+	@Override
+	public void setPlayTypeNum(CacheObject<Map<String, Map<String, Map<String, PlayTypeNum>>>> cacheObj) {
+		this.saveOrUpdate(cacheObj);
 	}
 }

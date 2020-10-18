@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.jll.entity.PlayType;
+import com.jll.entity.PlayTypeNum;
+import com.jll.entity.display.BitColumn;
 
 public interface PlayTypeService
 {
@@ -35,4 +37,16 @@ public interface PlayTypeService
 	boolean isNoPlayType(Integer id);
 	//修改排序
 	Map<String,Object> updatePlayTypeSeq(String lotteryType,String allId);
+
+	List<List<PlayTypeNum>> queryMainPs(String lotteryType);
+
+	List<List<PlayTypeNum>> queryMainPsHs(String lotteryType);
+
+	List<BitColumn> queryMainPsDwd(String lotteryType);
+
+	List<List<PlayTypeNum>> queryBwsz(String lotteryType);
+
+	List<List<PlayTypeNum>> querySwsz(String lotteryType);
+	
+	List<List<PlayTypeNum>> queryGwsz(String lotteryType);
 }

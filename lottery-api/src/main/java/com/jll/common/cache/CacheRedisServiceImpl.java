@@ -29,6 +29,7 @@ import com.jll.entity.OrderInfo;
 import com.jll.entity.PayChannel;
 import com.jll.entity.PayType;
 import com.jll.entity.PlayType;
+import com.jll.entity.PlayTypeNum;
 import com.jll.entity.SysCode;
 import com.jll.entity.UserInfo;
 import com.jll.entity.display.UserPushCache;
@@ -251,7 +252,7 @@ public class CacheRedisServiceImpl implements CacheRedisService
 		PlayType playType = null;
 		String playTypeName = null;
 		Map<String, Object> params = new HashMap<>();		
-		Map<String, Object> preBetResult = null;
+//		Map<String, Object> preBetResult = null;
 		String betNums = order.getBetNum();
 		//String[] betNumSet = null;
 		List<Map<String, String>> betNumMapping = null;
@@ -297,26 +298,24 @@ public class CacheRedisServiceImpl implements CacheRedisService
 				
 				Date startDate = new Date();
 				
-				params.put("betNum", betNums);
+				/*params.put("betNum", betNums);
 				params.put("times", order.getTimes());
 				params.put("monUnit", order.getPattern().floatValue());
 				params.put("lottoType", lotteryType);
 				
-				preBetResult = playTypeFacade.preProcessNumber(params, user);
+				preBetResult = playTypeFacade.preProcessNumber(params, user);*/
 				if(statInfo.get(Constants.KEY_ISSUE_TOTAL_BETTING_AMOUNT) == null) {
 					statInfo.put(Constants.KEY_ISSUE_TOTAL_BETTING_AMOUNT, 
-							preBetResult.get("betAmount"));
+							order.getBetAmount());
 				}else {
 					Float total = (Float)statInfo.get(Constants.KEY_ISSUE_TOTAL_BETTING_AMOUNT);
 					total = MathUtil.add(total, 
-							(Float)preBetResult.get("betAmount"), 
+							order.getBetAmount(), 
 							Float.class);
 					statInfo.put(Constants.KEY_ISSUE_TOTAL_BETTING_AMOUNT, 
 							total);
 				}		
 				
-				
-				preBetResult = null;
 				//TODO
 				for(Map<String, String> temp : betNumMapping) {
 					String betNumTemp = temp.get(Constants.KEY_FACADE_BET_NUM);
@@ -328,22 +327,23 @@ public class CacheRedisServiceImpl implements CacheRedisService
 					params.put("times", order.getTimes());
 					params.put("monUnit", order.getPattern().floatValue());
 					params.put("lottoType", lotteryType);
-					if(preBetResult == null) {
+					/*if(preBetResult == null) {
 						preBetResult = playTypeFacade.preProcessNumber(params, user);
-					}
+					}*/
 					
 					if(statInfo.get(pattern) != null) {
 						isExisting = true;
 					}
 					
+					Float maxWinAmount = MathUtil.multiply(order.getBetAmount(), order.getPrizeRate().floatValue(), Float.class);
 					if(isExisting) {
 						isExisting = false;				
 						statInfo.put(pattern, 
 								MathUtil.add((Float)statInfo.get(pattern), 
-										(Float)preBetResult.get("maxWinAmount"), 
+										maxWinAmount, 
 										Float.class));
 					}else {
-						statInfo.put(pattern, preBetResult.get("maxWinAmount"));
+						statInfo.put(pattern, maxWinAmount);
 					}
 					
 					/*if(statInfo.get(Constants.KEY_ISSUE_TOTAL_BETTING_AMOUNT) == null) {
@@ -922,5 +922,61 @@ public class CacheRedisServiceImpl implements CacheRedisService
 		cacheObject.setKey(bigCodeName);
 		
 		cacheDao.setSysCode(cacheObject);
+	}
+
+	@Override
+	public Map<String, PlayTypeNum> queryPlayTypeNum(String lotteryType, String keyPlayType) {
+		StringBuffer cacheKey = new StringBuffer();
+		CacheObject<Map<String,Map<String, Map<String, PlayTypeNum>>>> cacheObj = null;
+		
+		cacheKey.append(Constants.KEY_PLAY_TYPE_NUM);
+		
+		cacheObj = cacheDao.getPlayTypeNum(cacheKey.toString());
+		
+		if(cacheObj == null) {
+			return null;
+		}
+		
+		Map<String, Map<String, Map<String, PlayTypeNum>>> lotteryTypeMap = cacheObj.getContent();
+		Map<String, Map<String, PlayTypeNum>> playTypes = lotteryTypeMap.get(lotteryType);
+		Map<String, PlayTypeNum> playTypeNums = playTypes.get(keyPlayType);
+		return playTypeNums;
+	}
+
+	@Override
+	public void setPlayTypeNum(String codeTypeName,
+			Map<String, Map<String, Map<String, PlayTypeNum>>> lotteryTypePlayTypeNums) {
+		StringBuffer cacheKey = new StringBuffer();
+		cacheKey.append(codeTypeName);
+		
+		CacheObject<Map<String,Map<String, Map<String, PlayTypeNum>>>> cacheObj = null;
+		
+		cacheObj = cacheDao.getPlayTypeNum(cacheKey.toString());
+		
+		if(cacheObj == null) {
+			cacheObj= new CacheObject<>();
+		}
+		
+		cacheObj.setContent(lotteryTypePlayTypeNums);
+		cacheObj.setKey(cacheKey.toString());
+		cacheDao.setPlayTypeNum(cacheObj);
+	}
+
+	@Override
+	public Map<String, Map<String, Map<String, PlayTypeNum>>> queryPlayTypeNum(String codeTypeName) {
+		StringBuffer cacheKey = new StringBuffer();
+		cacheKey.append(codeTypeName);
+		
+		CacheObject<Map<String,Map<String, Map<String, PlayTypeNum>>>> cacheObj = null;
+		
+		cacheObj = cacheDao.getPlayTypeNum(cacheKey.toString());
+		
+		if(cacheObj == null) {
+			return null;
+		}
+		
+		Map<String, Map<String, Map<String, PlayTypeNum>>> lotteryTypeMap = cacheObj.getContent();
+		
+		return lotteryTypeMap;
 	}
 }

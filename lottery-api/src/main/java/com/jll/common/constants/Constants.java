@@ -134,6 +134,8 @@ public class Constants {
 	public final static String KEY_EXPERT_BETAMOUNT = "betAmount";
 	
 	public final static String KEY_WIN_NUMBER_5DIGITS_1_10 = "win_number_5digits_1_10";
+		
+	public final static String KEY_PLAY_TYPE_NUM = "play_type_num";
 	
 	public static enum DepositOrderState{
 		
@@ -670,6 +672,7 @@ public class Constants {
 		LOTTERY_CONFIG_XYFT("lottery_config_xyft"),//"PK10属性"
 		LOTTERY_CONFIG_XJSSC("lottery_config_xjssc"),//"PK10属性"
 		LOTTERY_CONFIG_YFB("lottery_config_yfb"),//1.5分彩
+		LOTTERY_CONFIG_TC3("lottery_config_tc3"),
 		SIGN_IN_DAY("sign_in_day"),
 		CT_PLAY_TYPE_CLASSICFICATION("ct_play_type_classicfication"),//"玩法类型"
 		WITHDRAWAL_CFG("withdrawal_cfg"),
@@ -2664,6 +2667,62 @@ public class Constants {
 		
 		public String getDesc() {
 			return this.desc;
+		}
+		
+		public static WalletState geByCode(int code) {
+			WalletState[] walStates = WalletState.values();
+			for(WalletState walState: walStates) {
+				if(walState.getCode() == code) {
+					return walState;
+				}
+			}
+			return null;
+		}
+	}
+	
+	public static enum PlayType{
+		BDW_YW_SZ(1, "bdw_yw_sz", "sz|数值/yw|一位/bdw|不定位"), 
+		EWHS_BS_DS(1, "ewhs_bs_ds", "ds|单双/bs|百十/ewhs|二位和数"), 
+		EWHS_BG_DS(1, "ewhs_bg_ds", "ds|单双/bg|百个/ewhs|二位和数"), 
+		EWHS_SG_DS(1, "ewhs_sg_ds", "ds|单双/sg|十个/ewhs|二位和数"), 
+		SWHS_DX(1, "swhs_dx", "dx|大小/swhs|三位和数"),
+		SWHS_DS(1, "swhs_ds", "ds|单双/swhs|三位和数"), 
+		YWDW_BW_DX(1, "ywdw_bw_dx", "dx|大小/bw|百位/ywdw|一位定位"), 
+		YWDW_BW_DS(1, "ywdw_bw_ds", "ds|单双/bw|百位/ywdw|一位定位"), 
+		YWDW_BW_ZH(1, "ywdw_bw_zh", "zh|质和/bw|百位/ywdw|一位定位"),
+		YWDW_BW_SZ(1, "ywdw_bw_sz", "sz|数值/bw|百位/ywdw|一位定位"),
+		YWDW_SW_DX(1, "ywdw_sw_dx", "dx|大小/sw|十位/ywdw|一位定位"), 
+		YWDW_SW_DS(1, "ywdw_sw_ds", "ds|单双/sw|十位/ywdw|一位定位"), 
+		YWDW_SW_ZH(1, "ywdw_sw_zh", "zh|质和/sw|十位/ywdw|一位定位"),
+		YWDW_SW_SZ(1, "ywdw_sw_sz", "sz|数值/sw|十位/ywdw|一位定位"),
+		YWDW_GW_DX(1, "ywdw_gw_dx", "dx|大小/gw|个位/ywdw|一位定位"), 
+		YWDW_GW_DS(1, "ywdw_gw_ds", "ds|单双/gw|个位/ywdw|一位定位"), 
+		YWDW_GW_ZH(1, "ywdw_gw_zh", "zh|质和/gw|个位/ywdw|一位定位"), 
+		YWDW_GW_SZ(1, "ywdw_gw_sz", "sz|数值/gw|个位/ywdw|一位定位"), 
+		;
+		
+		private int code;
+		
+		private String desc;
+		
+		private String name;
+		
+		private PlayType(int code, String name, String desc) {
+			this.code = code;
+			this.desc = desc;
+			this.name = name;
+		}
+		
+		public int getCode() {
+			return this.code;
+		}
+		
+		public String getDesc() {
+			return this.desc;
+		}
+		
+		public String getName(){
+			return this.name;
 		}
 		
 		public static WalletState geByCode(int code) {

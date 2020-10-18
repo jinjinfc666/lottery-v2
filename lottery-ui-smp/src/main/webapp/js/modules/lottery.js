@@ -356,128 +356,36 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 		var yfbHeaderOptions = ['冠军', '亚军', '季军', '第四名', '第五名', '第六名', '第七名', '第八名', '第九名', '第十名'];
 		var yfbDwdBettingValOptions = ['bettingVal,,,,,,,,,',',bettingVal,,,,,,,,',',,bettingVal,,,,,,,',',,,bettingVal,,,,,,',',,,,bettingVal,,,,,',',,,,,bettingVal,,,,',',,,,,,bettingVal,,,',',,,,,,,bettingVal,,',',,,,,,,,bettingVal,',',,,,,,,,,bettingVal'];
 		
-		$scope.initBettingNumUnauth = function(lotteryType, bitCounter){
-			$scope.bitNumArray = new Array();
-			var headerOptions = null;
-			var lotteryOptions = null;
-			var dwdBettingValOptions = null;
-			var bitNumBuffeKey = 'bitNumArray_' + lotteryType;
-			
-			if(lotteryType == 'cqssc'){
-				headerOptions = cqsscHeaderOptions;
-				lotteryOptions = cqsscOptions;
-				dwdBettingValOptions = cqsscDwdBettingValOptions;
-			}else if(lotteryType == 'xjssc'){
-				headerOptions = xjsscHeaderOptions;
-				lotteryOptions = xjsscOptions;
-				dwdBettingValOptions = xjsscDwdBettingValOptions;
-			}else if(lotteryType == 'bjpk10'){
-				headerOptions = bjpk10HeaderOptions;
-				lotteryOptions = bjpk10Options;
-			}else if(lotteryType == 'xyft'){
-				headerOptions = xyftHeaderOptions;
-				lotteryOptions = xyftOptions;
-			}else if(lotteryType == '5fc'){
-				headerOptions = fivefcHeaderOptions;
-				lotteryOptions = fivefcOptions;
-			}else if(lotteryType == 'yfb'){
-				headerOptions = yfbHeaderOptions;
-				lotteryOptions = yfbOptions;
-			}
-			
-			if(sessionStorage.getItem(bitNumBuffeKey) != null){
-				$scope.bitNumArray = JSON.parse(sessionStorage.getItem(bitNumBuffeKey));
-			}else{
-				for(var i = 0; i < bitCounter; i++){
-					var header = headerOptions[i];
-					//var bitNum = new Array();
-					var bitEle = {};
-					bitEle.header = header;
-					//bitEle.bitNum = bitNum;
-					bitEle.bitIndex = i;
-					
-					
-					var bettingNumers = new Array();
-					var bettingNumDx = new Array();
-					var bettingNumDs = new Array();
-					var bettingNumDwd = new Array();
-					
-					var bettingNumBig = {};
-					bettingNumBig.playTypeId = -1;
-					bettingNumBig.playTypeName = '';
-					bettingNumBig.bettingNumKey = '大';
-					bettingNumBig.bettingNumVal = 1;
-					bettingNumBig.prizeRate = '--';
-					bettingNumBig.isSm = true;
-					bettingNumBig.vClass = "{'ng-scope':true,'displaySm':isSmDisplay}";
-					bettingNumDx.push(bettingNumBig);
-					
-					var bettingNumSmall = {};
-					bettingNumSmall.playTypeId = -1;
-					bettingNumSmall.playTypeName = '';
-					bettingNumSmall.bettingNumKey = '小';
-					bettingNumSmall.bettingNumVal = 0;
-					bettingNumSmall.prizeRate = '--';
-					bettingNumSmall.isSm = true;
-					bettingNumSmall.vClass = "{'ng-scope':true,'displaySm':isSmDisplay}";
-					bettingNumDx.push(bettingNumSmall);		
-					
-					var bettingNumD = {};
-					bettingNumD.playTypeId = -1;
-					bettingNumD.playTypeName = '';
-					bettingNumD.bettingNumKey = '单';
-					bettingNumD.bettingNumVal = 1;
-					bettingNumD.prizeRate = '--';
-					bettingNumD.isSm = true;
-					bettingNumD.vClass = "{'ng-scope':true,'displaySm':isSmDisplay}";
-					bettingNumDs.push(bettingNumD);
-					
-					var bettingNumS = {};
-					bettingNumS.playTypeId = -1;
-					bettingNumS.playTypeName = '';
-					bettingNumS.bettingNumKey = '双';
-					bettingNumS.bettingNumVal = 0;
-					bettingNumS.prizeRate = '--';
-					bettingNumS.isSm = true;
-					bettingNumS.vClass = "{'ng-scope':true,'displaySm':isSmDisplay}";
-					bettingNumDs.push(bettingNumS);	
-					
-					
-					for(var ii = 0; ii< lotteryOptions.length; ii++){
-						var bettingNum = {};
-						bettingNum.playTypeId = -1;
-						bettingNum.playTypeName = '';
-						bettingNum.bettingNumKey = ''+lotteryOptions[ii];
-						bettingNum.bettingNumVal = lotteryOptions[ii];
-						bettingNum.prizeRate = '--';
-						bettingNum.isSm = false;
-						bettingNum.vClass = "{'ng-scope':true}";
-						bettingNumDwd.push(bettingNum);
-					}	
-					
-					for(var ii = 0; ii < bettingNumDx.length; ii++){
-						bettingNumers.push(bettingNumDx[ii]);
-					}
-					
-					for(var ii = 0; ii < bettingNumDs.length; ii++){
-						bettingNumers.push(bettingNumDs[ii]);
-					}
-					
-					for(var ii = 0; ii < bettingNumDwd.length; ii++){
-						bettingNumers.push(bettingNumDwd[ii]);
-					}
-					
-					bitEle.bitNum = bettingNumers;
-					//$scope.bettingNumers.bitNum = bettingNumers;
-					$scope.bitNumArray.push(bitEle);
-					
-					
-				}
-				
-				sessionStorage.setItem(bitNumBuffeKey, JSON.stringify($scope.bitNumArray));
-			}
+		var tc3Options = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+		var tc3HeaderOptions = ['百位', '十位', '个位'];
+		var tc3DwdBettingValOptions = ['bettingVal,,',',bettingVal,',',,bettingVal'];
+		
+//		$scope.initBettingNum = function(lotteryType, bitCounter){
+//			playgameService.queryMainPs(lotteryType, playTypeParams).then(function(ret){
+//				$scope.mainPs = ret.mainPs;
+//				$scope.hs = ret.hs;
+//				$scope.dwd = ret.dwd;
+//			});
+//				
+//			sessionStorage.setItem(bitNumBuffeKey, JSON.stringify($scope.bitNumArray));
+//		};
+		
+		$scope.queryMainPs = function(lotteryType){
+			playgameService.queryMainPs(lotteryType).then(function(ret){
+				$scope.mainPs = ret.mainPs;
+				$scope.hs = ret.hs;
+				$scope.dwd = ret.dwd;
+			});
 		};
-				
+		
+		$scope.queryYzps = function(lotteryType){
+			playgameService.queryYzps(lotteryType).then(function(ret){
+				$scope.mainPs = ret.mainPs;
+				$scope.bwsz = ret.bwsz;
+				$scope.swsz = ret.swsz;
+				$scope.gwsz = ret.gwsz;
+			});
+		};
 		$scope.initBettingNumAuth = function(lotteryType, bitCounter){
 			$scope.bitNumArray = new Array();
 			var headerOptions = null;
@@ -502,7 +410,8 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 				
 			}else if(lotteryType == 'yfb'){
 				headerOptions = yfbHeaderOptions;
-				//lotteryOptions = yfbOptions;
+			}else if(lotteryType == 'tc3'){
+				headerOptions = tc3HeaderOptions;
 			}
 			
 			if(sessionStorage.getItem(bitNumBuffeKey) != null){
@@ -694,6 +603,9 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 								}else if(lotteryType == 'yfb'){
 									lotteryOptions = yfbOptions;
 									dwdBettingValOptions = yfbDwdBettingValOptions;
+								}else if(lotteryType == 'tc3'){
+									lotteryOptions = tc3Options;
+									dwdBettingValOptions = tc3DwdBettingValOptions;
 								}
 								
 								for(var i = 0; i< lotteryOptions.length; i++){
@@ -833,6 +745,9 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 								}else if(lotteryType == 'yfb'){
 									headerOptions = yfbHeaderOptions;
 									lotteryOptions = yfbOptions;
+								}else if(lotteryType == 'tc3'){
+									headerOptions = tc3HeaderOptions;
+									lotteryOptions = tc3Options;
 								}
 								
 								for(var i = 0; i< lotteryOptions.length; i++){
@@ -971,43 +886,31 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 			
 			
 			if(myevent.target.tagName != 'TD'){
-				selFlag = $(myevent.target.parentElement).parents("tr").attr("data-sel");
-				dataBit = $(myevent.target.parentElement).parents("tr").attr("data-bit");
-				dataIndex = $(myevent.target.parentElement).parents("tr").attr("data-index");
-				
-				if(selFlag == '0'){
-					$(myevent.target.parentElement).parents("tr").attr("data-sel", '1');
-					$(myevent.target.parentElement).parents("tr").addClass('selNumBg');
-					
-					
-					if(typeof presetMoney != 'undefined'
-						&& presetMoney.length > 0){
-						$('#'+dataBit+'_'+dataIndex+'_betAmount').val(presetMoney);
-					}
-				}else{
-					$(myevent.target.parentElement).parents("tr").attr("data-sel", '0');
-					$(myevent.target.parentElement).parents("tr").removeClass('selNumBg');
-					$('#'+dataBit+'_'+dataIndex+'_betAmount').val('');
-				}
-
-				
+				dataUnit = $(myevent.target.parentElement).attr("data-unit");
 			}else{
-				selFlag = $(myevent.target.parentElement).attr("data-sel");
-				dataBit = $(myevent.target.parentElement).attr("data-bit");
-				dataIndex = $(myevent.target.parentElement).attr("data-index");				
-				if(selFlag == '0'){
-					$(myevent.target.parentElement).attr("data-sel", '1');
-					$(myevent.target.parentElement).addClass('selNumBg');
-					
-					if(typeof presetMoney != 'undefined'
-						&& presetMoney.length > 0){
-						$('#'+dataBit+'_'+dataIndex+'_betAmount').val(presetMoney);
-					}
-				}else{
-					$(myevent.target.parentElement).attr("data-sel", '0');
-					$(myevent.target.parentElement).removeClass('selNumBg');
-					$('#'+dataBit+'_'+dataIndex+'_betAmount').val('');
+				dataUnit = $(myevent.target).attr("data-unit");				
+			}
+			
+			selFlag = $('#'+dataUnit).attr("data-sel");
+			dataBit = $('#'+dataUnit).attr("data-bit");
+			dataIndex = $('#'+dataUnit).attr("data-index");
+			
+			if(selFlag == '0'){
+				$('#'+dataUnit).attr("data-sel", '1');
+				$("td[data-unit="+dataUnit +"]").each(function(){
+					$(this).addClass('selNumBg');						
+				});
+				
+				if(typeof presetMoney != 'undefined'
+					&& presetMoney.length > 0){
+					$('#'+dataBit+'_'+dataIndex+'_betAmount').val(presetMoney);
 				}
+			}else{
+				$('#'+dataUnit).attr("data-sel", '0');
+				$('#'+dataBit+'_'+dataIndex+'_betAmount').val('');
+				$("td[data-unit="+dataUnit +"]").each(function(){
+					$(this).removeClass('selNumBg');						
+				});
 			}
 			
 		};
@@ -1055,14 +958,14 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 			
 			issueId = bulletinBoard.currIssue.id;
 			
-			$('tr.ng-scope[data-sel="1" ]').each(function(){
+			$('td[data-sel="1" ]').each(function(){
 				bet = {};
 				var selFlag = $(this).attr("data-sel");
-				var dataBit = $(this).attr("data-bit");
-				var dataIndex = $(this).attr("data-index");
+				var dataUnit = $(this).attr("data-unit");
 				var betNum = $(this).attr("data-bettingNum");
 				var playTypeId = $(this).attr("data-play");
-				var betAmount = $('#'+dataBit+'_'+dataIndex+'_betAmount').val();
+				var betAmount = $('#'+dataUnit+'_betAmount').val();
+				var odds = $(this).attr("data_odds");
 				times = betAmount / pattern;
 				bet.issueId = issueId;
 				bet.playType = playTypeId;
@@ -1071,6 +974,8 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 				bet.pattern = pattern;
 				bet.isZh = isZh;
 				bet.terminalType = terminalType;
+				bet.prizeRate = odds;
+				bet.betAmount = betAmount;
 				
 				if(typeof betAmount == 'undefined' 
 					|| betAmount == null
@@ -1192,6 +1097,14 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 			    				numberDes = '季军';
 			    			}else{
 			    				numberDes = '第' + number + '名';
+			    			}
+			    		}else if(lotteryType == 'tc3'){
+			    			if(number == '一'){
+			    				numberDes = '百位';
+			    			}else if(number == '二'){
+			    				numberDes = '十位';
+			    			}else if(number == '三'){
+			    				numberDes = '个位';
 			    			}
 			    		}
 			    		codeVal = codeVal.replace('{number}', numberDes);
@@ -2288,6 +2201,52 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
     	return deferred.promise;
     };
     
+    
+	
+    this.queryMainPs = function(lotteryType){
+    	var deferred = $q.defer();
+    	    	 
+    	var queryMainPsURL_ = queryMainPsURL.replace('{lotteryType}', lotteryType);
+    	var ret = {};
+    	/*ret.mainPs = bitNum;
+    	ret.hs = playType;
+    	ret.dwd = bitName;*/
+    	    	
+    	$http.get(queryMainPsURL_).then(function(res){
+    		if (res.data.status == 1) {
+    			ret.mainPs = res.data.data.mainPs;
+    	    	ret.hs = res.data.data.hs;;
+    	    	ret.dwd = res.data.data.dwd;
+    	    	ret.status= res.data.status;
+	        }
+    		deferred.resolve(ret);
+    	}, function(){
+    		deferred.reject(ret);
+    	});
+    	
+    	return deferred.promise;
+    };
+    
+    this.queryYzps = function(lotteryType){
+    	var deferred = $q.defer();
+    	    	 
+    	var queryYzpsURL_ = queryYzpsURL.replace('{lotteryType}', lotteryType);
+    	var ret = {};
+    	    	
+    	$http.get(queryYzpsURL_).then(function(res){
+    		if (res.data.status == 1) {
+    			ret.mainPs = res.data.data.mainPs;
+    			ret.bwsz = res.data.data.bwsz;
+    			ret.swsz = res.data.data.swsz;
+    			ret.gwsz = res.data.data.gwsz;
+	        }
+    		deferred.resolve(ret);
+    	}, function(){
+    		deferred.reject(ret);
+    	});
+    	
+    	return deferred.promise;
+    };
     
     }
 ]).service('hisRecService', ["$http", "$q", function ($http, $q) {

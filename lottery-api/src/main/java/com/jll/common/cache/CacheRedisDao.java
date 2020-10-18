@@ -9,6 +9,7 @@ import com.jll.entity.Issue;
 import com.jll.entity.PayChannel;
 import com.jll.entity.PayType;
 import com.jll.entity.PlayType;
+import com.jll.entity.PlayTypeNum;
 import com.jll.entity.SysCode;
 import com.jll.entity.display.UserPushCache;
 import com.jll.game.BulletinBoard;
@@ -128,5 +129,9 @@ public interface CacheRedisDao {
 	void set5DigitsOne2TenNumbers(CacheObject<List<String>> cacheObj);
 
 	void deleteSysCode(String key);
+
+	CacheObject<Map<String, Map<String, Map<String, PlayTypeNum>>>> getPlayTypeNum(String keyPlayTypeNum);
+
+	void setPlayTypeNum(CacheObject<Map<String, Map<String, Map<String, PlayTypeNum>>>> cacheObj);
 }
 

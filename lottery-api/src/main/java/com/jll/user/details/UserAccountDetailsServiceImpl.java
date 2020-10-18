@@ -1,5 +1,6 @@
 package com.jll.user.details;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
@@ -39,6 +40,7 @@ public class UserAccountDetailsServiceImpl implements UserAccountDetailsService
 	@Override
 	public void saveAccDetails(UserAccountDetails userDetails) {
 		accDetailsDao.saveAccDetails(userDetails);
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
 		ObjectMapper mapper = new ObjectMapper();
 		String msg = null;
@@ -47,9 +49,11 @@ public class UserAccountDetailsServiceImpl implements UserAccountDetailsService
 			kafkaTemplate.send(KafkaTopics.ACCOUNT_DETAILS.getDesc(), msg);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
-			logger.error(String.format("topic {} msg {} can't sent to kafka",
+			logger.error(String.format("topic %s userAccountDetails id %s,userId %s,  can't sent to kafka",
 					KafkaTopics.ACCOUNT_DETAILS.getDesc(),
-					msg == null?"null":msg));
+					userDetails.getId(),
+					userDetails.getUserId(),
+					format.format(userDetails.getCreateTime())));
 		}
 		
 	}

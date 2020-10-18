@@ -224,10 +224,7 @@ public class OrderServiceImpl implements OrderService
 			cacheServ.publishMessage(Constants.TOPIC_WINNING_NUMBER, message);
 
 		}
-		
-		//在用户开启专家推荐号码服务的情况下需要修改推荐次数
-		expertServ.updateExpertPushTimes(user, lotteryType);
-		
+				
 		return String.valueOf(Message.status.SUCCESS.getCode());
 	}
 
@@ -282,8 +279,8 @@ public class OrderServiceImpl implements OrderService
 		Integer playTypeId = null;
 		PlayType playType = null;
 		String playTypeName = null;
-		Map<String, Object> params = null;
-		Map<String, Object> betInfo = null;
+//		Map<String, Object> params = null;
+//		Map<String, Object> betInfo = null;
 		boolean isBetNumValid = false;
 		
 		for(OrderInfo order : orders) {
@@ -313,22 +310,24 @@ public class OrderServiceImpl implements OrderService
 				return String.valueOf(Message.Error.ERROR_GAME_INVALID_BET_NUM.getCode());
 			}
 			
-			params = new HashMap<>();
+			/*params = new HashMap<>();
 			params.put("betNum", order.getBetNum());
 			params.put("times", order.getTimes());
 			params.put("monUnit", order.getPattern().floatValue());
-			params.put("lottoType", lotteryType);
+			params.put("lottoType", lotteryType);*/
 			
-			betInfo = playTypeFacade.preProcessNumber(params, user);
-			order.setBetAmount((Float)betInfo.get("betAmount"));
-			order.setBetTotal((Integer)betInfo.get("betTotal"));
-			order.setPrizeRate((BigDecimal)betInfo.get("singleBettingPrize"));
+//			betInfo = playTypeFacade.preProcessNumber(params, user);
+//			order.setBetAmount((Float)betInfo.get("betAmount"));
+//			order.setBetTotal((Integer)betInfo.get("betTotal"));
+//			order.setPrizeRate((BigDecimal)betInfo.get("singleBettingPrize"));
 			
 			BigDecimal betAmount = new BigDecimal(order.getBetAmount());
 			totalAmount = totalAmount.add(betAmount);
 		}
 		
-		return (bal.compareTo(totalAmount) == 1 || bal.compareTo(totalAmount) == 0)?String.valueOf(Message.status.SUCCESS.getCode()):String.valueOf(Message.Error.ERROR_GAME_BAL_INSUFFICIENT.getCode());
+		return (bal.compareTo(totalAmount) >= 0)
+				?String.valueOf(Message.status.SUCCESS.getCode())
+				:String.valueOf(Message.Error.ERROR_GAME_BAL_INSUFFICIENT.getCode());
 	}
 	
 	private Issue verifyIssueCache(Integer issueId,String lotteryType) {

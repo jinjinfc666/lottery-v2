@@ -1,4 +1,4 @@
-var SITE="http://localhost:8080/lottery-api";
+var SITE="http://localhost/lottery-api";
 //var SITE="http://miss369.com/lottery-api";
 //var SITE="http://192.168.1.9/lottery-api";
 
@@ -50,8 +50,6 @@ var queryLotterysURL = SITE+"/settingPlayType/lotteTypes";
 
 var queryPrizeRateURL = SITE+"/lotteries/{lotteryType}/play-type/{playType}/prize-rates";
 
-var queryExpertPushNumURL = SITE+"/experts/push-numbers";
-
 var cancelOrderURL = SITE+"/users/cancel/bet-order";
 
 var regUserURL = SITE+"/users/self/players";
@@ -72,7 +70,9 @@ var queryBankURL = SITE+"/settings/queryBankCodeList";
 
 var withdrawURL = SITE+"/users/withdraw/apply";
 
-var queryZhIssueURL = SITE+"/issues/IsZhIssues?lotteryType={lotoType}";
+var queryMainPsURL = SITE+"/lotteries/{lotteryType}/play-type/main-ps";
+
+var queryYzpsURL = SITE+"/lotteries/{lotteryType}/play-type/yzps";
 
 //弹出框口
 function openWin(tip) {

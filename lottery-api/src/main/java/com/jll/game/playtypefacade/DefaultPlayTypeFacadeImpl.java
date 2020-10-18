@@ -28,9 +28,9 @@ public abstract class DefaultPlayTypeFacadeImpl implements PlayTypeFacade {
 	
 	protected String playTypeDesc = null;
 	
-	CacheRedisService cacheServ = (CacheRedisService)SpringContextUtil.getBean("cacheRedisServiceImpl");
+	protected CacheRedisService cacheServ = (CacheRedisService)SpringContextUtil.getBean("cacheRedisServiceImpl");
 	
-	UserInfoService userServ = (UserInfoService)SpringContextUtil.getBean("userInfoServiceImpl");
+	protected UserInfoService userServ = (UserInfoService)SpringContextUtil.getBean("userInfoServiceImpl");
 	
 	@Override
 	public String getPlayTypeDesc() {

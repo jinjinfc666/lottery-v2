@@ -1,5 +1,6 @@
 package com.jll.game.playtype;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -15,8 +16,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jll.common.cache.CacheRedisService;
+import com.jll.common.constants.Constants;
 import com.jll.common.constants.Message;
 import com.jll.entity.PlayType;
+import com.jll.entity.PlayTypeNum;
+import com.jll.entity.display.BitColumn;
 
 @Configuration
 @PropertySource("classpath:sys-setting.properties")
@@ -220,6 +224,240 @@ public class PlayTypeServiceImpl implements PlayTypeService
 			map.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_ERROR_PARAMS.getErrorMes());
 			return map;
 		}
+	}
+	@Override
+	public List<List<PlayTypeNum>> queryMainPs(String lotteryType) {
+		String playType = Constants.PlayType.BDW_YW_SZ.getDesc();
+		List<List<PlayTypeNum>> ret = new ArrayList<>();
+		Map<String, PlayTypeNum> playTypeNumsMap = cacheRedisService.queryPlayTypeNum(lotteryType, playType);
+		int indx = 0;
+		for(int i = 0; i < 2; i++){
+			List<PlayTypeNum> row = new ArrayList<>();
+			ret.add(row);
+			for(int ii = 0; ii < 5; ii++){
+				PlayTypeNum playTypeNum = playTypeNumsMap.get(String.valueOf(indx));
+				playTypeNum.setCurrentOdds(playTypeNum.getaOdds());
+				row.add(playTypeNum);
+				indx++;
+			}
+		}
+		return ret;
+	}
+	@Override
+	public List<List<PlayTypeNum>> queryMainPsHs(String lotteryType) {
+		String codeTypeName = Constants.KEY_PLAY_TYPE_NUM;
+		
+		List<List<PlayTypeNum>> ret = new ArrayList<>();
+		List<PlayTypeNum> row1 = new ArrayList<>();
+		List<PlayTypeNum> row2 = new ArrayList<>();
+		ret.add(row1);
+		ret.add(row2);
+		Map<String,Map<String,Map<String,PlayTypeNum>>> playTypeNums1 = cacheRedisService.queryPlayTypeNum(codeTypeName);
+		playTypeNums1.entrySet().stream().filter(entry->entry.getKey().equals(lotteryType)).forEach(entry->{
+			Map<String, Map<String, PlayTypeNum>> playTypePlayTypeMap = entry.getValue();
+			playTypePlayTypeMap.entrySet().stream().filter(playTypeEntry->needIncluding(playTypeEntry.getKey())).forEach(playTypeEntry->{
+				playTypeEntry.getValue().forEach((k,playTypeNum)->{
+					StringBuffer buffer = new StringBuffer();
+					String bettingNum = playTypeEntry.getKey().split("\\/")[1];					
+					bettingNum = bettingNum.split("\\|")[1];
+					buffer.append(bettingNum).append(playTypeNum.getBetNumDesc());
+					playTypeNum.setDisplayName(buffer.toString());
+					playTypeNum.setCurrentOdds(playTypeNum.getaOdds());
+					if(row1.size() < 5){
+						row1.add(playTypeNum);
+					}else{
+						row2.add(playTypeNum);
+					}
+				});
+			});			
+		});
+		
+		return ret;
+	}
+	private boolean needIncluding(String key) {
+		String playType1 = Constants.PlayType.EWHS_BS_DS.getDesc();
+		String playType2 = Constants.PlayType.EWHS_BG_DS.getDesc();
+		String playType3 = Constants.PlayType.EWHS_SG_DS.getDesc();
+		String playType4 = Constants.PlayType.SWHS_DX.getDesc();
+		String playType5 = Constants.PlayType.SWHS_DS.getDesc();
+		
+		if(key.equals(playType1)
+				|| key.equals(playType2)
+				|| key.equals(playType3)
+				|| key.equals(playType4)
+				|| key.equals(playType5)){
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean isYwdw(String key) {
+		String ywdw = Constants.PlayType.YWDW_BW_DS.getName().split("_")[0];
+		String dx = Constants.PlayType.YWDW_BW_DX.getName().split("_")[2];
+		String zh = Constants.PlayType.YWDW_BW_ZH.getName().split("_")[2];
+		String ds = Constants.PlayType.YWDW_BW_DS.getName().split("_")[2];
+		if(key.contains(ywdw)
+				&& (key.contains(dx) || key.contains(zh) || key.contains(ds))){
+			return true;
+		}
+		return false;
+	}
+	@Override
+	public List<BitColumn> queryMainPsDwd(String lotteryType) {
+		String codeTypeName = Constants.KEY_PLAY_TYPE_NUM;
+		
+		List<BitColumn> ret = new ArrayList<>();
+		initBitColumn(ret);
+		Map<String,Map<String,Map<String,PlayTypeNum>>> playTypeNums1 = cacheRedisService.queryPlayTypeNum(codeTypeName);
+		playTypeNums1.entrySet().stream().filter(entry->entry.getKey().equals(lotteryType)).forEach(entry->{
+			Map<String, Map<String, PlayTypeNum>> playTypePlayTypeMap = entry.getValue();
+			playTypePlayTypeMap.entrySet().stream().filter(playTypeEntry->isYwdw(playTypeEntry.getKey())).forEach(playTypeEntry->{
+				System.out.println(playTypeEntry.getKey());
+				playTypeEntry.getValue().forEach((k,playTypeNum)->{
+					System.out.println(k);
+					playTypeNum.setCurrentOdds(playTypeNum.getaOdds());
+					if(isBw(playTypeEntry.getKey())){
+						BitColumn column = null;
+						if(ret.size() < 3){
+							
+						}else{
+							column = ret.get(0);
+						}
+						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
+						playTypeNums.add(playTypeNum);
+					}
+					
+					if(isSw(playTypeEntry.getKey())){
+						BitColumn column = null;
+						if(ret.size() < 2){
+							
+						}else{
+							column = ret.get(1);
+						}
+						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
+						playTypeNums.add(playTypeNum);
+					}
+					
+					if(isGw(playTypeEntry.getKey())){
+						BitColumn column = null;
+						if(ret.size() < 1){
+							
+						}else{
+							column = ret.get(2);
+						}
+						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
+						playTypeNums.add(playTypeNum);
+					}
+				});
+			});			
+		});
+		
+		return ret;
+	}
+	private void initBitColumn(List<BitColumn> ret) {
+		String gwName = Constants.PlayType.YWDW_GW_DX.getDesc().split("\\/")[1].split("\\|")[1];
+		String swName = Constants.PlayType.YWDW_SW_DX.getDesc().split("\\/")[1].split("\\|")[1];
+		String bwName = Constants.PlayType.YWDW_BW_DS.getDesc().split("\\/")[1].split("\\|")[1];
+		
+		BitColumn column = new BitColumn();
+		column.setColumnName(bwName);
+		column.setBitIndex(0);
+		column.setPlayTypeNums(new ArrayList<>());
+		ret.add(column);
+		
+		column = new BitColumn();
+		column.setColumnName(swName);
+		column.setBitIndex(1);
+		column.setPlayTypeNums(new ArrayList<>());
+		ret.add(column);
+		
+		column = new BitColumn();
+		column.setColumnName(gwName);
+		column.setBitIndex(2);
+		column.setPlayTypeNums(new ArrayList<>());
+		ret.add(column);
+	}
+	private boolean isGw(String key) {
+		String playType1 = Constants.PlayType.YWDW_GW_DX.getName().split("_")[1];
+		
+		if(key.contains(playType1)){
+			return true;
+		}
+		return false;
+	}
+	private boolean isSw(String key) {
+		String playType1 = Constants.PlayType.YWDW_SW_DX.getName().split("_")[1];
+		
+		if(key.contains(playType1)){
+			return true;
+		}
+		return false;
+	}
+	private boolean isBw(String key) {
+		String playType1 = Constants.PlayType.YWDW_BW_DS.getName().split("_")[1];
+		
+		if(key.contains(playType1)){
+			return true;
+		}
+		return false;
+	}
+	@Override
+	public List<List<PlayTypeNum>> queryBwsz(String lotteryType) {
+		String playType = Constants.PlayType.YWDW_BW_SZ.getDesc();
+		List<List<PlayTypeNum>> ret = new ArrayList<>();
+		Map<String, PlayTypeNum> playTypeNumsMap = cacheRedisService.queryPlayTypeNum(lotteryType, playType);
+		int indx = 0;
+		for(int i = 0; i < 2; i++){
+			List<PlayTypeNum> row = new ArrayList<>();
+			ret.add(row);
+			for(int ii = 0; ii < 5; ii++){
+				PlayTypeNum playTypeNum = playTypeNumsMap.get(String.valueOf(indx));
+				playTypeNum.setCurrentOdds(playTypeNum.getaOdds());				
+				playTypeNum.setDisplayName(playTypeNum.getBetNumDesc());
+				
+				row.add(playTypeNum);
+				indx++;
+			}
+		}
+		return ret;
+	}
+	@Override
+	public List<List<PlayTypeNum>> querySwsz(String lotteryType) {
+		String playType = Constants.PlayType.YWDW_SW_SZ.getDesc();
+		List<List<PlayTypeNum>> ret = new ArrayList<>();
+		Map<String, PlayTypeNum> playTypeNumsMap = cacheRedisService.queryPlayTypeNum(lotteryType, playType);
+		int indx = 0;
+		for(int i = 0; i < 2; i++){
+			List<PlayTypeNum> row = new ArrayList<>();
+			ret.add(row);
+			for(int ii = 0; ii < 5; ii++){
+				PlayTypeNum playTypeNum = playTypeNumsMap.get(String.valueOf(indx));
+				playTypeNum.setCurrentOdds(playTypeNum.getaOdds());
+				playTypeNum.setDisplayName(playTypeNum.getBetNumDesc());
+				row.add(playTypeNum);
+				indx++;
+			}
+		}
+		return ret;
+	}
+	@Override
+	public List<List<PlayTypeNum>> queryGwsz(String lotteryType) {
+		String playType = Constants.PlayType.YWDW_GW_SZ.getDesc();
+		List<List<PlayTypeNum>> ret = new ArrayList<>();
+		Map<String, PlayTypeNum> playTypeNumsMap = cacheRedisService.queryPlayTypeNum(lotteryType, playType);
+		int indx = 0;
+		for(int i = 0; i < 2; i++){
+			List<PlayTypeNum> row = new ArrayList<>();
+			ret.add(row);
+			for(int ii = 0; ii < 5; ii++){
+				PlayTypeNum playTypeNum = playTypeNumsMap.get(String.valueOf(indx));
+				playTypeNum.setCurrentOdds(playTypeNum.getaOdds());
+				playTypeNum.setDisplayName(playTypeNum.getBetNumDesc());
+				row.add(playTypeNum);
+				indx++;
+			}
+		}
+		return ret;
 	}
 }
 
