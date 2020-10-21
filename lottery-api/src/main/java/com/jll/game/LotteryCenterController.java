@@ -783,4 +783,20 @@ public class LotteryCenterController {
 			resp.put(Message.KEY_DATA, data);
 			return resp;
 		}
+		
+		//query main pan shi
+				@RequestMapping(value = "/{lottery-type}/play-type/ezdw/{numType}", method = {
+						RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
+				public Map<String, Object> queryEzps(
+						@PathVariable(name = "lottery-type", required = true) String lotteryType,
+						@PathVariable(name = "numType", required = true) String numType) {
+					Map<String, Object> resp = new HashMap<>();
+					Map<String, Object> data = new HashMap<>();
+					List<List<PlayTypeNum>> ezdw = playTypeServ.queryEzdw(lotteryType, numType);
+					data.put("ezdw", ezdw);
+					
+					resp.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
+					resp.put(Message.KEY_DATA, data);
+					return resp;
+				}
 }

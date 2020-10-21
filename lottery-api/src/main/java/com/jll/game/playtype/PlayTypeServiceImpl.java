@@ -3,8 +3,11 @@ package com.jll.game.playtype;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import javax.annotation.Resource;
 
@@ -458,6 +461,44 @@ public class PlayTypeServiceImpl implements PlayTypeService
 			}
 		}
 		return ret;
+	}
+	@Override
+	public List<List<PlayTypeNum>> queryEzdw(String lotteryType, String numType) {
+		String playType = parsePlayTypeFromNumType(numType == null?"0":numType.trim());
+		List<List<PlayTypeNum>> ret = new ArrayList<>();
+		Map<String, PlayTypeNum> playTypeNumsMap = cacheRedisService.queryPlayTypeNum(lotteryType, playType);
+		Map<String, PlayTypeNum> playTypeNumsMap_ = new TreeMap<>(); 
+		playTypeNumsMap_.putAll(playTypeNumsMap);
+		
+		int indx = 0;
+		Iterator<Entry<String, PlayTypeNum>> playTypeNumsIte = playTypeNumsMap_.entrySet().iterator();
+		List<PlayTypeNum> row = null;
+		while(playTypeNumsIte.hasNext()){			
+			if(indx % 5 == 0){
+				row = new ArrayList<>();
+				ret.add(row);
+			}
+			
+			row.add(playTypeNumsIte.next().getValue());
+			
+			indx++;
+		}
+		
+		return ret;
+	}
+	
+	private String parsePlayTypeFromNumType(String numType){
+		if(Constants.NumType.EWDW_BS_SZ.getCode() == Integer.parseInt(numType)){
+			return Constants.NumType.EWDW_BS_SZ.getDesc();
+		}
+		if(Constants.NumType.EWDW_BG_SZ.getCode() == Integer.parseInt(numType)){
+			return Constants.NumType.EWDW_BG_SZ.getDesc();
+		}
+		
+		if(Constants.NumType.EWDW_SG_SZ.getCode() == Integer.parseInt(numType)){
+			return Constants.NumType.EWDW_SG_SZ.getDesc();
+		}
+		return Constants.NumType.EWDW_BS_SZ.getDesc();
 	}
 }
 

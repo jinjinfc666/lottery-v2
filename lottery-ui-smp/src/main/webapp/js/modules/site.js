@@ -74,6 +74,8 @@ var queryMainPsURL = SITE+"/lotteries/{lotteryType}/play-type/main-ps";
 
 var queryYzpsURL = SITE+"/lotteries/{lotteryType}/play-type/yzps";
 
+var queryEzpsURL = SITE+"/lotteries/{lottery-type}/play-type/ezdw/{numType}";
+
 //弹出框口
 function openWin(tip) {
 

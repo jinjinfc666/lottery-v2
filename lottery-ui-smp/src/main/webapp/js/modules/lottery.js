@@ -386,6 +386,12 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 				$scope.gwsz = ret.gwsz;
 			});
 		};
+		
+		$scope.queryEzdw = function(lotteryType, numType){
+			playgameService.queryEzdw(lotteryType, numType).then(function(ret){
+				$scope.ezdw = ret.ezdw;
+			});
+		};
 		$scope.initBettingNumAuth = function(lotteryType, bitCounter){
 			$scope.bitNumArray = new Array();
 			var headerOptions = null;
@@ -2248,6 +2254,24 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
     	return deferred.promise;
     };
     
+    this.queryEzdw = function(lotteryType, numType){
+    	var deferred = $q.defer();
+    	    	 
+    	var queryEzpsURL_ = queryEzpsURL.replace('{numType}', numType);
+    	queryEzpsURL_ = queryEzpsURL_.replace('{lottery-type}', lotteryType);
+    	var ret = {};
+    	    	
+    	$http.get(queryEzpsURL_).then(function(res){
+    		if (res.data.status == 1) {
+    			ret.ezdw = res.data.data.ezdw;
+	        }
+    		deferred.resolve(ret);
+    	}, function(){
+    		deferred.reject(ret);
+    	});
+    	
+    	return deferred.promise;
+    };
     }
 ]).service('hisRecService', ["$http", "$q", function ($http, $q) {
 	this.queryBettingRec = function(queryRecParams){

@@ -312,9 +312,9 @@
 	
 					<div class="main-bet-content" ng-if="isLogin" ng-controller="authCtrl" >
 						<div class="bar-bet">
-							<button class="btn btn-danger ml10 resetBtn" style="background: #267671; border-color: #455964;" type="button" ng-click='switchNum("0")>百十定位</button>
-							<button class="btn btn-danger ml10 resetBtn" style="background: #267671; border-color: #455964;" type="button"  ng-click='switchNum("1")>百个定位</button>
-							<button type="button" class="btn btn-danger ml10 ng-scope lotteryV2Btn" ng-click='switchNum("2")'>十个定位</button>
+							<button class="btn btn-danger ml10 resetBtn" style="background: #267671; border-color: #455964;" type="button" ng-click="queryEzdw('tc3','0')">百十定位</button>
+							<button class="btn btn-danger ml10 resetBtn" style="background: #267671; border-color: #455964;" type="button"  ng-click="queryEzdw('tc3','1')">百个定位</button>
+							<button type="button" class="btn btn-danger ml10 ng-scope lotteryV2Btn" ng-click="queryEzdw('tc3','2')">十个定位</button>
 							
 						</div>
 						
@@ -342,7 +342,7 @@
 						
 						<div id="lotteryV2_content" class="ng-scope ssc_ball"
 							style="width: 100%; display: inline-block;"
-								ng-init="queryYzps('tc3')">
+								ng-init="queryEzdw('tc3',' 0')">
 	
 							<table class="table table-bordered table-bet" style="display:blocked">
 								<thead>
@@ -391,7 +391,7 @@
 									</tr>
 								</thead>
 								<tbody>
-									<tr ng-repeat="row in mainPs">
+									<tr ng-repeat="row in ezdw">
 										<td width="60" add-color="0" ng-click="selNum($event)" data-unit="{{$index}}_0_unit_tab_01">{{row[0].betNum}}</td>
 										<td add-color="0" ng-click="selNum($event)"  data-unit="{{$index}}_0_unit_tab_01"><b class="text-danger ng-binding">{{row[0].currentOdds}}</b></td>
 										<td add-color="0"										

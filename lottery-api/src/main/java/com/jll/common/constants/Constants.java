@@ -2735,4 +2735,45 @@ public class Constants {
 			return null;
 		}
 	}
+	
+	public static enum NumType{
+		EWDW_BS_SZ(0, "ewdw_bs_sz", "sz|数值/bs|百十/ewdw|二位定位"), 
+		EWDW_BG_SZ(1, "ewdw_bg_sz", "sz|数值/bg|百个/ewdw|二位定位"), 
+		EWDW_SG_SZ(2, "ewdw_sg_sz", "sz|数值/sg|十个/ewdw|二位定位"), 
+		;
+		
+		private int code;
+		
+		private String desc;
+		
+		private String name;
+		
+		private NumType(int code, String name, String desc) {
+			this.code = code;
+			this.desc = desc;
+			this.name = name;
+		}
+		
+		public int getCode() {
+			return this.code;
+		}
+		
+		public String getDesc() {
+			return this.desc;
+		}
+		
+		public String getName(){
+			return this.name;
+		}
+		
+		public static WalletState geByCode(int code) {
+			WalletState[] walStates = WalletState.values();
+			for(WalletState walState: walStates) {
+				if(walState.getCode() == code) {
+					return walState;
+				}
+			}
+			return null;
+		}
+	}
 }
