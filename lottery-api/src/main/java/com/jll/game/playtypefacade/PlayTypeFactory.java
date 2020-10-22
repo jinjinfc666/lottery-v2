@@ -9,6 +9,9 @@ import com.jll.game.playtypefacade.tc3.BwDsPlayTypeFacadeImpl;
 import com.jll.game.playtypefacade.tc3.BwDxPlayTypeFacadeImpl;
 import com.jll.game.playtypefacade.tc3.BwSZPlayTypeFacadeImpl;
 import com.jll.game.playtypefacade.tc3.BwZhPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.EwDwBgSZPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.EwDwBsSZPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.EwDwSgSZPlayTypeFacadeImpl;
 import com.jll.game.playtypefacade.tc3.EwhsBgDsPlayTypeFacadeImpl;
 import com.jll.game.playtypefacade.tc3.EwhsBsDsPlayTypeFacadeImpl;
 import com.jll.game.playtypefacade.tc3.EwhsSgDsPlayTypeFacadeImpl;
@@ -154,6 +157,12 @@ public class PlayTypeFactory {
 		SwSZPlayTypeFacadeImpl tc3SwSZPlayTypeFacadeImpl = new SwSZPlayTypeFacadeImpl();
 		GwSZPlayTypeFacadeImpl tc3GwSZPlayTypeFacadeImpl = new GwSZPlayTypeFacadeImpl();
 		
+		
+		EwDwBsSZPlayTypeFacadeImpl tc3EwDwBsSZPlayTypeFacadeImpl = new EwDwBsSZPlayTypeFacadeImpl();
+		EwDwBgSZPlayTypeFacadeImpl tc3EwDwBgSZPlayTypeFacadeImpl = new EwDwBgSZPlayTypeFacadeImpl();
+		EwDwSgSZPlayTypeFacadeImpl tc3EwDwSgSZPlayTypeFacadeImpl = new EwDwSgSZPlayTypeFacadeImpl();
+		
+		
 		playTypeFacades.add(qszxPlayTypeFacadeImpl);
 		playTypeFacades.add(qszxDsPlayTypeFacadeImpl);
 		playTypeFacades.add(zszxPlayTypeFacadeImpl);
@@ -277,6 +286,10 @@ public class PlayTypeFactory {
 		playTypeFacades.add(tc3BwSZPlayTypeFacadeImpl);
 		playTypeFacades.add(tc3SwSZPlayTypeFacadeImpl);
 		playTypeFacades.add(tc3GwSZPlayTypeFacadeImpl);
+		
+		playTypeFacades.add(tc3EwDwBsSZPlayTypeFacadeImpl);
+		playTypeFacades.add(tc3EwDwBgSZPlayTypeFacadeImpl);
+		playTypeFacades.add(tc3EwDwSgSZPlayTypeFacadeImpl);
 		
 	}
 	

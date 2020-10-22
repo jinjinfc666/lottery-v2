@@ -155,7 +155,7 @@ public class EwDwBgSZPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 			}
 			
 			String bwNum = String.valueOf(temp.charAt(0));
-			String swNum = String.valueOf(temp.charAt(1));
+			String swNum = String.valueOf(temp.charAt(2));
 			if(!betNumOptions.contains(bwNum)
 					|| !betNumOptions.contains(swNum)) {
 				return false;

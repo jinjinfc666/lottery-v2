@@ -11,8 +11,8 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.eclipse.jetty.util.StringUtil;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,7 +28,7 @@ import com.jll.common.constants.Constants.SysCodeTypes;
 import com.jll.common.constants.Constants.UserType;
 import com.jll.common.constants.Message;
 import com.jll.common.utils.MathUtil;
-import com.jll.common.utils.StringUtils;
+//import com.jll.common.utils.StringUtils;
 import com.jll.dao.PageBean;
 import com.jll.entity.Issue;
 import com.jll.entity.OrderInfo;
@@ -188,7 +188,7 @@ public class LotteryCenterController {
 		}
 
 		retCode = lotCenServ.PreBet(params, data);
-		if (StringUtil.isBlank(retCode) || !retCode.equals(Integer.toString(Message.status.SUCCESS.getCode()))) {
+		if (StringUtils.isBlank(retCode) || !retCode.equals(Integer.toString(Message.status.SUCCESS.getCode()))) {
 			resp.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
 			resp.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_GAME_FAILED_PROCESS_BETTING_NUM.getCode());
 			resp.put(Message.KEY_ERROR_MES, Message.Error.ERROR_GAME_FAILED_PROCESS_BETTING_NUM.getErrorMes());

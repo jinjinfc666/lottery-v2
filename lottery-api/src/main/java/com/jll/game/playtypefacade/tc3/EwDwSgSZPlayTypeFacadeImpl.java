@@ -28,11 +28,11 @@ import com.jll.game.playtypefacade.DefaultPlayTypeFacadeImpl;
  * @author Administrator
  *
  */
-public class EwDwBsSZPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
+public class EwDwSgSZPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 	
-	private Logger logger = Logger.getLogger(EwDwBsSZPlayTypeFacadeImpl.class);
+	private Logger logger = Logger.getLogger(EwDwSgSZPlayTypeFacadeImpl.class);
 	
-	protected String playTypeDesc = "sz|数值/bs|百十/ewdw|二位定位/fs";
+	protected String playTypeDesc = "sz|数值/sg|十个/ewdw|二位定位/fs";
 	
 	private final int PRIME = 1;
 	
@@ -154,7 +154,7 @@ public class EwDwBsSZPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 				return false;
 			}
 			
-			String bwNum = String.valueOf(temp.charAt(0));
+			String bwNum = String.valueOf(temp.charAt(2));
 			String swNum = String.valueOf(temp.charAt(1));
 			if(!betNumOptions.contains(bwNum)
 					|| !betNumOptions.contains(swNum)) {
@@ -302,9 +302,9 @@ public class EwDwBsSZPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 							if(iii == ii || iii == i)							
 								continue;
 									buffer.delete(0, buffer.length());								
-									String bwNum = String.valueOf(key.charAt(0));
+									String gwNum = String.valueOf(key.charAt(2));
 									String swNum = String.valueOf(key.charAt(1));
-									boolean isMatch = String.valueOf(i).equals(bwNum) && String.valueOf(ii).equals(swNum);
+									boolean isMatch = String.valueOf(iii).equals(gwNum) && String.valueOf(ii).equals(swNum);
 //									boolean isPrimeBetNum = primeStr.contains(key);
 									if((isMatch)){
 										buffer.append(i).append(ii).append(iii);	
