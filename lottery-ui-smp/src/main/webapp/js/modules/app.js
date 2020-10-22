@@ -51,6 +51,10 @@ app.config(["$httpProvider", function ($httpProvider) {
         url: '/lottery_betting_tc3_ezdw',
         templateUrl: 'embed/lottery_betting_tc3_ezdw.html',
         params:{'seqNo':1}
+    }).state('lottery_betting_tc3_szdw', {
+        url: '/lottery_betting_tc3_szdw',
+        templateUrl: 'embed/lottery_betting_tc3_szdw.html',
+        params:{'seqNo':1}
     }).state('userCenter', {
         url: '/userCenter',
         templateUrl: 'embed/user_center.html'

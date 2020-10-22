@@ -2699,6 +2699,7 @@ public class Constants {
 		YWDW_GW_DS(1, "ywdw_gw_ds", "ds|单双/gw|个位/ywdw|一位定位"), 
 		YWDW_GW_ZH(1, "ywdw_gw_zh", "zh|质和/gw|个位/ywdw|一位定位"), 
 		YWDW_GW_SZ(1, "ywdw_gw_sz", "sz|数值/gw|个位/ywdw|一位定位"), 
+		SWDW_SZ(1, "swdw_sz", "sz|数值/swdw|三位定位"), 
 		;
 		
 		private int code;

@@ -91,7 +91,7 @@ public class LotteryCenterController {
 
 	@Resource
 	PlayTypeNumService playTypeNumServ;
-	
+
 	@RequestMapping(value = "/{lottery-type}/pre-bet", method = {
 			RequestMethod.POST }, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public Map<String, Object> PreBet(@PathVariable(name = "lottery-type", required = true) String lotteryType,
@@ -258,13 +258,12 @@ public class LotteryCenterController {
 						return resp;
 					}
 
-					if(!isRateValid(orders)){
+					if (!isRateValid(orders)) {
 						resp.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
 						resp.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_GAME_ORDER_ERROR_RATE.getCode());
 						resp.put(Message.KEY_ERROR_MES, Message.Error.ERROR_GAME_ORDER_ERROR_RATE.getErrorMes());
 						return resp;
 					}
-					
 
 					retCode = orderServ.saveOrders(orders, walletId, zhFlag, lotteryType);
 					if (!String.valueOf(Message.status.SUCCESS.getCode()).equals(retCode)) {
@@ -279,18 +278,20 @@ public class LotteryCenterController {
 						String xyAmount = userExtServ.queryFiledByName(user.getId(), "xyAmount");
 						UserAccount wallet = walletServ.queryById(walletId);
 						user.setXyAmount(Double.parseDouble(xyAmount));
-						user.setUsedCreditAmount(new BigDecimal(xyAmount).subtract(new BigDecimal(wallet.getBalance())));
+						user.setUsedCreditAmount(
+								new BigDecimal(xyAmount).subtract(new BigDecimal(wallet.getBalance())));
 						userExtServ.saveUserInfoExt(user);
 //						user.setXyPayoutRate(Double.parseDouble(payoutRate));
-						/*boolean isExtendMaxmium = validMaxPayout(lotteryType, orders, user);
-						if (!isExtendMaxmium) {
-							resp.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
-							resp.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_GAME_PAYOUT_UP_LIMIT.getCode());
-							resp.put(Message.KEY_ERROR_MES, Message.Error.ERROR_GAME_PAYOUT_UP_LIMIT.getErrorMes());
-							return resp;
-						}*/
+						/*
+						 * boolean isExtendMaxmium = validMaxPayout(lotteryType, orders, user); if
+						 * (!isExtendMaxmium) { resp.put(Message.KEY_STATUS,
+						 * Message.status.FAILED.getCode()); resp.put(Message.KEY_ERROR_CODE,
+						 * Message.Error.ERROR_GAME_PAYOUT_UP_LIMIT.getCode());
+						 * resp.put(Message.KEY_ERROR_MES,
+						 * Message.Error.ERROR_GAME_PAYOUT_UP_LIMIT.getErrorMes()); return resp; }
+						 */
 					}
-					
+
 					resp.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
 
 					logger.debug(
@@ -449,10 +450,9 @@ public class LotteryCenterController {
 			if (currentIssue == null) {
 				/*
 				 * currentIssue = new Issue(); Issue nextIssue =
-				 * lotCenServ.queryNextIssue(lastIssue); if(nextIssue != null) {
-				 * downCounter = nextIssue.getStartTime().getTime() -
-				 * nowTime.getTime(); downCounter = downCounter/1000;
-				 * currentIssue.setDownCounter(downCounter); }else {
+				 * lotCenServ.queryNextIssue(lastIssue); if(nextIssue != null) { downCounter =
+				 * nextIssue.getStartTime().getTime() - nowTime.getTime(); downCounter =
+				 * downCounter/1000; currentIssue.setDownCounter(downCounter); }else {
 				 * currentIssue.setDownCounter(-1L); }
 				 */
 			} else {
@@ -614,12 +614,9 @@ public class LotteryCenterController {
 	}
 
 	/**
-	 * @param currT
-	 *            当前奖金模式 1700-2000
-	 * @param currR
-	 *            当前用户平台点数
-	 * @param superior
-	 *            上级用户ID
+	 * @param currT    当前奖金模式 1700-2000
+	 * @param currR    当前用户平台点数
+	 * @param superior 上级用户ID
 	 * @return
 	 */
 	@RequestMapping(value = "/prize-templates", method = {
@@ -744,11 +741,10 @@ public class LotteryCenterController {
 		return map;
 	}
 
-	//query main pan shi
+	// query main pan shi
 	@RequestMapping(value = "/{lottery-type}/play-type/main-ps", method = {
 			RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
-	public Map<String, Object> queryMainPs(
-			@PathVariable(name = "lottery-type", required = true) String lotteryType) {
+	public Map<String, Object> queryMainPs(@PathVariable(name = "lottery-type", required = true) String lotteryType) {
 		Map<String, Object> resp = new HashMap<>();
 		Map<String, Object> data = new HashMap<>();
 		List<List<PlayTypeNum>> mainPs = playTypeServ.queryMainPs(lotteryType);
@@ -757,46 +753,57 @@ public class LotteryCenterController {
 		data.put("mainPs", mainPs);
 		data.put("hs", mainPsHs);
 		data.put("dwd", mainPsDwd);
-		
+
+		resp.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
+		resp.put(Message.KEY_DATA, data);
+		return resp;
+	}
+
+	// query main pan shi
+	@RequestMapping(value = "/{lottery-type}/play-type/yzps", method = {
+			RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
+	public Map<String, Object> queryYzps(@PathVariable(name = "lottery-type", required = true) String lotteryType) {
+		Map<String, Object> resp = new HashMap<>();
+		Map<String, Object> data = new HashMap<>();
+		List<List<PlayTypeNum>> mainPs = playTypeServ.queryMainPs(lotteryType);
+		List<List<PlayTypeNum>> bwsz = playTypeServ.queryBwsz(lotteryType);
+		List<List<PlayTypeNum>> swsz = playTypeServ.querySwsz(lotteryType);
+		List<List<PlayTypeNum>> gwsz = playTypeServ.queryGwsz(lotteryType);
+		data.put("mainPs", mainPs);
+		data.put("bwsz", bwsz);
+		data.put("swsz", swsz);
+		data.put("gwsz", gwsz);
+
+		resp.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
+		resp.put(Message.KEY_DATA, data);
+		return resp;
+	}
+
+	// query main pan shi
+	@RequestMapping(value = "/{lottery-type}/play-type/ezdw/{numType}", method = {
+			RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
+	public Map<String, Object> queryEzps(@PathVariable(name = "lottery-type", required = true) String lotteryType,
+			@PathVariable(name = "numType", required = true) String numType) {
+		Map<String, Object> resp = new HashMap<>();
+		Map<String, Object> data = new HashMap<>();
+		List<List<PlayTypeNum>> ezdw = playTypeServ.queryEzdw(lotteryType, numType);
+		data.put("ezdw", ezdw);
+
 		resp.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
 		resp.put(Message.KEY_DATA, data);
 		return resp;
 	}
 	
-	//query main pan shi
-		@RequestMapping(value = "/{lottery-type}/play-type/yzps", method = {
-				RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
-		public Map<String, Object> queryYzps(
-				@PathVariable(name = "lottery-type", required = true) String lotteryType) {
-			Map<String, Object> resp = new HashMap<>();
-			Map<String, Object> data = new HashMap<>();
-			List<List<PlayTypeNum>> mainPs = playTypeServ.queryMainPs(lotteryType);
-			List<List<PlayTypeNum>> bwsz = playTypeServ.queryBwsz(lotteryType);
-			List<List<PlayTypeNum>> swsz = playTypeServ.querySwsz(lotteryType);
-			List<List<PlayTypeNum>> gwsz = playTypeServ.queryGwsz(lotteryType);
-			data.put("mainPs", mainPs);
-			data.put("bwsz", bwsz);
-			data.put("swsz", swsz);
-			data.put("gwsz", gwsz);
-			
-			resp.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
-			resp.put(Message.KEY_DATA, data);
-			return resp;
-		}
-		
-		//query main pan shi
-				@RequestMapping(value = "/{lottery-type}/play-type/ezdw/{numType}", method = {
-						RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
-				public Map<String, Object> queryEzps(
-						@PathVariable(name = "lottery-type", required = true) String lotteryType,
-						@PathVariable(name = "numType", required = true) String numType) {
-					Map<String, Object> resp = new HashMap<>();
-					Map<String, Object> data = new HashMap<>();
-					List<List<PlayTypeNum>> ezdw = playTypeServ.queryEzdw(lotteryType, numType);
-					data.put("ezdw", ezdw);
-					
-					resp.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
-					resp.put(Message.KEY_DATA, data);
-					return resp;
-				}
+	@RequestMapping(value = "/{lottery-type}/play-type/szdw", method = {
+			RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
+	public Map<String, Object> querySzdw(@PathVariable(name = "lottery-type", required = true) String lotteryType) {
+		Map<String, Object> resp = new HashMap<>();
+		Map<String, Object> data = new HashMap<>();
+		List<List<PlayTypeNum>> szdw = playTypeServ.querySzdw(lotteryType);
+		data.put("szdw", szdw);
+
+		resp.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
+		resp.put(Message.KEY_DATA, data);
+		return resp;
+	}
 }

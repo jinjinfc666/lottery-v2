@@ -76,6 +76,8 @@ var queryYzpsURL = SITE+"/lotteries/{lotteryType}/play-type/yzps";
 
 var queryEzpsURL = SITE+"/lotteries/{lottery-type}/play-type/ezdw/{numType}";
 
+var querySzdwURL = SITE+"/lotteries/{lottery-type}/play-type/szdw";
+
 //弹出框口
 function openWin(tip) {
 
