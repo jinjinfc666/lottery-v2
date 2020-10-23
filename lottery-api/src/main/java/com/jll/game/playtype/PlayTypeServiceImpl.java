@@ -464,7 +464,7 @@ public class PlayTypeServiceImpl implements PlayTypeService
 	}
 	@Override
 	public List<List<PlayTypeNum>> queryEzdw(String lotteryType, String numType) {
-		String playType = parsePlayTypeFromNumType(numType == null?"0":numType.trim());
+		String playType = parseEzdwPlayTypeFromNumType(numType == null?"0":numType.trim());
 		List<List<PlayTypeNum>> ret = new ArrayList<>();
 		Map<String, PlayTypeNum> playTypeNumsMap = cacheRedisService.queryPlayTypeNum(lotteryType, playType);
 		Map<String, PlayTypeNum> playTypeNumsMap_ = new TreeMap<>(); 
@@ -487,19 +487,34 @@ public class PlayTypeServiceImpl implements PlayTypeService
 		return ret;
 	}
 	
-	private String parsePlayTypeFromNumType(String numType){
-		if(Constants.NumType.EWDW_BS_SZ.getCode() == Integer.parseInt(numType)){
-			return Constants.NumType.EWDW_BS_SZ.getDesc();
+	private String parseEzdwPlayTypeFromNumType(String numType){
+		if(Constants.EzdwNumType.EWDW_BS_SZ.getCode() == Integer.parseInt(numType)){
+			return Constants.EzdwNumType.EWDW_BS_SZ.getDesc();
 		}
-		if(Constants.NumType.EWDW_BG_SZ.getCode() == Integer.parseInt(numType)){
-			return Constants.NumType.EWDW_BG_SZ.getDesc();
+		if(Constants.EzdwNumType.EWDW_BG_SZ.getCode() == Integer.parseInt(numType)){
+			return Constants.EzdwNumType.EWDW_BG_SZ.getDesc();
 		}
 		
-		if(Constants.NumType.EWDW_SG_SZ.getCode() == Integer.parseInt(numType)){
-			return Constants.NumType.EWDW_SG_SZ.getDesc();
+		if(Constants.EzdwNumType.EWDW_SG_SZ.getCode() == Integer.parseInt(numType)){
+			return Constants.EzdwNumType.EWDW_SG_SZ.getDesc();
 		}
-		return Constants.NumType.EWDW_BS_SZ.getDesc();
+		return Constants.EzdwNumType.EWDW_BS_SZ.getDesc();
 	}
+	
+	private String parseEzhsPlayTypeFromNumType(String numType){
+		if(Constants.EzhsNumType.EWHS_BS_SZ.getCode() == Integer.parseInt(numType)){
+			return Constants.EzhsNumType.EWHS_BS_SZ.getDesc();
+		}
+		if(Constants.EzhsNumType.EWHS_BG_SZ.getCode() == Integer.parseInt(numType)){
+			return Constants.EzhsNumType.EWHS_BG_SZ.getDesc();
+		}
+		
+		if(Constants.EzhsNumType.EWHS_SG_SZ.getCode() == Integer.parseInt(numType)){
+			return Constants.EzhsNumType.EWHS_SG_SZ.getDesc();
+		}
+		return Constants.EzhsNumType.EWHS_BS_SZ.getDesc();
+	}
+	
 	@Override
 	public List<List<PlayTypeNum>> querySzdw(String lotteryType) {
 		String playType = Constants.PlayType.SWDW_SZ.getDesc();
@@ -527,6 +542,30 @@ public class PlayTypeServiceImpl implements PlayTypeService
 	@Override
 	public List<List<PlayTypeNum>> queryEzzh(String lotteryType) {
 		String playType = Constants.PlayType.BDW_EW_SZ.getDesc();
+		List<List<PlayTypeNum>> ret = new ArrayList<>();
+		Map<String, PlayTypeNum> playTypeNumsMap = cacheRedisService.queryPlayTypeNum(lotteryType, playType);
+		Map<String, PlayTypeNum> playTypeNumsMap_ = new TreeMap<>(); 
+		playTypeNumsMap_.putAll(playTypeNumsMap);
+		
+		int indx = 0;
+		Iterator<Entry<String, PlayTypeNum>> playTypeNumsIte = playTypeNumsMap_.entrySet().iterator();
+		List<PlayTypeNum> row = null;
+		while(playTypeNumsIte.hasNext()){			
+			if(indx % 5 == 0){
+				row = new ArrayList<>();
+				ret.add(row);
+			}
+			
+			row.add(playTypeNumsIte.next().getValue());
+			
+			indx++;
+		}
+		
+		return ret;
+	}
+	@Override
+	public List<List<PlayTypeNum>> queryEzhs(String lotteryType, String numType) {
+		String playType = parseEzhsPlayTypeFromNumType(numType == null?"0":numType.trim());
 		List<List<PlayTypeNum>> ret = new ArrayList<>();
 		Map<String, PlayTypeNum> playTypeNumsMap = cacheRedisService.queryPlayTypeNum(lotteryType, playType);
 		Map<String, PlayTypeNum> playTypeNumsMap_ = new TreeMap<>(); 

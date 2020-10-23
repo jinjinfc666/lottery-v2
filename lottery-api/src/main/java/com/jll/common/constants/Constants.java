@@ -2739,7 +2739,7 @@ public class Constants {
 		}
 	}
 	
-	public static enum NumType{
+	public static enum EzdwNumType{
 		EWDW_BS_SZ(0, "ewdw_bs_sz", "sz|数值/bs|百十/ewdw|二位定位"), 
 		EWDW_BG_SZ(1, "ewdw_bg_sz", "sz|数值/bg|百个/ewdw|二位定位"), 
 		EWDW_SG_SZ(2, "ewdw_sg_sz", "sz|数值/sg|十个/ewdw|二位定位"), 
@@ -2751,7 +2751,48 @@ public class Constants {
 		
 		private String name;
 		
-		private NumType(int code, String name, String desc) {
+		private EzdwNumType(int code, String name, String desc) {
+			this.code = code;
+			this.desc = desc;
+			this.name = name;
+		}
+		
+		public int getCode() {
+			return this.code;
+		}
+		
+		public String getDesc() {
+			return this.desc;
+		}
+		
+		public String getName(){
+			return this.name;
+		}
+		
+		public static WalletState geByCode(int code) {
+			WalletState[] walStates = WalletState.values();
+			for(WalletState walState: walStates) {
+				if(walState.getCode() == code) {
+					return walState;
+				}
+			}
+			return null;
+		}
+	}
+	
+	public static enum EzhsNumType{
+		EWHS_BS_SZ(0, "ewhs_bs_sz", "sz|数值/bs|百十/ewhs|二位和数"), 
+		EWHS_BG_SZ(1, "ewhs_bg_sz", "sz|数值/bg|百个/ewhs|二位和数"), 
+		EWHS_SG_SZ(2, "ewhs_sg_sz", "sz|数值/sg|十个/ewhs|二位和数"), 
+		;
+		
+		private int code;
+		
+		private String desc;
+		
+		private String name;
+		
+		private EzhsNumType(int code, String name, String desc) {
 			this.code = code;
 			this.desc = desc;
 			this.name = name;
