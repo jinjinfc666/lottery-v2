@@ -2702,7 +2702,7 @@ public class Constants {
 		SWDW_SZ(1, "swdw_sz", "sz|数值/swdw|三位定位"), 
 		BDW_EW_SZ(1, "bdw_ew_sz", "sz|数值/ew|二位/bdw|不定位"), 
 		SWHS_SZ(1, "swhs_sz", "sz|数值/swhs|三位和数"), 
-		
+		BDW_SW_SZ(1, "bdw_sw_sz", "sz|数值/sw|三位/bdw|不定位"), 
 		;
 		
 		private int code;

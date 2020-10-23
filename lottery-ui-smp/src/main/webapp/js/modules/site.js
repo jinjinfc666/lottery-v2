@@ -84,6 +84,8 @@ var queryEzhsURL = SITE+"/lotteries/{lottery-type}/play-type/ezhs/{numType}";
 
 var querySzhsURL = SITE+"/lotteries/{lottery-type}/play-type/szhs";
 
+var querySzzhURL = SITE+"/lotteries/{lottery-type}/play-type/szzh";
+
 //弹出框口
 function openWin(tip) {
 

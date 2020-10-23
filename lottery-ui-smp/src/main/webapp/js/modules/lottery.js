@@ -417,6 +417,12 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 			});
 		};
 		
+		$scope.querySzzh = function(lotteryType){
+			playgameService.querySzzh(lotteryType).then(function(ret){
+				$scope.szzh = ret.szzh;
+			});
+		};
+		
 		$scope.initBettingNumAuth = function(lotteryType, bitCounter){
 			$scope.bitNumArray = new Array();
 			var headerOptions = null;
@@ -2362,6 +2368,25 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
     	$http.get(querySzhsURL_).then(function(res){
     		if (res.data.status == 1) {
     			ret.szhs = res.data.data.szhs;
+	        }
+    		deferred.resolve(ret);
+    	}, function(){
+    		deferred.reject(ret);
+    	});
+    	
+    	return deferred.promise;
+    };
+    
+    
+    this.querySzzh = function(lotteryType){
+    	var deferred = $q.defer();
+    	    	 
+    	var querySzzhURL_ = querySzzhURL.replace('{lottery-type}', lotteryType);
+    	var ret = {};
+    	    	
+    	$http.get(querySzzhURL_).then(function(res){
+    		if (res.data.status == 1) {
+    			ret.szzh = res.data.data.szzh;
 	        }
     		deferred.resolve(ret);
     	}, function(){

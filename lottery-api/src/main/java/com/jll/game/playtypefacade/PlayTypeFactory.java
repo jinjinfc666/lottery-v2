@@ -6,6 +6,7 @@ import java.util.List;
 import com.jll.game.playtype.PlayTypeFacade;
 import com.jll.game.playtypefacade.tc3.BdwEwPlayTypeFacadeImpl;
 import com.jll.game.playtypefacade.tc3.BdwQyPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.BdwSwPlayTypeFacadeImpl;
 import com.jll.game.playtypefacade.tc3.BwDsPlayTypeFacadeImpl;
 import com.jll.game.playtypefacade.tc3.BwDxPlayTypeFacadeImpl;
 import com.jll.game.playtypefacade.tc3.BwSZPlayTypeFacadeImpl;
@@ -178,6 +179,8 @@ public class PlayTypeFactory {
 		
 		SwhsSzPlayTypeFacadeImpl tc3SwhsSzPlayTypeFacadeImpl = new SwhsSzPlayTypeFacadeImpl();
 		
+		BdwSwPlayTypeFacadeImpl tc3BdwSwPlayTypeFacadeImpl = new BdwSwPlayTypeFacadeImpl();
+		
 		playTypeFacades.add(qszxPlayTypeFacadeImpl);
 		playTypeFacades.add(qszxDsPlayTypeFacadeImpl);
 		playTypeFacades.add(zszxPlayTypeFacadeImpl);
@@ -315,6 +318,8 @@ public class PlayTypeFactory {
 		playTypeFacades.add(tc3EwhsSgSzPlayTypeFacadeImpl);
 		
 		playTypeFacades.add(tc3SwhsSzPlayTypeFacadeImpl);
+		
+		playTypeFacades.add(tc3BdwSwPlayTypeFacadeImpl);
 	}
 	
 	public static PlayTypeFactory getInstance() {
