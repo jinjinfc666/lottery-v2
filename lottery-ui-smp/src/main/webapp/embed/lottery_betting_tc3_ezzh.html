@@ -263,7 +263,7 @@
 								<a class="ng-binding" lot_code="qianwei" stid="33" ui-sref="lottery_betting_tc3_ezdw">二字定位</a>
 							</li>
 							<li ng-class="{'ng-scope':true,'active':isBitActive}" ng-click="changeFocus(1)">
-								<a class="ng-binding" lot_code="qianwei" stid="33"  ui-sref="lottery_betting_tc3_ezzh'>二字组合</a>
+								<a class="ng-binding" lot_code="qianwei" stid="33" ui-sref="lottery_betting_tc3_ezzh'>二字组合</a>
 							</li>
 							<li ng-class="{'ng-scope':true,'active':isBitActive}" ng-click="changeFocus(1)">
 								<a class="ng-binding" lot_code="qianwei" stid="33" ui-sref="lottery_betting_tc3_szdw">三字定位</a>
@@ -342,7 +342,7 @@
 						
 						<div id="lotteryV2_content" class="ng-scope ssc_ball"
 							style="width: 100%; display: inline-block;"
-								ng-init="queryEzdw('tc3',' 0')">
+								ng-init="queryEzzh('tc3')">
 	
 							<table class="table table-bordered table-bet" style="display:blocked">
 								<thead>
@@ -391,7 +391,7 @@
 									</tr>
 								</thead>
 								<tbody>
-									<tr ng-repeat="row in ezdw">
+									<tr ng-repeat="row in ezzh">
 										<td width="60" add-color="0" ng-click="selNum($event)" data-unit="{{$index}}_0_unit_tab_01">{{row[0].betNum}}</td>
 										<td add-color="0" ng-click="selNum($event)"  data-unit="{{$index}}_0_unit_tab_01"><b class="text-danger ng-binding">{{row[0].currentOdds}}</b></td>
 										<td add-color="0"										
