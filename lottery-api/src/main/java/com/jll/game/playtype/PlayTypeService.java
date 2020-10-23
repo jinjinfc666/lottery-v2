@@ -57,4 +57,6 @@ public interface PlayTypeService
 	List<List<PlayTypeNum>> queryEzzh(String lotteryType);
 
 	List<List<PlayTypeNum>> queryEzhs(String lotteryType, String numType);
+
+	List<List<PlayTypeNum>> querySzhs(String lotteryType);
 }

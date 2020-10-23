@@ -55,13 +55,17 @@ app.config(["$httpProvider", function ($httpProvider) {
         url: '/lottery_betting_tc3_ezhs',
         templateUrl: 'embed/lottery_betting_tc3_ezhs.html',
         params:{'seqNo':1}
+    }).state('lottery_betting_tc3_ezzh', {
+        url: '/lottery_betting_tc3_ezzh',
+        templateUrl: 'embed/lottery_betting_tc3_ezzh.html',
+        params:{'seqNo':1}
     }).state('lottery_betting_tc3_szdw', {
         url: '/lottery_betting_tc3_szdw',
         templateUrl: 'embed/lottery_betting_tc3_szdw.html',
         params:{'seqNo':1}
-    }).state('lottery_betting_tc3_ezzh', {
-        url: '/lottery_betting_tc3_ezzh',
-        templateUrl: 'embed/lottery_betting_tc3_ezzh.html',
+    }).state('lottery_betting_tc3_szhs', {
+        url: '/lottery_betting_tc3_szhs',
+        templateUrl: 'embed/lottery_betting_tc3_szhs.html',
         params:{'seqNo':1}
     }).state('userCenter', {
         url: '/userCenter',

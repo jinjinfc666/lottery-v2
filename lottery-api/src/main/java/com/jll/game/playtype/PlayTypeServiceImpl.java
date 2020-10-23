@@ -587,5 +587,29 @@ public class PlayTypeServiceImpl implements PlayTypeService
 		
 		return ret;
 	}
+	@Override
+	public List<List<PlayTypeNum>> querySzhs(String lotteryType) {
+		String playType = Constants.PlayType.SWHS_SZ.getDesc();
+		List<List<PlayTypeNum>> ret = new ArrayList<>();
+		Map<String, PlayTypeNum> playTypeNumsMap = cacheRedisService.queryPlayTypeNum(lotteryType, playType);
+		Map<String, PlayTypeNum> playTypeNumsMap_ = new TreeMap<>(); 
+		playTypeNumsMap_.putAll(playTypeNumsMap);
+		
+		int indx = 0;
+		Iterator<Entry<String, PlayTypeNum>> playTypeNumsIte = playTypeNumsMap_.entrySet().iterator();
+		List<PlayTypeNum> row = null;
+		while(playTypeNumsIte.hasNext()){			
+			if(indx % 5 == 0){
+				row = new ArrayList<>();
+				ret.add(row);
+			}
+			
+			row.add(playTypeNumsIte.next().getValue());
+			
+			indx++;
+		}
+		
+		return ret;
+	}
 }
 
