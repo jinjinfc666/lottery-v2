@@ -2703,6 +2703,12 @@ public class Constants {
 		BDW_EW_SZ(1, "bdw_ew_sz", "sz|数值/ew|二位/bdw|不定位"), 
 		SWHS_SZ(1, "swhs_sz", "sz|数值/swhs|三位和数"), 
 		BDW_SW_SZ(1, "bdw_sw_sz", "sz|数值/sw|三位/bdw|不定位"), 
+		ZX_ZX3_5M(1, "zx_zx3_5m", "5m|5码/zx3|组选3/zx|组选"), 
+		ZX_ZX3_6M(1, "zx_zx3_6m", "6m|5码/zx3|组选3/zx|组选"), 
+		ZX_ZX3_7M(1, "zx_zx3_7m", "7m|5码/zx3|组选3/zx|组选"), 
+		ZX_ZX3_8M(1, "zx_zx3_8m", "8m|5码/zx3|组选3/zx|组选"), 
+		ZX_ZX3_9M(1, "zx_zx3_9m", "9m|5码/zx3|组选3/zx|组选"), 
+		ZX_ZX3_QB(1, "zx_zx3_qb", "qb|5码/zx3|组选3/zx|组选"), 
 		;
 		
 		private int code;

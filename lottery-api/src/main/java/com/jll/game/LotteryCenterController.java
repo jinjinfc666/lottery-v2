@@ -859,4 +859,17 @@ public class LotteryCenterController {
 		resp.put(Message.KEY_DATA, data);
 		return resp;
 	}
+	
+	@RequestMapping(value = "/{lottery-type}/play-type/zs", method = {
+			RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
+	public Map<String, Object> queryZs(@PathVariable(name = "lottery-type", required = true) String lotteryType) {
+		Map<String, Object> resp = new HashMap<>();
+		Map<String, Object> data = new HashMap<>();
+		List<BitColumn> zs = playTypeServ.queryZx3(lotteryType);
+		data.put("zs", zs);
+
+		resp.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
+		resp.put(Message.KEY_DATA, data);
+		return resp;
+	}
 }

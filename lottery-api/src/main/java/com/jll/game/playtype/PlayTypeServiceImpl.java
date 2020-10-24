@@ -305,6 +305,18 @@ public class PlayTypeServiceImpl implements PlayTypeService
 		}
 		return false;
 	}
+	
+	private boolean isZx3(String key) {
+		String zx = Constants.PlayType.ZX_ZX3_5M.getName().split("_")[0];
+		String zx3 = Constants.PlayType.ZX_ZX3_5M.getName().split("_")[1];
+		if(key.contains(zx)
+				&& (key.contains(zx3))){
+			return true;
+		}
+		return false;
+	}
+	
+	
 	@Override
 	public List<BitColumn> queryMainPsDwd(String lotteryType) {
 		String codeTypeName = Constants.KEY_PLAY_TYPE_NUM;
@@ -319,7 +331,7 @@ public class PlayTypeServiceImpl implements PlayTypeService
 				playTypeEntry.getValue().forEach((k,playTypeNum)->{
 					System.out.println(k);
 					playTypeNum.setCurrentOdds(playTypeNum.getaOdds());
-					if(isBw(playTypeEntry.getKey())){
+					if(isYwdwBw(playTypeEntry.getKey())){
 						BitColumn column = null;
 						if(ret.size() < 3){
 							
@@ -330,7 +342,7 @@ public class PlayTypeServiceImpl implements PlayTypeService
 						playTypeNums.add(playTypeNum);
 					}
 					
-					if(isSw(playTypeEntry.getKey())){
+					if(isYwdwSw(playTypeEntry.getKey())){
 						BitColumn column = null;
 						if(ret.size() < 2){
 							
@@ -341,7 +353,7 @@ public class PlayTypeServiceImpl implements PlayTypeService
 						playTypeNums.add(playTypeNum);
 					}
 					
-					if(isGw(playTypeEntry.getKey())){
+					if(isYwdwGw(playTypeEntry.getKey())){
 						BitColumn column = null;
 						if(ret.size() < 1){
 							
@@ -380,7 +392,7 @@ public class PlayTypeServiceImpl implements PlayTypeService
 		column.setPlayTypeNums(new ArrayList<>());
 		ret.add(column);
 	}
-	private boolean isGw(String key) {
+	private boolean isYwdwGw(String key) {
 		String playType1 = Constants.PlayType.YWDW_GW_DX.getName().split("_")[1];
 		
 		if(key.contains(playType1)){
@@ -388,7 +400,7 @@ public class PlayTypeServiceImpl implements PlayTypeService
 		}
 		return false;
 	}
-	private boolean isSw(String key) {
+	private boolean isYwdwSw(String key) {
 		String playType1 = Constants.PlayType.YWDW_SW_DX.getName().split("_")[1];
 		
 		if(key.contains(playType1)){
@@ -396,7 +408,7 @@ public class PlayTypeServiceImpl implements PlayTypeService
 		}
 		return false;
 	}
-	private boolean isBw(String key) {
+	private boolean isYwdwBw(String key) {
 		String playType1 = Constants.PlayType.YWDW_BW_DS.getName().split("_")[1];
 		
 		if(key.contains(playType1)){
@@ -634,6 +646,176 @@ public class PlayTypeServiceImpl implements PlayTypeService
 		}
 		
 		return ret;
+	}
+	
+	@Override
+	public List<BitColumn> queryZx3(String lotteryType) {
+		String codeTypeName = Constants.KEY_PLAY_TYPE_NUM;
+		
+		List<BitColumn> ret = new ArrayList<>();
+		initBitColumn(ret);
+		Map<String,Map<String,Map<String,PlayTypeNum>>> playTypeNums1 = cacheRedisService.queryPlayTypeNum(codeTypeName);
+		playTypeNums1.entrySet().stream().filter(entry->entry.getKey().equals(lotteryType)).forEach(entry->{
+			Map<String, Map<String, PlayTypeNum>> playTypePlayTypeMap = entry.getValue();
+			playTypePlayTypeMap.entrySet().stream().filter(playTypeEntry->isZx3(playTypeEntry.getKey())).forEach(playTypeEntry->{
+				System.out.println(playTypeEntry.getKey());
+				playTypeEntry.getValue().forEach((k,playTypeNum)->{
+					System.out.println(k);
+					playTypeNum.setCurrentOdds(playTypeNum.getaOdds());
+					if(isZx35m(playTypeEntry.getKey())){
+						BitColumn column = null;
+						if(ret.size() < 3){
+							
+						}else{
+							column = ret.get(0);
+						}
+						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
+						playTypeNums.add(playTypeNum);
+					}
+					
+					if(isZx36m(playTypeEntry.getKey())){
+						BitColumn column = null;
+						if(ret.size() < 2){
+							
+						}else{
+							column = ret.get(1);
+						}
+						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
+						playTypeNums.add(playTypeNum);
+					}
+					
+					if(isZx37m(playTypeEntry.getKey())){
+						BitColumn column = null;
+						if(ret.size() < 1){
+							
+						}else{
+							column = ret.get(2);
+						}
+						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
+						playTypeNums.add(playTypeNum);
+					}
+					
+					if(isZx38m(playTypeEntry.getKey())){
+						BitColumn column = null;
+						if(ret.size() < 1){
+							
+						}else{
+							column = ret.get(2);
+						}
+						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
+						playTypeNums.add(playTypeNum);
+					}
+					
+					if(isZx39m(playTypeEntry.getKey())){
+						BitColumn column = null;
+						if(ret.size() < 1){
+							
+						}else{
+							column = ret.get(2);
+						}
+						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
+						playTypeNums.add(playTypeNum);
+					}
+					
+					if(isZx3Qb(playTypeEntry.getKey())){
+						BitColumn column = null;
+						if(ret.size() < 1){
+							
+						}else{
+							column = ret.get(2);
+						}
+						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
+						playTypeNums.add(playTypeNum);
+					}
+				});
+			});			
+		});
+		
+		return ret;
+	}
+	
+	/**
+	 * zu xuan 3 5 ma
+	 * @param key
+	 * @return
+	 */
+	private boolean isZx35m(String key) {
+		String playType1 = Constants.PlayType.ZX_ZX3_5M.getName().split("_")[2];
+		
+		if(key.contains(playType1)){
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * zu xuan 3 6 ma
+	 * @param key
+	 * @return
+	 */
+	private boolean isZx36m(String key) {
+		String playType1 = Constants.PlayType.ZX_ZX3_6M.getName().split("_")[2];
+		
+		if(key.contains(playType1)){
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * zu xuan 3 7 ma
+	 * @param key
+	 * @return
+	 */
+	private boolean isZx37m(String key) {
+		String playType1 = Constants.PlayType.ZX_ZX3_7M.getName().split("_")[2];
+		
+		if(key.contains(playType1)){
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * zu xuan 3 8 ma
+	 * @param key
+	 * @return
+	 */
+	private boolean isZx38m(String key) {
+		String playType1 = Constants.PlayType.ZX_ZX3_8M.getName().split("_")[2];
+		
+		if(key.contains(playType1)){
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * zu xuan 3 9 ma
+	 * @param key
+	 * @return
+	 */
+	private boolean isZx39m(String key) {
+		String playType1 = Constants.PlayType.ZX_ZX3_9M.getName().split("_")[2];
+		
+		if(key.contains(playType1)){
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * zu xuan 3 10 ma
+	 * @param key
+	 * @return
+	 */
+	private boolean isZx3Qb(String key) {
+		String playType1 = Constants.PlayType.ZX_ZX3_QB.getName().split("_")[2];
+		
+		if(key.contains(playType1)){
+			return true;
+		}
+		return false;
 	}
 }
 
