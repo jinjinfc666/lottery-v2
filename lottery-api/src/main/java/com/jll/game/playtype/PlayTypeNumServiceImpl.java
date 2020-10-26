@@ -77,10 +77,25 @@ public class PlayTypeNumServiceImpl implements PlayTypeNumService{
 		String lotteryType = issue.getLotteryType();
 		String classification = playType.getClassification();
 		PlayTypeNum playTypeNum = lotteryTypePlayTypeNums_.get(lotteryType).get(classification).get(order.getBetNum());
+		if(playTypeNum == null) {
+			boolean isZx = isZx(playType);
+			if(isZx) {
+				playTypeNum = lotteryTypePlayTypeNums_.get(lotteryType).get(classification).get(String.valueOf(order.getBetNum().charAt(0)));
+			}
+		}
 		if(playTypeNum.getaOdds().compareTo(prizeRate) != 0){
 			return true;
 		}
 		
+		return false;
+	}
+
+
+	private boolean isZx(PlayType playType) {
+		String classification = playType.getClassification();
+		if(classification.contains(Constants.KEY_ZX)) {
+			return true;
+		}
 		return false;
 	}
 	

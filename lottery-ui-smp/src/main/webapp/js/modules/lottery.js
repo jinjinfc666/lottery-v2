@@ -1057,7 +1057,7 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 			});
 		};
 
-		$scope.bettingZx = function(lotteryType){
+		$scope.bettingZs = function(lotteryType){
 			var bet = null;
 			var bets = new Array();
 			var bulletinBoard = JSON.parse(sessionStorage.getItem("bulletinBoard"));
@@ -1078,18 +1078,25 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 			
 			
 			issueId = bulletinBoard.currIssue.id;
+			var betAmount = '';
+			$("input[name='presetMoney']").each(function(){
+				betAmount = $(this).val();
+			});
 			
 			if(typeof betAmount == 'undefined' 
 				|| betAmount == null
 				|| betAmount == ''){
-				blankCounter++;
+				showToast('请输入预设金额！');
+				return;
 			}
 			
 			var betNum = '';
 			for(var i = 0; i < 6; i++){
+				betNum = '';
+				
 				bet = {};
 				bet.issueId = issueId;
-				bet.playType = playTypeId;
+				
 				bet.betAmount = betAmount;
 				times = betAmount / pattern;
 				bet.times = times;
@@ -1097,69 +1104,35 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 				bet.isZh = isZh;
 				bet.terminalType = terminalType;
 				var prizeRate = '';
-				
-				$('col_'+i).find('td[data-sel="1" ]').each(function(){
+				var playType = '';
+				$('#col_'+i).find('td[data-sel="1" ]').each(function(){
 					var selFlag = $(this).attr("data-sel");
 					var dataUnit = $(this).attr("data-unit");
 					var betNum_ = $(this).attr("data-bettingNum");
 					var playTypeId = $(this).attr("data-play");
-//					var betAmount = $('#'+dataUnit+'_betAmount').val();
 					var odds = $(this).attr("data_odds");
 					
 					
-//					bet.betNum = betNum;
 					betNum += betNum_;
-//					bet.times = times;
-//					bet.pattern = pattern;
-					
-//					bet.prizeRate = odds;
 					prizeRate = odds;
-					
+					playType = playTypeId;
 					
 				});
-				var len = parseLen(i);
-				if(betNum.length != len){
-					alert('');
+				var len = $scope.parseZsLen(i);
+				if(betNum.length != 0 && betNum.length != len){
+					showToast(len + "码请输入 "+ len +"个号码!");
 					return;
+				}
+				if(betNum.length == 0 ){
+					continue;
 				}
 				bet.betNum = betNum;
 				bet.prizeRate = prizeRate;
+				bet.playType = playType;
 				bets.push(bet);
 			}
-			$('td[data-sel="1" ]').each(function(){
-				bet = {};
-				var selFlag = $(this).attr("data-sel");
-				var dataUnit = $(this).attr("data-unit");
-				var betNum = $(this).attr("data-bettingNum");
-				var playTypeId = $(this).attr("data-play");
-				var betAmount = $('#'+dataUnit+'_betAmount').val();
-				var odds = $(this).attr("data_odds");
-				times = betAmount / pattern;
-				bet.issueId = issueId;
-				bet.playType = playTypeId;
-				bet.betNum = betNum;
-				bet.times = times;
-				bet.pattern = pattern;
-				bet.isZh = isZh;
-				bet.terminalType = terminalType;
-				bet.prizeRate = odds;
-				bet.betAmount = betAmount;
-				
-				if(typeof betAmount == 'undefined' 
-					|| betAmount == null
-					|| betAmount == ''){
-					blankCounter++;
-				}
-				
-				bets.push(bet);
-				
-				
-			});
 			
-			if(blankCounter > 0){
-				showToast("请输入投注金额!");
-				return;
-			}
+	
 			playgameService.bet(bets, lotteryType, walletId).then(function(){
 				showToast("投注成功!");
 				
@@ -1182,6 +1155,33 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 			});
 		};
 		
+		//获取组三的号码长度
+		$scope.parseZsLen = function(colIndex){
+			if(colIndex == 0){
+				return 5;
+			}
+			if(colIndex == 1){
+				return 6;
+			}
+			if(colIndex == 2){
+				return 7;
+			}
+			if(colIndex == 3){
+				return 8;
+			}
+			if(colIndex == 4){
+				return 9;
+			}
+			
+			//全码 1
+			if(colIndex == 5){
+				return 1;
+			}
+			
+		};
+		
+		$scope.presetAmount = '';
+        
 		$scope.queryBettingRecBrief = function(lotteryType, pageIndex){
 			
 			if(sessionStorage.getItem('userInfo') == null){

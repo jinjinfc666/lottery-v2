@@ -137,6 +137,8 @@ public class Constants {
 		
 	public final static String KEY_PLAY_TYPE_NUM = "play_type_num";
 	
+	public final static String KEY_ZX = "zx";
+	
 	public static enum DepositOrderState{
 		
 		INIT_OR_PUSHED(0),

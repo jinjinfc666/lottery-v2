@@ -576,7 +576,7 @@ app.controller('authCtrl',
     	});
     }
     
-    //$scope.displayAllWallet();
+    $scope.presetAmount = '';
 }]);
 
 app.controller('mainController', ["$scope", "$http","$interval","$timeout", function ($scope, $http,$interval,$timeout) {
