@@ -32,6 +32,12 @@ import com.jll.game.playtypefacade.tc3.SwZhPlayTypeFacadeImpl;
 import com.jll.game.playtypefacade.tc3.SwhsDsPlayTypeFacadeImpl;
 import com.jll.game.playtypefacade.tc3.SwhsDxPlayTypeFacadeImpl;
 import com.jll.game.playtypefacade.tc3.SwhsSzPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.ZxZs10mPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.ZxZs5mPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.ZxZs6mPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.ZxZs7mPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.ZxZs8mPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.ZxZs9mPlayTypeFacadeImpl;
 
 public class PlayTypeFactory {
 
@@ -181,6 +187,13 @@ public class PlayTypeFactory {
 		
 		BdwSwPlayTypeFacadeImpl tc3BdwSwPlayTypeFacadeImpl = new BdwSwPlayTypeFacadeImpl();
 		
+		ZxZs5mPlayTypeFacadeImpl tc3ZxZs5mPlayTypeFacadeImpl = new ZxZs5mPlayTypeFacadeImpl();
+		ZxZs6mPlayTypeFacadeImpl tc3ZxZs6mPlayTypeFacadeImpl = new ZxZs6mPlayTypeFacadeImpl();
+		ZxZs7mPlayTypeFacadeImpl tc3ZxZs7mPlayTypeFacadeImpl = new ZxZs7mPlayTypeFacadeImpl();
+		ZxZs8mPlayTypeFacadeImpl tc3ZxZs8mPlayTypeFacadeImpl = new ZxZs8mPlayTypeFacadeImpl();
+		ZxZs9mPlayTypeFacadeImpl tc3ZxZs9mPlayTypeFacadeImpl = new ZxZs9mPlayTypeFacadeImpl();
+		ZxZs10mPlayTypeFacadeImpl tc3ZxZs10mPlayTypeFacadeImpl = new ZxZs10mPlayTypeFacadeImpl();
+		
 		playTypeFacades.add(qszxPlayTypeFacadeImpl);
 		playTypeFacades.add(qszxDsPlayTypeFacadeImpl);
 		playTypeFacades.add(zszxPlayTypeFacadeImpl);
@@ -320,6 +333,14 @@ public class PlayTypeFactory {
 		playTypeFacades.add(tc3SwhsSzPlayTypeFacadeImpl);
 		
 		playTypeFacades.add(tc3BdwSwPlayTypeFacadeImpl);
+		
+		
+		playTypeFacades.add(tc3ZxZs5mPlayTypeFacadeImpl);
+		playTypeFacades.add(tc3ZxZs6mPlayTypeFacadeImpl);
+		playTypeFacades.add(tc3ZxZs7mPlayTypeFacadeImpl);
+		playTypeFacades.add(tc3ZxZs8mPlayTypeFacadeImpl);
+		playTypeFacades.add(tc3ZxZs9mPlayTypeFacadeImpl);
+		playTypeFacades.add(tc3ZxZs10mPlayTypeFacadeImpl);
 	}
 	
 	public static PlayTypeFactory getInstance() {

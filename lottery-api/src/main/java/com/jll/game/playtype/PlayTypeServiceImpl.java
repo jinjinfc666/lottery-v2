@@ -392,6 +392,53 @@ public class PlayTypeServiceImpl implements PlayTypeService
 		column.setPlayTypeNums(new ArrayList<>());
 		ret.add(column);
 	}
+	
+	private void initZsBitColumn(List<BitColumn> ret) {
+		String zx35m = Constants.PlayType.ZX_ZX3_5M.getDesc().split("\\/")[0].split("\\|")[1];
+		String zx36m = Constants.PlayType.ZX_ZX3_6M.getDesc().split("\\/")[0].split("\\|")[1];
+		String zx37m = Constants.PlayType.ZX_ZX3_7M.getDesc().split("\\/")[0].split("\\|")[1];
+		String zx38m = Constants.PlayType.ZX_ZX3_8M.getDesc().split("\\/")[0].split("\\|")[1];
+		String zx39m = Constants.PlayType.ZX_ZX3_9M.getDesc().split("\\/")[0].split("\\|")[1];
+		String zx3qb = Constants.PlayType.ZX_ZX3_QB.getDesc().split("\\/")[0].split("\\|")[1];
+		
+		BitColumn column = new BitColumn();
+		column.setColumnName(zx35m);
+		column.setBitIndex(0);
+		column.setPlayTypeNums(new ArrayList<>());
+		ret.add(column);
+		
+		column = new BitColumn();
+		column.setColumnName(zx36m);
+		column.setBitIndex(1);
+		column.setPlayTypeNums(new ArrayList<>());
+		ret.add(column);
+		
+		column = new BitColumn();
+		column.setColumnName(zx37m);
+		column.setBitIndex(2);
+		column.setPlayTypeNums(new ArrayList<>());
+		ret.add(column);
+		
+		column = new BitColumn();
+		column.setColumnName(zx38m);
+		column.setBitIndex(2);
+		column.setPlayTypeNums(new ArrayList<>());
+		ret.add(column);
+		
+		column = new BitColumn();
+		column.setColumnName(zx39m);
+		column.setBitIndex(2);
+		column.setPlayTypeNums(new ArrayList<>());
+		ret.add(column);
+		
+		column = new BitColumn();
+		column.setColumnName(zx3qb);
+		column.setBitIndex(2);
+		column.setPlayTypeNums(new ArrayList<>());
+		ret.add(column);
+	}
+	
+	
 	private boolean isYwdwGw(String key) {
 		String playType1 = Constants.PlayType.YWDW_GW_DX.getName().split("_")[1];
 		
@@ -653,7 +700,7 @@ public class PlayTypeServiceImpl implements PlayTypeService
 		String codeTypeName = Constants.KEY_PLAY_TYPE_NUM;
 		
 		List<BitColumn> ret = new ArrayList<>();
-		initBitColumn(ret);
+		initZsBitColumn(ret);
 		Map<String,Map<String,Map<String,PlayTypeNum>>> playTypeNums1 = cacheRedisService.queryPlayTypeNum(codeTypeName);
 		playTypeNums1.entrySet().stream().filter(entry->entry.getKey().equals(lotteryType)).forEach(entry->{
 			Map<String, Map<String, PlayTypeNum>> playTypePlayTypeMap = entry.getValue();
@@ -663,67 +710,37 @@ public class PlayTypeServiceImpl implements PlayTypeService
 					System.out.println(k);
 					playTypeNum.setCurrentOdds(playTypeNum.getaOdds());
 					if(isZx35m(playTypeEntry.getKey())){
-						BitColumn column = null;
-						if(ret.size() < 3){
-							
-						}else{
-							column = ret.get(0);
-						}
+						BitColumn column = ret.get(0);
 						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
 						playTypeNums.add(playTypeNum);
 					}
 					
 					if(isZx36m(playTypeEntry.getKey())){
-						BitColumn column = null;
-						if(ret.size() < 2){
-							
-						}else{
-							column = ret.get(1);
-						}
+						BitColumn column = ret.get(1);
 						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
 						playTypeNums.add(playTypeNum);
 					}
 					
 					if(isZx37m(playTypeEntry.getKey())){
-						BitColumn column = null;
-						if(ret.size() < 1){
-							
-						}else{
-							column = ret.get(2);
-						}
+						BitColumn column = ret.get(2);
 						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
 						playTypeNums.add(playTypeNum);
 					}
 					
 					if(isZx38m(playTypeEntry.getKey())){
-						BitColumn column = null;
-						if(ret.size() < 1){
-							
-						}else{
-							column = ret.get(2);
-						}
+						BitColumn column = ret.get(3);
 						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
 						playTypeNums.add(playTypeNum);
 					}
 					
 					if(isZx39m(playTypeEntry.getKey())){
-						BitColumn column = null;
-						if(ret.size() < 1){
-							
-						}else{
-							column = ret.get(2);
-						}
+						BitColumn column = ret.get(4);
 						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
 						playTypeNums.add(playTypeNum);
 					}
 					
 					if(isZx3Qb(playTypeEntry.getKey())){
-						BitColumn column = null;
-						if(ret.size() < 1){
-							
-						}else{
-							column = ret.get(2);
-						}
+						BitColumn column = ret.get(5);
 						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
 						playTypeNums.add(playTypeNum);
 					}
