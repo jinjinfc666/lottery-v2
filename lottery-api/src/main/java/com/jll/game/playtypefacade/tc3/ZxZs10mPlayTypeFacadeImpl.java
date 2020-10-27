@@ -38,7 +38,7 @@ public class ZxZs10mPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 	
 	private final int COMPOSITE = 0;
 	
-	private String betNumOptions = "00,01";
+	private String betNumOptions = "0123456789";
 	
 	private String primeStr = "12357";
 	

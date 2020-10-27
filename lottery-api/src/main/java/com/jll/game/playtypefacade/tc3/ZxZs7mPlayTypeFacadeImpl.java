@@ -38,7 +38,7 @@ public class ZxZs7mPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 	
 	private final int COMPOSITE = 0;
 	
-	private String betNumOptions = "00,01";
+	private String betNumOptions = "0123456789";
 	
 	private String primeStr = "12357";
 	
@@ -269,16 +269,12 @@ public class ZxZs7mPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 	private Map<String, String> splitBetNum(String temp) {
 		Map<String, String> bits = new HashMap<String, String>();
 		int len = temp.length();
-						
-		if(len % 2 != 0) {
-			return bits;
-		}
-		
+				
 		for(int i = 0; i < len;) {
-			String bit = temp.substring(i, i + 2);
+			String bit = temp.substring(i, i + 1);
 			bits.put(bit, bit);
 			
-			i += 2;
+			i += 1;
 		}
 		
 		return bits;
