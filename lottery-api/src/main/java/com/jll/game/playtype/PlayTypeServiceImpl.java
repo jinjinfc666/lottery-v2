@@ -316,6 +316,15 @@ public class PlayTypeServiceImpl implements PlayTypeService
 		return false;
 	}
 	
+	private boolean isZx6(String key) {
+		String zx = Constants.PlayType.ZX_ZX6_4M.getName().split("_")[0];
+		String zx6 = Constants.PlayType.ZX_ZX6_4M.getName().split("_")[1];
+		if(key.contains(zx)
+				&& (key.contains(zx6))){
+			return true;
+		}
+		return false;
+	}
 	
 	@Override
 	public List<BitColumn> queryMainPsDwd(String lotteryType) {
@@ -438,6 +447,44 @@ public class PlayTypeServiceImpl implements PlayTypeService
 		ret.add(column);
 	}
 	
+	private void initZlBitColumn(List<BitColumn> ret) {
+		String zx35m = Constants.PlayType.ZX_ZX6_4M.getDesc().split("\\/")[0].split("\\|")[1];
+		String zx36m = Constants.PlayType.ZX_ZX6_5M.getDesc().split("\\/")[0].split("\\|")[1];
+		String zx37m = Constants.PlayType.ZX_ZX6_6M.getDesc().split("\\/")[0].split("\\|")[1];
+		String zx38m = Constants.PlayType.ZX_ZX6_7M.getDesc().split("\\/")[0].split("\\|")[1];
+		String zx39m = Constants.PlayType.ZX_ZX6_8M.getDesc().split("\\/")[0].split("\\|")[1];
+		
+		BitColumn column = new BitColumn();
+		column.setColumnName(zx35m);
+		column.setBitIndex(0);
+		column.setPlayTypeNums(new ArrayList<>());
+		ret.add(column);
+		
+		column = new BitColumn();
+		column.setColumnName(zx36m);
+		column.setBitIndex(1);
+		column.setPlayTypeNums(new ArrayList<>());
+		ret.add(column);
+		
+		column = new BitColumn();
+		column.setColumnName(zx37m);
+		column.setBitIndex(2);
+		column.setPlayTypeNums(new ArrayList<>());
+		ret.add(column);
+		
+		column = new BitColumn();
+		column.setColumnName(zx38m);
+		column.setBitIndex(3);
+		column.setPlayTypeNums(new ArrayList<>());
+		ret.add(column);
+		
+		column = new BitColumn();
+		column.setColumnName(zx39m);
+		column.setBitIndex(4);
+		column.setPlayTypeNums(new ArrayList<>());
+		ret.add(column);
+		
+	}
 	
 	private boolean isYwdwGw(String key) {
 		String playType1 = Constants.PlayType.YWDW_GW_DX.getName().split("_")[1];
@@ -700,7 +747,7 @@ public class PlayTypeServiceImpl implements PlayTypeService
 		String codeTypeName = Constants.KEY_PLAY_TYPE_NUM;
 		
 		List<BitColumn> ret = new ArrayList<>();
-		initZsBitColumn(ret);
+		initZlBitColumn(ret);
 		Map<String,Map<String,Map<String,PlayTypeNum>>> playTypeNums1 = cacheRedisService.queryPlayTypeNum(codeTypeName);
 		playTypeNums1.entrySet().stream().filter(entry->entry.getKey().equals(lotteryType)).forEach(entry->{
 			Map<String, Map<String, PlayTypeNum>> playTypePlayTypeMap = entry.getValue();
@@ -744,6 +791,58 @@ public class PlayTypeServiceImpl implements PlayTypeService
 						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
 						playTypeNums.add(playTypeNum);
 					}
+				});
+			});			
+		});
+		
+		return ret;
+	}
+	
+	
+	@Override
+	public List<BitColumn> queryZx6(String lotteryType) {
+		String codeTypeName = Constants.KEY_PLAY_TYPE_NUM;
+		
+		List<BitColumn> ret = new ArrayList<>();
+		initZlBitColumn(ret);
+		Map<String,Map<String,Map<String,PlayTypeNum>>> playTypeNums1 = cacheRedisService.queryPlayTypeNum(codeTypeName);
+		playTypeNums1.entrySet().stream().filter(entry->entry.getKey().equals(lotteryType)).forEach(entry->{
+			Map<String, Map<String, PlayTypeNum>> playTypePlayTypeMap = entry.getValue();
+			playTypePlayTypeMap.entrySet().stream().filter(playTypeEntry->isZx6(playTypeEntry.getKey())).forEach(playTypeEntry->{
+				System.out.println(playTypeEntry.getKey());
+				playTypeEntry.getValue().forEach((k,playTypeNum)->{
+					System.out.println(k);
+					playTypeNum.setCurrentOdds(playTypeNum.getaOdds());
+					if(isZx64m(playTypeEntry.getKey())){
+						BitColumn column = ret.get(0);
+						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
+						playTypeNums.add(playTypeNum);
+					}
+					
+					if(isZx65m(playTypeEntry.getKey())){
+						BitColumn column = ret.get(1);
+						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
+						playTypeNums.add(playTypeNum);
+					}
+					
+					if(isZx66m(playTypeEntry.getKey())){
+						BitColumn column = ret.get(2);
+						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
+						playTypeNums.add(playTypeNum);
+					}
+					
+					if(isZx67m(playTypeEntry.getKey())){
+						BitColumn column = ret.get(3);
+						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
+						playTypeNums.add(playTypeNum);
+					}
+					
+					if(isZx68m(playTypeEntry.getKey())){
+						BitColumn column = ret.get(4);
+						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
+						playTypeNums.add(playTypeNum);
+					}
+					
 				});
 			});			
 		});
@@ -828,6 +927,78 @@ public class PlayTypeServiceImpl implements PlayTypeService
 	 */
 	private boolean isZx3Qb(String key) {
 		String playType1 = Constants.PlayType.ZX_ZX3_QB.getName().split("_")[2];
+		
+		if(key.contains(playType1)){
+			return true;
+		}
+		return false;
+	}
+	
+	
+	
+	/**
+	 * zu xuan 3 5 ma
+	 * @param key
+	 * @return
+	 */
+	private boolean isZx64m(String key) {
+		String playType1 = Constants.PlayType.ZX_ZX6_4M.getName().split("_")[2];
+		
+		if(key.contains(playType1)){
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * zu xuan 3 6 ma
+	 * @param key
+	 * @return
+	 */
+	private boolean isZx65m(String key) {
+		String playType1 = Constants.PlayType.ZX_ZX6_5M.getName().split("_")[2];
+		
+		if(key.contains(playType1)){
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * zu xuan 3 7 ma
+	 * @param key
+	 * @return
+	 */
+	private boolean isZx66m(String key) {
+		String playType1 = Constants.PlayType.ZX_ZX6_6M.getName().split("_")[2];
+		
+		if(key.contains(playType1)){
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * zu xuan 3 8 ma
+	 * @param key
+	 * @return
+	 */
+	private boolean isZx67m(String key) {
+		String playType1 = Constants.PlayType.ZX_ZX6_7M.getName().split("_")[2];
+		
+		if(key.contains(playType1)){
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * zu xuan 3 9 ma
+	 * @param key
+	 * @return
+	 */
+	private boolean isZx68m(String key) {
+		String playType1 = Constants.PlayType.ZX_ZX6_8M.getName().split("_")[2];
 		
 		if(key.contains(playType1)){
 			return true;

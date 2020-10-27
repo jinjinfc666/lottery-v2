@@ -63,4 +63,6 @@ public interface PlayTypeService
 	List<List<PlayTypeNum>> querySzzh(String lotteryType);
 
 	List<BitColumn> queryZx3(String lotteryType);
+
+	List<BitColumn> queryZx6(String lotteryType);
 }

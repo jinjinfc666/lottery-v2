@@ -429,6 +429,12 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 			});
 		};
 		
+		$scope.queryZl = function(lotteryType){
+			playgameService.queryZl(lotteryType).then(function(ret){
+				$scope.zl = ret.zl;
+			});
+		};
+		
 		$scope.initBettingNumAuth = function(lotteryType, bitCounter){
 			$scope.bitNumArray = new Array();
 			var headerOptions = null;

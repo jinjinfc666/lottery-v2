@@ -2711,6 +2711,11 @@ public class Constants {
 		ZX_ZX3_8M(1, "zx_zx3_8m", "8m|8码/zx3|组选3/zx|组选"), 
 		ZX_ZX3_9M(1, "zx_zx3_9m", "9m|9码/zx3|组选3/zx|组选"), 
 		ZX_ZX3_QB(1, "zx_zx3_qb", "qb|全包/zx3|组选3/zx|组选"), 
+		ZX_ZX6_4M(1, "zx_zx6_4m", "4m|4码/zx6|组选6/zx|组选"), 
+		ZX_ZX6_5M(1, "zx_zx6_5m", "5m|5码/zx6|组选6/zx|组选"), 
+		ZX_ZX6_6M(1, "zx_zx6_6m", "6m|6码/zx6|组选6/zx|组选"), 
+		ZX_ZX6_7M(1, "zx_zx6_7m", "7m|7码/zx6|组选6/zx|组选"), 
+		ZX_ZX6_8M(1, "zx_zx6_8m", "8m|8码/zx6|组选6/zx|组选"), 
 		;
 		
 		private int code;
