@@ -421,19 +421,19 @@ public class PlayTypeServiceImpl implements PlayTypeService
 		
 		column = new BitColumn();
 		column.setColumnName(zx38m);
-		column.setBitIndex(2);
+		column.setBitIndex(3);
 		column.setPlayTypeNums(new ArrayList<>());
 		ret.add(column);
 		
 		column = new BitColumn();
 		column.setColumnName(zx39m);
-		column.setBitIndex(2);
+		column.setBitIndex(4);
 		column.setPlayTypeNums(new ArrayList<>());
 		ret.add(column);
 		
 		column = new BitColumn();
 		column.setColumnName(zx3qb);
-		column.setBitIndex(2);
+		column.setBitIndex(5);
 		column.setPlayTypeNums(new ArrayList<>());
 		ret.add(column);
 	}

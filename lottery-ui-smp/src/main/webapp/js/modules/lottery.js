@@ -2546,6 +2546,24 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
     	return deferred.promise;
     };
     
+    this.queryZl = function(lotteryType){
+    	var deferred = $q.defer();
+    	    	 
+    	var queryZlURL_ = queryZlURL.replace('{lottery-type}', lotteryType);
+    	var ret = {};
+    	    	
+    	$http.get(queryZlURL_).then(function(res){
+    		if (res.data.status == 1) {
+    			ret.zl = res.data.data.zl;
+	        }
+    		deferred.resolve(ret);
+    	}, function(){
+    		deferred.reject(ret);
+    	});
+    	
+    	return deferred.promise;
+    };
+    
     }
 ]).service('hisRecService', ["$http", "$q", function ($http, $q) {
 	this.queryBettingRec = function(queryRecParams){
