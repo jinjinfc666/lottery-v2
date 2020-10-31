@@ -79,6 +79,18 @@ app.config(["$httpProvider", function ($httpProvider) {
         url: '/lottery_betting_tc3_zl',
         templateUrl: 'embed/lottery_betting_tc3_zl.html',
         params:{'seqNo':1}
+    }).state('lottery_betting_tc3_yztg', {
+        url: '/lottery_betting_tc3_yztg',
+        templateUrl: 'embed/lottery_betting_tc3_yztg.html',
+        params:{'seqNo':1}
+    }).state('lottery_betting_tc3_kd', {
+        url: '/lottery_betting_tc3_kd',
+        templateUrl: 'embed/lottery_betting_tc3_kd.html',
+        params:{'seqNo':1}
+    }).state('lottery_betting_tc3_fszh', {
+        url: '/lottery_betting_tc3_fszh',
+        templateUrl: 'embed/lottery_betting_tc3_fszh.html',
+        params:{'seqNo':1}
     }).state('userCenter', {
         url: '/userCenter',
         templateUrl: 'embed/user_center.html'

@@ -88,6 +88,14 @@ var querySzzhURL = SITE+"/lotteries/{lottery-type}/play-type/szzh";
 
 var queryZsURL = SITE+"/lotteries/{lottery-type}/play-type/zs";
 
+var queryZlURL = SITE+"/lotteries/{lottery-type}/play-type/zl";
+
+var queryYztgURL = SITE+"/lotteries/{lottery-type}/play-type/yztg";
+
+var queryKdURL = SITE+"/lotteries/{lottery-type}/play-type/kd";
+
+var queryFsURL = SITE+"/lotteries/{lottery-type}/play-type/fs";
+
 //弹出框口
 function openWin(tip) {
 

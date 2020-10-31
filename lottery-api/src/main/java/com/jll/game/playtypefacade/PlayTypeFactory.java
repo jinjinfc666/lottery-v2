@@ -20,10 +20,23 @@ import com.jll.game.playtypefacade.tc3.EwhsBsDsPlayTypeFacadeImpl;
 import com.jll.game.playtypefacade.tc3.EwhsBsSzPlayTypeFacadeImpl;
 import com.jll.game.playtypefacade.tc3.EwhsSgDsPlayTypeFacadeImpl;
 import com.jll.game.playtypefacade.tc3.EwhsSgSzPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.FsBwSZPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.FsGwSZPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.FsSwSZPlayTypeFacadeImpl;
 import com.jll.game.playtypefacade.tc3.GwDsPlayTypeFacadeImpl;
 import com.jll.game.playtypefacade.tc3.GwDxPlayTypeFacadeImpl;
 import com.jll.game.playtypefacade.tc3.GwSZPlayTypeFacadeImpl;
 import com.jll.game.playtypefacade.tc3.GwZhPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.Kd0kPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.Kd1kPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.Kd2kPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.Kd3kPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.Kd4kPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.Kd5kPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.Kd6kPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.Kd7kPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.Kd8kPlayTypeFacadeImpl;
+import com.jll.game.playtypefacade.tc3.Kd9kPlayTypeFacadeImpl;
 import com.jll.game.playtypefacade.tc3.SwDsPlayTypeFacadeImpl;
 import com.jll.game.playtypefacade.tc3.SwDwSZPlayTypeFacadeImpl;
 import com.jll.game.playtypefacade.tc3.SwDxPlayTypeFacadeImpl;
@@ -205,6 +218,23 @@ public class PlayTypeFactory {
 		ZxZl7mPlayTypeFacadeImpl tc3ZxZl7mPlayTypeFacadeImpl = new ZxZl7mPlayTypeFacadeImpl();
 		ZxZl8mPlayTypeFacadeImpl tc3ZxZl8mPlayTypeFacadeImpl = new ZxZl8mPlayTypeFacadeImpl();
 		
+		
+		Kd9kPlayTypeFacadeImpl tc3Kd9kPlayTypeFacadeImpl = new Kd9kPlayTypeFacadeImpl();
+		Kd8kPlayTypeFacadeImpl tc3Kd8kPlayTypeFacadeImpl = new Kd8kPlayTypeFacadeImpl();
+		Kd7kPlayTypeFacadeImpl tc3Kd7kPlayTypeFacadeImpl = new Kd7kPlayTypeFacadeImpl();
+		Kd6kPlayTypeFacadeImpl tc3Kd6kPlayTypeFacadeImpl = new Kd6kPlayTypeFacadeImpl();
+		Kd5kPlayTypeFacadeImpl tc3Kd5kPlayTypeFacadeImpl = new Kd5kPlayTypeFacadeImpl();
+		Kd4kPlayTypeFacadeImpl tc3Kd4kPlayTypeFacadeImpl = new Kd4kPlayTypeFacadeImpl();
+		Kd3kPlayTypeFacadeImpl tc3Kd3kPlayTypeFacadeImpl = new Kd3kPlayTypeFacadeImpl();
+		Kd2kPlayTypeFacadeImpl tc3Kd2kPlayTypeFacadeImpl = new Kd2kPlayTypeFacadeImpl();
+		Kd1kPlayTypeFacadeImpl tc3Kd1kPlayTypeFacadeImpl = new Kd1kPlayTypeFacadeImpl();
+		Kd0kPlayTypeFacadeImpl tc3Kd0kPlayTypeFacadeImpl = new Kd0kPlayTypeFacadeImpl();
+		
+		
+		FsBwSZPlayTypeFacadeImpl tc3FsBwSZPlayTypeFacadeImpl = new FsBwSZPlayTypeFacadeImpl();
+		FsSwSZPlayTypeFacadeImpl tc3FsSwSZPlayTypeFacadeImpl = new FsSwSZPlayTypeFacadeImpl();
+		FsGwSZPlayTypeFacadeImpl tc3FsGwSZPlayTypeFacadeImpl = new FsGwSZPlayTypeFacadeImpl();
+		
 		playTypeFacades.add(qszxPlayTypeFacadeImpl);
 		playTypeFacades.add(qszxDsPlayTypeFacadeImpl);
 		playTypeFacades.add(zszxPlayTypeFacadeImpl);
@@ -358,6 +388,21 @@ public class PlayTypeFactory {
 		playTypeFacades.add(tc3ZxZl6mPlayTypeFacadeImpl);
 		playTypeFacades.add(tc3ZxZl7mPlayTypeFacadeImpl);
 		playTypeFacades.add(tc3ZxZl8mPlayTypeFacadeImpl);
+		
+		playTypeFacades.add(tc3Kd9kPlayTypeFacadeImpl);
+		playTypeFacades.add(tc3Kd8kPlayTypeFacadeImpl);
+		playTypeFacades.add(tc3Kd7kPlayTypeFacadeImpl);
+		playTypeFacades.add(tc3Kd6kPlayTypeFacadeImpl);
+		playTypeFacades.add(tc3Kd5kPlayTypeFacadeImpl);
+		playTypeFacades.add(tc3Kd4kPlayTypeFacadeImpl);
+		playTypeFacades.add(tc3Kd3kPlayTypeFacadeImpl);
+		playTypeFacades.add(tc3Kd2kPlayTypeFacadeImpl);
+		playTypeFacades.add(tc3Kd1kPlayTypeFacadeImpl);
+		playTypeFacades.add(tc3Kd0kPlayTypeFacadeImpl);
+		
+		playTypeFacades.add(tc3FsBwSZPlayTypeFacadeImpl);
+		playTypeFacades.add(tc3FsSwSZPlayTypeFacadeImpl);
+		playTypeFacades.add(tc3FsGwSZPlayTypeFacadeImpl);
 	}
 	
 	public static PlayTypeFactory getInstance() {

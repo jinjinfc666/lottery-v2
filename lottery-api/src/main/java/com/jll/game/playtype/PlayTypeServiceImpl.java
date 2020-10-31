@@ -326,6 +326,21 @@ public class PlayTypeServiceImpl implements PlayTypeService
 		return false;
 	}
 	
+	private boolean isKd(String key) {
+		String kd = Constants.PlayType.KD_0K.getName().split("_")[0];
+		if(key.contains(kd)){
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean isFs(String key) {
+		String fs = Constants.PlayType.FSZH_BW_SZ.getName().split("_")[0];
+		if(key.contains(fs)){
+			return true;
+		}
+		return false;
+	}
 	@Override
 	public List<BitColumn> queryMainPsDwd(String lotteryType) {
 		String codeTypeName = Constants.KEY_PLAY_TYPE_NUM;
@@ -336,9 +351,8 @@ public class PlayTypeServiceImpl implements PlayTypeService
 		playTypeNums1.entrySet().stream().filter(entry->entry.getKey().equals(lotteryType)).forEach(entry->{
 			Map<String, Map<String, PlayTypeNum>> playTypePlayTypeMap = entry.getValue();
 			playTypePlayTypeMap.entrySet().stream().filter(playTypeEntry->isYwdw(playTypeEntry.getKey())).forEach(playTypeEntry->{
-				System.out.println(playTypeEntry.getKey());
+				
 				playTypeEntry.getValue().forEach((k,playTypeNum)->{
-					System.out.println(k);
 					playTypeNum.setCurrentOdds(playTypeNum.getaOdds());
 					if(isYwdwBw(playTypeEntry.getKey())){
 						BitColumn column = null;
@@ -486,6 +500,79 @@ public class PlayTypeServiceImpl implements PlayTypeService
 		
 	}
 	
+	private void initKdBitColumn(List<BitColumn> ret) {		
+		String kd0k = Constants.PlayType.KD_0K.getDesc().split("\\/")[0].split("\\|")[1];
+		String kd1k = Constants.PlayType.KD_1K.getDesc().split("\\/")[0].split("\\|")[1];
+		String kd2k = Constants.PlayType.KD_2K.getDesc().split("\\/")[0].split("\\|")[1];
+		String kd3k = Constants.PlayType.KD_3K.getDesc().split("\\/")[0].split("\\|")[1];
+		String kd4k = Constants.PlayType.KD_4K.getDesc().split("\\/")[0].split("\\|")[1];
+		String kd5k = Constants.PlayType.KD_5K.getDesc().split("\\/")[0].split("\\|")[1];
+		String kd6k = Constants.PlayType.KD_6K.getDesc().split("\\/")[0].split("\\|")[1];
+		String kd7k = Constants.PlayType.KD_7K.getDesc().split("\\/")[0].split("\\|")[1];
+		String kd8k = Constants.PlayType.KD_8K.getDesc().split("\\/")[0].split("\\|")[1];
+		String kd9k = Constants.PlayType.KD_9K.getDesc().split("\\/")[0].split("\\|")[1];
+		
+		BitColumn column = new BitColumn();
+		column.setColumnName(kd0k);
+		column.setBitIndex(0);
+		column.setPlayTypeNums(new ArrayList<>());
+		ret.add(column);
+		
+		column = new BitColumn();
+		column.setColumnName(kd1k);
+		column.setBitIndex(1);
+		column.setPlayTypeNums(new ArrayList<>());
+		ret.add(column);
+		
+		column = new BitColumn();
+		column.setColumnName(kd2k);
+		column.setBitIndex(2);
+		column.setPlayTypeNums(new ArrayList<>());
+		ret.add(column);
+		
+		column = new BitColumn();
+		column.setColumnName(kd3k);
+		column.setBitIndex(3);
+		column.setPlayTypeNums(new ArrayList<>());
+		ret.add(column);
+		
+		column = new BitColumn();
+		column.setColumnName(kd4k);
+		column.setBitIndex(4);
+		column.setPlayTypeNums(new ArrayList<>());
+		ret.add(column);
+		
+		column = new BitColumn();
+		column.setColumnName(kd5k);
+		column.setBitIndex(5);
+		column.setPlayTypeNums(new ArrayList<>());
+		ret.add(column);
+		
+		column = new BitColumn();
+		column.setColumnName(kd6k);
+		column.setBitIndex(6);
+		column.setPlayTypeNums(new ArrayList<>());
+		ret.add(column);
+		
+		column = new BitColumn();
+		column.setColumnName(kd7k);
+		column.setBitIndex(7);
+		column.setPlayTypeNums(new ArrayList<>());
+		ret.add(column);
+		
+		column = new BitColumn();
+		column.setColumnName(kd8k);
+		column.setBitIndex(8);
+		column.setPlayTypeNums(new ArrayList<>());
+		ret.add(column);
+		
+		column = new BitColumn();
+		column.setColumnName(kd9k);
+		column.setBitIndex(9);
+		column.setPlayTypeNums(new ArrayList<>());
+		ret.add(column);
+	}
+	
 	private boolean isYwdwGw(String key) {
 		String playType1 = Constants.PlayType.YWDW_GW_DX.getName().split("_")[1];
 		
@@ -510,6 +597,122 @@ public class PlayTypeServiceImpl implements PlayTypeService
 		}
 		return false;
 	}
+	
+	private boolean is0k(String key) {
+		String playType1 = Constants.PlayType.KD_0K.getName().split("_")[1];
+		
+		if(key.contains(playType1)){
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean is1k(String key) {
+		String playType1 = Constants.PlayType.KD_1K.getName().split("_")[1];
+		
+		if(key.contains(playType1)){
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean is2k(String key) {
+		String playType1 = Constants.PlayType.KD_2K.getName().split("_")[1];
+		
+		if(key.contains(playType1)){
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean is3k(String key) {
+		String playType1 = Constants.PlayType.KD_3K.getName().split("_")[1];
+		
+		if(key.contains(playType1)){
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean is4k(String key) {
+		String playType1 = Constants.PlayType.KD_4K.getName().split("_")[1];
+		
+		if(key.contains(playType1)){
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean is5k(String key) {
+		String playType1 = Constants.PlayType.KD_5K.getName().split("_")[1];
+		
+		if(key.contains(playType1)){
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean is6k(String key) {
+		String playType1 = Constants.PlayType.KD_6K.getName().split("_")[1];
+		
+		if(key.contains(playType1)){
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean is7k(String key) {
+		String playType1 = Constants.PlayType.KD_7K.getName().split("_")[1];
+		
+		if(key.contains(playType1)){
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean is8k(String key) {
+		String playType1 = Constants.PlayType.KD_8K.getName().split("_")[1];
+		
+		if(key.contains(playType1)){
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean is9k(String key) {
+		String playType1 = Constants.PlayType.KD_9K.getName().split("_")[1];
+		
+		if(key.contains(playType1)){
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean isFsGw(String key) {
+		String playType1 = Constants.PlayType.FSZH_GW_SZ.getName().split("_")[1];
+		
+		if(key.contains(playType1)){
+			return true;
+		}
+		return false;
+	}
+	private boolean isFsSw(String key) {
+		String playType1 = Constants.PlayType.FSZH_SW_SZ.getName().split("_")[1];
+		
+		if(key.contains(playType1)){
+			return true;
+		}
+		return false;
+	}
+	private boolean isFsBw(String key) {
+		String playType1 = Constants.PlayType.FSZH_BW_SZ.getName().split("_")[1];
+		
+		if(key.contains(playType1)){
+			return true;
+		}
+		return false;
+	}
+	
 	@Override
 	public List<List<PlayTypeNum>> queryBwsz(String lotteryType) {
 		String playType = Constants.PlayType.YWDW_BW_SZ.getDesc();
@@ -747,7 +950,7 @@ public class PlayTypeServiceImpl implements PlayTypeService
 		String codeTypeName = Constants.KEY_PLAY_TYPE_NUM;
 		
 		List<BitColumn> ret = new ArrayList<>();
-		initZlBitColumn(ret);
+		initZsBitColumn(ret);
 		Map<String,Map<String,Map<String,PlayTypeNum>>> playTypeNums1 = cacheRedisService.queryPlayTypeNum(codeTypeName);
 		playTypeNums1.entrySet().stream().filter(entry->entry.getKey().equals(lotteryType)).forEach(entry->{
 			Map<String, Map<String, PlayTypeNum>> playTypePlayTypeMap = entry.getValue();
@@ -1004,6 +1207,173 @@ public class PlayTypeServiceImpl implements PlayTypeService
 			return true;
 		}
 		return false;
+	}
+	@Override
+	public List<BitColumn> queryKd(String lotteryType) {
+		String codeTypeName = Constants.KEY_PLAY_TYPE_NUM;
+		
+		List<BitColumn> ret = new ArrayList<>();
+		initKdBitColumn(ret);
+		Map<String,Map<String,Map<String,PlayTypeNum>>> playTypeNums1 = cacheRedisService.queryPlayTypeNum(codeTypeName);
+		playTypeNums1.entrySet().stream().filter(entry->entry.getKey().equals(lotteryType)).forEach(entry->{
+			Map<String, Map<String, PlayTypeNum>> playTypePlayTypeMap = entry.getValue();
+			playTypePlayTypeMap.entrySet().stream().filter(playTypeEntry->isKd(playTypeEntry.getKey())).forEach(playTypeEntry->{
+				System.out.println(playTypeEntry.getKey());
+				playTypeEntry.getValue().forEach((k,playTypeNum)->{
+					System.out.println(k);
+					playTypeNum.setCurrentOdds(playTypeNum.getaOdds());
+					if(is0k(playTypeEntry.getKey())){
+						BitColumn column = null;
+						if(ret.size() < 3){
+							
+						}else{
+							column = ret.get(0);
+						}
+						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
+						playTypeNums.add(playTypeNum);
+					}
+					
+					if(is1k(playTypeEntry.getKey())){
+						BitColumn column = null;
+						if(ret.size() < 2){
+							
+						}else{
+							column = ret.get(1);
+						}
+						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
+						playTypeNums.add(playTypeNum);
+					}
+					
+					if(is2k(playTypeEntry.getKey())){
+						BitColumn column = null;
+						if(ret.size() < 1){
+							
+						}else{
+							column = ret.get(2);
+						}
+						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
+						playTypeNums.add(playTypeNum);
+					}
+					if(is3k(playTypeEntry.getKey())){
+						BitColumn column = null;
+						if(ret.size() < 1){
+							
+						}else{
+							column = ret.get(3);
+						}
+						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
+						playTypeNums.add(playTypeNum);
+					}
+					if(is4k(playTypeEntry.getKey())){
+						BitColumn column = null;
+						if(ret.size() < 1){
+							
+						}else{
+							column = ret.get(4);
+						}
+						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
+						playTypeNums.add(playTypeNum);
+					}
+					if(is5k(playTypeEntry.getKey())){
+						BitColumn column = null;
+						if(ret.size() < 1){
+							
+						}else{
+							column = ret.get(5);
+						}
+						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
+						playTypeNums.add(playTypeNum);
+					}
+					if(is6k(playTypeEntry.getKey())){
+						BitColumn column = null;
+						if(ret.size() < 1){
+							
+						}else{
+							column = ret.get(6);
+						}
+						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
+						playTypeNums.add(playTypeNum);
+					}
+					if(is7k(playTypeEntry.getKey())){
+						BitColumn column = null;
+						if(ret.size() < 1){
+							
+						}else{
+							column = ret.get(7);
+						}
+						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
+						playTypeNums.add(playTypeNum);
+					}
+					if(is8k(playTypeEntry.getKey())){
+						BitColumn column = null;
+						if(ret.size() < 1){
+							
+						}else{
+							column = ret.get(8);
+						}
+						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
+						playTypeNums.add(playTypeNum);
+					}
+					if(is9k(playTypeEntry.getKey())){
+						BitColumn column = null;
+						if(ret.size() < 1){
+							
+						}else{
+							column = ret.get(9);
+						}
+						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
+						playTypeNums.add(playTypeNum);
+					}
+				});
+			});			
+		});
+		
+		ret.forEach(BitColumn->{
+			for(int i = BitColumn.getPlayTypeNums().size()-1; i < 10; i++ ){
+				PlayTypeNum playTypeNum = new PlayTypeNum();
+				playTypeNum.setBetNumDesc("");
+				BitColumn.getPlayTypeNums().add(playTypeNum);
+			}
+		});
+		return ret;
+	}
+	@Override
+	public List<BitColumn> queryFs(String lotteryType) {
+		String codeTypeName = Constants.KEY_PLAY_TYPE_NUM;
+		
+		List<BitColumn> ret = new ArrayList<>();
+		initBitColumn(ret);
+		Map<String,Map<String,Map<String,PlayTypeNum>>> playTypeNums1 = cacheRedisService.queryPlayTypeNum(codeTypeName);
+		playTypeNums1.entrySet().stream().filter(entry->entry.getKey().equals(lotteryType)).forEach(entry->{
+			Map<String, Map<String, PlayTypeNum>> playTypePlayTypeMap = entry.getValue();
+			playTypePlayTypeMap.entrySet().stream().filter(playTypeEntry->isFs(playTypeEntry.getKey())).forEach(playTypeEntry->{
+				System.out.println(playTypeEntry.getKey());
+				playTypeEntry.getValue().forEach((k,playTypeNum)->{
+					System.out.println(k);
+					playTypeNum.setCurrentOdds(playTypeNum.getaOdds());
+					if(isFsBw(playTypeEntry.getKey())){
+						BitColumn column = ret.get(0);
+						
+						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
+						playTypeNums.add(playTypeNum);
+					}
+					
+					if(isFsSw(playTypeEntry.getKey())){
+						BitColumn column = ret.get(1);
+						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
+						playTypeNums.add(playTypeNum);
+					}
+					
+					if(isFsGw(playTypeEntry.getKey())){
+						BitColumn column = ret.get(2);
+						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
+						playTypeNums.add(playTypeNum);
+					}
+				});
+			});			
+		});
+		
+		return ret;
 	}
 }
 

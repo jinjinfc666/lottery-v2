@@ -885,4 +885,43 @@ public class LotteryCenterController {
 		resp.put(Message.KEY_DATA, data);
 		return resp;
 	}
+	
+	@RequestMapping(value = "/{lottery-type}/play-type/yztg", method = {
+			RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
+	public Map<String, Object> queryYztg(@PathVariable(name = "lottery-type", required = true) String lotteryType) {
+		Map<String, Object> resp = new HashMap<>();
+		Map<String, Object> data = new HashMap<>();
+		List<BitColumn> dwd = playTypeServ.queryMainPsDwd(lotteryType);
+		data.put("dwd", dwd);
+
+		resp.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
+		resp.put(Message.KEY_DATA, data);
+		return resp;
+	}
+	
+	@RequestMapping(value = "/{lottery-type}/play-type/kd", method = {
+			RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
+	public Map<String, Object> queryKd(@PathVariable(name = "lottery-type", required = true) String lotteryType) {
+		Map<String, Object> resp = new HashMap<>();
+		Map<String, Object> data = new HashMap<>();
+		List<BitColumn> kd = playTypeServ.queryKd(lotteryType);
+		data.put("kd", kd);
+
+		resp.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
+		resp.put(Message.KEY_DATA, data);
+		return resp;
+	}
+	
+	@RequestMapping(value = "/{lottery-type}/play-type/fs", method = {
+			RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
+	public Map<String, Object> queryFs(@PathVariable(name = "lottery-type", required = true) String lotteryType) {
+		Map<String, Object> resp = new HashMap<>();
+		Map<String, Object> data = new HashMap<>();
+		List<BitColumn> fs = playTypeServ.queryFs(lotteryType);
+		data.put("fs", fs);
+
+		resp.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
+		resp.put(Message.KEY_DATA, data);
+		return resp;
+	}
 }

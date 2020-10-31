@@ -28,18 +28,18 @@ import com.jll.game.playtypefacade.DefaultPlayTypeFacadeImpl;
  * @author Administrator
  *
  */
-public class BwZhPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
+public class FsSwSZPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 	
-	private Logger logger = Logger.getLogger(BwZhPlayTypeFacadeImpl.class);
+	private Logger logger = Logger.getLogger(FsSwSZPlayTypeFacadeImpl.class);
 	
-	protected String playTypeDesc = "zh|质和/bw|百位/ywdw|一位定位/fs";
+	protected String playTypeDesc = "sz|数值/sw|十位/fszh|复式组合/fs";
 	
 	private final int PRIME = 1;
 	
 	private final int COMPOSITE = 0;
 	
-	private String betNumOptions = "00,01";
-	//质
+	private String betNumOptions = "0123456789";
+	
 	private String primeStr = "12357";
 	
 	private String smallStr = "04689";
@@ -152,8 +152,8 @@ public class BwZhPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 							
 			Map<String, String> tempBits = splitBetNum(temp);
 			if(tempBits.size() < 1
-					|| tempBits.size() > 2
-					|| tempBits.size() != (temp.length() / 2)) {
+					|| tempBits.size() > 10
+					|| tempBits.size() != (temp.length() / 1)) {
 				return false;
 			}
 			
@@ -272,15 +272,15 @@ public class BwZhPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		Map<String, String> bits = new HashMap<String, String>();
 		int len = temp.length();
 						
-		if(len % 2 != 0) {
+		/*if(len % 2 != 0) {
 			return bits;
-		}
+		}*/
 		
 		for(int i = 0; i < len;) {
-			String bit = temp.substring(i, i + 2);
+			String bit = temp.substring(i, i + 1);
 			bits.put(bit, bit);
 			
-			i += 2;
+			i += 1;
 		}
 		
 		return bits;
@@ -308,10 +308,9 @@ public class BwZhPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 								continue;
 									buffer.delete(0, buffer.length());								
 									
-									boolean isPrime = primeStr.contains(String.valueOf(i));
-									boolean isPrimeBetNum = primeStr.contains(key);
-									if((isPrime && isPrimeBetNum)
-											|| (!isPrime && !isPrimeBetNum)){
+									boolean isMatch = String.valueOf(ii).equals(key);
+//									boolean isPrimeBetNum = primeStr.contains(key);
+									if((isMatch)){
 										buffer.append(i).append(ii).append(iii);	
 										
 										Map<String, String> row = new HashMap<String, String>();

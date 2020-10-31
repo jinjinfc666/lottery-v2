@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -108,6 +109,8 @@ public class SysInitLoader {
 			tc3PlayTypes.forEach(playType->{
 				List<PlayTypeNum> playTypeNumInList = playTypeNumServ.queryPlayTypeNum(new Long(playType.getId()));
 				Map<String, PlayTypeNum> playTypeNumInMap = playTypeNumInList.stream().collect(Collectors.toMap(PlayTypeNum::getBetNum,Function.identity()));
+				Map<String, PlayTypeNum> playTypeNumInTreeMap = new TreeMap<>();
+				playTypeNumInTreeMap.putAll(playTypeNumInMap);
 				Map<String, Map<String, PlayTypeNum>> playTypePlayTypeNums = Optional.ofNullable(lotteryTypePlayTypeNums_.get(playType.getLotteryType())).orElse(new HashMap<String, Map<String, PlayTypeNum>>());
 				if(playTypePlayTypeNums.size() == 0)
 					lotteryTypePlayTypeNums_.put(playType.getLotteryType(), playTypePlayTypeNums);

@@ -2715,7 +2715,22 @@ public class Constants {
 		ZX_ZX6_5M(1, "zx_zx6_5m", "5m|5码/zx6|组选6/zx|组选"), 
 		ZX_ZX6_6M(1, "zx_zx6_6m", "6m|6码/zx6|组选6/zx|组选"), 
 		ZX_ZX6_7M(1, "zx_zx6_7m", "7m|7码/zx6|组选6/zx|组选"), 
-		ZX_ZX6_8M(1, "zx_zx6_8m", "8m|8码/zx6|组选6/zx|组选"), 
+		ZX_ZX6_8M(1, "zx_zx6_8m", "8m|8码/zx6|组选6/zx|组选"),
+		
+		KD_0K(1, "kd_0k", "0k|0跨/kd|跨度"), 
+		KD_1K(1, "kd_1k", "1k|1跨/kd|跨度"), 
+		KD_2K(1, "kd_2k", "2k|2跨/kd|跨度"), 
+		KD_3K(1, "kd_3k", "3k|3跨/kd|跨度"), 
+		KD_4K(1, "kd_4k", "4k|4跨/kd|跨度"), 
+		KD_5K(1, "kd_5k", "5k|5跨/kd|跨度"), 
+		KD_6K(1, "kd_6k", "6k|6跨/kd|跨度"), 
+		KD_7K(1, "kd_7k", "7k|7跨/kd|跨度"),
+		KD_8K(1, "kd_8k", "8k|8跨/kd|跨度"), 
+		KD_9K(1, "kd_9k", "9k|9跨/kd|跨度"), 
+		
+		FSZH_BW_SZ(1, "fszh_bw_sz", "sz|数值/bw|百位/fszh|复式组合"),
+		FSZH_SW_SZ(1, "fszh_sw_sz", "sz|数值/sw|十位/fszh|复式组合"), 
+		FSZH_GW_SZ(1, "fszh_gw_sz", "sz|数值/gw|个位/fszh|复式组合"), 
 		;
 		
 		private int code;

@@ -435,6 +435,30 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 			});
 		};
 		
+		$scope.queryYztg = function(lotteryType){
+			playgameService.queryYztg(lotteryType).then(function(ret){
+				$scope.dwd = ret.dwd;
+			});
+		};
+		
+		$scope.queryYztg = function(lotteryType){
+			playgameService.queryYztg(lotteryType).then(function(ret){
+				$scope.dwd = ret.dwd;
+			});
+		};
+		
+		$scope.queryKd = function(lotteryType){
+			playgameService.queryKd(lotteryType).then(function(ret){
+				$scope.kd = ret.kd;
+			});
+		};
+		
+		$scope.queryFs = function(lotteryType){
+			playgameService.queryFs(lotteryType).then(function(ret){
+				$scope.fs = ret.fs;
+			});
+		};
+		
 		$scope.initBettingNumAuth = function(lotteryType, bitCounter){
 			$scope.bitNumArray = new Array();
 			var headerOptions = null;
@@ -964,6 +988,61 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 			
 		};
 		
+		$scope.selNumYztg = function(myevent){
+			var selFlag = null;
+			var dataBit = null;
+			var dataIndex = null;
+			var presetMoney = null;
+			$("input[name='presetMoney']").each(function(){
+				presetMoney = $(this).val();
+				if(typeof presetMoney != 'undefined'
+					&& presetMoney != null
+					&& presetMoney.length > 0){
+					return false;
+				}
+			});
+			
+			$("td[data-sel=1]").each(function(){
+				var dataUnit = $(this).attr("data-unit");	
+				var dataBit = $('#'+dataUnit).attr("data-bit");
+				var dataIndex = $('#'+dataUnit).attr("data-index");
+				$(this).removeClass('selNumBg');
+				$("td[data-unit="+dataUnit+"]").each(function(){
+					$(this).removeClass('selNumBg');
+				});
+				$(this).attr("data-sel", '0');
+				$('#'+dataBit+'_'+dataIndex+'_betAmount').val('');
+			});
+			
+			if(myevent.target.tagName != 'TD'){
+				dataUnit = $(myevent.target.parentElement).attr("data-unit");
+			}else{
+				dataUnit = $(myevent.target).attr("data-unit");				
+			}
+			
+			selFlag = $('#'+dataUnit).attr("data-sel");
+			dataBit = $('#'+dataUnit).attr("data-bit");
+			dataIndex = $('#'+dataUnit).attr("data-index");
+			
+			if(selFlag == '0'){
+				$('#'+dataUnit).attr("data-sel", '1');
+				$("td[data-unit="+dataUnit +"]").each(function(){
+					$(this).addClass('selNumBg');						
+				});
+				
+				if(typeof presetMoney != 'undefined'
+					&& presetMoney.length > 0){
+					$('#'+dataBit+'_'+dataIndex+'_betAmount').val(presetMoney);
+				}
+			}else{
+				$('#'+dataUnit).attr("data-sel", '0');
+				$('#'+dataBit+'_'+dataIndex+'_betAmount').val('');
+				$("td[data-unit="+dataUnit +"]").each(function(){
+					$(this).removeClass('selNumBg');						
+				});
+			}
+			
+		};
 		
 		$scope.resetBettingAmount = function(){
 			//var presetBettingAmount = $('#presetMoney').val();
@@ -1186,6 +1265,220 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 			
 		};
 		
+		//获取组三的号码长度
+		$scope.parseZlLen = function(colIndex){
+			if(colIndex == 0){
+				return 4;
+			}
+			if(colIndex == 1){
+				return 5;
+			}
+			if(colIndex == 2){
+				return 6;
+			}
+			if(colIndex == 3){
+				return 7;
+			}
+			if(colIndex == 4){
+				return 8;
+			}
+		};
+		
+		$scope.bettingZl = function(lotteryType){
+			var bet = null;
+			var bets = new Array();
+			var bulletinBoard = JSON.parse(sessionStorage.getItem("bulletinBoard"));
+			var issueId = null;
+			var walletId = JSON.parse(sessionStorage.getItem("mainAcc")).id;
+			var times = 1;
+			var pattern = 1;
+			var isZh = 0;
+			var terminalType = 0; 
+			var blankCounter = 0;
+			
+			if(typeof bulletinBoard == 'undefined'
+				|| bulletinBoard == null
+				|| bulletinBoard.currIssue == null){
+				showToast("无投注期次!");
+				return;
+			}
+			
+			
+			issueId = bulletinBoard.currIssue.id;
+			var betAmount = '';
+			$("input[name='presetMoney']").each(function(){
+				betAmount = $(this).val();
+			});
+			
+			if(typeof betAmount == 'undefined' 
+				|| betAmount == null
+				|| betAmount == ''){
+				showToast('请输入预设金额！');
+				return;
+			}
+			
+			var betNum = '';
+			for(var i = 0; i < 6; i++){
+				betNum = '';
+				
+				bet = {};
+				bet.issueId = issueId;
+				
+				bet.betAmount = betAmount;
+				times = betAmount / pattern;
+				bet.times = times;
+				bet.pattern = pattern;
+				bet.isZh = isZh;
+				bet.terminalType = terminalType;
+				var prizeRate = '';
+				var playType = '';
+				$('#col_'+i).find('td[data-sel="1" ]').each(function(){
+					var selFlag = $(this).attr("data-sel");
+					var dataUnit = $(this).attr("data-unit");
+					var betNum_ = $(this).attr("data-bettingNum");
+					var playTypeId = $(this).attr("data-play");
+					var odds = $(this).attr("data_odds");
+					
+					
+					betNum += betNum_;
+					prizeRate = odds;
+					playType = playTypeId;
+					
+				});
+				var len = $scope.parseZlLen(i);
+				if(betNum.length != 0 && betNum.length != len){
+					showToast(len + "码请输入 "+ len +"个号码!");
+					return;
+				}
+				if(betNum.length == 0 ){
+					continue;
+				}
+				bet.betNum = betNum;
+				bet.prizeRate = prizeRate;
+				bet.playType = playType;
+				bets.push(bet);
+			}
+			
+	
+			playgameService.bet(bets, lotteryType, walletId).then(function(){
+				showToast("投注成功!");
+				
+				$scope.queryBettingRecBrief(lotteryType, 1);
+				$scope.queryMemberInfo();
+				$scope.queryExpertPushNum(lotteryType);
+				
+				$('tr.ng-scope[data-sel="1" ]').each(function(){
+					$(this).removeClass('selNumBg');
+					$(this).attr("data-sel", "0");
+					$(this).children("td").children("input").val('');
+					$('html, body').animate({scrollTop:0}, 'slow'); 
+				});
+			},
+			function(error){
+				var codeType = 'error_mes';
+				var attr = error;
+				var codeVal =  sysCodeTranslateFactory.codeTranslate(codeType, attr);
+				showToast(codeVal);
+			});
+		};
+		
+		$scope.bettingZl = function(lotteryType){
+			var bet = null;
+			var bets = new Array();
+			var bulletinBoard = JSON.parse(sessionStorage.getItem("bulletinBoard"));
+			var issueId = null;
+			var walletId = JSON.parse(sessionStorage.getItem("mainAcc")).id;
+			var times = 1;
+			var pattern = 1;
+			var isZh = 0;
+			var terminalType = 0; 
+			var blankCounter = 0;
+			
+			if(typeof bulletinBoard == 'undefined'
+				|| bulletinBoard == null
+				|| bulletinBoard.currIssue == null){
+				showToast("无投注期次!");
+				return;
+			}
+			
+			
+			issueId = bulletinBoard.currIssue.id;
+			var betAmount = '';
+			$("input[name='presetMoney']").each(function(){
+				betAmount = $(this).val();
+			});
+			
+			if(typeof betAmount == 'undefined' 
+				|| betAmount == null
+				|| betAmount == ''){
+				showToast('请输入预设金额！');
+				return;
+			}
+			
+			var betNum = '';
+			for(var i = 0; i < 6; i++){
+				betNum = '';
+				
+				bet = {};
+				bet.issueId = issueId;
+				
+				bet.betAmount = betAmount;
+				times = betAmount / pattern;
+				bet.times = times;
+				bet.pattern = pattern;
+				bet.isZh = isZh;
+				bet.terminalType = terminalType;
+				var prizeRate = '';
+				var playType = '';
+				$('#col_'+i).find('td[data-sel="1" ]').each(function(){
+					var selFlag = $(this).attr("data-sel");
+					var dataUnit = $(this).attr("data-unit");
+					var betNum_ = $(this).attr("data-bettingNum");
+					var playTypeId = $(this).attr("data-play");
+					var odds = $(this).attr("data_odds");
+					
+					
+					betNum += betNum_;
+					prizeRate = odds;
+					playType = playTypeId;
+					
+				});
+				var len = $scope.parseZlLen(i);
+				if(betNum.length != 0 && betNum.length != len){
+					showToast(len + "码请输入 "+ len +"个号码!");
+					return;
+				}
+				if(betNum.length == 0 ){
+					continue;
+				}
+				bet.betNum = betNum;
+				bet.prizeRate = prizeRate;
+				bet.playType = playType;
+				bets.push(bet);
+			}
+			
+	
+			playgameService.bet(bets, lotteryType, walletId).then(function(){
+				showToast("投注成功!");
+				
+				$scope.queryBettingRecBrief(lotteryType, 1);
+				$scope.queryMemberInfo();
+				$scope.queryExpertPushNum(lotteryType);
+				
+				$('tr.ng-scope[data-sel="1" ]').each(function(){
+					$(this).removeClass('selNumBg');
+					$(this).attr("data-sel", "0");
+					$(this).children("td").children("input").val('');
+					$('html, body').animate({scrollTop:0}, 'slow'); 
+				});
+			},
+			function(error){
+				var codeType = 'error_mes';
+				var attr = error;
+				var codeVal =  sysCodeTranslateFactory.codeTranslate(codeType, attr);
+				showToast(codeVal);
+			});
+		};
 		$scope.presetAmount = '';
         
 		$scope.queryBettingRecBrief = function(lotteryType, pageIndex){
@@ -2561,6 +2854,78 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
     	$http.get(queryZlURL_).then(function(res){
     		if (res.data.status == 1) {
     			ret.zl = res.data.data.zl;
+	        }
+    		deferred.resolve(ret);
+    	}, function(){
+    		deferred.reject(ret);
+    	});
+    	
+    	return deferred.promise;
+    };
+    
+    this.queryYztg = function(lotteryType){
+    	var deferred = $q.defer();
+    	    	 
+    	var queryYztgURL_ = queryYztgURL.replace('{lottery-type}', lotteryType);
+    	var ret = {};
+    	    	
+    	$http.get(queryYztgURL_).then(function(res){
+    		if (res.data.status == 1) {
+    			ret.dwd = res.data.data.dwd;
+	        }
+    		deferred.resolve(ret);
+    	}, function(){
+    		deferred.reject(ret);
+    	});
+    	
+    	return deferred.promise;
+    };
+    
+    this.queryKd = function(lotteryType){
+    	var deferred = $q.defer();
+    	    	 
+    	var queryKdURL_ = queryKdURL.replace('{lottery-type}', lotteryType);
+    	var ret = {};
+    	    	
+    	$http.get(queryKdURL_).then(function(res){
+    		if (res.data.status == 1) {
+    			ret.kd = res.data.data.kd;
+	        }
+    		deferred.resolve(ret);
+    	}, function(){
+    		deferred.reject(ret);
+    	});
+    	
+    	return deferred.promise;
+    };
+    
+    this.queryKd = function(lotteryType){
+    	var deferred = $q.defer();
+    	    	 
+    	var queryKdURL_ = queryKdURL.replace('{lottery-type}', lotteryType);
+    	var ret = {};
+    	    	
+    	$http.get(queryKdURL_).then(function(res){
+    		if (res.data.status == 1) {
+    			ret.kd = res.data.data.kd;
+	        }
+    		deferred.resolve(ret);
+    	}, function(){
+    		deferred.reject(ret);
+    	});
+    	
+    	return deferred.promise;
+    };
+    
+    this.queryFs = function(lotteryType){
+    	var deferred = $q.defer();
+    	    	 
+    	var queryFsURL_ = queryFsURL.replace('{lottery-type}', lotteryType);
+    	var ret = {};
+    	    	
+    	$http.get(queryFsURL_).then(function(res){
+    		if (res.data.status == 1) {
+    			ret.fs = res.data.data.fs;
 	        }
     		deferred.resolve(ret);
     	}, function(){
