@@ -107,7 +107,6 @@
     
 	<!-- <tx:annotation-driven transaction-manager="txManager" /> -->
 	
-    
 	<tx:advice id="txAdvice" transaction-manager="txManager">
         <!-- the transactional semantics... -->
         <tx:attributes>

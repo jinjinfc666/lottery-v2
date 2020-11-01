@@ -163,7 +163,7 @@
 				</div>
 			</div>
 			
-			<div id="lotteryV2_content" class="sidebar index-sidebar ng-scope" ng-init="queryIssueRecBrief('tc3',1)">
+			<div id="lotteryV2_content" class="sidebar index-sidebar ng-scope" ng-init="queryIssueRecBriefTc3('tc3',1)">
 			<table class="table table-bordered table-bet pull-left ng-scope" style="background-color:white">
 							<thead>
 								<tr>
@@ -249,47 +249,47 @@
 		<div class="frame ng-scope">
 			<!-- content_left -->		
 			
-			<div class="main ng-scope" id="_main_view" ng-controller="lotteryUICtrl" ng-init="iniCqsscUI()">
+			<div class="main ng-scope" id="_main_view" ng-controller="lotteryUICtrl" ng-init="iniCqsscUI(0)">
 				<section class="ng-scope">
 					<div id="lotteryV2_group" class="ng-scope" >
-						<ul class="twoNav ng-scope">
-							<li ng-class="{'ng-scope':true,'active':isZHActive}" ng-click="changeFocus(0)">
+						<ul class="twoNav ng-scope" >
+							<li ng-class="{'ng-scope':true,'active':isZeroActive}">
 								<a class="ng-binding" lot_code="zhenghe" stid="33" ui-sref="lottery_betting_tc3">主盘势</a>
 							</li>
-							<li ng-class="{'ng-scope':true,'active':isBitActive}" ng-click="changeFocus(1)">
+							<li ng-class="{'ng-scope':true,'active':isOneActive}">
 								<a class="ng-binding" lot_code="qianwei" stid="33" ui-sref="lottery_betting_tc3_yzdw">一字盘势</a>
 							</li>
-							<li ng-class="{'ng-scope':true,'active':isBitActive}" ng-click="changeFocus(1)">
+							<li ng-class="{'ng-scope':true,'active':isTwoActive}">
 								<a class="ng-binding" lot_code="qianwei" stid="33" ui-sref="lottery_betting_tc3_ezdw">二字定位</a>
 							</li>
-							<li ng-class="{'ng-scope':true,'active':isBitActive}" ng-click="changeFocus(1)">
+							<li ng-class="{'ng-scope':true,'active':isThreeActive}">
 								<a class="ng-binding" lot_code="qianwei" stid="33" ui-sref="lottery_betting_tc3_ezzh">二字组合</a>
 							</li>
-							<li ng-class="{'ng-scope':true,'active':isBitActive}" ng-click="changeFocus(1)">
+							<li ng-class="{'ng-scope':true,'active':isFourActive}">
 								<a class="ng-binding" lot_code="qianwei" stid="33" ui-sref="lottery_betting_tc3_ezhs">二字和数</a>
 							</li>
-							<li ng-class="{'ng-scope':true,'active':isBitActive}" ng-click="changeFocus(1)">
+							<li ng-class="{'ng-scope':true,'active':isFiveActive}">
 								<a class="ng-binding" lot_code="qianwei" stid="33" ui-sref="lottery_betting_tc3_szdw">三字定位</a>
 							</li>
-							<li ng-class="{'ng-scope':true,'active':isBitActive}" ng-click="changeFocus(1)">
+							<li ng-class="{'ng-scope':true,'active':isSixActive}">
 								<a class="ng-binding" lot_code="qianwei" stid="33" ui-sref="lottery_betting_tc3_szzh">三字组合</a>
 							</li>
-							<li ng-class="{'ng-scope':true,'active':isBitActive}" ng-click="changeFocus(1)">
+							<li ng-class="{'ng-scope':true,'active':isSevenActive}">
 								<a class="ng-binding" lot_code="qianwei" stid="33" ui-sref="lottery_betting_tc3_szhs">三字和数</a>
 							</li>
-							<li ng-class="{'ng-scope':true,'active':isBitActive}" ng-click="changeFocus(1)">
+							<li ng-class="{'ng-scope':true,'active':isEightActive}">
 								<a class="ng-binding" lot_code="qianwei" stid="33" ui-sref="lottery_betting_tc3_zs">组三</a>
 							</li>
-							<li ng-class="{'ng-scope':true,'active':isBitActive}" ng-click="changeFocus(1)">
+							<li ng-class="{'ng-scope':true,'active':isNineActive}">
 								<a class="ng-binding" lot_code="qianwei" stid="33" ui-sref="lottery_betting_tc3_zl">组六</a>
 							</li>
-							<li ng-class="{'ng-scope':true,'active':isBitActive}" ng-click="changeFocus(1)">
+							<li ng-class="{'ng-scope':true,'active':isTenActive}">
 								<a class="ng-binding" lot_code="qianwei" stid="33" ui-sref="lottery_betting_tc3_fszh">复式组合</a>
 							</li>
-							<li ng-class="{'ng-scope':true,'active':isBitActive}" ng-click="changeFocus(1)">
+							<li ng-class="{'ng-scope':true,'active':isElevenActive}">
 								<a class="ng-binding" lot_code="qianwei" stid="33" ui-sref="lottery_betting_tc3_yzgg">一字过关</a>
 							</li>
-							<li ng-class="{'ng-scope':true,'active':isBitActive}" ng-click="changeFocus(1)">
+							<li ng-class="{'ng-scope':true,'active':isTwelveActive}">
 								<a class="ng-binding" lot_code="qianwei" stid="33" ui-sref="lottery_betting_tc3_kd">跨度</a>
 							</li>
 							<!-- li class="ng-scope "><a class="ng-binding" lot_code="wanwei" stid="33">万位</a></li>
@@ -313,7 +313,7 @@
 						</ul>
 					</div>
 	
-					<div class="main-bet-content" ng-if="isLogin" ng-controller="authCtrl" >
+					<div class="main-bet-content">
 						<div class="bar-bet">
 							<div class="input-group pull-left w150 ml20">
 								<span id="basic-addon1" class="input-group-addon">预设金额</span> 
@@ -321,15 +321,9 @@
 										class="form-control ng-pristine ng-untouched ng-valid"
 										name="presetMoney" 
 										maxlength="6" 
-										value="" 
-										disabled ng-if="!isLogin" ng-controller="authCtrl" >
-								<input type="text" 
-										class="form-control ng-pristine ng-untouched ng-valid"
-										name="presetMoney" 
-										maxlength="6" 
-										value=""  ng-if="isLogin" ng-controller="authCtrl" >
+										ng-model="$parent.presetAmount">
 							</div>
-							<button class="btn btn-danger ml10 resetBtn" style="background: #267671; border-color: #455964;" type="button">重置</button>
+							<button class="btn btn-danger ml10 resetBtn" style="background: #267671; border-color: #455964;" type="button" ng-click="reset()">重置</button>
 							<button type="button" class="btn btn-danger ml10 ng-scope lotteryV2Btn" ng-click='betting("tc3")'>提交注单</button>
 							<div class="pull-right clock ng-scope" id="currentQiHaoAndTime">
 								<span id="flushTime" style="font-size: 14px; float: right; width: 40px; text-align: right; margin-top: 4px; margin-left: 6px"></span>
@@ -361,7 +355,8 @@
 											<input type="text"
 												class="bet-input ng-pristine ng-untouched ng-valid"
 												maxlength="6"
-												id="{{$index}}_0_unit_tab_01_betAmount"> 
+												id="{{$index}}_0_unit_tab_01_betAmount"
+												disabled> 
 										</td>
 										<td width="60" add-color="1" ng-click="selNum($event)" data-unit="{{$index}}_1_unit_tab_01">{{row[1].betNum}}</td>
 										<td add-color="1" ng-click="selNum($event)" data-unit="{{$index}}_1_unit_tab_01"><b class="text-danger ng-binding">{{row[1].currentOdds}}</b></td>
@@ -376,7 +371,8 @@
 											<input type="text"
 												class="bet-input ng-pristine ng-untouched ng-valid"
 												maxlength="6"
-												id="{{$index}}_1_unit_tab_01_betAmount"> 
+												id="{{$index}}_1_unit_tab_01_betAmount"
+												disabled> 
 										</td>
 										<td width="60" add-color="2" ng-click="selNum($event)" data-unit="{{$index}}_2_unit_tab_01">{{row[2].betNum}}</td>
 										<td add-color="2" ng-click="selNum($event)" data-unit="{{$index}}_2_unit_tab_01"><b class="text-danger ng-binding">{{row[2].currentOdds}}</b></td>
@@ -391,7 +387,8 @@
 											<input type="text"
 												class="bet-input ng-pristine ng-untouched ng-valid"
 												maxlength="6"
-												id="{{$index}}_2_unit_tab_01_betAmount"> 
+												id="{{$index}}_2_unit_tab_01_betAmount"
+												disabled> 
 										</td>
 										<td width="60" add-color="3" ng-click="selNum($event)" data-unit="{{$index}}_3_unit_tab_01">{{row[3].betNum}}</td>
 										<td add-color="3" data-unit="{{$index}}_3_unit_tab_01" ng-click="selNum($event)"><b class="text-danger ng-binding">{{row[3].currentOdds}}</b></td>
@@ -406,7 +403,8 @@
 											<input type="text"
 												class="bet-input ng-pristine ng-untouched ng-valid"
 												maxlength="6"
-												id="{{$index}}_3_unit_tab_01_betAmount"> 
+												id="{{$index}}_3_unit_tab_01_betAmount"
+												disabled> 
 										</td>
 										
 										<td width="60" add-color="4" ng-click="selNum($event)" data-unit="{{$index}}_4_unit_tab_01">{{row[4].betNum}}</td>
@@ -423,7 +421,8 @@
 												class="bet-input ng-pristine ng-untouched ng-valid"
 												maxlength="6"
 												disabled=""
-												id="{{$index}}_4_unit_tab_01_betAmount"> 
+												id="{{$index}}_4_unit_tab_01_betAmount"
+												disabled> 
 										</td>
 									</tr>
 								</tbody>
@@ -450,7 +449,8 @@
 											<input type="text"
 												class="bet-input ng-pristine ng-untouched ng-valid"
 												maxlength="6"
-												id="{{$index}}_0_unit_tab_02_betAmount"> 
+												id="{{$index}}_0_unit_tab_02_betAmount"
+												disabled> 
 										</td>
 										<td width="60" add-color="1" ng-click="selNum($event)" data-unit="{{$index}}_1_unit_tab_02">{{row[1].displayName}}</td>
 										<td add-color="1" ng-click="selNum($event)" data-unit="{{$index}}_1_unit_tab_02"><b class="text-danger ng-binding">{{row[1].currentOdds}}</b></td>
@@ -465,7 +465,8 @@
 											<input type="text"
 												class="bet-input ng-pristine ng-untouched ng-valid"
 												maxlength="6"
-												id="{{$index}}_1_unit_tab_02_betAmount"> 
+												id="{{$index}}_1_unit_tab_02_betAmount"
+												disabled> 
 										</td>
 										<td width="60" add-color="2" ng-click="selNum($event)" data-unit="{{$index}}_2_unit_tab_02">{{row[2].displayName}}</td>
 										<td add-color="2" ng-click="selNum($event)" data-unit="{{$index}}_2_unit_tab_02"><b class="text-danger ng-binding">{{row[2].currentOdds}}</b></td>
@@ -480,7 +481,8 @@
 											<input type="text"
 												class="bet-input ng-pristine ng-untouched ng-valid"
 												maxlength="6"
-												id="{{$index}}_2_unit_tab_02_betAmount"> 
+												id="{{$index}}_2_unit_tab_02_betAmount"
+												disabled> 
 										</td>
 										<td width="60" add-color="3" ng-click="selNum($event)" data-unit="{{$index}}_3_unit_tab_02">{{row[3].displayName}}</td>
 										<td add-color="3" data-unit="{{$index}}_3_unit_tab_02"><b class="text-danger ng-binding" ng-click="selNum($event)">{{row[3].currentOdds}}</b></td>
@@ -495,7 +497,8 @@
 											<input type="text"
 												class="bet-input ng-pristine ng-untouched ng-valid"
 												maxlength="6"
-												id="{{$index}}_3_unit_tab_02_betAmount"> 
+												id="{{$index}}_3_unit_tab_02_betAmount"
+												disabled> 
 										</td>
 										
 										<td width="60" add-color="4" ng-click="selNum($event)"  data-unit="{{$index}}_4_unit_tab_02">{{row[4].displayName}}</td>
@@ -511,7 +514,8 @@
 											<input type="text"
 												class="bet-input ng-pristine ng-untouched ng-valid"
 												maxlength="6"
-												id="{{$index}}_4_unit_tab_02_betAmount"> 
+												id="{{$index}}_4_unit_tab_02_betAmount"
+												disabled> 
 										</td>
 									</tr>
 								</tbody>
@@ -539,40 +543,28 @@
 												data-unit="{{$index}}_{{row.bitIndex}}_unit_tab_03"
 												data_odds="{{v.currentOdds}}"
 												ng-click="selNum($event)">
-											<input type="text" id="{{$index}}_{{row.bitIndex}}_unit_tab_03_betAmount" class="bet-input ng-pristine ng-untouched ng-valid" maxlength="6">
+											<input 
+												type="text" 
+												id="{{$index}}_{{row.bitIndex}}_unit_tab_03_betAmount" 
+												class="bet-input ng-pristine ng-untouched ng-valid" 
+												maxlength="6"
+												disabled>
 										</td>
 									</tr>
 								</tbody>
 							</table>
 						</div>
 						
-						<div class="bar-bet" ng-if="isLogin" ng-controller="authCtrl">
+						<div class="bar-bet">
 							<div class="input-group pull-left w150 ml20">
 								<span id="basic-addon1" class="input-group-addon">预设金额</span> 
 								<input type="text" 
 										class="form-control ng-pristine ng-untouched ng-valid"
 										name="presetMoney" 
 										maxlength="6" 
-										value="">
+										ng-model="$parent.presetAmount">
 							</div>
-							<button class="btn btn-danger ml10 resetBtn" style="background: #267671; border-color: #455964;" type="button">重置</button>
-							<button type="button" class="btn btn-danger ml10 ng-scope lotteryV2Btn">提交注单</button>
-							<div class="pull-right clock ng-scope" id="currentQiHaoAndTime">
-								<span id="flushTime" style="font-size: 14px; float: right; width: 40px; text-align: right; margin-top: 4px; margin-left: 6px"></span>
-							</div>
-						</div>
-						
-						<div class="bar-bet" ng-if="!isLogin" ng-controller="authCtrl">
-							<div class="input-group pull-left w150 ml20">
-								<span id="basic-addon1" class="input-group-addon">预设金额</span> 
-								<input type="text" 
-										class="form-control ng-pristine ng-untouched ng-valid"
-										name="presetMoney" 
-										maxlength="6" 
-										value="" 
-										disabled>
-							</div>
-							<button class="btn btn-danger ml10 resetBtn" style="background: #267671; border-color: #455964;" type="button">重置</button>
+							<button class="btn btn-danger ml10 resetBtn" style="background: #267671; border-color: #455964;" type="button"  ng-click="reset()">重置</button>
 							<button type="button" class="btn btn-danger ml10 ng-scope lotteryV2Btn">提交注单</button>
 							<div class="pull-right clock ng-scope" id="currentQiHaoAndTime">
 								<span id="flushTime" style="font-size: 14px; float: right; width: 40px; text-align: right; margin-top: 4px; margin-left: 6px"></span>

@@ -85,4 +85,7 @@ public interface IssueService
 
 	Map<String, Object> queryRecentBetBrief(String lotteryType, String startTime, String endTime,
 			Integer pageIndex, Integer pageSize);
+
+	Map<String, Object> queryRecentBetBriefTc3(String lotteryType, String startTime, String endTime, Integer pageIndex,
+			Integer pageSize);
 }

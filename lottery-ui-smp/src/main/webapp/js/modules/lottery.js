@@ -143,7 +143,7 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 			
 			bettingRecTimer = $interval(function () {				
 				$scope.queryBettingRecBrief(lotteryType, 1);
-				$scope.queryIssueRecBrief(lotteryType, 1);
+				$scope.queryIssueRecBriefTc3(lotteryType, 1);
 			},120000);
 			
 			queryMemeberTimer = $interval(function () {				
@@ -319,9 +319,11 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 				}else{
 					seconds_ = ''+seconds;
 				}
-				
-				downCounterVal.push(minutes_.substring(0,1));
-				downCounterVal.push(minutes_.substring(1));
+				for(var minLen = 0;minLen < minutes_.length; minLen++){
+					downCounterVal.push(minutes_.substring(minLen,minLen + 1));
+				}
+				/*downCounterVal.push(minutes_.substring(0,1));
+				downCounterVal.push(minutes_.substring(1));*/
 				downCounterVal.push(":");
 				downCounterVal.push(seconds_.substring(0,1));
 				downCounterVal.push(seconds_.substring(1));
@@ -1063,7 +1065,10 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 				}
 			});
 		};
-		
+		$scope.reset = function(){
+			$scope.presetAmount = '';
+		};
+
 		$scope.betting = function(lotteryType){
 			var bet = null;
 			var bets = new Array();
@@ -1092,7 +1097,7 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 				var dataUnit = $(this).attr("data-unit");
 				var betNum = $(this).attr("data-bettingNum");
 				var playTypeId = $(this).attr("data-play");
-				var betAmount = $('#'+dataUnit+'_betAmount').val();
+				var betAmount = $scope.presetAmount;
 				var odds = $(this).attr("data_odds");
 				times = betAmount / pattern;
 				bet.issueId = issueId;
@@ -1530,6 +1535,21 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 			});
 		};
 		
+		$scope.queryIssueRecBriefTc3 = function(lotteryType, pageIndex){
+			
+			$scope.queryRecParams = {};
+			$scope.queryRecParams.pageIndex = pageIndex;
+			$scope.queryRecParams.pageSize = 15;
+			$scope.queryRecParams.startTime = $scope.getPreviewDayFormatDate();
+			$scope.queryRecParams.endTime = $scope.getPreviewDayFormatDate();
+			$scope.queryRecParams.lotteryType = lotteryType;
+			
+			hisRecService.queryIssueRecBrief($scope.queryRecParams).then(function(res){
+				$scope.issueRecs = res;				
+			}, function(error){
+				showToast("查询开奖失败!!");
+			});
+		};
 		
 		 $scope.getBettingNum = function(lotteryType, playType, bettingNum) {
 		    	var codeType = "play_type_" + lotteryType;
@@ -1618,6 +1638,22 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 		        return currentdate;
 		    };
 		    
+		    $scope.getPreviewDayFormatDate = function(){
+		    	var date = new Date();
+		    	date = new Date(date.getTime() - 24*60*60*1000); 
+		        var seperator1 = "-";
+		        var year = date.getFullYear();
+		        var month = date.getMonth() + 1;
+		        var strDate = date.getDate() - 1;
+		        if (month >= 1 && month <= 9) {
+		            month = "0" + month;
+		        }
+		        if (strDate >= 0 && strDate <= 9) {
+		            strDate = "0" + strDate;
+		        }
+		        var currentdate = year + seperator1 + month + seperator1 + strDate;
+		        return currentdate;
+		    };
 		    
 		    $scope.queryExpertPushNum = function(lotteryType){
 				$scope.queryExpertPushNumParams = {};
@@ -2196,25 +2232,73 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 	
 }])
 .controller('lotteryUICtrl', ["$scope", "$http","$state", "$location", "playgameService", "hisRecService", function ($scope, $http, $state,$location, playgameService, hisRecService) {
-	$scope.iniCqsscUI = function(){
-		$scope.isZHActive = true;
-		$scope.isBitActive = false;
-		$scope.isSmDisplay = false;
+	$scope.iniCqsscUI = function(focusType){
+		$scope.changeFocus(focusType);
 	};
 	
 	
 	
 	$scope.changeFocus = function(focusType){
-		if(focusType == 0){
-			$scope.isZHActive = true;
-			$scope.isBitActive = false;
-			//控制双面
-			$scope.isSmDisplay = false;
-		}else if(focusType == 1){
-			$scope.isZHActive = false;
-			$scope.isBitActive = true;
-			$scope.isSmDisplay = true;
+		$scope.resetFocus();
+		switch(focusType) {
+		     case 0:
+		    	 $scope.isZeroActive = true;
+		         break;
+		     case 1:
+					$scope.isOneActive = true;
+		        break;
+		     case 2:
+					$scope.isTwoActive = true;
+		        break;
+		     case 3:
+					$scope.isThreeActive = true;
+		        break;
+		     case 4:
+					$scope.isFourActive = true;
+		        break;
+		     case 5:
+					$scope.isFiveActive = true;
+		        break;
+		     case 6:
+					$scope.isSixActive = true;
+		        break;
+		     case 7:
+					$scope.isSevenActive = true;
+		        break;
+		     case 8:
+					$scope.isEightActive = true;
+		        break;
+		     case 9:
+					$scope.isNineActive = true;
+		        break;
+		     case 10:
+					$scope.isTenActive = true;
+		        break;
+		     case 11:
+					$scope.isElevenActive = true;
+		        break;
+		     case 12:
+					$scope.isTwelveActive = true;
+		        break;
+		     default:
+		    	 $scope.isZeroActive = true;
 		}
+	};
+	
+	$scope.resetFocus = function(){
+			$scope.isZeroActive = false;
+			$scope.isOneActive = false;
+			$scope.isTwoActive = false;
+			$scope.isThreeActive = false;
+			$scope.isFourDisplay = false;
+			$scope.isFiveActive = false;
+			$scope.isSixActive = false;
+			$scope.isSevenActive = false;
+			$scope.isEightActive = false;
+			$scope.isNineDisplay = false;
+			$scope.isTenActive = false;
+			$scope.isElevenActive = false;
+			$scope.isTwelveActive = false;
 	};
 	
 }]).service('playgameService', ["$http", "$q", function ($http, $q) {

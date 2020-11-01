@@ -1,6 +1,8 @@
 package com.jll.game.playtype;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -355,40 +357,40 @@ public class PlayTypeServiceImpl implements PlayTypeService
 				playTypeEntry.getValue().forEach((k,playTypeNum)->{
 					playTypeNum.setCurrentOdds(playTypeNum.getaOdds());
 					if(isYwdwBw(playTypeEntry.getKey())){
-						BitColumn column = null;
-						if(ret.size() < 3){
-							
-						}else{
-							column = ret.get(0);
-						}
+						BitColumn column = ret.get(0);
 						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
 						playTypeNums.add(playTypeNum);
 					}
 					
 					if(isYwdwSw(playTypeEntry.getKey())){
-						BitColumn column = null;
-						if(ret.size() < 2){
-							
-						}else{
-							column = ret.get(1);
-						}
+						BitColumn column = ret.get(1);
 						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
 						playTypeNums.add(playTypeNum);
 					}
 					
 					if(isYwdwGw(playTypeEntry.getKey())){
-						BitColumn column = null;
-						if(ret.size() < 1){
-							
-						}else{
-							column = ret.get(2);
-						}
+						BitColumn column = ret.get(2);
 						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
 						playTypeNums.add(playTypeNum);
 					}
 				});
 			});			
 		});
+		
+		ret.forEach(bitCol->{
+			PlayTypeNum[] playTypeNumArray = bitCol.getPlayTypeNums().toArray(new PlayTypeNum[0]);
+			Arrays.sort(playTypeNumArray, new Comparator<PlayTypeNum>(){
+				@Override
+				public int compare(PlayTypeNum o1, PlayTypeNum o2) {
+					return o1.getPlayTypeId().compareTo(o2.getPlayTypeId());
+				}
+				
+			});
+			
+			List<PlayTypeNum> playTypeNum = Arrays.asList(playTypeNumArray);
+			bitCol.setPlayTypeNums(playTypeNum);
+		});
+		
 		
 		return ret;
 	}

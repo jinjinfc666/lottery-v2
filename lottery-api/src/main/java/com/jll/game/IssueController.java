@@ -101,8 +101,7 @@ public class IssueController {
 		}
 		return ret;
 	}
-	
-	
+		
 	//获取期次状态
 	@RequestMapping(value="/getIssuesState", method = { RequestMethod.GET },  produces={"application/json"})
 	public Map<String, Object> getIssueState(){

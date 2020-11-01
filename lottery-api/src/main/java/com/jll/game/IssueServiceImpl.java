@@ -891,6 +891,14 @@ public class IssueServiceImpl implements IssueService
 		return issueDao.queryRecentBetBrief(lotteryType,startTime, endTime, pageIndex, pageSize);
 	}
 	
+	@Override
+	public Map<String, Object> queryRecentBetBriefTc3(String lotteryType, String startTime, String endTime,
+			Integer pageIndex, Integer pageSize) {
+		String codeTypeName=Constants.SysCodeTypes.LOTTERY_TYPES.getCode();
+		Map<String, SysCode> sysCodes=cacheServ.getSysCode(codeTypeName);
+		return issueDao.queryRecentBetBrief(lotteryType,startTime, endTime, pageIndex, pageSize);
+	}
+	
 	/**
 	 * 占成
 	 * if user lost betting, then the agents share the betting amount
