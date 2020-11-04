@@ -8,4 +8,6 @@ public interface PlayTypeNumDao {
 
 	List<PlayTypeNum> queryPlayTypeNum(Long playTypeId);
 
+	void changeUserCurrMarket(String userId, String currMarket);
+
 }

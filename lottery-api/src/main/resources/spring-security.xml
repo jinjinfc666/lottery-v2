@@ -24,7 +24,6 @@
     <beans:bean id="oauth2UserApprovalHandler" class="org.springframework.security.oauth2.provider.approval.DefaultUserApprovalHandler" />
 
 	<beans:bean id="encoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
-	
 	<http pattern="/oauth/token" create-session="stateless" use-expressions="false" authentication-manager-ref="oauth2AuthenticationManager">
 		<intercept-url pattern="/oauth/token" access="IS_AUTHENTICATED_FULLY"/>
 		<anonymous enabled="false" />

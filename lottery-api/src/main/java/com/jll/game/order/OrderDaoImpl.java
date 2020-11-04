@@ -16,7 +16,6 @@ import com.jll.common.utils.Utils;
 import com.jll.dao.DefaultGenericDaoImpl;
 import com.jll.dao.PageBean;
 import com.jll.entity.OrderInfo;
-import com.jll.entity.UserBankCard;
 
 @Repository
 public class OrderDaoImpl extends DefaultGenericDaoImpl<OrderInfo> implements OrderDao

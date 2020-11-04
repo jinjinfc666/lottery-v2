@@ -461,6 +461,155 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 			});
 		};
 		
+		/**
+		 * postfix 模糊查找的匹配后缀 eg.{{$index}}_0_unit_tab_01
+		 * 
+		 * filterType  匹配类型 
+		 * 					0 大 
+		 */
+		$scope.filterNum = function(postfix, filterType){
+			$scope.resetSelNum(postfix);
+			$("td[data-unit$='" +postfix+ "']").each(function(){
+				switch(filterType) {
+			     case 0:
+			    	 $scope.selBigNum(postfix);
+			         break;
+			     case 1:
+			    	 $scope.selSmallNum(postfix);
+			        break;
+			     case 2:
+			    	 $scope.selOddNum(postfix);
+			        break;
+			     case 3:
+			    	 $scope.selEvenNum(postfix);
+			        break;
+			     case 4:
+			    	 $scope.selPrimeNum(postfix);
+			        break;
+			     case 5:
+			    	 $scope.selCompositeNum(postfix);
+			        break;
+			     case 6:
+						$scope.isSixActive = true;
+			        break;
+			     case 7:
+						$scope.isSevenActive = true;
+			        break;
+			     case 8:
+						$scope.isEightActive = true;
+			        break;
+			     case 9:
+						$scope.isNineActive = true;
+			        break;
+			     case 10:
+						$scope.isTenActive = true;
+			        break;
+			     case 11:
+						$scope.isElevenActive = true;
+			        break;
+			     case 12:
+						$scope.isTwelveActive = true;
+			        break;
+			     default:
+			    	 $scope.isZeroActive = true;
+			}
+			});
+		};
+		
+		$scope.selBigNum = function(postfix){			
+			$("td[data-unit$='" +postfix+ "']").each(function(){
+				var betNum = $(this).attr("data-bettingNum");
+				var isBigNum = false;
+				if(betNum*1 >= 5){
+					isBigNum = true;
+				}
+				if(isBigNum){
+					$(this).attr("data-sel", '1');
+					$(this).addClass('selNumBg');	
+				}
+			});
+		};
+		
+		$scope.selSmallNum = function(postfix){			
+			$("td[data-unit$='" +postfix+ "']").each(function(){
+				var betNum = $(this).attr("data-bettingNum");
+				var isSmallNum = false;
+				if(betNum*1 < 5){
+					isSmallNum = true;
+				}
+				if(isSmallNum){
+					$(this).attr("data-sel", '1');
+					$(this).addClass('selNumBg');	
+				}
+			});
+		};
+		
+		$scope.selOddNum = function(postfix){			
+			$("td[data-unit$='" +postfix+ "']").each(function(){
+				var betNum = $(this).attr("data-bettingNum");
+				var isOddNum = false;
+				if(betNum*1 %2 != 0){
+					isOddNum = true;
+				}
+				if(isOddNum){
+					$(this).attr("data-sel", '1');
+					$(this).addClass('selNumBg');	
+				}
+			});
+		};
+		
+		$scope.selEvenNum = function(postfix){			
+			$("td[data-unit$='" +postfix+ "']").each(function(){
+				var betNum = $(this).attr("data-bettingNum");
+				var isEvenNum = false;
+				if(betNum*1 %2 == 0){
+					isEvenNum = true;
+				}
+				if(isEvenNum){
+					$(this).attr("data-sel", '1');
+					$(this).addClass('selNumBg');	
+				}
+			});
+		};
+		
+		$scope.selPrimeNum = function(postfix){	
+			//质
+			var primeStr = "12357";
+			
+//			private String smallStr = "04689";
+			
+			$("td[data-unit$='" +postfix+ "']").each(function(){
+				var betNum = $(this).attr("data-bettingNum");
+				var isPrimeNum = false;
+				if(primeStr.indexOf(betNum) != -1){
+					isPrimeNum = true;
+				}
+				if(isPrimeNum){
+					$(this).attr("data-sel", '1');
+					$(this).addClass('selNumBg');	
+				}
+			});
+		};
+		
+		$scope.selCompositeNum = function(postfix){	
+			//质
+			var compositStr = "04689";
+			
+//			private String smallStr = "04689";
+			
+			$("td[data-unit$='" +postfix+ "']").each(function(){
+				var betNum = $(this).attr("data-bettingNum");
+				var isCompositNum = false;
+				if(compositStr.indexOf(betNum) != -1){
+					isCompositNum = true;
+				}
+				if(isCompositNum){
+					$(this).attr("data-sel", '1');
+					$(this).addClass('selNumBg');	
+				}
+			});
+		};
+		
 		$scope.initBettingNumAuth = function(lotteryType, bitCounter){
 			$scope.bitNumArray = new Array();
 			var headerOptions = null;
@@ -960,7 +1109,7 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 			});
 			
 			
-			if(myevent.target.tagName != 'TD'){
+			if(myevent != null && myevent.target.tagName != 'TD'){
 				dataUnit = $(myevent.target.parentElement).attr("data-unit");
 			}else{
 				dataUnit = $(myevent.target).attr("data-unit");				
@@ -1069,6 +1218,13 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 			$scope.presetAmount = '';
 		};
 
+		$scope.resetSelNum = function(postfix){
+			$("td[data-unit$='" +postfix+ "']").each(function(){
+				$(this).attr("data-sel", '0');
+				$(this).removeClass('selNumBg');	
+			});
+		};
+		
 		$scope.betting = function(lotteryType){
 			var bet = null;
 			var bets = new Array();

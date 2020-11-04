@@ -21,7 +21,6 @@ import com.jll.common.utils.StringUtils;
 import com.jll.dao.DefaultGenericDaoImpl;
 import com.jll.dao.PageBean;
 import com.jll.entity.UserInfo;
-import com.jll.entity.UserInfoExt;
 
 @Repository
 public class UserInfoDaoImpl extends DefaultGenericDaoImpl<UserInfo> implements UserInfoDao

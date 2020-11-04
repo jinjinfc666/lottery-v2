@@ -98,5 +98,11 @@ public class PlayTypeNumServiceImpl implements PlayTypeNumService{
 		}
 		return false;
 	}
+
+
+	@Override
+	public void updateUserCurrMarket(String userId, String currMarket) {
+		playTypeNumDao.changeUserCurrMarket(userId, currMarket);
+	}
 	
 }

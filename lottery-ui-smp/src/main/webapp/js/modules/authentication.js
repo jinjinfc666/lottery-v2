@@ -36,7 +36,13 @@ app.controller('authCtrl',
 			$scope.isLogin = true;
 			
 			$scope.userInfo = JSON.parse(userInfo);
-			
+			$scope.creditMarkets = $scope.userInfo.creditMarkets;
+			for(var i = 0; i < $scope.userInfo.creditMarkets.length; i++){
+				if($scope.userInfo.creditMarkets[i].marketId == $scope.userInfo.currentMarket.marketId){
+					$scope.currentMarket = $scope.userInfo.creditMarkets[i];
+					break;
+				}
+			}
 			userInfoServ.queryUserAcc($scope.userInfo.id).then(function(userAcc){
 				var mainAcc = null;
 				var redPacketAcc = null;
@@ -270,6 +276,15 @@ app.controller('authCtrl',
             				$scope.redPacketAcc = redPacketAcc;
             				
             				$scope.isLogin = true;
+            				$scope.creditMarkets = userInfo.creditMarkets;
+            				for(var i = 0; i < userInfo.creditMarkets.length; i++){
+            					if(userInfo.creditMarkets[i].marketId == userInfo.currentMarket.marketId){
+            						$scope.currentMarket = userInfo.creditMarkets[i];
+            						break;
+            					}
+            				}
+            				
+            				
             			});
             		});
             	}
@@ -300,6 +315,10 @@ app.controller('authCtrl',
 
     };
 
+    
+    $scope.changeUserCurrMarket = function (selCreditMarket){
+    	userInfoServ.changeUserCurrMarket(selCreditMarket);
+    }
     
     //通过手机号找回密码
     $scope.findPwdByMobile = function () {
@@ -794,6 +813,8 @@ app.controller('mainController', ["$scope", "$http","$interval","$timeout", func
     	
     	return deferred.promise;
     }
+    
+    
 }]);
 
 

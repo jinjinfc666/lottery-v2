@@ -313,7 +313,7 @@
 						</ul>
 					</div>
 	
-					<div class="main-bet-content" ng-if="isLogin" ng-controller="authCtrl" >
+					<div class="main-bet-content">
 						<div class="bar-bet">
 							<button class="btn btn-danger ml10 resetBtn" style="background: #267671; border-color: #455964;" type="button" ng-click="queryEzdw('tc3','0')">百十定位</button>
 							<button class="btn btn-danger ml10 resetBtn" style="background: #267671; border-color: #455964;" type="button"  ng-click="queryEzdw('tc3','1')">百个定位</button>
@@ -328,13 +328,7 @@
 										class="form-control ng-pristine ng-untouched ng-valid"
 										name="presetMoney" 
 										maxlength="6" 
-										value="" 
-										disabled ng-if="!isLogin" ng-controller="authCtrl" >
-								<input type="text" 
-										class="form-control ng-pristine ng-untouched ng-valid"
-										name="presetMoney" 
-										maxlength="6" 
-										value=""  ng-if="isLogin" ng-controller="authCtrl" >
+										ng-model="$parent.presetAmount">
 							</div>
 							<button class="btn btn-danger ml10 resetBtn" style="background: #267671; border-color: #455964;" type="button">重置</button>
 							<button type="button" class="btn btn-danger ml10 ng-scope lotteryV2Btn" ng-click='betting("tc3")'>提交注单</button>

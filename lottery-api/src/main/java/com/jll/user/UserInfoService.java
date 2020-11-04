@@ -178,4 +178,6 @@ public interface UserInfoService
 	Map<String, Object> queryAllAgentEntrust(Map<String, Object> ret);
 	
 	boolean scanChilderen(UserInfo user, BigDecimal platRebate);
+	
+	void updateUserCurrMarket(String string);
 }

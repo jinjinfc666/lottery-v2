@@ -74,8 +74,9 @@
 </style>
 </head>
 <body ng-controller="authCtrl"  ng-init="queryCaptchaCode()">
+
 	<!-- 注册 -->
-	<header id="header" ng-show="!isLogin">
+	<header id="header" ng-if="!isLogin">
 		<div class="content cfx">
 			<div class="ico fl">
 				<span class="capital"> 博天下</span>
@@ -105,7 +106,7 @@
 	</header>
 
 
-	<header id="header" ng-show="isLogin">
+	<header id="header" ng-if="isLogin">
 		<div class="content cfx">
 			<div class="ico fl">
 				<span class="capital"> 博天下</span>
@@ -122,6 +123,13 @@
 						</a>
 					</div>
 					<div class="money_info">
+						<select 
+							ng-model="selCreditMarket" 
+							ng-options="x.marketName for x in creditMarkets"
+							ng-init="selCreditMarket=currentMarket" 
+							ng-change="changeUserCurrMarket(selCreditMarket)">
+						</select>
+						
 						余额：<span class="show_money j-showmoney"  ng-click="queryMemberInfo()">{{mainAcc.balance}}</span>
 					</div>					
 				</div>

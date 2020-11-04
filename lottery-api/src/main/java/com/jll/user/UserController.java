@@ -1929,4 +1929,22 @@ public class UserController {
 			return ret;
 		}
 	}
+	
+	
+	@RequestMapping(value={"/changeUserCurrMarket"}, method={RequestMethod.POST}, produces=MediaType.APPLICATION_JSON_VALUE)
+	public Map<String, Object> changeUserCurrMarket(@RequestBody Map<String, String> params) {
+		Map<String, Object> ret = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
+		try {
+			userInfoService.updateUserCurrMarket(Utils.toString(params.get("creditMarket")));
+			map.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
+			return map;
+		}catch(Exception e){
+			ret.clear();
+			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_OTHERS.getCode());
+			ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_OTHERS.getErrorMes());
+			return ret;
+		}
+	}
 }

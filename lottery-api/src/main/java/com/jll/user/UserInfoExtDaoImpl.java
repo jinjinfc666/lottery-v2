@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -24,6 +25,7 @@ import com.jll.dao.PageBean;
 import com.jll.entity.OrderInfoExt;
 import com.jll.entity.UserInfo;
 import com.jll.entity.UserInfoExt;
+import com.jll.entity.display.CreditMarket;
 
 @Repository
 public class UserInfoExtDaoImpl extends DefaultGenericDaoImpl<UserInfoExt> implements UserInfoExtDao
@@ -41,12 +43,30 @@ public class UserInfoExtDaoImpl extends DefaultGenericDaoImpl<UserInfoExt> imple
 		params.add(user.getId());
 		List<UserInfoExt> exts = query(sql, params, UserInfoExt.class);
 		
-		if(exts == null || exts.size() == 0) {
-			if(user.getPanKou() != null) {
+		if(CollectionUtils.isEmpty(exts)) {
+			if(!CollectionUtils.isEmpty(user.getCreditMarkets())) {
+				StringBuffer buffer = new StringBuffer();
+				List<CreditMarket> creditMarkets = user.getCreditMarkets();
+				creditMarkets.forEach(creditMarket->{
+					buffer.append(creditMarket.getMarketId()).append(",");
+				});
+				buffer.deleteCharAt(buffer.length() - 1);
 				ext = new UserInfoExt();
 				ext.setUserId(user.getId());
-				ext.setExtFieldName("panKou");
-				ext.setExtFieldVal(String.valueOf(user.getPanKou()));
+				ext.setExtFieldName("creditMarket");
+				ext.setExtFieldVal(buffer.toString());
+				ext.setCreateTime(today);
+				
+				this.saveOrUpdate(ext);
+			}
+			
+			if(user.getCurrentMarket() != null) {
+				CreditMarket currentMarket = user.getCurrentMarket();
+				
+				ext = new UserInfoExt();
+				ext.setUserId(user.getId());
+				ext.setExtFieldName("currCreditMarket");
+				ext.setExtFieldVal(String.valueOf(currentMarket.getMarketId()));
 				ext.setCreateTime(today);
 				
 				this.saveOrUpdate(ext);
@@ -103,14 +123,24 @@ public class UserInfoExtDaoImpl extends DefaultGenericDaoImpl<UserInfoExt> imple
 			}
 		}else {
 			for(UserInfoExt ext_ : exts) {
-				if(ext_.getExtFieldName().equals("panKou") && user.getPanKou() != null) {
-					ext_.setExtFieldVal(String.valueOf(user.getPanKou()));
+				if(ext_.getExtFieldName().equals("creditMarket") && user.getCreditMarkets() != null) {
+					StringBuffer buffer = new StringBuffer();
+					List<CreditMarket> creditMarkets = user.getCreditMarkets();
+					creditMarkets.forEach(creditMarket->{
+						buffer.append(creditMarket.getMarketId()).append(",");
+					});
+					buffer.deleteCharAt(buffer.length() - 1);
+					
+					ext_.setExtFieldVal(buffer.toString());
 					this.saveOrUpdate(ext_);
 					
-				}else if(ext_.getExtFieldName().equals("xyAmount")) {
+				}else if(ext_.getExtFieldName().equals("currCreditMarket") && user.getCurrentMarket() != null) {
+					ext_.setExtFieldVal(String.valueOf(user.getCurrentMarket().getMarketId()));
+					this.saveOrUpdate(ext_);
+				}else if(ext_.getExtFieldName().equals("xyAmount") && user.getXyAmount() != null) {
 					ext_.setExtFieldVal(String.valueOf(user.getXyAmount()));
 					this.saveOrUpdate(ext_);
-				}else if(ext_.getExtFieldName().equals("xyPayoutRate")) {
+				}else if(ext_.getExtFieldName().equals("xyPayoutRate") && user.getXyPayoutRate() != null) {
 					ext_.setExtFieldVal(String.valueOf(user.getXyPayoutRate()));
 					this.saveOrUpdate(ext_);
 				}else if(ext_.getExtFieldName().equals("zcAmount") && user.getZcAmount() != null) {

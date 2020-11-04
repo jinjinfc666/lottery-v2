@@ -100,4 +100,5 @@ public interface UserInfoDao
 	
 	Map<String, Object> queryAllUserInfo(Integer id, String userName, Integer proxyId, String startTime, String endTime,
 			Integer userType, Integer userStatus, Integer pageIndex, Integer pageSize);
+	
 }

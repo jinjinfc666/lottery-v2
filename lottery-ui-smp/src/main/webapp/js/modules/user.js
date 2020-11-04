@@ -862,4 +862,22 @@ userModule.controller('userInfoCtrl', ["$scope", "$http","$state", "$interval", 
 		return deferred.promise;
 	};
 	
+	this.changeUserCurrMarket = function(selCreditMarket){
+		var deferred = $q.defer();
+		
+    	$http.post(
+    			changeUserCurrMarketURL, 
+    			{'creditMarket': '' + selCreditMarket.marketId},
+    			{'Content-type': 'application/json'}
+    			
+        ).success(function (data, status, headers, config) {
+
+            deferred.resolve(1);
+        }).error(function (data, status, headers, config) {
+            //$("#loginCodeImg").attr("src", get_code + Math.random());
+            deferred.reject(-1);
+        });
+        
+        return deferred.promise;
+    }
 }]);

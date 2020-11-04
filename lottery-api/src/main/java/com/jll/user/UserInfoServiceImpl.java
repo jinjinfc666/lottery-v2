@@ -81,9 +81,11 @@ import com.jll.entity.UserAccountDetails;
 import com.jll.entity.UserBankCard;
 import com.jll.entity.UserInfo;
 import com.jll.entity.WithdrawApplication;
+import com.jll.entity.display.CreditMarket;
 import com.jll.game.IssueService;
 import com.jll.game.order.OrderDao;
 import com.jll.game.order.OrderService;
+import com.jll.game.playtype.PlayTypeNumService;
 import com.jll.report.WithdrawApplicationService;
 import com.jll.sys.security.permission.SysRoleService;
 import com.jll.sys.security.user.SysAuthorityDao;
@@ -165,6 +167,9 @@ public class UserInfoServiceImpl implements UserInfoService
 	
 	@Resource
 	UserInfoExtService userExtServ;
+	
+	@Resource
+	PlayTypeNumService playTypeNumServ;
 	
 	@Override
 	public int getUserId(String userName) {
@@ -283,8 +288,8 @@ public class UserInfoServiceImpl implements UserInfoService
 				|| dbInfo.getUserType().intValue() == UserType.ENTRUST_PLAYER.getCode()) {
 			String payoutRate = userExtServ.queryFiledByName(dbInfo.getId(), "xyPayoutRate");
 			String xyAmount = userExtServ.queryFiledByName(dbInfo.getId(), "xyAmount");
-			String panKou = userExtServ.queryFiledByName(dbInfo.getId(), "panKou");
-			String isHiddenPlan = userExtServ.queryFiledByName(dbInfo.getId(), "isHiddenPlan");
+			String creditMarketIds = userExtServ.queryFiledByName(dbInfo.getId(), "creditMarket");
+			String currCreditMarket = userExtServ.queryFiledByName(dbInfo.getId(), "currCreditMarket");
 			
 			if(payoutRate != null) {
 				dbInfo.setXyPayoutRate(Double.parseDouble(payoutRate));
@@ -294,17 +299,37 @@ public class UserInfoServiceImpl implements UserInfoService
 				dbInfo.setXyAmount(Double.parseDouble(xyAmount));
 			}
 			
-			if(isHiddenPlan != null) {
-				dbInfo.setIsHiddenPlan(Integer.parseInt(isHiddenPlan));
+			
+			if(creditMarketIds != null) {
+				List<CreditMarket> creditMarkets = parseCreditMarket(creditMarketIds);
+				dbInfo.setCreditMarkets(creditMarkets);
 			}
 			
-			if(panKou != null) {
-				dbInfo.setPanKou(Integer.parseInt(panKou));
+			if(!StringUtils.isEmpty(currCreditMarket)) {
+				Constants.CreditMarketEnum creditMarketEnum = Constants.CreditMarketEnum.getByCode(Integer.valueOf(currCreditMarket));
+				CreditMarket creditMarketObj = new CreditMarket();
+				creditMarketObj.setMarketId(creditMarketEnum.getCode());
+				creditMarketObj.setMarketName(creditMarketEnum.getName());
+				dbInfo.setCurrentMarket(creditMarketObj);
 			}
 		}
 		
 		ret.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
 		ret.put(Message.KEY_DATA, dbInfo);
+		return ret;
+	}
+
+	private List<CreditMarket> parseCreditMarket(String creditMarketIds) {
+		String[] creditMarketStr = creditMarketIds.split(",");
+		List<CreditMarket> ret = new ArrayList<>();
+		for(String creaditMarketId : creditMarketStr){
+			CreditMarket creditMarket = new CreditMarket();
+			creditMarket.setMarketId(Integer.valueOf(creaditMarketId));
+			Constants.CreditMarketEnum creditMarketEnum = Constants.CreditMarketEnum.getByCode(Integer.valueOf(creaditMarketId));
+			creditMarket.setMarketName(creditMarketEnum.getName());
+			
+			ret.add(creditMarket);
+		}
 		return ret;
 	}
 
@@ -437,8 +462,11 @@ public class UserInfoServiceImpl implements UserInfoService
 			String xyAmount = userExtServ.queryFiledByName(user.getId(), "xyAmount");
 			String tsAmount = userExtServ.queryFiledByName(user.getId(), "tsAmount");
 			String zcAmount = userExtServ.queryFiledByName(user.getId(), "zcAmount");
-			String panKou = userExtServ.queryFiledByName(user.getId(), "panKou");
+//			String panKou = userExtServ.queryFiledByName(user.getId(), "panKou");
 			String usedCreditAmount = userExtServ.queryFiledByName(user.getId(), "usedCreditAmount");
+			
+			String creditMarketIds = userExtServ.queryFiledByName(user.getId(), "panKou");
+			String currCreditMarket = userExtServ.queryFiledByName(user.getId(), "currCreditMarket");
 			
 			if(payoutRate != null) {
 				user.setXyPayoutRate(Double.parseDouble(payoutRate));
@@ -452,8 +480,17 @@ public class UserInfoServiceImpl implements UserInfoService
 				user.setUsedCreditAmount(new BigDecimal(usedCreditAmount));
 			}
 			
-			if(panKou != null) {
-				user.setPanKou(Integer.parseInt(panKou));
+			if(creditMarketIds != null) {
+				List<CreditMarket> creditMarkets = parseCreditMarket(creditMarketIds);
+				user.setCreditMarkets(creditMarkets);
+			}
+						
+			if(!StringUtils.isEmpty(currCreditMarket)) {
+				Constants.CreditMarketEnum creditMarketEnum = Constants.CreditMarketEnum.getByCode(Integer.valueOf(currCreditMarket));
+				CreditMarket creditMarketObj = new CreditMarket();
+				creditMarketObj.setMarketId(creditMarketEnum.getCode());
+				creditMarketObj.setMarketName(creditMarketEnum.getName());
+				user.setCurrentMarket(creditMarketObj);
 			}
 			
 			if(tsAmount != null) {
@@ -971,9 +1008,8 @@ public class UserInfoServiceImpl implements UserInfoService
 		Integer userType=userInfo.getUserType();
 		String phoneNum=userInfo.getPhoneNum();
 		String email=userInfo.getEmail();
-		Integer isHiddenPlan = userInfo.getIsHiddenPlan();
 		BigDecimal platRebate=userInfo.getPlatRebate();
-		Integer panKou = userInfo.getPanKou();
+		List<CreditMarket> creditMarkets = userInfo.getCreditMarkets();
 		Double xyPayoutRate = userInfo.getXyPayoutRate();
 		Double xyAmount = userInfo.getXyAmount();
 		BigDecimal tsAmount = userInfo.getTsAmount();
@@ -982,17 +1018,18 @@ public class UserInfoServiceImpl implements UserInfoService
 		BigDecimal oldPlatRebate = user.getPlatRebate();
 		String qq = userInfo.getQq();
 		String weChat = userInfo.getWechat();
-		
+		CreditMarket currCreditMarket = userInfo.getCurrentMarket();
 		if(userType!=null) {
 			user.setUserType(userType);
 		}
 		
-		if(isHiddenPlan != null) {
-			user.setIsHiddenPlan(isHiddenPlan);
+		
+		if(creditMarkets != null) {
+			user.setCreditMarkets(creditMarkets);
 		}
 		
-		if(panKou != null) {
-			user.setPanKou(panKou);
+		if(currCreditMarket != null) {
+			user.setCurrentMarket(currCreditMarket);
 		}
 		
 		if(xyAmount != null) {
@@ -2124,10 +2161,12 @@ public class UserInfoServiceImpl implements UserInfoService
 					|| userInfo.getUserType().intValue() == Constants.UserType.ENTRUST_AGENCY.getCode()) {
 				String payoutRate = userExtServ.queryFiledByName(userInfo.getId(), "xyPayoutRate");
 				String xyAmount = userExtServ.queryFiledByName(userInfo.getId(), "xyAmount");
-				String panKou = userExtServ.queryFiledByName(userInfo.getId(), "panKou");
-				String isHiddenPlan = userExtServ.queryFiledByName(userInfo.getId(), "isHiddenPlan");
+//				String panKou = userExtServ.queryFiledByName(userInfo.getId(), "panKou");
 				String zcAmount = userExtServ.queryFiledByName(userInfo.getId(), "zcAmount");
 				String tsAmount = userExtServ.queryFiledByName(userInfo.getId(), "tsAmount");
+				String creditMarketIds = userExtServ.queryFiledByName(userInfo.getId(), "creditMarket");
+				String currCreditMarket = userExtServ.queryFiledByName(userInfo.getId(), "currCreditMarket");
+				
 				if(payoutRate != null) {
 					userInfo.setXyPayoutRate(Double.parseDouble(payoutRate));
 				}
@@ -2136,12 +2175,18 @@ public class UserInfoServiceImpl implements UserInfoService
 					userInfo.setXyAmount(Double.parseDouble(xyAmount));
 				}
 				
-				if(isHiddenPlan != null) {
-					userInfo.setIsHiddenPlan(Integer.parseInt(isHiddenPlan));
+								
+				if(!StringUtils.isEmpty(currCreditMarket)) {
+					Constants.CreditMarketEnum creditMarketEnum = Constants.CreditMarketEnum.getByCode(Integer.valueOf(currCreditMarket));
+					CreditMarket creditMarketObj = new CreditMarket();
+					creditMarketObj.setMarketId(creditMarketEnum.getCode());
+					creditMarketObj.setMarketName(creditMarketEnum.getName());
+					userInfo.setCurrentMarket(creditMarketObj);
 				}
 				
-				if(panKou != null) {
-					userInfo.setPanKou(Integer.parseInt(panKou));
+				if(creditMarketIds != null) {
+					List<CreditMarket> creditMarkets = parseCreditMarket(creditMarketIds);
+					userInfo.setCreditMarkets(creditMarkets);
 				}
 				
 				if(tsAmount != null) {
@@ -2475,8 +2520,8 @@ public class UserInfoServiceImpl implements UserInfoService
 				|| superior.getUserType().intValue() == UserType.GENERAL_AGENCY.getCode()) {
 			String payoutRate = userExtServ.queryFiledByName(superior.getId(), "xyPayoutRate");
 			String xyAmount = userExtServ.queryFiledByName(superior.getId(), "xyAmount");
-			String panKou = userExtServ.queryFiledByName(superior.getId(), "panKou");
-			String isHiddenPlan = userExtServ.queryFiledByName(superior.getId(), "isHiddenPlan");
+			String creditMarketIds = userExtServ.queryFiledByName(superior.getId(), "creditMarket");
+			String currCreditMarket = userExtServ.queryFiledByName(superior.getId(), "currCreditMarket");
 			String zcAmount = userExtServ.queryFiledByName(superior.getId(), "zcAmount");
 			String tsAmount = userExtServ.queryFiledByName(superior.getId(), "tsAmount");
 			if(payoutRate != null) {
@@ -2486,13 +2531,18 @@ public class UserInfoServiceImpl implements UserInfoService
 			if(xyAmount != null) {
 				superior.setXyAmount(Double.parseDouble(xyAmount));
 			}
-			
-			if(isHiddenPlan != null) {
-				superior.setIsHiddenPlan(Integer.parseInt(isHiddenPlan));
+						
+			if(creditMarketIds != null) {
+				List<CreditMarket> creditMarkets = parseCreditMarket(creditMarketIds);
+				superior.setCreditMarkets(creditMarkets);
 			}
-			
-			if(panKou != null) {
-				superior.setPanKou(Integer.parseInt(panKou));
+						
+			if(!StringUtils.isEmpty(currCreditMarket)) {
+				Constants.CreditMarketEnum creditMarketEnum = Constants.CreditMarketEnum.getByCode(Integer.valueOf(currCreditMarket));
+				CreditMarket creditMarketObj = new CreditMarket();
+				creditMarketObj.setMarketId(creditMarketEnum.getCode());
+				creditMarketObj.setMarketName(creditMarketEnum.getName());
+				superior.setCurrentMarket(creditMarketObj);
 			}
 			
 			if(tsAmount != null) {
@@ -2602,5 +2652,16 @@ public class UserInfoServiceImpl implements UserInfoService
 		}
 		
 		return true;
+	}
+
+	@Override
+	public void updateUserCurrMarket(String currMarket) {
+		UserInfo userInfo = getCurLoginInfo();
+		CreditMarket creditMarketObj = new CreditMarket();
+		creditMarketObj.setMarketId(Integer.valueOf(currMarket));
+		userInfo.setCurrentMarket(creditMarketObj);
+		playTypeNumServ.updateUserCurrMarket(userInfo.getUserId(), currMarket);
+		
+		userExtServ.saveUserInfoExt(userInfo);
 	}
 }

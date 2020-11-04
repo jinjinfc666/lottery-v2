@@ -2849,4 +2849,37 @@ public class Constants {
 			return null;
 		}
 	}
+	
+	public static enum CreditMarketEnum{
+		MARKET_A(0, "A 盘"), 
+		MARKET_B(1, "B 盘"), 
+		MARKET_C(2, "C 盘"), 
+		;
+		
+		private int code;
+		
+		private String name;
+		
+		private CreditMarketEnum(int code, String name) {
+			this.code = code;
+			this.name = name;
+		}
+		
+		public int getCode() {
+			return this.code;
+		}		
+		public String getName(){
+			return this.name;
+		}
+		
+		public static CreditMarketEnum getByCode(int code) {
+			CreditMarketEnum[] markets = CreditMarketEnum.values();
+			for(CreditMarketEnum market: markets) {
+				if(market.getCode() == code) {
+					return market;
+				}
+			}
+			return null;
+		}
+	}
 }

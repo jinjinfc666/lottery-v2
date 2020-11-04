@@ -96,6 +96,8 @@ var queryKdURL = SITE+"/lotteries/{lottery-type}/play-type/kd";
 
 var queryFsURL = SITE+"/lotteries/{lottery-type}/play-type/fs";
 
+var changeUserCurrMarketURL = SITE+"/users/changeUserCurrMarket";
+
 //弹出框口
 function openWin(tip) {
 
