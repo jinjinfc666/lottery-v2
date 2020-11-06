@@ -467,7 +467,7 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 		 * filterType  匹配类型 
 		 * 					0 大 
 		 */
-		$scope.filterNum = function(postfix, filterType){
+		$scope.filterNum = function(postfix, filterType, extraParam){
 			$scope.resetSelNum(postfix);
 			$("td[data-unit$='" +postfix+ "']").each(function(){
 				switch(filterType) {
@@ -490,13 +490,13 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 			    	 $scope.selCompositeNum(postfix);
 			        break;
 			     case 6:
-						$scope.isSixActive = true;
+			    	 $scope.selEzdwNum(postfix, extraParam);
 			        break;
 			     case 7:
-						$scope.isSevenActive = true;
+					$scope.selSzdwNum(postfix);
 			        break;
 			     case 8:
-						$scope.isEightActive = true;
+			    	 $scope.selSzzhNum(postfix);
 			        break;
 			     case 9:
 						$scope.isNineActive = true;
@@ -524,7 +524,12 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 					isBigNum = true;
 				}
 				if(isBigNum){
-					$(this).attr("data-sel", '1');
+					var dataSelVal = $(this).attr("data-sel");
+					if(dataSelVal != 'undefined'
+						&& dataSelVal != null
+						&& dataSelVal.length > 0 ){
+						$(this).attr("data-sel", '1');
+					}
 					$(this).addClass('selNumBg');	
 				}
 			});
@@ -538,7 +543,12 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 					isSmallNum = true;
 				}
 				if(isSmallNum){
-					$(this).attr("data-sel", '1');
+					var dataSelVal = $(this).attr("data-sel");
+					if(dataSelVal != 'undefined'
+						&& dataSelVal != null
+						&& dataSelVal.length > 0 ){
+						$(this).attr("data-sel", '1');
+					}
 					$(this).addClass('selNumBg');	
 				}
 			});
@@ -552,7 +562,12 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 					isOddNum = true;
 				}
 				if(isOddNum){
-					$(this).attr("data-sel", '1');
+					var dataSelVal = $(this).attr("data-sel");
+					if(dataSelVal != 'undefined'
+						&& dataSelVal != null
+						&& dataSelVal.length > 0 ){
+						$(this).attr("data-sel", '1');
+					}
 					$(this).addClass('selNumBg');	
 				}
 			});
@@ -566,7 +581,12 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 					isEvenNum = true;
 				}
 				if(isEvenNum){
-					$(this).attr("data-sel", '1');
+					var dataSelVal = $(this).attr("data-sel");
+					if(dataSelVal != 'undefined'
+						&& dataSelVal != null
+						&& dataSelVal.length > 0 ){
+						$(this).attr("data-sel", '1');
+					}
 					$(this).addClass('selNumBg');	
 				}
 			});
@@ -585,7 +605,12 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 					isPrimeNum = true;
 				}
 				if(isPrimeNum){
-					$(this).attr("data-sel", '1');
+					var dataSelVal = $(this).attr("data-sel");
+					if(dataSelVal != 'undefined'
+						&& dataSelVal != null
+						&& dataSelVal.length > 0 ){
+						$(this).attr("data-sel", '1');
+					}
 					$(this).addClass('selNumBg');	
 				}
 			});
@@ -604,7 +629,32 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 					isCompositNum = true;
 				}
 				if(isCompositNum){
-					$(this).attr("data-sel", '1');
+					var dataSelVal = $(this).attr("data-sel");
+					if(dataSelVal != 'undefined'
+						&& dataSelVal != null
+						&& dataSelVal.length > 0 ){
+						$(this).attr("data-sel", '1');
+					}
+					$(this).addClass('selNumBg');	
+				}
+			});
+		};
+		
+		$scope.selEzdwNum = function(postfix, extraParam){	
+			
+			$("td[data-unit$='" +postfix+ "']").each(function(){
+				var betNum = $(this).attr("data-bettingNum");
+				var isSelNum = false;
+				if(betNum.indexOf(extraParam) != -1){
+					isSelNum = true;
+				}
+				if(isSelNum){
+					var dataSelVal = $(this).attr("data-sel");
+					if(dataSelVal != 'undefined'
+						&& dataSelVal != null
+						&& dataSelVal.length > 0 ){
+						$(this).attr("data-sel", '1');
+					}
 					$(this).addClass('selNumBg');	
 				}
 			});
@@ -1220,7 +1270,13 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 
 		$scope.resetSelNum = function(postfix){
 			$("td[data-unit$='" +postfix+ "']").each(function(){
-				$(this).attr("data-sel", '0');
+				var dataSelVal = $(this).attr("data-sel");
+				if(dataSelVal != 'undefined'
+					&& dataSelVal != null
+					&& dataSelVal.length > 0 ){
+					$(this).attr("data-sel", '0');
+				}
+				
 				$(this).removeClass('selNumBg');	
 			});
 		};
@@ -1946,6 +2002,109 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 							return;
 						}
 					}
+				};
+				
+				$scope.selSzdwCondition = {
+						selBit:0,
+						selBitNum:0,
+						zx:0
+				
+				};
+				
+				$scope.selSzzhCondition = {
+						selBitNum:0,
+						zx:0
+				
+				};
+				
+				$scope.selSzdwNum = function(postfix){
+					$("td[data-unit$='" +postfix+ "']").each(function(){
+						var betNum = $(this).attr("data-bettingNum");
+						var map = new CusMap();
+						for(var i = 0; i < betNum.length; i++){
+							var bitNum = betNum.substring(i, i + 1);
+							map.put(bitNum,bitNum);
+						}
+						
+						var isZs = false;
+						var isZl = false;
+						//组三
+						if($scope.selSzdwCondition.selZx == 0){
+							isZs = map.size() == 2?true : false;
+							if(!isZs){
+								return;
+							}
+						}else{//组六
+							isZl = map.size() == 3?true : false;
+							if(!isZl){
+								return;
+							}
+						}
+						
+						if($scope.selSzdwCondition.selBit == 0){
+							var bw = betNum.substring(0, 1);
+							if(bw != $scope.selSzdwCondition.selBitNum){
+								return ;
+							}
+						}else if($scope.selSzdwCondition.selBit == 1){
+							var sw = betNum.substring(1, 2);
+							if(sw != $scope.selSzdwCondition.selBitNum){
+								return ;
+							}
+						}else{
+							var gw = betNum.substring(2);
+							if(gw != $scope.selSzdwCondition.selBitNum){
+								return ;
+							}
+						}
+						
+						var dataSelVal = $(this).attr("data-sel");
+						if(dataSelVal != 'undefined'
+							&& dataSelVal != null
+							&& dataSelVal.length > 0 ){
+							$(this).attr("data-sel", '1');
+						}
+						$(this).addClass('selNumBg');	
+					});
+				};
+				
+				$scope.selSzzhNum = function(postfix){
+					$("td[data-unit$='" +postfix+ "']").each(function(){
+						var betNum = $(this).attr("data-bettingNum");
+						var map = new CusMap();
+						for(var i = 0; i < betNum.length; i++){
+							var bitNum = betNum.substring(i, i + 1);
+							map.put(bitNum,bitNum);
+						}
+						
+						var isZs = false;
+						var isZl = false;
+						//组三
+						if($scope.selSzzhCondition.selZx == 0){
+							isZs = map.size() == 2?true : false;
+							if(!isZs){
+								return;
+							}
+						}else{//组六
+							isZl = map.size() == 3?true : false;
+							if(!isZl){
+								return;
+							}
+						}
+						
+						if(betNum.indexOf($scope.selSzzhCondition.selBitNum) == -1){
+							return ;
+						}
+						
+												
+						var dataSelVal = $(this).attr("data-sel");
+						if(dataSelVal != 'undefined'
+							&& dataSelVal != null
+							&& dataSelVal.length > 0 ){
+							$(this).attr("data-sel", '1');
+						}
+						$(this).addClass('selNumBg');	
+					});
 				};
 				
 				$scope.submitSchedule = function(lotteryType){

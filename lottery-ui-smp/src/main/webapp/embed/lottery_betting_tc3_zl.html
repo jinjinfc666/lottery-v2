@@ -337,7 +337,7 @@
 								ng-init="queryZl('tc3')">
 	
 	
-							<table ng-repeat="row in zl"  class="table table-bordered table-bet pull-left w33 ng-scope">
+							<table ng-repeat="row in zl"  class="table table-bordered table-bet pull-left w20 ng-scope">
 								<thead>
 									<tr>
 										<th colspan="3" class="ng-binding">{{row.columnName}}</th>
@@ -359,7 +359,10 @@
 												data-unit="{{$index}}_{{row.bitIndex}}_unit_tab_03"
 												data_odds="{{v.currentOdds}}"
 												ng-click="selNum($event)">
-											<input type="text" id="{{$index}}_{{row.bitIndex}}_unit_tab_03_betAmount" class="bet-input ng-pristine ng-untouched ng-valid" maxlength="6">
+											<input type="text" 
+													id="{{$index}}_{{row.bitIndex}}_unit_tab_03_betAmount" 
+													class="bet-input ng-pristine ng-untouched ng-valid" 
+													disabled>
 										</td>
 									</tr>
 								</tbody>

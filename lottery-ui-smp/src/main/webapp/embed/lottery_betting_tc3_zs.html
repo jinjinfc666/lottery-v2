@@ -321,8 +321,7 @@
 								<input type="text" 
 										class="form-control ng-pristine ng-untouched ng-valid"
 										name="presetMoney" 
-										maxlength="6" 
-										ng-model='presetAmount'>
+										ng-model="$parent.presetAmount">
 										
 							</div>
 							<button class="btn btn-danger ml10 resetBtn" style="background: #267671; border-color: #455964;" type="button">重置</button>
@@ -337,7 +336,7 @@
 								ng-init="queryZs('tc3')">
 	
 	
-							<table ng-repeat="row in zs"  class="table table-bordered table-bet pull-left w33 ng-scope">
+							<table ng-repeat="row in zs"  class="table table-bordered table-bet pull-left w16 ng-scope">
 								<thead>
 									<tr>
 										<th colspan="3" class="ng-binding">{{row.columnName}}</th>
@@ -359,7 +358,11 @@
 												data-unit="{{$index}}_{{row.bitIndex}}_unit_tab_03"
 												data_odds="{{v.currentOdds}}"
 												ng-click="selNum($event)">
-											<input type="text" id="{{$index}}_{{row.bitIndex}}_unit_tab_03_betAmount" class="bet-input ng-pristine ng-untouched ng-valid" maxlength="6">
+											<input type="text" 
+													id="{{$index}}_{{row.bitIndex}}_unit_tab_03_betAmount" 
+													class="bet-input ng-pristine ng-untouched ng-valid" 
+													maxlength="6"
+													disabled>
 										</td>
 									</tr>
 								</tbody>

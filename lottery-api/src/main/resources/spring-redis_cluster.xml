@@ -8,6 +8,7 @@
    		http://www.springframework.org/schema/redis
    		http://www.springframework.org/schema/redis/spring-redis-1.0.xsd">
 	
+	
 	<bean id="redisClusterConfiguration" class="org.springframework.data.redis.connection.RedisClusterConfiguration">
 		<property name="maxRedirects" value="${redis.maxRedirects}"></property>
 		<property name="clusterNodes">
