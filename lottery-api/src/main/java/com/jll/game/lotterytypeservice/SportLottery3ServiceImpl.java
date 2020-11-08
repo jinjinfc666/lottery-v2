@@ -121,7 +121,7 @@ public class SportLottery3ServiceImpl extends DefaultLottoTypeServiceImpl
 	private String generateLottoNumber(long seq, Date curr) {
 		StringBuffer buffer = new StringBuffer();
 		//Date curr = new Date();
-		SimpleDateFormat format = new SimpleDateFormat("YYYY");
+		SimpleDateFormat format = new SimpleDateFormat("YY");
 		DecimalFormat numFormat = new DecimalFormat("000");
 
 		buffer.append(format.format(curr)).append(numFormat.format(seq));
@@ -140,7 +140,7 @@ public class SportLottery3ServiceImpl extends DefaultLottoTypeServiceImpl
 		String[] urls = null;
 		Map<String, Object> result = null;
 		String response = null;
-		String codeTypeName = Constants.SysCodeTypes.LOTTERY_CONFIG_XYFT.getCode();
+		String codeTypeName = Constants.SysCodeTypes.LOTTERY_CONFIG_TC3.getCode();
 		String codeName = Constants.LotteryAttributes.URL_WINING_NUMBER_EXTENAL.getCode();
 		SysCode sysCode = cacheServ.getSysCode(codeTypeName, codeName);
 		String winningNum = null;
@@ -192,7 +192,7 @@ public class SportLottery3ServiceImpl extends DefaultLottoTypeServiceImpl
 							response = (String)result.get("responseBody");
 							if(response.contains(issueNum.replace("-", ""))) {
 								if(response.contains("preDrawCode")) {//网易
-									winningNum = parse168(response, issueNum, "10041");
+									winningNum = parse168(response, issueNum, "10043");
 								}
 								
 								/*if(response.contains("code")) {//360
@@ -367,8 +367,7 @@ public class SportLottery3ServiceImpl extends DefaultLottoTypeServiceImpl
 					winningIssueNum = Integer.toString((Integer)winningIssueNumObj);
 				}
 				Integer lottoType_ = (Integer)winningNumMap.get("lotCode");
-				if(issueNum.equals(winningIssueNum)
-						&& lottoType.equals(String.valueOf(lottoType_))) {
+				if(issueNum.equals(winningIssueNum)) {
 					return winningNumber;
 				}
 			}

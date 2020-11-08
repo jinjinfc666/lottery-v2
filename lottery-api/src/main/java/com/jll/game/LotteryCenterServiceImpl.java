@@ -296,8 +296,7 @@ public class LotteryCenterServiceImpl implements LotteryCenterService
 		isChanged = (Boolean)ret.get(Constants.KEY_IS_CHANGED);
 		if(currIssue != null && 
 				currIssue.getState() == Constants.IssueState.END_ISSUE.getCode()
-				&& isChanged
-				&& hasMoreIssue(lottoType.getCodeName())) {
+				&& isChanged) {
 			String currIssueNum = currIssue.getIssueNum();
 			
 			final String message = currIssue.getLotteryType()+ "|" + currIssueNum;
