@@ -44,11 +44,7 @@ public class BdwEwPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 				continue;
 			}
 			
-			if(temp.contains(winNumSet[0])
-					|| temp.contains(winNumSet[1])
-					|| temp.contains(winNumSet[2])) {
-				return true;
-			}
+			return winNum.contains(String.valueOf(temp.charAt(0))) && winNum.contains(String.valueOf(temp.charAt(1)));
 		}
 				
 		return false;

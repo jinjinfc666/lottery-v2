@@ -16,16 +16,16 @@ import com.jll.entity.OrderInfo;
 import com.jll.game.playtype.PlayTypeFacade;
 import com.jll.game.playtypefacade.PlayTypeFactory;
 
-public class BdwQyPlayTypeFacadeImplTest extends ServiceJunitBase{
+public class BdwSwPlayTypeFacadeImplTest extends ServiceJunitBase{
 		
-	public BdwQyPlayTypeFacadeImplTest(String name) {
+	public BdwSwPlayTypeFacadeImplTest(String name) {
 		super(name);
 	}	
 	
 	@Resource
 	PlayTypeFacade playTypeFacade;
 	
-	final String facadeName = "sz|数值/yw|一位/bdw|不定位/fs";
+	final String facadeName = "sz|数值/sw|三位/bdw|不定位/fs";
 	
 	@Override
 	protected void setUp() throws Exception {
@@ -66,9 +66,38 @@ public class BdwQyPlayTypeFacadeImplTest extends ServiceJunitBase{
 		Assert.assertTrue(ret.size() == 216);
 	}
 	
+	public void testValidBetNum_valid(){
+		String betNum = "000";
+		OrderInfo order = new OrderInfo();
+		//order.setIssueId(issueId);
+		order.setBetNum(betNum);
+		
+		boolean ret = playTypeFacade.validBetNum(order);
+		Assert.assertTrue(ret);
+	}
+	
+	public void testValidBetNum_tooLong(){
+		String betNum = "0000";
+		OrderInfo order = new OrderInfo();
+		//order.setIssueId(issueId);
+		order.setBetNum(betNum);
+		
+		boolean ret = playTypeFacade.validBetNum(order);
+		Assert.assertFalse(ret);
+	}
+	
+	public void testValidBetNum_shortLength(){
+		String betNum = "00";
+		OrderInfo order = new OrderInfo();
+		//order.setIssueId(issueId);
+		order.setBetNum(betNum);
+		
+		boolean ret = playTypeFacade.validBetNum(order);
+		Assert.assertFalse(ret);
+	}
 	public void testIsMatchWinningNum_winning(){
 		Date startTime = new Date();
-		String betNum = "1";
+		String betNum = "111";
 		Issue issue = new Issue();
 		issue.setIssueNum("");
 		issue.setLotteryType(Constants.LottoType.TC3.getCode());
@@ -88,7 +117,7 @@ public class BdwQyPlayTypeFacadeImplTest extends ServiceJunitBase{
 	
 	public void testIsMatchWinningNum_winning_2bit(){
 		Date startTime = new Date();
-		String betNum = "2";
+		String betNum = "122";
 		Issue issue = new Issue();
 		issue.setIssueNum("");
 		issue.setLotteryType(Constants.LottoType.TC3.getCode());
@@ -108,7 +137,7 @@ public class BdwQyPlayTypeFacadeImplTest extends ServiceJunitBase{
 	
 	public void testIsMatchWinningNum_winning_3bit(){
 		Date startTime = new Date();
-		String betNum = "4";
+		String betNum = "124";
 		Issue issue = new Issue();
 		issue.setIssueNum("");
 		issue.setLotteryType(Constants.LottoType.TC3.getCode());
@@ -128,7 +157,7 @@ public class BdwQyPlayTypeFacadeImplTest extends ServiceJunitBase{
 	
 	public void testIsMatchWinningNum_lost(){
 		Date startTime = new Date();
-		String betNum = "0";
+		String betNum = "001";
 		Issue issue = new Issue();
 		issue.setIssueNum("");
 		issue.setLotteryType(Constants.LottoType.TC3.getCode());

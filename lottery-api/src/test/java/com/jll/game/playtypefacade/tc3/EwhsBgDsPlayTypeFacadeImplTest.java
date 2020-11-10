@@ -16,16 +16,16 @@ import com.jll.entity.OrderInfo;
 import com.jll.game.playtype.PlayTypeFacade;
 import com.jll.game.playtypefacade.PlayTypeFactory;
 
-public class BdwQyPlayTypeFacadeImplTest extends ServiceJunitBase{
+public class EwhsBgDsPlayTypeFacadeImplTest extends ServiceJunitBase{
 		
-	public BdwQyPlayTypeFacadeImplTest(String name) {
+	public EwhsBgDsPlayTypeFacadeImplTest(String name) {
 		super(name);
 	}	
 	
 	@Resource
 	PlayTypeFacade playTypeFacade;
 	
-	final String facadeName = "sz|数值/yw|一位/bdw|不定位/fs";
+	final String facadeName = "ds|单双/bg|百个/ewhs|二位和数/fs";
 	
 	@Override
 	protected void setUp() throws Exception {
@@ -66,73 +66,114 @@ public class BdwQyPlayTypeFacadeImplTest extends ServiceJunitBase{
 		Assert.assertTrue(ret.size() == 216);
 	}
 	
-	public void testIsMatchWinningNum_winning(){
-		Date startTime = new Date();
-		String betNum = "1";
-		Issue issue = new Issue();
-		issue.setIssueNum("");
-		issue.setLotteryType(Constants.LottoType.TC3.getCode());
-		issue.setRetNum("1,2,4");
-		issue.setStartTime(startTime);
-		issue.setState(Constants.IssueState.LOTTO_DARW.getCode());
-		issue.setEndTime(DateUtil.addMinutes(startTime, 10));
-		
+	public void testValidBetNum_valid_00(){
+		String betNum = "00";
 		OrderInfo order = new OrderInfo();
 		//order.setIssueId(issueId);
 		order.setBetNum(betNum);
 		
-		boolean ret = playTypeFacade.isMatchWinningNum(issue, order);
+		boolean ret = playTypeFacade.validBetNum(order);
 		Assert.assertTrue(ret);
-		
 	}
 	
-	public void testIsMatchWinningNum_winning_2bit(){
-		Date startTime = new Date();
-		String betNum = "2";
-		Issue issue = new Issue();
-		issue.setIssueNum("");
-		issue.setLotteryType(Constants.LottoType.TC3.getCode());
-		issue.setRetNum("1,2,4");
-		issue.setStartTime(startTime);
-		issue.setState(Constants.IssueState.LOTTO_DARW.getCode());
-		issue.setEndTime(DateUtil.addMinutes(startTime, 10));
-		
+	public void testValidBetNum_valid_01(){
+		String betNum = "01";
 		OrderInfo order = new OrderInfo();
 		//order.setIssueId(issueId);
 		order.setBetNum(betNum);
 		
-		boolean ret = playTypeFacade.isMatchWinningNum(issue, order);
+		boolean ret = playTypeFacade.validBetNum(order);
 		Assert.assertTrue(ret);
-		
 	}
 	
-	public void testIsMatchWinningNum_winning_3bit(){
-		Date startTime = new Date();
-		String betNum = "4";
-		Issue issue = new Issue();
-		issue.setIssueNum("");
-		issue.setLotteryType(Constants.LottoType.TC3.getCode());
-		issue.setRetNum("1,2,4");
-		issue.setStartTime(startTime);
-		issue.setState(Constants.IssueState.LOTTO_DARW.getCode());
-		issue.setEndTime(DateUtil.addMinutes(startTime, 10));
-		
-		OrderInfo order = new OrderInfo();
-		//order.setIssueId(issueId);
-		order.setBetNum(betNum);
-		
-		boolean ret = playTypeFacade.isMatchWinningNum(issue, order);
-		Assert.assertTrue(ret);
-		
-	}
-	
-	public void testIsMatchWinningNum_lost(){
-		Date startTime = new Date();
+	public void testValidBetNum_valid_wrong_num(){
 		String betNum = "0";
+		OrderInfo order = new OrderInfo();
+		//order.setIssueId(issueId);
+		order.setBetNum(betNum);
+		
+		boolean ret = playTypeFacade.validBetNum(order);
+		Assert.assertFalse(ret);
+	}
+	
+	public void testValidBetNum_tooLong(){
+		String betNum = "0001";
+		OrderInfo order = new OrderInfo();
+		//order.setIssueId(issueId);
+		order.setBetNum(betNum);
+		
+		boolean ret = playTypeFacade.validBetNum(order);
+		Assert.assertFalse(ret);
+	}
+	
+	
+	public void testIsMatchWinningNum_winning_00(){
+		Date startTime = new Date();
+		String betNum = "00";
+		Issue issue = new Issue();
+		issue.setIssueNum("");
+		issue.setLotteryType(Constants.LottoType.TC3.getCode());
+		issue.setRetNum("2,0,0");
+		issue.setStartTime(startTime);
+		issue.setState(Constants.IssueState.LOTTO_DARW.getCode());
+		issue.setEndTime(DateUtil.addMinutes(startTime, 10));
+		
+		OrderInfo order = new OrderInfo();
+		//order.setIssueId(issueId);
+		order.setBetNum(betNum);
+		
+		boolean ret = playTypeFacade.isMatchWinningNum(issue, order);
+		Assert.assertTrue(ret);
+		
+	}
+	
+	public void testIsMatchWinningNum_winning_01(){
+		Date startTime = new Date();
+		String betNum = "01";
+		Issue issue = new Issue();
+		issue.setIssueNum("");
+		issue.setLotteryType(Constants.LottoType.TC3.getCode());
+		issue.setRetNum("2,9,9");
+		issue.setStartTime(startTime);
+		issue.setState(Constants.IssueState.LOTTO_DARW.getCode());
+		issue.setEndTime(DateUtil.addMinutes(startTime, 10));
+		
+		OrderInfo order = new OrderInfo();
+		//order.setIssueId(issueId);
+		order.setBetNum(betNum);
+		
+		boolean ret = playTypeFacade.isMatchWinningNum(issue, order);
+		Assert.assertTrue(ret);
+		
+	}
+	
+	public void testIsMatchWinningNum_lost_00(){
+		Date startTime = new Date();
+		String betNum = "00";
 		Issue issue = new Issue();
 		issue.setIssueNum("");
 		issue.setLotteryType(Constants.LottoType.TC3.getCode());
 		issue.setRetNum("1,2,4");
+		issue.setStartTime(startTime);
+		issue.setState(Constants.IssueState.LOTTO_DARW.getCode());
+		issue.setEndTime(DateUtil.addMinutes(startTime, 10));
+		
+		OrderInfo order = new OrderInfo();
+		//order.setIssueId(issueId);
+		order.setBetNum(betNum);
+		
+		boolean ret = playTypeFacade.isMatchWinningNum(issue, order);
+		Assert.assertFalse(ret);
+		
+	}
+	
+	public void testIsMatchWinningNum_lost_01(){
+		Date startTime = new Date();
+		String betNum = "01";
+		Issue issue = new Issue();
+		issue.setIssueNum("");
+		issue.setLotteryType(Constants.LottoType.TC3.getCode());
+		issue.setRetNum("0,2,4");
 		issue.setStartTime(startTime);
 		issue.setState(Constants.IssueState.LOTTO_DARW.getCode());
 		issue.setEndTime(DateUtil.addMinutes(startTime, 10));

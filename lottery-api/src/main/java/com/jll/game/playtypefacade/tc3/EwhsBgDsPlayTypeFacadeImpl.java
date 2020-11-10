@@ -64,8 +64,8 @@ public class EwhsBgDsPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		winNumSet = winNum.split(",");
 		//betNumSet = betNum.split(",");
 		betNumMul = betNum.split(";");
-		
-		if(Integer.parseInt(winNumSet[0]) % 2 != 0) {
+		Integer sum = Integer.valueOf(winNumSet[0]) + Integer.valueOf(winNumSet[2]);
+		if(sum % 2 != 0) {
 			winNumFinal = ODD;
 		}else {
 			winNumFinal = EVEN;
@@ -152,9 +152,7 @@ public class EwhsBgDsPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 			}			
 							
 			Map<String, String> tempBits = splitBetNum(temp);
-			if(tempBits.size() < 1
-					|| tempBits.size() > 2
-					|| tempBits.size() != (temp.length() / 2)) {
+			if(temp.length() != 2) {
 				return false;
 			}
 			
@@ -272,16 +270,13 @@ public class EwhsBgDsPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 	private Map<String, String> splitBetNum(String temp) {
 		Map<String, String> bits = new HashMap<String, String>();
 		int len = temp.length();
-						
-		if(len % 2 != 0) {
-			return bits;
-		}
+				
 		
 		for(int i = 0; i < len;) {
-			String bit = temp.substring(i, i + 2);
+			String bit = temp.substring(i, i + 1);
 			bits.put(bit, bit);
 			
-			i += 2;
+			i += 1;
 		}
 		
 		return bits;

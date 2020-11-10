@@ -42,7 +42,7 @@ public class BwZhPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 	//质
 	private String primeStr = "12357";
 	
-	private String smallStr = "04689";
+	private String compositeStr = "04689";
 	
 	@Override
 	public boolean isMatchWinningNum(Issue issue, OrderInfo order) {
@@ -63,7 +63,7 @@ public class BwZhPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		//betNumSet = betNum.split(",");
 		betNumMul = betNum.split(";");
 		
-		if(Integer.parseInt(winNumSet[0]) >= 5) {
+		if(primeStr.contains(String.valueOf(winNum.charAt(0)))) {
 			winNumFinal = PRIME;
 		}else {
 			winNumFinal = COMPOSITE;
