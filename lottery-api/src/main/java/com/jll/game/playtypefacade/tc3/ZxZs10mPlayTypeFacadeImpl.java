@@ -46,36 +46,7 @@ public class ZxZs10mPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 	
 	@Override
 	public boolean isMatchWinningNum(Issue issue, OrderInfo order) {
-		//开奖号码的每一位
-		String[] winNumSet = null;
-		//投注号码的每个位的号码，可能多个号码
-		//String[] betNumSet = new String[3];
-		//每次点击选号按钮所选号码，多个所选号码以;分割
-		String[] betNumMul= null;
-		String betNum = null;
-		String winNum = null;
-		int winNumFinal = -1;
-		
-		winNum = issue.getRetNum();
-		betNum = order.getBetNum();
-		//winNum = winNum.substring(0,3);
-		winNumSet = winNum.split(",");
-		//betNumSet = betNum.split(",");
-		betNumMul = betNum.split(";");
-		
-		if(Integer.parseInt(winNumSet[0]) >= 5) {
-			winNumFinal = PRIME;
-		}else {
-			winNumFinal = COMPOSITE;
-		}
-		
-		for(String temp : betNumMul) {
-			if(temp.contains("0" + String.valueOf(winNumFinal))) {
-				return true;
-			}
-		}
-				
-		return false;
+		return true;
 	}
 
 	@Override
@@ -150,17 +121,8 @@ public class ZxZs10mPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 				return false;
 			}			
 							
-			Map<String, String> tempBits = splitBetNum(temp);
-			if(tempBits.size() != 1) {
+			if(temp.length() != 1){
 				return false;
-			}
-			
-			Iterator<String> ite = tempBits.keySet().iterator();
-			while(ite.hasNext()) {
-				String key = ite.next();
-				if(!betNumOptions.contains(key)) {
-					return false;
-				}
 			}
 			
 		}

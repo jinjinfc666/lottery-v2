@@ -65,7 +65,7 @@ public class SwDsPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		//betNumSet = betNum.split(",");
 		betNumMul = betNum.split(";");
 		
-		if(Integer.parseInt(winNumSet[0]) % 2 != 0) {
+		if(Integer.parseInt(winNumSet[1]) % 2 != 0) {
 			winNumFinal = ODD;
 		}else {
 			winNumFinal = EVEN;

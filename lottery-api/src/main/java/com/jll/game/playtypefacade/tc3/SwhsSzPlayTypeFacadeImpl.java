@@ -28,34 +28,49 @@ public class SwhsSzPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 	protected String playTypeDesc = "sz|数值/swhs|三位和数/fs";
 		
 	private String betNumOptions = "0-6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21-27";
-		
+	
+	private Integer sumDownLimit = 7;
+	
+	private String downLimitRange = "0-6";
+	
+	private Integer sumUpLimit = 20;
+	
+	private String upLimitRange = "21-27";
+	
 	@Override
 	public boolean isMatchWinningNum(Issue issue, OrderInfo order) {
 		//开奖号码的每一位
-		String[] winNumSet = null;
-		//每次点击选号按钮所选号码，多个所选号码以;分割
-		String[] betNumMul= null;
-		String betNum = null;
-		String winNum = null;
-		
-		winNum = issue.getRetNum();
-		betNum = order.getBetNum();
-		winNumSet = winNum.split(",");
-		betNumMul = betNum.split(";");
-		
-		for(String temp : betNumMul) {
-			if(StringUtils.isBlank(temp)) {
-				continue;
-			}
-			
-			if(temp.contains(winNumSet[0])
-					|| temp.contains(winNumSet[1])
-					|| temp.contains(winNumSet[2])) {
-				return true;
-			}
-		}
+				String[] winNumSet = null;
+				//每次点击选号按钮所选号码，多个所选号码以;分割
+				String[] betNumMul= null;
+				String betNum = null;
+				String winNum = null;
 				
-		return false;
+				winNum = issue.getRetNum();
+				betNum = order.getBetNum();
+				winNumSet = winNum.split(",");
+				betNumMul = betNum.split(";");
+				
+				Integer sum = Integer.valueOf(winNumSet[2]) + Integer.valueOf(winNumSet[1]) + Integer.valueOf(winNumSet[0]);
+				String sumStr = null;
+				if(sum < sumDownLimit){
+					sumStr = downLimitRange;
+				}else if(sum > sumUpLimit){
+					sumStr = upLimitRange;
+				}else{
+					sumStr = String.valueOf(sum);
+				}
+				for(String temp : betNumMul) {
+					if(StringUtils.isBlank(temp)) {
+						continue;
+					}
+					
+					if(!temp.equals(sumStr)){
+						return false;
+					}
+				}
+						
+				return true;
 	}
 
 	@Override
@@ -131,11 +146,18 @@ public class SwhsSzPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 			if(StringUtils.isBlank(temp)) {
 				return false;
 			}			
-							
-			if(!betNumOptions.contains(temp)) {
-				return false;
+			boolean isMatchOption = false;			
+			String[] betNumOptionsArray = betNumOptions.split(",");
+			for(String option : betNumOptionsArray){
+				if(temp.equals(option)){
+					isMatchOption = true;
+					continue;
+				}
 			}
 			
+			if(!isMatchOption){
+				return false;
+			}
 		}
 		
 		return true;

@@ -49,35 +49,35 @@ public class SwhsDsPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 	@Override
 	public boolean isMatchWinningNum(Issue issue, OrderInfo order) {
 		//开奖号码的每一位
-		String[] winNumSet = null;
-		//投注号码的每个位的号码，可能多个号码
-		//String[] betNumSet = new String[3];
-		//每次点击选号按钮所选号码，多个所选号码以;分割
-		String[] betNumMul= null;
-		String betNum = null;
-		String winNum = null;
-		int winNumFinal = -1;
-		
-		winNum = issue.getRetNum();
-		betNum = order.getBetNum();
-		//winNum = winNum.substring(0,3);
-		winNumSet = winNum.split(",");
-		//betNumSet = betNum.split(",");
-		betNumMul = betNum.split(";");
-		
-		if(Integer.parseInt(winNumSet[0]) % 2 != 0) {
-			winNumFinal = ODD;
-		}else {
-			winNumFinal = EVEN;
-		}
-		
-		for(String temp : betNumMul) {
-			if(temp.contains("0" + String.valueOf(winNumFinal))) {
-				return true;
-			}
-		}
+				String[] winNumSet = null;
+				//投注号码的每个位的号码，可能多个号码
+				//String[] betNumSet = new String[3];
+				//每次点击选号按钮所选号码，多个所选号码以;分割
+				String[] betNumMul= null;
+				String betNum = null;
+				String winNum = null;
+				int winNumFinal = -1;
 				
-		return false;
+				winNum = issue.getRetNum();
+				betNum = order.getBetNum();
+				//winNum = winNum.substring(0,3);
+				winNumSet = winNum.split(",");
+				//betNumSet = betNum.split(",");
+				betNumMul = betNum.split(";");
+				Integer sum = Integer.valueOf(winNumSet[0])+ Integer.valueOf(winNumSet[1]) + Integer.valueOf(winNumSet[2]);
+				if(sum % 2 != 0) {
+					winNumFinal = ODD;
+				}else {
+					winNumFinal = EVEN;
+				}
+				
+				for(String temp : betNumMul) {
+					if(temp.contains("0" + String.valueOf(winNumFinal))) {
+						return true;
+					}
+				}
+						
+				return false;
 	}
 
 	@Override
@@ -152,9 +152,7 @@ public class SwhsDsPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 			}			
 							
 			Map<String, String> tempBits = splitBetNum(temp);
-			if(tempBits.size() < 1
-					|| tempBits.size() > 2
-					|| tempBits.size() != (temp.length() / 2)) {
+			if(temp.length() != 2) {
 				return false;
 			}
 			

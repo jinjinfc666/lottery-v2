@@ -63,7 +63,7 @@ public class GwZhPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		//betNumSet = betNum.split(",");
 		betNumMul = betNum.split(";");
 		
-		if(Integer.parseInt(winNumSet[0]) >= 5) {
+		if(primeStr.contains(winNumSet[2])) {
 			winNumFinal = PRIME;
 		}else {
 			winNumFinal = COMPOSITE;

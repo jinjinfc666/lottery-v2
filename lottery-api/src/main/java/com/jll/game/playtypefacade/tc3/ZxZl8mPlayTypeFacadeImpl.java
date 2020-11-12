@@ -30,7 +30,7 @@ import com.jll.game.playtypefacade.DefaultPlayTypeFacadeImpl;
  */
 public class ZxZl8mPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 	
-	private Logger logger = Logger.getLogger(ZxZl8mPlayTypeFacadeImpl.class);
+	private Logger logger = Logger.getLogger(ZxZl4mPlayTypeFacadeImpl.class);
 	
 	protected String playTypeDesc = "8m|8码/zx6|组选6/zx|组选/fs";
 	
@@ -44,38 +44,43 @@ public class ZxZl8mPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 	
 	private String smallStr = "04689";
 	
+	private final Integer selNumMaxLen = 8;
+	
+	private final Integer winNumMaxLen = 3;
+	
 	@Override
 	public boolean isMatchWinningNum(Issue issue, OrderInfo order) {
 		//开奖号码的每一位
 		String[] winNumSet = null;
-		//投注号码的每个位的号码，可能多个号码
-		//String[] betNumSet = new String[3];
 		//每次点击选号按钮所选号码，多个所选号码以;分割
 		String[] betNumMul= null;
 		String betNum = null;
 		String winNum = null;
-		int winNumFinal = -1;
 		
 		winNum = issue.getRetNum();
 		betNum = order.getBetNum();
-		//winNum = winNum.substring(0,3);
 		winNumSet = winNum.split(",");
-		//betNumSet = betNum.split(",");
 		betNumMul = betNum.split(";");
 		
-		if(Integer.parseInt(winNumSet[0]) >= 5) {
-			winNumFinal = PRIME;
-		}else {
-			winNumFinal = COMPOSITE;
+		
+		Map<String, Integer> winNumMap = splitBetNumMap(winNum, 2);
+		if(winNumMap.size() != winNumMaxLen){
+			return false;
 		}
 		
 		for(String temp : betNumMul) {
-			if(temp.contains("0" + String.valueOf(winNumFinal))) {
-				return true;
+			if(StringUtils.isBlank(temp)) {
+				continue;
 			}
+			Map<String, Integer> betNumMap = splitBetNumMap(betNum, 1);
+			boolean isMatch = isMatch(betNumMap, winNumMap);
+			if(!isMatch){
+				return false;
+			}
+			
 		}
 				
-		return false;
+		return true;
 	}
 
 	@Override
@@ -151,7 +156,7 @@ public class ZxZl8mPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 			}			
 							
 			Map<String, String> tempBits = splitBetNum(temp);
-			if(tempBits.size() != 8) {
+			if(tempBits.size() != selNumMaxLen) {
 				return false;
 			}
 			
@@ -270,6 +275,7 @@ public class ZxZl8mPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		Map<String, String> bits = new HashMap<String, String>();
 		int len = temp.length();
 				
+		
 		for(int i = 0; i < len;) {
 			String bit = temp.substring(i, i + 1);
 			bits.put(bit, bit);
@@ -410,4 +416,39 @@ public class ZxZl8mPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		}
 		return ret;
 	}
+	
+	private Map<String, Integer> splitBetNumMap(String temp, int interval) {
+		Map<String, Integer> bits = new HashMap<>();
+		int len = temp.length();
+			
+		for(int i = 0; i < len;) {
+			String bit = temp.substring(i, i + 1);
+			if(bits.get(bit) == null){
+				bits.put(bit, 1);
+			}else{
+				Integer counter = bits.get(bit);
+				counter++;
+				bits.put(bit, counter);
+			}
+			
+			i += interval;
+		}
+		
+		return bits;
+	}
+	
+	private boolean isMatch(Map<String, Integer> betNumSet, Map<String, Integer> winNumSet){
+		
+		Iterator<String> ite = winNumSet.keySet().iterator();
+		while(ite.hasNext()){
+			String key = ite.next();
+			Integer counter = winNumSet.get(key);
+			Integer counter_ = betNumSet.get(key);
+			if(counter_ == null || !counter_.equals(counter)){
+				return false;
+			}
+		}
+		return true;
+	}
 }
+

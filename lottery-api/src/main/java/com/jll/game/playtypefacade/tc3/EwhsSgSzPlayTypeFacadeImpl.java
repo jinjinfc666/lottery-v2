@@ -28,7 +28,14 @@ public class EwhsSgSzPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 	protected String playTypeDesc = "sz|数值/sg|十个/ewhs|二位和数/fs";
 		
 	private String betNumOptions = "0-4,5,6,7,8,9,10,11,12,13,14-18";
-		
+	
+	private Integer sumDownLimit = 5;
+	
+	private String downLimitRange = "0-4";
+	
+	private Integer sumUpLimit = 13;
+	
+	private String upLimitRange = "14-18";
 	@Override
 	public boolean isMatchWinningNum(Issue issue, OrderInfo order) {
 		//开奖号码的每一位
@@ -43,19 +50,26 @@ public class EwhsSgSzPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		winNumSet = winNum.split(",");
 		betNumMul = betNum.split(";");
 		
+		Integer sum = Integer.valueOf(winNumSet[2]) + Integer.valueOf(winNumSet[1]);
+		String sumStr = null;
+		if(sum < sumDownLimit){
+			sumStr = downLimitRange;
+		}else if(sum > sumUpLimit){
+			sumStr = upLimitRange;
+		}else{
+			sumStr = String.valueOf(sum);
+		}
 		for(String temp : betNumMul) {
 			if(StringUtils.isBlank(temp)) {
 				continue;
 			}
 			
-			if(temp.contains(winNumSet[0])
-					|| temp.contains(winNumSet[1])
-					|| temp.contains(winNumSet[2])) {
-				return true;
+			if(!temp.equals(sumStr)){
+				return false;
 			}
 		}
 				
-		return false;
+		return true;
 	}
 
 	@Override
@@ -131,11 +145,18 @@ public class EwhsSgSzPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 			if(StringUtils.isBlank(temp)) {
 				return false;
 			}			
-							
-			if(!betNumOptions.contains(temp)) {
-				return false;
+			boolean isMatchOption = false;			
+			String[] betNumOptionsArray = betNumOptions.split(",");
+			for(String option : betNumOptionsArray){
+				if(temp.equals(option)){
+					isMatchOption = true;
+					continue;
+				}
 			}
 			
+			if(!isMatchOption){
+				return false;
+			}
 		}
 		
 		return true;

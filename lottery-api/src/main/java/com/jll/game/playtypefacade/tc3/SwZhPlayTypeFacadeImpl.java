@@ -63,7 +63,7 @@ public class SwZhPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		//betNumSet = betNum.split(",");
 		betNumMul = betNum.split(";");
 		
-		if(Integer.parseInt(winNumSet[0]) >= 5) {
+		if(primeStr.contains(winNumSet[1])) {
 			winNumFinal = PRIME;
 		}else {
 			winNumFinal = COMPOSITE;

@@ -27,6 +27,12 @@ public class Kd0kPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 	
 	protected String playTypeDesc = "0k|0跨/kd|跨度/fs";
 		
+	private final String KEY_MIN = "min_bit";
+	
+	private final String KEY_MAX = "max_bit";
+	
+	private final Integer kdVal = 0;
+	
 //	private String betNumOptions = "0-6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21-27";
 		
 	@Override
@@ -43,21 +49,37 @@ public class Kd0kPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		winNumSet = winNum.split(",");
 		betNumMul = betNum.split(";");
 		
+		
+		Map<String, Integer> winNumMap = splitBetNumMap(winNum);
+		
 		for(String temp : betNumMul) {
 			if(StringUtils.isBlank(temp)) {
 				continue;
 			}
-			
-			if(temp.contains(winNumSet[0])
-					|| temp.contains(winNumSet[1])
-					|| temp.contains(winNumSet[2])) {
-				return true;
+			Map<String, Integer> betNumMap = splitBetNumMap(betNum);
+			boolean isMatch = isMatch(betNumMap, winNumMap);
+			if(!isMatch){
+				return false;
 			}
+			
 		}
 				
-		return false;
+		return true;
 	}
 
+	private boolean isMatch(Map<String, Integer> betNumSet, Map<String, Integer> winNumSet){
+		
+		Iterator<String> ite = betNumSet.keySet().iterator();
+		while(ite.hasNext()){
+			String key = ite.next();
+			Integer counter = betNumSet.get(key);
+			Integer counter_ = winNumSet.get(key);
+			if(counter_ == null || !counter_.equals(counter)){
+				return false;
+			}
+		}
+		return true;
+	}
 	@Override
 	public Map<String, Object> preProcessNumber(Map<String, Object> params, UserInfo user) {		
 		Map<String, Object> ret = new HashMap<>();
@@ -131,9 +153,35 @@ public class Kd0kPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 			if(StringUtils.isBlank(temp)) {
 				return false;
 			}
+			
+			if(temp.length() != 3){
+				return false;
+			}
+			
+			Map<String, Integer> tempSet = parseMinAndMax(temp);
+			Integer min = tempSet.get(KEY_MIN);
+			Integer max = tempSet.get(KEY_MAX);
+			if(max - min != kdVal){
+				return false;
+			}
 		}
 		
 		return true;
+	}
+
+	private Map<String, Integer> parseMinAndMax(String temp) {
+		Map<String, Integer> ret = new HashMap<>();
+		for(int i = 0;i < temp.length(); i++){
+			String bit = temp.substring(i, i + 1);
+			if(ret.get(KEY_MIN) == null || ret.get(KEY_MIN) > Integer.valueOf(bit)){
+				ret.put(KEY_MIN, Integer.valueOf(bit));
+			}
+			
+			if(ret.get(KEY_MAX) == null || ret.get(KEY_MAX) < Integer.valueOf(bit)){
+				ret.put(KEY_MAX, Integer.valueOf(bit));
+			}
+		}
+		return ret;
 	}
 
 	@Override
@@ -305,5 +353,26 @@ public class Kd0kPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		betNum.append(Integer.toString(bit));
 				
 		return betNum.toString();
+	}
+	
+	
+	private Map<String, Integer> splitBetNumMap(String temp) {
+		Map<String, Integer> bits = new HashMap<>();
+		int len = temp.length();
+			
+		for(int i = 0; i < len;) {
+			String bit = temp.substring(i, i + 1);
+			if(bits.get(bit) == null){
+				bits.put(bit, 1);
+			}else{
+				Integer counter = bits.get(bit);
+				counter++;
+				bits.put(bit, counter);
+			}
+			
+			i += 1;
+		}
+		
+		return bits;
 	}
 }

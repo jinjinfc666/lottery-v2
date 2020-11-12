@@ -63,19 +63,15 @@ public class SwDwSZPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		//betNumSet = betNum.split(",");
 		betNumMul = betNum.split(";");
 		
-		if(Integer.parseInt(winNumSet[0]) >= 5) {
-			winNumFinal = PRIME;
-		}else {
-			winNumFinal = COMPOSITE;
-		}
-		
 		for(String temp : betNumMul) {
-			if(temp.contains("0" + String.valueOf(winNumFinal))) {
-				return true;
+			if(!String.valueOf(temp.charAt(0)).equals(winNumSet[0])
+					|| !String.valueOf(temp.charAt(1)).equals(winNumSet[1])
+					|| !String.valueOf(temp.charAt(2)).equals(winNumSet[2])){
+				return false;
 			}
 		}
 				
-		return false;
+		return true;
 	}
 
 	@Override

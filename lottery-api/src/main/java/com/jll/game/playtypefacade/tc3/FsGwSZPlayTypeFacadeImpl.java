@@ -63,19 +63,14 @@ public class FsGwSZPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		//betNumSet = betNum.split(",");
 		betNumMul = betNum.split(";");
 		
-		if(Integer.parseInt(winNumSet[0]) >= 5) {
-			winNumFinal = PRIME;
-		}else {
-			winNumFinal = COMPOSITE;
-		}
-		
+				
 		for(String temp : betNumMul) {
-			if(temp.contains("0" + String.valueOf(winNumFinal))) {
-				return true;
+			if(!temp.equals(winNumSet[2])) {
+				return false;
 			}
 		}
 				
-		return false;
+		return true;
 	}
 
 	@Override

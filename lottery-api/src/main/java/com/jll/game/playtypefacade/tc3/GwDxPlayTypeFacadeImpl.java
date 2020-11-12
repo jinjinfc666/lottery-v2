@@ -65,7 +65,7 @@ public class GwDxPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		//betNumSet = betNum.split(",");
 		betNumMul = betNum.split(";");
 		
-		if(Integer.parseInt(winNumSet[0]) >= 5) {
+		if(Integer.parseInt(winNumSet[2]) >= 5) {
 			winNumFinal = BIGGER;
 		}else {
 			winNumFinal = SMALLER;

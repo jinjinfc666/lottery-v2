@@ -65,7 +65,7 @@ public class SwDxPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		//betNumSet = betNum.split(",");
 		betNumMul = betNum.split(";");
 		
-		if(Integer.parseInt(winNumSet[0]) >= 5) {
+		if(Integer.parseInt(winNumSet[1]) >= 5) {
 			winNumFinal = BIGGER;
 		}else {
 			winNumFinal = SMALLER;
