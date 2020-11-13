@@ -15,7 +15,6 @@
 	<packaging>war</packaging>
 	<name>lottery-admin</name>
 	<description>lottery-admin</description>
-
 	
 	<build>
 		<plugins>

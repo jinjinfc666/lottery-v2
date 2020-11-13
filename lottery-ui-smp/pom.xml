@@ -15,7 +15,6 @@
 	<packaging>war</packaging>
 	<name>lottery-ui-smp</name>
 	<description>lottery-ui-smp</description>
-
 	
 	<build>
 		<plugins>
