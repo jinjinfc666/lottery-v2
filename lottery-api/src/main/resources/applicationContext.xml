@@ -151,8 +151,6 @@
         <aop:advisor advice-ref="txAdvice" pointcut="execution(* com.jll..*Service.*(..))"/>
     </aop:config>
     
-    
-    
 	<import resource="spring-redis.xml" />
 	<import resource="spring-security.xml" />
 	<import resource="spring-job.xml" />

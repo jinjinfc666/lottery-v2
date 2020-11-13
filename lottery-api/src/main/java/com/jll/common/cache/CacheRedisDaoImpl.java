@@ -427,4 +427,9 @@ public class CacheRedisDaoImpl  extends AbstractBaseRedisDao implements CacheRed
 	public void setPlayTypeNum(CacheObject<Map<String, Map<String, Map<String, PlayTypeNum>>>> cacheObj) {
 		this.saveOrUpdate(cacheObj);
 	}
+
+	@Override
+	public void deletePlayTypeNum(String keyPlayTypeNum) {
+		this.delete(keyPlayTypeNum);
+	}
 }

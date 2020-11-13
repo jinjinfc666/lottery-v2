@@ -2661,7 +2661,8 @@ public class UserInfoServiceImpl implements UserInfoService
 		creditMarketObj.setMarketId(Integer.valueOf(currMarket));
 		userInfo.setCurrentMarket(creditMarketObj);
 		playTypeNumServ.updateUserCurrMarket(userInfo.getUserId(), currMarket);
-		
+		String message = Constants.KEY_INIT_SYS_CODE_PLAY_TYPE_NUM;
+		cacheServ.publishMessage(Constants.KEY_INIT_SYSCODE, message);
 		userExtServ.saveUserInfoExt(userInfo);
 	}
 }

@@ -317,7 +317,18 @@ app.controller('authCtrl',
 
     
     $scope.changeUserCurrMarket = function (selCreditMarket){
-    	userInfoServ.changeUserCurrMarket(selCreditMarket);
+    	userInfoServ.changeUserCurrMarket(selCreditMarket).then(function(){
+    		var userInfo = sessionStorage.getItem("userInfo");
+
+    		if(typeof userInfo != 'undefined'
+    					&& userInfo != null){
+	    		$scope.userInfo = JSON.parse(userInfo);
+	    		/*$scope.creditMarkets = selCreditMarket;*/
+	    		$scope.userInfo.currentMarket = selCreditMarket;
+	    		sessionStorage.setItem("userInfo", JSON.stringify($scope.userInfo));
+    		}
+    	});
+    	
     }
     
     //通过手机号找回密码

@@ -250,4 +250,6 @@ public interface CacheRedisService {
 	 */
 	void setPlayTypeNum(String codeTypeName,
 			Map<String, Map<String, Map<String, PlayTypeNum>>> lotteryTypePlayTypeNums);
+
+	void deletePlayTypeNum();
 }

@@ -1,5 +1,7 @@
 package com.jll.sys.init;
 
+import java.io.Serializable;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -18,14 +20,20 @@ import org.apache.log4j.Logger;
 import com.jll.common.cache.CacheRedisService;
 import com.jll.common.constants.Constants;
 import com.jll.common.constants.Constants.LottoType;
+import com.jll.common.threadpool.ThreadPoolManager;
+import com.jll.common.utils.StringUtils;
 import com.jll.common.utils.Utils;
 import com.jll.entity.IpBlackList;
+import com.jll.entity.Issue;
 import com.jll.entity.PayChannel;
 import com.jll.entity.PayType;
 import com.jll.entity.PlayType;
 import com.jll.entity.PlayTypeNum;
 import com.jll.entity.SysCode;
 import com.jll.game.LotteryCenterServiceImpl;
+import com.jll.game.LotteryTypeFactory;
+import com.jll.game.LotteryTypeService;
+import com.jll.game.mesqueue.MessageDelegateListener;
 import com.jll.game.playtype.PlayTypeNumService;
 import com.jll.game.playtype.PlayTypeService;
 import com.jll.pay.PaymentService;
@@ -34,7 +42,7 @@ import com.jll.sys.deposit.PayChannelService;
 import com.jll.sys.deposit.PayTypeService;
 import com.jll.sysSettings.syscode.SysCodeService;
 
-public class SysInitLoader {
+public class SysInitLoader implements MessageDelegateListener{
 	
 	private Logger logger = Logger.getLogger(LotteryCenterServiceImpl.class);
 	
@@ -107,7 +115,6 @@ public class SysInitLoader {
 			tc3PlayTypes.addAll(fc3dPlayTypes);
 			
 			tc3PlayTypes.forEach(playType->{
-				System.out.println("current play type is " + playType.getClassification());
 				List<PlayTypeNum> playTypeNumInList = playTypeNumServ.queryPlayTypeNum(new Long(playType.getId()));
 				Map<String, PlayTypeNum> playTypeNumInMap = playTypeNumInList.stream().collect(Collectors.toMap(PlayTypeNum::getBetNum,Function.identity()));
 				Map<String, PlayTypeNum> playTypeNumInTreeMap = new TreeMap<>();
@@ -510,5 +517,20 @@ public class SysInitLoader {
 		
 		
 		
+	}
+	
+	
+	@Override
+	public void handleMessage(Serializable message) {
+		String msg = (String)message;
+		if(Constants.KEY_INIT_SYS_CODE_PLAY_TYPE_NUM.equals(msg)){
+			ThreadPoolManager.getInstance().exeThread(new Runnable() {
+				@Override
+				public void run() {
+					cacheServ.deletePlayTypeNum();
+					initPlayTypeNum();
+				}
+			});
+		}
 	}
 }

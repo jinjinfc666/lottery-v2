@@ -45,5 +45,6 @@
 	<redis:listener-container>
         <redis:listener ref="winningNumberListenerImpl" serializer="stringRedisSerializer" method="handleMessage" topic="winning_number"/>
         <redis:listener ref="payoutListenerImpl" serializer="stringRedisSerializer" method="handleMessage" topic="pay_out"/>
+        <redis:listener ref="sysInitLoader" serializer="stringRedisSerializer" method="handleMessage" topic="init_syscode"/>
     </redis:listener-container>
 </beans>

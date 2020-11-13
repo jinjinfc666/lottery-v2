@@ -979,4 +979,9 @@ public class CacheRedisServiceImpl implements CacheRedisService
 		
 		return lotteryTypeMap;
 	}
+
+	@Override
+	public void deletePlayTypeNum() {
+		cacheDao.deletePlayTypeNum(Constants.KEY_PLAY_TYPE_NUM);
+	}
 }

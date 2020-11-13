@@ -139,6 +139,10 @@ public class Constants {
 	
 	public final static String KEY_ZX = "zx";
 	
+	public final static String KEY_INIT_SYS_CODE_PLAY_TYPE_NUM = "init_play_type_num";
+	
+	public final static String KEY_INIT_SYSCODE = "init_syscode";
+	
 	public static enum DepositOrderState{
 		
 		INIT_OR_PUSHED(0),

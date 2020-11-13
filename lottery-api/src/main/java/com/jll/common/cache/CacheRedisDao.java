@@ -133,5 +133,7 @@ public interface CacheRedisDao {
 	CacheObject<Map<String, Map<String, Map<String, PlayTypeNum>>>> getPlayTypeNum(String keyPlayTypeNum);
 
 	void setPlayTypeNum(CacheObject<Map<String, Map<String, Map<String, PlayTypeNum>>>> cacheObj);
+
+	void deletePlayTypeNum(String keyPlayTypeNum);
 }
 
