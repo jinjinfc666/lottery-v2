@@ -22,5 +22,7 @@ public interface TReportDao {
 	public Map<String, Object> queryNextTeamAllSm(String startTime, 
 			String endTime, 
 			UserInfo userInfo);
+	
+	public PageBean queryDailySettlement(String startTime, String endTime, String userName,Integer pageIndex,Integer pageSize);
 }
 

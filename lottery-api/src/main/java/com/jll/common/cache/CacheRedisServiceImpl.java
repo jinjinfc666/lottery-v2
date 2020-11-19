@@ -30,6 +30,7 @@ import com.jll.entity.PayChannel;
 import com.jll.entity.PayType;
 import com.jll.entity.PlayType;
 import com.jll.entity.PlayTypeNum;
+import com.jll.entity.StatBettingNumber;
 import com.jll.entity.SysCode;
 import com.jll.entity.UserInfo;
 import com.jll.entity.display.UserPushCache;
@@ -37,6 +38,7 @@ import com.jll.game.BulletinBoard;
 import com.jll.game.playtype.PlayTypeFacade;
 import com.jll.game.playtype.PlayTypeService;
 import com.jll.game.playtypefacade.PlayTypeFactory;
+import com.jll.report.StatBettingNumberService;
 import com.jll.sysSettings.syscode.SysCodeService;
 
 @Configuration
@@ -72,6 +74,8 @@ public class CacheRedisServiceImpl implements CacheRedisService
 	
 	@Resource
 	PlayTypeService playTypeServ;
+	
+	private StatBettingNumberService statBettingNumberServ;
 	
 	@Override
 	public synchronized void setCaptchaCode(String captchaCode, int captchaCodeExpiredTime) {
@@ -240,168 +244,7 @@ public class CacheRedisServiceImpl implements CacheRedisService
 	}
 	//playType 玩法--------------------End----------------------------------
 	
-	@Override
-	public void statGroupByBettingNum(String lotteryType, OrderInfo order, UserInfo user) {
-		StringBuffer cacheKey = new StringBuffer();
-		cacheKey.append(Constants.KEY_STAT_ISSUE_BETTING)
-		.append(lotteryType).append(order.getIssueId());
-		Map<String, Object> statInfo = null;
-		CacheObject<Map<String, Object>> cacheObj = null;
-		PlayTypeFacade playTypeFacade = null;
-		Integer playTypeId = null;
-		PlayType playType = null;
-		String playTypeName = null;
-		Map<String, Object> params = new HashMap<>();		
-//		Map<String, Object> preBetResult = null;
-		String betNums = order.getBetNum();
-		//String[] betNumSet = null;
-		List<Map<String, String>> betNumMapping = null;
-		int bettingBlockTimes = 3000;
-		int bettingBlockCounter = 0;
-		String keyLock = Constants.KEY_LOCK_CACHE_STATISTIC;
-		
-		while(bettingBlockCounter < bettingBlockTimes) {
-			if(lock(keyLock, keyLock, Constants.LOCK_CACHE_STATISTIC_EXPIRED)) {
-				
-				cacheObj = cacheDao.getStatGroupByBettingNum(cacheKey.toString());
-				
-				if(cacheObj == null) {
-					cacheObj = new CacheObject<>();
-					statInfo = new HashMap<>();
-					cacheObj.setKey(cacheKey.toString());
-					cacheObj.setContent(statInfo);
-					cacheObj.setExpired(1*60*60);
-				}
-				
-				if(playTypeFacade == null) {
-					playTypeId = order.getPlayType();
-					if(playTypeId == null) {
-						return ;
-					}
-					playType = playTypeServ.queryById(playTypeId);
-					if(playType == null) {
-						return ;
-					}
-					
-					if(playType.getPtName().equals("fs")) {
-						playTypeName = playType.getClassification() + "/fs";
-					}else if(playType.getPtName().equals("ds")){
-						playTypeName = playType.getClassification() + "/ds";
-					}else {
-						playTypeName = playType.getClassification() + "/" + playType.getPtName();
-					}
-					playTypeFacade = PlayTypeFactory.getInstance().getPlayTypeFacade(playTypeName);
-				}		
-				
-				betNumMapping = playTypeFacade.parseBetNumber(betNums);
-				statInfo = cacheObj.getContent();
-				
-				Date startDate = new Date();
-				
-				/*params.put("betNum", betNums);
-				params.put("times", order.getTimes());
-				params.put("monUnit", order.getPattern().floatValue());
-				params.put("lottoType", lotteryType);
-				
-				preBetResult = playTypeFacade.preProcessNumber(params, user);*/
-				if(statInfo.get(Constants.KEY_ISSUE_TOTAL_BETTING_AMOUNT) == null) {
-					statInfo.put(Constants.KEY_ISSUE_TOTAL_BETTING_AMOUNT, 
-							order.getBetAmount());
-				}else {
-					Float total = (Float)statInfo.get(Constants.KEY_ISSUE_TOTAL_BETTING_AMOUNT);
-					total = MathUtil.add(total, 
-							order.getBetAmount(), 
-							Float.class);
-					statInfo.put(Constants.KEY_ISSUE_TOTAL_BETTING_AMOUNT, 
-							total);
-				}		
-				
-				//TODO
-				for(Map<String, String> temp : betNumMapping) {
-					String betNumTemp = temp.get(Constants.KEY_FACADE_BET_NUM);
-					String pattern = temp.get(Constants.KEY_FACADE_PATTERN);
-					String sample = temp.get(Constants.KEY_FACADE_BET_NUM_SAMPLE);
-					boolean isExisting = false;			
-					
-					params.put("betNum", betNumTemp);
-					params.put("times", order.getTimes());
-					params.put("monUnit", order.getPattern().floatValue());
-					params.put("lottoType", lotteryType);
-					/*if(preBetResult == null) {
-						preBetResult = playTypeFacade.preProcessNumber(params, user);
-					}*/
-					
-					if(statInfo.get(pattern) != null) {
-						isExisting = true;
-					}
-					
-					Float maxWinAmount = MathUtil.multiply(order.getBetAmount(), order.getPrizeRate().floatValue(), Float.class);
-					if(isExisting) {
-						isExisting = false;				
-						statInfo.put(pattern, 
-								MathUtil.add((Float)statInfo.get(pattern), 
-										maxWinAmount, 
-										Float.class));
-					}else {
-						statInfo.put(pattern, maxWinAmount);
-					}
-					
-					/*if(statInfo.get(Constants.KEY_ISSUE_TOTAL_BETTING_AMOUNT) == null) {
-						statInfo.put(Constants.KEY_ISSUE_TOTAL_BETTING_AMOUNT, 
-								preBetResult.get("betAmount"));
-					}else {
-						Float total = (Float)statInfo.get(Constants.KEY_ISSUE_TOTAL_BETTING_AMOUNT);
-						total = MathUtil.add(total, 
-								(Float)preBetResult.get("betAmount"), 
-								Float.class);
-						statInfo.put(Constants.KEY_ISSUE_TOTAL_BETTING_AMOUNT, 
-								total);
-					}		*/
-					
-				}
-				
-				Date endDate = new Date();
-				
-				logger.debug(String.format("Thread ID: %s   totaly take over  %s,   try to add %s  records  ,  existing %s records", 
-						Thread.currentThread().getId(),
-						endDate.getTime() - startDate.getTime(),
-						betNumMapping.size(),
-						statInfo.size()));
-				
-				
-				
-				
-				//TODO 
-				Iterator<String> ite = statInfo.keySet().iterator();
-				while(ite.hasNext()) {
-					String key = ite.next();
-					Float val = (Float)statInfo.get(key);
-					logger.debug(String.format("Thread ID: %s   curr bet num  %s,   total bet amount %s  ", 
-							Thread.currentThread().getId(),
-							key,
-							String.valueOf(val)));
-					
-				}
-				cacheObj.setContent(statInfo);
-				
-				cacheDao.setStatGroupByBettingNum(cacheObj);
-				
-				
-				releaseLock(keyLock);
-				break;
-			}
-			
-			
-			bettingBlockCounter++;
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-
+	
 	@Override
 	public boolean isIssueBetting(String lotteryType, int issueId) {
 		BulletinBoard bulletinBoard = getBulletinBoard(lotteryType);

@@ -160,8 +160,15 @@
                 	xyAmount = document.getElementById('xyAmount').value;
                 	zcAmount = document.getElementById('zcAmount').value;
                 	tsAmount = document.getElementById('tsAmount').value;
-                    panKou = $("#smPanKou option:selected").attr("data-seq");
-                    platRebate = $("#smPanKou option:selected").val();
+                    /* panKou =  */
+                    $("#smPanKou input:checked").each(function(){
+                    	if(panKou == 'undefined' || panKou == null){
+                    		panKou = $(this).attr('data-seq');
+                    	}else{
+                    		panKou = panKou +"," +$(this).attr('data-seq');
+                    	}
+                    });
+                    /* platRebate = $("#smPanKou option:selected").val(); */
                     
                     if(xyAmount == null || xyAmount == ''){
                     	$("#xyAmount_error").text("请输入信誉额度!");
@@ -198,7 +205,7 @@
 	                    "xyAmount":xyAmount,
 	                    "zcAmount":zcAmount,
 	                    "tsAmount":tsAmount,
-	                    'panKou':panKou
+	                    'creditMarketIds':panKou
 	                });
                 }else{
                 	if(platRebate==""){
@@ -434,8 +441,8 @@
                     },
                     success: function (data) {
                     	if(data.status=="1"){
-                       	 $.each(data.data, function(key, val) {  
-                       		$("#smPanKou").append("<option data-seq='"+ val.seq +"' value='"+val.codeVal+"'>"+val.remark+"</option>");
+                       	 $.each(data.data, function(key, val) {								
+                       		 $("#smPanKou").append("<input type='checkbox' name='markets' data-seq='"+ val.seq +"' value='"+val.codeVal +"'>"+ val.remark +"&nbsp;&nbsp;");
                             })
                        }else{
                            alert(getErroe(data.error_code));
@@ -461,8 +468,8 @@
                 </td>
             </tr>
             
-            <tr>
-                <th class="thstyle">真实姓名</th>
+            <tr style="display:none">
+                <th class="thstyle" >真实姓名</th>
                 <td>
                     <input type="text" id="realName" name="realName" value="" placeholder="只能填写中文" onkeyup="value=value.replace(/[^\u4E00-\u9FA5]/g,'')" onbeforepaste="clipboardData.setData('text',clipboardData.getData('text').replace(/[^\u4E00-\u9FA5]/g,''))" style="width:250px;" class="login_putin" />
                 </td>
@@ -474,7 +481,7 @@
                     <span id="userName1" style="color:red;"></span>
                 </td>
             </tr>
-            <tr>
+            <tr  style="display:none">
                 <th class="thstyle">身份证</th>
                 <td><input type="text" id="userId" name="userId" value="" style="width:250px;" class="login_putin" /></td>
             </tr>
@@ -483,7 +490,7 @@
                 <td><input type="password" id="loginPwd" name="loginPwd" value="" placeholder="密码为6-15位的字母或数字组成" style="width:250px;" class="login_putin" />
                 <span id="loginPwd1" style="color:red;"></span></td>
             </tr>
-            <tr>
+            <tr  style="display:none">
                 <th class="thstyle">资金密码</th>
                 <td><input type="password" id="fundPwd" name="fundPwd" value="" placeholder="密码为6-15位的字母或数字组成" style="width:250px;" class="login_putin" /></td>
             </tr>
@@ -491,7 +498,7 @@
             <tr name="row_xy" class="displayNone">
                 <th class="thstyle">选择盘口</th>
                 <td>
-                	<select id="smPanKou" style="width:250px;height:50px"></select>
+                	<div id="smPanKou" style="width:250px;height:50px" style="display:inline"></div>
                 	<span id="smPanKou_error" style="color:red;"></span>
                 </td>
             </tr>
@@ -531,19 +538,19 @@
             </tr>
             
             
-            <tr>
-                <th class="thstyle">手机号</th>
+            <tr  style="display:none">
+                <th class="thstyle" >手机号</th>
                 <td><input type="text" id="phoneNum" name="phoneNum" value="" style="width:250px;" class="login_putin" /></td>
             </tr>
-            <tr>
+            <tr  style="display:none">
                 <th class="thstyle">QQ</th>
                 <td><input type="text" id="qq" name="qq" value="" style="width:250px;" class="login_putin" /></td>
             </tr>
-            <tr>
+            <tr  style="display:none">
                 <th class="thstyle">微信</th>
                 <td><input type="text" id="wechat" name="wechat" value="" style="width:250px;" class="login_putin" /></td>
             </tr>
-            <tr>
+            <tr  style="display:none">
                 <th class="thstyle">邮箱</th>
                 <td><input type="text" id="email" name="email" value="" style="width:250px;" class="login_putin" /></td>
             </tr>

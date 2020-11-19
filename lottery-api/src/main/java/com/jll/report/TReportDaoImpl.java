@@ -715,6 +715,34 @@ public class TReportDaoImpl extends DefaultGenericDaoImpl<TeamPlReport> implemen
 		}
 		return listRecord;
 	}
+	
+	@Override
+	public PageBean queryDailySettlement(String startTime, String endTime, String userName,Integer pageIndex,Integer pageSize) {
+		String userNameSql="";
+		String timeSql="";
+		Map<String,Object> map=new HashMap<String,Object>();
+		if(!StringUtils.isBlank(userName)) {
+			userNameSql=" and user_name=:userName";
+			map.put("userName", userName);
+		}else {
+			userNameSql=" and  user_type=:userName";
+			map.put("userName", Constants.UserType.AGENCY.getCode());
+		}
+		if(!StringUtils.isBlank(startTime)&&!StringUtils.isBlank(endTime)) {
+			timeSql="where create_time >=:startTime and create_time <=:endTime";
+			Date beginDate = DateUtil.fmtYmdToDate(startTime);
+		    Date endDate = DateUtil.fmtYmdToDate(endTime);
+			map.put("startTime", beginDate);
+			map.put("endTime", endDate);
+		}
+		String sql=null;
+		sql="select user_name,SUM(deposit) as deposit,SUM(withdrawal) as withdrawal,SUM(transfer) as transfer ,SUM(transfer_out) as transfer_out,SUM(deduction) as deduction,sum(consumption) as consumption,SUM(cancel_amount) as cancel_amount,SUM(return_prize) as return_prize,SUM(rebate) as rebate,SUM(recharge_member) AS recharge_member,SUM(new_members) as new_members,sum(profit) as profit,user_type from team_pl_report "+timeSql+userNameSql+" GROUP BY user_name,user_type";
+		PageBean page=new PageBean();
+		page.setPageIndex(pageIndex);
+		page.setPageSize(pageSize);
+		PageBean pageBean=queryBySqlPagination(page, sql,map);
+		return pageBean;
+	}
 }
 
 

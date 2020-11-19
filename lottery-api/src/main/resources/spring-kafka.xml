@@ -32,13 +32,19 @@
      </bean>
      
      <!-- 创建kafkatemplate bean，使用的时候，只需要注入这个bean，即可使用template的send消息方法 -->
-     <bean id="KafkaTemplate" class="org.springframework.kafka.core.KafkaTemplate">
+     <bean id="kafkaTemplate" class="org.springframework.kafka.core.KafkaTemplate">
      	<constructor-arg ref="producerFactory"/>
      	<constructor-arg name="autoFlush" value="true"/>
      	<property name="defaultTopic" value="account_details"/>
      </bean>
-     
-          <bean id="consumerFactory" class="org.springframework.kafka.core.DefaultKafkaConsumerFactory">
+
+	<bean id="kafkaTemplateBetNum" class="org.springframework.kafka.core.KafkaTemplate">
+		<constructor-arg ref="producerFactory" />
+		<constructor-arg name="autoFlush" value="true" />
+		<property name="defaultTopic" value="stat_betting_num" />
+	</bean>
+      
+     <bean id="consumerFactory" class="org.springframework.kafka.core.DefaultKafkaConsumerFactory">
      	<constructor-arg>
      		<ref bean="connectionProperties"/>
      	</constructor-arg>
@@ -46,16 +52,24 @@
      
      <!-- 实际执行消息消费的类 -->
      <bean id="statProfitMsgConsumer" class="com.jll.stat.StatProfitServiceImpl"/>
+     <bean id="statBetNumMsgConsumer" class="com.jll.stat.StatBettingNumServiceImpl"/>
      
      <!-- 消费者容器配置信息 -->
      <bean id="statProfitMsgContainerProperties" class="org.springframework.kafka.listener.config.ContainerProperties">
      	<constructor-arg value="account_details"/>
      	<property name="messageListener" ref="statProfitMsgConsumer"/>
      </bean>
-     
+     <bean id="statBetNumMsgContainerProperties" class="org.springframework.kafka.listener.config.ContainerProperties">
+     	<constructor-arg value="stat_betting_num"/>
+     	<property name="messageListener" ref="statBetNumMsgConsumer"/>
+     </bean>
      <!-- 创建kafka template bean，使用的时候，只需要注入这个bean，即可使用template的send消息方法 -->
-     <bean id="statProfitMsgContainer" class="org.springframework.kafka.listener.KafkaMessageListenerContainer" init-method="doStart">
+     <bean id="statProfitMsgContainer" class="org.springframework.kafka.listener.KafkaMessageListenerContainer">
      	<constructor-arg ref="consumerFactory"/>
      	<constructor-arg ref="statProfitMsgContainerProperties"/>
+     </bean>
+     <bean id="statBetNumMsgContainer" class="org.springframework.kafka.listener.KafkaMessageListenerContainer">
+     	<constructor-arg ref="consumerFactory"/>
+     	<constructor-arg ref="statBetNumMsgContainerProperties"/>
      </bean>
 </beans>

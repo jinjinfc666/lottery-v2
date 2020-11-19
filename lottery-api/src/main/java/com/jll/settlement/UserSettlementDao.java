@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.jll.dao.PageBean;
-import com.jll.entity.TrgUserAccountDetails;
+//import com.jll.entity.TrgUserAccountDetails;
 import com.jll.entity.UserInfo;
 import com.jll.entity.UserSettlement;
 

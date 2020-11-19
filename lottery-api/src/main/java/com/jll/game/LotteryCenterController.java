@@ -13,7 +13,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -91,7 +93,7 @@ public class LotteryCenterController {
 
 	@Resource
 	PlayTypeNumService playTypeNumServ;
-
+	
 	@RequestMapping(value = "/{lottery-type}/pre-bet", method = {
 			RequestMethod.POST }, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public Map<String, Object> PreBet(@PathVariable(name = "lottery-type", required = true) String lotteryType,

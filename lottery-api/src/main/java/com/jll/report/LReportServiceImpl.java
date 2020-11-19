@@ -26,12 +26,9 @@ public class LReportServiceImpl implements LReportService {
 	@Override
 	public PageBean queryLReport(Map<String, Object> ret) {
 		String codeName=(String) ret.get("codeName");
-		String startTime=(String) ret.get("startTime");
-		String endTime=(String) ret.get("endTime");
-		String userName=(String) ret.get("userName");
 		Integer pageIndex=(Integer) ret.get("pageIndex");
 		Integer pageSize=(Integer) ret.get("pageSize");
-		return lReportDao.queryLReport(codeName,startTime, endTime, userName,pageIndex,pageSize);
+		return lReportDao.queryLReport(codeName,pageIndex,pageSize);
 	}
 	//团队盈亏报表(按彩种查询)总计
 	@Override

@@ -68,4 +68,15 @@ public class TReportServiceImpl implements TReportService {
 		
 		return tReportDao.queryNextTeamAllSm(startTime, endTime, userInfo);
 	}
+	
+	//团队盈亏报表
+		@Override
+		public PageBean queryDailySettlement(Map<String, Object> ret) {
+			String startTime=(String) ret.get("startTime");
+			String endTime=(String) ret.get("endTime");
+			String userName=(String) ret.get("userName");
+			Integer pageIndex=(Integer) ret.get("pageIndex");
+			Integer pageSize=(Integer) ret.get("pageSize");
+			return tReportDao.queryTeamAll(startTime, endTime, userName,pageIndex,pageSize);
+		}
 }

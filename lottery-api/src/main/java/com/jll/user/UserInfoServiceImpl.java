@@ -455,6 +455,10 @@ public class UserInfoServiceImpl implements UserInfoService
 	@Override
 	public UserInfo getUserById(Integer userId) {
 		UserInfo user = userDao.getUserById(userId);
+		if(user == null){
+			return user;
+		}
+		
 		if(user.getUserType().intValue() == UserType.XY_PLAYER.getCode()
 				|| user.getUserType().intValue() == UserType.XY_AGENCY.getCode()
 				|| user.getUserType().intValue() == UserType.GENERAL_AGENCY.getCode()) {
@@ -465,7 +469,7 @@ public class UserInfoServiceImpl implements UserInfoService
 //			String panKou = userExtServ.queryFiledByName(user.getId(), "panKou");
 			String usedCreditAmount = userExtServ.queryFiledByName(user.getId(), "usedCreditAmount");
 			
-			String creditMarketIds = userExtServ.queryFiledByName(user.getId(), "panKou");
+			String creditMarketIds = userExtServ.queryFiledByName(user.getId(), "creditMarket");
 			String currCreditMarket = userExtServ.queryFiledByName(user.getId(), "currCreditMarket");
 			
 			if(payoutRate != null) {
@@ -483,6 +487,7 @@ public class UserInfoServiceImpl implements UserInfoService
 			if(creditMarketIds != null) {
 				List<CreditMarket> creditMarkets = parseCreditMarket(creditMarketIds);
 				user.setCreditMarkets(creditMarkets);
+				user.setCreditMarketIds(creditMarketIds);
 			}
 						
 			if(!StringUtils.isEmpty(currCreditMarket)) {
@@ -1009,7 +1014,8 @@ public class UserInfoServiceImpl implements UserInfoService
 		String phoneNum=userInfo.getPhoneNum();
 		String email=userInfo.getEmail();
 		BigDecimal platRebate=userInfo.getPlatRebate();
-		List<CreditMarket> creditMarkets = userInfo.getCreditMarkets();
+		List<CreditMarket> creditMarkets = null;
+		String creditMarketIds = userInfo.getCreditMarketIds();
 		Double xyPayoutRate = userInfo.getXyPayoutRate();
 		Double xyAmount = userInfo.getXyAmount();
 		BigDecimal tsAmount = userInfo.getTsAmount();
@@ -1024,8 +1030,10 @@ public class UserInfoServiceImpl implements UserInfoService
 		}
 		
 		
-		if(creditMarkets != null) {
+		if(!StringUtils.isEmpty(creditMarketIds)) {
+			creditMarkets = parseCreditMarket(creditMarketIds);
 			user.setCreditMarkets(creditMarkets);
+			user.setCreditMarketIds(creditMarketIds);
 		}
 		
 		if(currCreditMarket != null) {
@@ -1141,6 +1149,12 @@ public class UserInfoServiceImpl implements UserInfoService
 		}
 		
 		Map<String,Object> userInfoList = userDao.queryAllUserInfo(id, userName, proxyId, startTime, endTime,userType, userStatus, pageIndex,pageSize);
+		if(userInfoList.get("data") != null 
+				&& ((PageBean)userInfoList.get("data")).getContent() != null){
+			for(UserInfo userInfo_ : (List<UserInfo>)((PageBean)userInfoList.get("data")).getContent()){
+				appendUserInfoExt(userInfo_);
+			}			
+		}
 		return userInfoList;
 	}
 	//查询所有的代理
@@ -1174,6 +1188,12 @@ public class UserInfoServiceImpl implements UserInfoService
 		}*/
 		
 		userInfoList = userDao.queryAllAgent(map, userInfo);
+		if(userInfoList.get("data") != null 
+				&& ((PageBean)userInfoList.get("data")).getContent() != null){
+			for(UserInfo userInfo_ : (List<UserInfo>)((PageBean)userInfoList.get("data")).getContent()){
+				appendUserInfoExt(userInfo_);
+			}			
+		}
 		return userInfoList;
 	}
 	
@@ -2154,50 +2174,7 @@ public class UserInfoServiceImpl implements UserInfoService
 			userInfo.setFundPwd(StringUtils.MORE_ASTERISK);
 			
 			
-			if(userInfo.getUserType().intValue() == Constants.UserType.XY_PLAYER.getCode()
-					|| userInfo.getUserType().intValue() == Constants.UserType.XY_AGENCY.getCode()
-					|| userInfo.getUserType().intValue() == Constants.UserType.SM_PLAYER.getCode()
-					|| userInfo.getUserType().intValue() == Constants.UserType.ENTRUST_PLAYER.getCode()
-					|| userInfo.getUserType().intValue() == Constants.UserType.ENTRUST_AGENCY.getCode()) {
-				String payoutRate = userExtServ.queryFiledByName(userInfo.getId(), "xyPayoutRate");
-				String xyAmount = userExtServ.queryFiledByName(userInfo.getId(), "xyAmount");
-//				String panKou = userExtServ.queryFiledByName(userInfo.getId(), "panKou");
-				String zcAmount = userExtServ.queryFiledByName(userInfo.getId(), "zcAmount");
-				String tsAmount = userExtServ.queryFiledByName(userInfo.getId(), "tsAmount");
-				String creditMarketIds = userExtServ.queryFiledByName(userInfo.getId(), "creditMarket");
-				String currCreditMarket = userExtServ.queryFiledByName(userInfo.getId(), "currCreditMarket");
-				
-				if(payoutRate != null) {
-					userInfo.setXyPayoutRate(Double.parseDouble(payoutRate));
-				}
-				
-				if(xyAmount != null) {
-					userInfo.setXyAmount(Double.parseDouble(xyAmount));
-				}
-				
-								
-				if(!StringUtils.isEmpty(currCreditMarket)) {
-					Constants.CreditMarketEnum creditMarketEnum = Constants.CreditMarketEnum.getByCode(Integer.valueOf(currCreditMarket));
-					CreditMarket creditMarketObj = new CreditMarket();
-					creditMarketObj.setMarketId(creditMarketEnum.getCode());
-					creditMarketObj.setMarketName(creditMarketEnum.getName());
-					userInfo.setCurrentMarket(creditMarketObj);
-				}
-				
-				if(creditMarketIds != null) {
-					List<CreditMarket> creditMarkets = parseCreditMarket(creditMarketIds);
-					userInfo.setCreditMarkets(creditMarkets);
-				}
-				
-				if(tsAmount != null) {
-					userInfo.setTsAmount(new BigDecimal(tsAmount).multiply(new BigDecimal(100)));
-				}
-				
-				if(zcAmount != null) {
-					userInfo.setZcAmount(new BigDecimal(zcAmount).multiply(new BigDecimal(100)));
-				}
-				
-			}
+			appendUserInfoExt(userInfo);
 			ret.clear();
 			ret.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
 			ret.put(Message.KEY_DATA, userInfo);
@@ -2207,6 +2184,53 @@ public class UserInfoServiceImpl implements UserInfoService
 			ret.put(Message.KEY_DATA, userInfo);
 		}
 		return ret;
+	}
+
+	private void appendUserInfoExt(UserInfo userInfo) {
+		if(userInfo.getUserType().intValue() == Constants.UserType.XY_PLAYER.getCode()
+				|| userInfo.getUserType().intValue() == Constants.UserType.XY_AGENCY.getCode()
+				|| userInfo.getUserType().intValue() == Constants.UserType.SM_PLAYER.getCode()
+				|| userInfo.getUserType().intValue() == Constants.UserType.ENTRUST_PLAYER.getCode()
+				|| userInfo.getUserType().intValue() == Constants.UserType.ENTRUST_AGENCY.getCode()) {
+			String payoutRate = userExtServ.queryFiledByName(userInfo.getId(), "xyPayoutRate");
+			String xyAmount = userExtServ.queryFiledByName(userInfo.getId(), "xyAmount");
+			String zcAmount = userExtServ.queryFiledByName(userInfo.getId(), "zcAmount");
+			String tsAmount = userExtServ.queryFiledByName(userInfo.getId(), "tsAmount");
+			String creditMarketIds = userExtServ.queryFiledByName(userInfo.getId(), "creditMarket");
+			String currCreditMarket = userExtServ.queryFiledByName(userInfo.getId(), "currCreditMarket");
+			
+			if(payoutRate != null) {
+				userInfo.setXyPayoutRate(Double.parseDouble(payoutRate));
+			}
+			
+			if(xyAmount != null) {
+				userInfo.setXyAmount(Double.parseDouble(xyAmount));
+			}
+			
+							
+			if(!StringUtils.isEmpty(currCreditMarket)) {
+				Constants.CreditMarketEnum creditMarketEnum = Constants.CreditMarketEnum.getByCode(Integer.valueOf(currCreditMarket));
+				CreditMarket creditMarketObj = new CreditMarket();
+				creditMarketObj.setMarketId(creditMarketEnum.getCode());
+				creditMarketObj.setMarketName(creditMarketEnum.getName());
+				userInfo.setCurrentMarket(creditMarketObj);
+			}
+			
+			if(creditMarketIds != null) {
+				List<CreditMarket> creditMarkets = parseCreditMarket(creditMarketIds);
+				userInfo.setCreditMarkets(creditMarkets);
+				userInfo.setCreditMarketIds(creditMarketIds);
+			}
+			
+			if(tsAmount != null) {
+				userInfo.setTsAmount(new BigDecimal(tsAmount).multiply(new BigDecimal(100)));
+			}
+			
+			if(zcAmount != null) {
+				userInfo.setZcAmount(new BigDecimal(zcAmount).multiply(new BigDecimal(100)));
+			}
+			
+		}
 	}
 
 	@Override
@@ -2513,6 +2537,9 @@ public class UserInfoServiceImpl implements UserInfoService
 		superiorIds = superiorStr.split(",");
 		if(superiorIds != null && superiorIds.length > 0) {
 			superior = getUserById(Integer.parseInt(superiorIds[0]));
+			if(superior == null){
+				return superior;
+			}
 		}
 		
 		if(superior.getUserType().intValue() == Constants.UserType.XY_PLAYER.getCode()
@@ -2535,6 +2562,7 @@ public class UserInfoServiceImpl implements UserInfoService
 			if(creditMarketIds != null) {
 				List<CreditMarket> creditMarkets = parseCreditMarket(creditMarketIds);
 				superior.setCreditMarkets(creditMarkets);
+				superior.setCreditMarketIds(creditMarketIds);
 			}
 						
 			if(!StringUtils.isEmpty(currCreditMarket)) {

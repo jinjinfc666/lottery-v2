@@ -44,19 +44,27 @@ public class UserInfoExtDaoImpl extends DefaultGenericDaoImpl<UserInfoExt> imple
 		List<UserInfoExt> exts = query(sql, params, UserInfoExt.class);
 		
 		if(CollectionUtils.isEmpty(exts)) {
-			if(!CollectionUtils.isEmpty(user.getCreditMarkets())) {
-				StringBuffer buffer = new StringBuffer();
-				List<CreditMarket> creditMarkets = user.getCreditMarkets();
-				creditMarkets.forEach(creditMarket->{
-					buffer.append(creditMarket.getMarketId()).append(",");
-				});
-				buffer.deleteCharAt(buffer.length() - 1);
+			if(!StringUtils.isEmpty(user.getCreditMarketIds())) {
 				ext = new UserInfoExt();
 				ext.setUserId(user.getId());
 				ext.setExtFieldName("creditMarket");
-				ext.setExtFieldVal(buffer.toString());
+				ext.setExtFieldVal(user.getCreditMarketIds());
 				ext.setCreateTime(today);
 				
+				this.saveOrUpdate(ext);
+				
+				ext = new UserInfoExt();
+				ext.setUserId(user.getId());
+				ext.setExtFieldName("usedCreditAmount");
+				ext.setExtFieldVal("0.00");
+				ext.setCreateTime(today);
+				this.saveOrUpdate(ext);
+				
+				ext = new UserInfoExt();
+				ext.setUserId(user.getId());
+				ext.setExtFieldName("currCreditMarket");
+				ext.setExtFieldVal(String.valueOf(user.getCreditMarketIds().charAt(0)));
+				ext.setCreateTime(today);
 				this.saveOrUpdate(ext);
 			}
 			
@@ -123,15 +131,9 @@ public class UserInfoExtDaoImpl extends DefaultGenericDaoImpl<UserInfoExt> imple
 			}
 		}else {
 			for(UserInfoExt ext_ : exts) {
-				if(ext_.getExtFieldName().equals("creditMarket") && user.getCreditMarkets() != null) {
-					StringBuffer buffer = new StringBuffer();
-					List<CreditMarket> creditMarkets = user.getCreditMarkets();
-					creditMarkets.forEach(creditMarket->{
-						buffer.append(creditMarket.getMarketId()).append(",");
-					});
-					buffer.deleteCharAt(buffer.length() - 1);
-					
-					ext_.setExtFieldVal(buffer.toString());
+				if(ext_.getExtFieldName().equals("creditMarket") && !StringUtils.isEmpty(user.getCreditMarketIds())) {
+					StringBuffer buffer = new StringBuffer();					
+					ext_.setExtFieldVal(user.getCreditMarketIds());
 					this.saveOrUpdate(ext_);
 					
 				}else if(ext_.getExtFieldName().equals("currCreditMarket") && user.getCurrentMarket() != null) {

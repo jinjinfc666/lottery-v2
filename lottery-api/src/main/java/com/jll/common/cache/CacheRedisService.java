@@ -87,11 +87,7 @@ public interface CacheRedisService {
 	 */
 	void setPlayType(String lotteryType, List<PlayType> playTypes);
 
-	/**
-	 * 按照所选彩种的当前期次的所选号码进行投注金额以及投注注数的统计数据
-	 * @param order
-	 */
-	void statGroupByBettingNum(String lotteryType, OrderInfo order, UserInfo user);
+	
 
 	/**
 	 * 獲取当前期次的投注统计数据

@@ -33,7 +33,7 @@ public class LReportDaoImpl extends DefaultGenericDaoImpl<LotteryPlReport> imple
 	//团队盈亏报表(按彩种查询)
 	
 	@Override
-	public PageBean queryLReport(String codeName, String startTime, String endTime, String userName,Integer pageIndex,Integer pageSize) {
+	public PageBean queryLReport(String codeName, Integer pageIndex,Integer pageSize) {
 		String userNameSql="";
 		String timeSql="";
 		String codeNameSql="";
@@ -42,20 +42,7 @@ public class LReportDaoImpl extends DefaultGenericDaoImpl<LotteryPlReport> imple
 			codeNameSql=" and code_name=:codeName";
 			map.put("codeName", codeName);
 		}
-		if(!StringUtils.isBlank(userName)) {
-			userNameSql=" and user_name=:userName";
-			map.put("userName", userName);
-		}else {
-			userNameSql=" and  user_type=:userName";
-			map.put("userName", Constants.UserType.AGENCY.getCode());
-		}
-		if(!StringUtils.isBlank(startTime)&&!StringUtils.isBlank(endTime)) {
-			timeSql=" create_time >=:startTime and create_time <=:endTime";
-			Date beginDate = DateUtil.fmtYmdToDate(startTime);
-		    Date endDate = DateUtil.fmtYmdToDate(endTime);
-			map.put("startTime", beginDate);
-			map.put("endTime", endDate);
-		}
+		
 		String sql=null;
 		sql = "select user_name,SUM(consumption) as consumption, SUM(cancel_amount) as cancel_amount,SUM(return_prize) as return_prize,SUM(rebate) as rebate,SUM(profit) as profit,user_type from lottery_pl_report where "+timeSql+userNameSql+codeNameSql+" GROUP BY user_name,user_type";
 		PageBean page=new PageBean();

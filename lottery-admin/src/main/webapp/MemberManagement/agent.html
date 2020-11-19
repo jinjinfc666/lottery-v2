@@ -190,8 +190,22 @@
                                 row += "<td class=\"thCenter\">"+ConvertJSONDateToJSDateObject(""+val.createTime+"")+"</td>";
                                 row += "<td class=\"thCenter\">"+state+"</td>";
                                 row += "<td class=\"thCenter\">"+userType+"</td>";
-                                row += "<td class=\"thCenter\">"+rebate+"</td>";
-                                row += "<td class=\"thCenter\">"+platRebate+"</td>";
+                                if(val.zcAmount == null || val.zcAmount == 'null'){
+                                	row += "<td class=\"thCenter\"></td>";
+                                }else{
+                                	row += "<td class=\"thCenter\">"+val.zcAmount+"</td>";
+                                }
+                                if(val.tsAmount == null || val.tsAmount == 'null'){
+                                	row += "<td class=\"thCenter\"></td>";
+                                }else{
+                                	row += "<td class=\"thCenter\">"+val.tsAmount+"</td>";
+                                }
+                                if(val.xyAmount == null || val.xyAmount == 'null'){
+                                	row += "<td class=\"thCenter\"></td>";
+                                }else{
+                                	row += "<td class=\"thCenter\">"+val.xyAmount+"</td>";
+                                }
+                                
                                 row += "<td class=\"thCenter\">"+val.regIp+"</td>";
                                 row += "<td class=\"thCenter\">"+operating+"</td></tr>";
                                 $("#" + tableid).append(row); 
@@ -369,8 +383,21 @@
                                     row += "<td class=\"thCenter\">"+ConvertJSONDateToJSDateObject(""+val.createTime+"")+"</td>";
                                     row += "<td class=\"thCenter\">"+state+"</td>";
                                     row += "<td class=\"thCenter\">"+userType+"</td>";
-                                    row += "<td class=\"thCenter\">"+val.rebate+"</td>";
-                                    row += "<td class=\"thCenter\">"+val.platRebate+"</td>";
+                                    if(val.zcAmount == null || val.zcAmount == 'null'){
+                                    	row += "<td class=\"thCenter\"></td>";
+                                    }else{
+                                    	row += "<td class=\"thCenter\">"+val.zcAmount+"</td>";
+                                    }
+                                    if(val.tsAmount == null || val.tsAmount == 'null'){
+                                    	row += "<td class=\"thCenter\"></td>";
+                                    }else{
+                                    	row += "<td class=\"thCenter\">"+val.tsAmount+"</td>";
+                                    }
+                                    if(val.xyAmount == null || val.xyAmount == 'null'){
+                                    	row += "<td class=\"thCenter\"></td>";
+                                    }else{
+                                    	row += "<td class=\"thCenter\">"+val.xyAmount+"</td>";
+                                    }
                                     row += "<td class=\"thCenter\">"+val.regIp+"</td>";
                                     row += "<td class=\"thCenter\">"+operating+"</td></tr>";
                                     $("#" + tableid).append(row); 
@@ -617,10 +644,10 @@
                     	代理类型：
                  		<select id="userType" name="userType" style="width:250px;" class="form-control">
 				        	<option value=""></option>
-				        	<option value="1" >在线代理</option>
-				            <option value="6" >双面代理</option>
+				        	<!-- <option value="1" >在线代理</option>
+				            <option value="6" >双面代理</option> -->
 				            <option value="8">信誉代理</option>
-				            <option value="10">委托投注代理</option>
+				            <!-- <option value="10">委托投注代理</option> -->
 			        	</select>
 			        	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     </div>
@@ -649,8 +676,9 @@
                             <th class="thCenter">注册时间</th>
                             <th class="thCenter">状态</th>
                             <th class="thCenter">用户类型</th>                            
-                            <th class="thCenter">上级返点</th>
-                            <th class="thCenter">下级返点</th>
+                            <th class="thCenter">占成</th>
+                            <th class="thCenter">退水</th>
+                            <th class="thCenter">信誉额度</th>
                             <th class="thCenter">注册Ip</th>
                             <th class="thCenter">操作</th>
                         </tr>

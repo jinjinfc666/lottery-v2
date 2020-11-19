@@ -60,3 +60,5 @@ var querySysUserURL = SITE + "/SysUser/querySysUser";
 
 var queryByUserId = SITE + "/SysUser/byUserId";
 
+var queryDailySettlement = SITE + "/report/daily-settlement";
+

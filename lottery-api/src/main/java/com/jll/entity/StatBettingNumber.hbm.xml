@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generated 2018-8-14 16:52:58 by Hibernate Tools 5.2.10.Final --><!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="true" default-access="property" default-cascade="none" default-lazy="true">
+    <class catalog="lottery" dynamic-insert="false" dynamic-update="false" mutable="true" name="com.jll.entity.StatBettingNumber" optimistic-lock="version" polymorphism="implicit" select-before-update="false" table="stat_betting_number">
+        <id name="id" type="java.lang.Integer">
+            <column name="id"/>
+            <generator class="identity"/>
+        </id>
+        <property generated="never" lazy="false" name="lotteryType" optimistic-lock="true" type="string" unique="false">
+            <column length="10" name="lottery_type" not-null="true">
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="issueId" optimistic-lock="true" type="java.lang.Integer" unique="false">
+            <column name="issue_id">
+                <comment>��ֵ��Ա����</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="issueNum" optimistic-lock="true" type="string" unique="false">
+            <column length="50" name="issue_num">
+                <comment>�û���</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="playTypeId" optimistic-lock="true" type="java.lang.Integer" unique="false">
+            <column name="play_type_id">
+                <comment>�û����</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="playTypeName" optimistic-lock="true" type="string" unique="false">
+            <column name="play_type_name">
+                <comment>�û�ȡ��</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="betNum" optimistic-lock="true" type="string" unique="false">
+            <column name="bet_num">
+                <comment>�û�ȡ��</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="betAmount" optimistic-lock="true" type="big_decimal" unique="false">
+            <column name="bet_amount">
+                <comment>�û�ȡ��</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="createTime" optimistic-lock="true" type="timestamp" unique="false">
+            <column name="create_time">
+                <comment>�۳�</comment>
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

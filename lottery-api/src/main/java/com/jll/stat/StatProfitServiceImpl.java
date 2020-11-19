@@ -21,7 +21,7 @@ import com.jll.common.constants.Constants.TrgUserAccDetailsFlag;
 import com.jll.common.constants.Constants.UserType;
 import com.jll.dao.PageBean;
 import com.jll.entity.TeamPlReport;
-import com.jll.entity.TrgUserAccountDetails;
+//import com.jll.entity.TrgUserAccountDetails;
 import com.jll.entity.UserAccountDetails;
 import com.jll.entity.UserInfo;
 import com.jll.game.mesqueue.kafka.KafkaConsumer;
@@ -34,8 +34,8 @@ public class StatProfitServiceImpl implements StatProfitService, KafkaConsumer
 {
 	private Logger logger = Logger.getLogger(StatProfitServiceImpl.class);
 
-	@Resource
-	TrgUserAccountDetailsService trgUserAccDetailServ;
+	/*@Resource
+	TrgUserAccountDetailsService trgUserAccDetailServ;*/
 	
 	@Resource
 	UserInfoService userServ;

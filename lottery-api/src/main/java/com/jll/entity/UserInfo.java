@@ -58,6 +58,8 @@ public class UserInfo implements java.io.Serializable {
 	
 	private CreditMarket currentMarket;
 	
+	private String creditMarketIds;
+	
 	public UserInfo(){
 		
 	}
@@ -354,6 +356,14 @@ public class UserInfo implements java.io.Serializable {
 
 	public void setCurrentMarket(CreditMarket currentMarket) {
 		this.currentMarket = currentMarket;
+	}
+
+	public String getCreditMarketIds() {
+		return creditMarketIds;
+	}
+
+	public void setCreditMarketIds(String creditMarketIds) {
+		this.creditMarketIds = creditMarketIds;
 	}
 
 	

@@ -2656,6 +2656,7 @@ public class Constants {
 	
 	public static enum KafkaTopics{
 		ACCOUNT_DETAILS(1, "account_details"), 
+		STAT_BETTING_NUM(2, "stat_betting_num"), 
 		;
 		
 		private int code;
@@ -2855,9 +2856,9 @@ public class Constants {
 	}
 	
 	public static enum CreditMarketEnum{
-		MARKET_A(0, "A 盘"), 
-		MARKET_B(1, "B 盘"), 
-		MARKET_C(2, "C 盘"), 
+		MARKET_A(1, "A 盘"), 
+		MARKET_B(2, "B 盘"), 
+		MARKET_C(3, "C 盘"), 
 		;
 		
 		private int code;

@@ -30,25 +30,7 @@
                 document.getElementById('endTime').value=getNowFormatDate();
                 searchrecord("search");
             });
-            function parseDomain() {
-                var currURL = location.href;
-                var domain = '';
-                if (currURL.indexOf("http") >= 0) {
-                    if (currURL.indexOf("/", currURL.indexOf("http") + 7) > 0) {
-                        domain = currURL.substring(0, currURL.indexOf("/", currURL
-                                .indexOf("http") + 7));
-                    } else {
-                        domain = currURL;
-                    }
-                }
-                if (typeof domain == 'undefined' || domain.length == 0) {
-                    return '';
-                }
-                if (domain.indexOf(":", 7) > 0) {
-                    domain = domain.substring(0, domain.indexOf(":", 7));
-                }
-                return domain;
-            }
+            
             function searchrecord(str) {
                 var pageIndex=page(str);
                 var tableid = $("#tableTRTD").attr("id");
@@ -57,14 +39,13 @@
                 var endTime = document.getElementById('endTime').value;
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
-                var domain=parseDomain();
-                var url=domain+"/lottery-api/report/MReportNextTeam";
+                var url= queryDailySettlement;
                 
                 if(typeof userName == 'undefined'
                 		|| userName == null
                 		|| userName == ''){
                 	var userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
-                	if(userInfo.userType == 6){
+                	if(userInfo.userType == 8){
                 		userName = userInfo.userName;
                 		$("#userName").val(userName);
                 		sendTeamReportRequest(url, userName, startTime, endTime, pageIndex, token);
@@ -152,7 +133,8 @@
 	    	                                 <td class=\"thCenter\">"+vRemainCreditLimit+"</td>\n\
 	    	                                 <td class=\"thCenter\">"+vSettlementAmount+"</td>\n\
 	    	                                 <td class=\"thCenter\">"+vProfit+"</td>\n\
-	    	                                 <td class=\"thCenter\">"+userType+"</td></tr>");
+	    	                                 <td class=\"thCenter\">"+userType+"</td>\n\
+	 	                                    <td class=\"thCenter\">"+val.createTime+"</td></tr>");
                                  }else{
                                 	 var halfLen = val.userName.length / 2;
                                 	 for(var i = 0; i < halfLen; i++){
@@ -356,6 +338,7 @@
                             <th class="thCenter">剩余信誉额度</th>
                             <th class="thCenter">结算金额</th>
                             <th class="thCenter">盈利</th>
+                            <th class="thCenter">是否结算</th>
                             <th class="thCenter">用户类型</th>
                             <th class="thCenter">日期</th>
                         </tr>

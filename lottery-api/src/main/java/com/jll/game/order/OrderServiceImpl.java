@@ -10,14 +10,19 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jll.common.cache.CacheRedisService;
 import com.jll.common.constants.Constants;
+import com.jll.common.constants.Constants.KafkaTopics;
 import com.jll.common.constants.Constants.OrderDelayState;
 import com.jll.common.constants.Message;
 import com.jll.common.threadpool.QueueManager;
@@ -82,6 +87,10 @@ public class OrderServiceImpl implements OrderService
 	
 	@Resource
 	OrderInfoExtService orderInfoExtServ;
+	
+
+	@Autowired
+	private KafkaTemplate<Integer, String> kafkaTemplateBetNum;
 	
 	@Override
 	public String saveOrders(List<OrderInfo> orders, int walletId, int zhFlag, String lotteryType) {
@@ -193,12 +202,19 @@ public class OrderServiceImpl implements OrderService
 			wallet.setBalance(postAmount);
 			
 			// update the statistic in cache
-			QueueManager.getInstance().exeThread(new Runnable() {
-				@Override
-				public void run() {
-					cacheServ.statGroupByBettingNum(lotteryType, order, user);
-				}
-			});
+			ObjectMapper mapper = new ObjectMapper();
+			String msg = null;
+			try {
+				msg = mapper.writeValueAsString(order);
+				kafkaTemplateBetNum.send(KafkaTopics.STAT_BETTING_NUM.getDesc(), msg);
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+				logger.error(String.format("topic %s order id %s,userId %s, bet num %s can't sent to kafka",
+						KafkaTopics.STAT_BETTING_NUM.getDesc(),
+						order.getId(),
+						order.getUserId(),
+						order.getBetNum()));
+			}
 		}
 		
 		// update balance
@@ -206,24 +222,7 @@ public class OrderServiceImpl implements OrderService
 	
 		logger.debug(String.format("Done cal balance  %s", new BigDecimal(wallet.getBalance()).toString()));
 		
-		if (Constants.LottoType.MMC.getCode().equals(lotteryType)) {
-			int issueId = orders.get(0).getIssueId();
-			Issue issue = issueServ.getIssueById(issueId);
-			issue.setState(Constants.IssueState.END_ISSUE.getCode());
-			issueServ.saveIssue(issue);
-			
-			BulletinBoard bulletinBoard = cacheServ.getBulletinBoard(lotteryType);
-			if(bulletinBoard == null) {
-				bulletinBoard = new BulletinBoard();
-			}
-			
-			bulletinBoard.setLastIssue(issue);
-			cacheServ.setBulletinBoard(lotteryType, bulletinBoard);
-			
-			final String message = lotteryType + "|" + issue.getIssueNum();
-			cacheServ.publishMessage(Constants.TOPIC_WINNING_NUMBER, message);
-
-		}
+		
 				
 		return String.valueOf(Message.status.SUCCESS.getCode());
 	}

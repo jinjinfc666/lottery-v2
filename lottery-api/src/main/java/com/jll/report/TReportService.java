@@ -18,4 +18,7 @@ public interface TReportService {
 	public void saveOrUpdateProfit(TeamPlReport profit);
 	
 	public Map<String, Object> queryNextTeamAllSM(Map<String, Object> ret);
+	
+	//团队盈亏报表
+	public PageBean queryDailySettlement(Map<String, Object> ret);
 }

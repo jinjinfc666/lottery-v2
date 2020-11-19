@@ -114,7 +114,8 @@
                     success: function (data) {
                         if(data.status=="1"){
                         	 $.each(data.data, function(key, val) {  
-                                 $("#smPanKou").append("<option data-seq='"+ val.seq +"' value='"+val.codeVal+"'>"+val.remark+"</option>");
+                                 /* $("#smPanKou").append("<option data-seq='"+ val.seq +"' value='"+val.codeVal+"'>"+val.remark+"</option>"); */
+                        		 $("#smPanKou").append("<input type='checkbox' name='markets' data-seq='"+ val.seq +"' value='"+val.codeVal +"'>"+ val.remark +"&nbsp;&nbsp;");
                              })
                         }else{
                             alert(getErroe(data.error_code));
@@ -207,10 +208,11 @@
                             }
                             
                             
-                            if(data.data.panKou != null){
-                            	 $("#smPanKou option").each(function(){
-                                 	if($(this).attr('data-seq') == data.data.panKou){
-                                 		$(this).attr('selected', true);
+                            if(data.data.creditMarketIds != null){
+                            	$("#smPanKou input").each(function(){
+                            		var dataSeq = $(this).attr('data-seq');
+                                 	if(data.data.creditMarketIds.indexOf(dataSeq) != -1){
+                                 		$(this).attr('checked', true);
                                  		return;
                                  	}
                                  });
@@ -276,8 +278,13 @@
                 	xyAmount = document.getElementById('xyAmount').value;
                 	zcAmount = document.getElementById('zcAmount').value;
                 	tsAmount = document.getElementById('tsAmount').value;
-                    panKou = $("#smPanKou option:selected").attr("data-seq");
-                    platRebate = $("#smPanKou option:selected").val();
+                	$("#smPanKou input:checked").each(function(){
+                    	if(panKou == 'undefined' || panKou == null){
+                    		panKou = $(this).attr('data-seq');
+                    	}else{
+                    		panKou = panKou +"," +$(this).attr('data-seq');
+                    	}
+                    });
                     
                     if(xyAmount == null || xyAmount == ''){
                     	$("#xyAmount_error").text("请输入信誉额度!");
@@ -310,7 +317,7 @@
 	                    "xyAmount":xyAmount,
 	                    "zcAmount":zcAmount,
 	                    "tsAmount":tsAmount,
-	                    'panKou':panKou
+	                    'creditMarketIds':panKou
 	                });
                 }else if(userType == '9'){
                 	xyAmount = document.getElementById('xyAmount').value;
@@ -730,7 +737,7 @@
                 	</select>
                 </td>
             </tr>
-            <tr>
+            <tr style="display:none">
                 <th class="thstyle">真实姓名</th>
                 <td><input type="text" id="realName" name="realName" value="" style="width:250px;" class="form-control" /></td>
             </tr>
@@ -738,7 +745,7 @@
                 <th class="thstyle">用户名</th>
                 <td><input type="text" id="userName" name="userName" value="" style="width:250px;" class="form-control" readonly /></td>
             </tr>
-            <tr>
+            <tr style="display:none">
                 <th class="thstyle">身份证</th>
                 <td><input type="text" id="userId" name="userId" value="" style="width:250px;" class="form-control" readonly /></td>
             </tr>
@@ -746,7 +753,7 @@
                 <th class="thstyle">登录密码</th>
                 <td><a onclick="resetLoginPwd()">重置登录密码</a></td>
             </tr>
-            <tr>
+            <tr style="display:none">
                 <th class="thstyle">资金密码</th>
                 <td><a onclick="resetFundPwd()">重置资金密码</a></td>
             </tr>
@@ -758,7 +765,7 @@
                 <th class="thstyle">用户级别</th>
                 <td><input type="text" id="level" name="level" value="" style="width:250px;" class="form-control" readonly /></td>
             </tr>
-            <tr>
+            <tr style="display:none">
                 <th class="thstyle">登陆次数</th>
                 <td><input type="text" id="loginCount" name="loginCount" value="" style="width:250px;" class="form-control" readonly /></td>
             </tr>
@@ -770,7 +777,7 @@
             <tr name="row_xy" class="displayNone">
                 <th class="thstyle">选择盘口</th>
                 <td>
-                	<select id="smPanKou" style="width:250px;height:50px"></select>
+                	<div id="smPanKou" style="width:250px;height:50px" style="display:inline"></div>
                 	<span id="smPanKou_error" style="color:red;"></span>
                 </td>
             </tr>
@@ -795,11 +802,11 @@
                 	<span id="tsAmount_error" style="color:red;"></span>
                 </td>
             </tr>
-            <tr  name="row_sm">
+            <tr  name="row_sm" style="display:none">
                 <th class="thstyle">上级返点</th>
                 <td><input type="text" id="rebate" name="rebate" value="" style="width:250px;" class="form-control"  readonly /></td>
             </tr>
-            <tr  name="row_sm">
+            <tr  name="row_sm" style="display:none">
                 <th class="thstyle">下级返点</th>
                 <!-- <td><input type="text" id="platRebate" name="platRebate" value="" style="width:250px;" class="form-control" onkeyup="clearNoNum(this)" onkeypress="if(/\.\d\d{3}$/.test(value))event.returnValue=false" /></td> -->
                 
@@ -814,14 +821,14 @@
                 </td>
             </tr>
             
-            <tr name="row_entrust">
+            <tr name="row_entrust" style="display:none">
                 <th class="thstyle">最高派奖率</th>
                 <td>
                 	<input type="number" id="payoutRate" name="payoutRate" value="" style="width:250px;" class="login_putin" placeholder="取值范围 0.0-1.0" />
                 	<span id="xyPayoutRate_error" style="color:red;"></span></td>
                 </td>
             </tr>
-            <tr name="row_entrust">
+            <tr name="row_entrust" style="display:none">
                 <th class="thstyle">隐藏计划</th>
                 <td>
                 <select id="isHiddenPlan" style="width:250px;height:50px" >
@@ -830,27 +837,27 @@
                 </select>
             </tr>
             
-            <tr>
+            <tr style="display:none">
                 <th class="thstyle">手机号</th>
                 <td><input type="text" id="phoneNum" name="phoneNum" value="" style="width:250px;" class="form-control" /></td>
             </tr>
-            <tr>
+            <tr style="display:none">
                 <th class="thstyle">QQ</th>
                 <td><input type="text" id="qq" name="qq" value="" style="width:250px;" class="form-control" /></td>
             </tr>
-            <tr>
+            <tr style="display:none">
                 <th class="thstyle">微信</th>
                 <td><input type="text" id="wechat" name="wechat" value="" style="width:250px;" class="form-control" /></td>
             </tr>
-            <tr>
+            <tr style="display:none">
                 <th class="thstyle">邮箱</th>
                 <td><input type="text" id="email" name="email" value="" style="width:250px;" class="form-control" /></td>
             </tr>
-            <tr>
+            <tr style="display:none">
                 <th class="thstyle">注册IP</th>
                 <td><input type="text" id="regIp" name="regIp" value="" style="width:250px;" class="form-control" readonly /></td>
             </tr>
-            <tr>
+            <tr style="display:none">
                 <th class="thstyle">注册时间</th>
                 <td><input type="text" id="createTime" name="createTime" value="" style="width:250px;" class="form-control" readonly /></td>
             </tr>

@@ -3,6 +3,7 @@ package com.jll.report;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jll.report.RedPackageService;
 import com.jll.sysSettings.syscode.SysCodeService;
+import com.alibaba.druid.sql.ast.statement.SQLWithSubqueryClause.Entry;
 import com.jll.common.cache.CacheRedisService;
 import com.jll.common.constants.Constants;
 import com.jll.common.constants.Constants.SysCodeTypes;
@@ -65,6 +67,10 @@ public class ReportController {
 	PPLService pPLService;
 	@Resource
 	CacheRedisService cacheRedisService;
+	
+	@Resource
+	StatBettingNumberService statBettingNumberServ;
+	
 	/**
 	 *流水明细
 	 */
@@ -311,6 +317,8 @@ public class ReportController {
 		Map<String, Object> ret = new HashMap<>();
 		try {
 			Map<String,SysCode> types = cacheRedisService.getSysCode(SysCodeTypes.LOTTERY_TYPES.getCode());
+			types = types.entrySet().stream().filter(entry->entry.getValue().getState() == 1).collect(Collectors.toMap( (e) -> (String) e.getKey(),
+				    (e) -> e.getValue()));
 			ret.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
 			ret.put("data", types);
 		}catch(Exception e){
@@ -835,6 +843,32 @@ public class ReportController {
 		}
 		return ret;
 	}
+	
+	@RequestMapping(value={"/statBetNum"}, method={RequestMethod.GET}, produces={"application/json"})
+	public Map<String, Object> queryStatBetNum(@RequestParam(name = "lotteryType", required = true) String lotteryType,//时间 String
+			@RequestParam(name = "pageIndex", required = true) Integer pageIndex,//当前请求页
+			HttpServletRequest request) {
+		Map<String, Object> ret = new HashMap<>();		
+		Integer pageSize=Constants.Pagination.SUM_NUMBER.getCode();
+		ret.put("pageSize", pageSize);
+		ret.put("pageIndex", pageIndex);
+		ret.put("lotteryType", lotteryType);
+		logger.debug(ret+"------------------------------queryLReportTeam--------------------------------------");
+		try {
+			PageBean list = statBettingNumberServ.queryStatBetNum(ret);
+			logger.debug(list+"------------------------------queryLReportTeam--------------------------------------");
+			ret.clear();
+			ret.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
+			ret.put("data", list);
+		}catch(Exception e){
+			ret.clear();
+			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_OTHERS.getCode());
+			ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_OTHERS.getErrorMes());
+		}
+		return ret;
+	}
+	
 	//总计
 	@RequestMapping(value={"/LReportTeamSum"}, method={RequestMethod.GET}, produces={"application/json"})
 	public Map<String, Object> queryLReportTeamSum(@RequestParam(name = "userName", required = false) String userName,
@@ -1076,5 +1110,49 @@ public class ReportController {
 			ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_OTHERS.getErrorMes());
 			return ret;
 		}
+	}
+	
+	/**
+	 *团队盈亏报表
+	 */
+	@RequestMapping(value={"/daily-settlement"}, method={RequestMethod.GET}, produces={"application/json"})
+	public Map<String, Object> queryDailySettlement(@RequestParam(name = "userName", required = false) String userName,
+			  @RequestParam(name = "startTime", required = true) String startTime,//时间 String
+			  @RequestParam(name = "endTime", required = true) String endTime,//时间 String
+			  @RequestParam(name = "pageIndex", required = true) Integer pageIndex,//当前请求页
+			  HttpServletRequest request) {
+		Map<String, Object> ret = new HashMap<>();
+		if(StringUtils.isBlank(startTime)||StringUtils.isBlank(endTime)) {
+			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_ERROR_PARAMS.getCode());
+			ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_ERROR_PARAMS.getErrorMes());
+	    	return ret;
+		}
+		if(!DateUtil.isValidYmdDate(startTime)||!DateUtil.isValidYmdDate(endTime)) {
+			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_ERROR_PARAMS.getCode());
+			ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_ERROR_PARAMS.getErrorMes());
+	    	return ret;
+		}
+		Integer pageSize=Constants.Pagination.SUM_NUMBER.getCode();
+		ret.put("pageSize", pageSize);
+		ret.put("pageIndex", pageIndex);
+		ret.put("userName", userName);
+		ret.put("startTime", startTime);
+		ret.put("endTime", endTime);
+		logger.debug(ret+"------------------------------queryMReportTeam--------------------------------------");
+		try {
+			PageBean list = tReportService.queryDailySettlement(ret);
+			logger.debug(list+"------------------------------queryMReportTeam--------------------------------------");
+			ret.clear();
+			ret.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
+			ret.put("data", list);
+		}catch(Exception e){
+			ret.clear();
+			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_OTHERS.getCode());
+			ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_OTHERS.getErrorMes());
+		}
+		return ret;
 	}
 }

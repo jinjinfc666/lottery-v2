@@ -167,23 +167,32 @@
                                  
                                 var row = "<tr>";
                                 row += "<td class=\"thCenter\">"+val.userName+"</td>";
-                                row += "<td class=\"thCenter\">"+val.realName+"</td>";
+                                /* row += "<td class=\"thCenter\">"+val.realName+"</td>"; */
                                 row += "<td class=\"thCenter\">"+state+"</td>";
                                 row += "<td class=\"thCenter\">"+userType+"</td>";
-                                row += "<td class=\"thCenter\">"+val.rebate+"</td>";
-                                row += "<td class=\"thCenter\">"+val.platRebate+"</td>";
-                                row += "<td class=\"thCenter\">"+isValidEmail+"</td>";
-                                row += "<td class=\"thCenter\">"+isValidPhone+"</td>";
-                                row += "<td class=\"thCenter\">"+val.qq+"</td>";
-                                row += "<td class=\"thCenter\">"+val.wechat+"</td>";
+                                if(val.zcAmount == null || val.zcAmount == 'null'){
+                                	row += "<td class=\"thCenter\"></td>";
+                                }else{
+                                	row += "<td class=\"thCenter\">"+val.zcAmount+"</td>";
+                                }
+                                if(val.tsAmount == null || val.tsAmount == 'null'){
+                                	row += "<td class=\"thCenter\"></td>";
+                                }else{
+                                	row += "<td class=\"thCenter\">"+val.tsAmount+"</td>";
+                                }
+                                if(val.xyAmount == null || val.xyAmount == 'null'){
+                                	row += "<td class=\"thCenter\"></td>";
+                                }else{
+                                	row += "<td class=\"thCenter\">"+val.xyAmount+"</td>";
+                                }
                                 row += "<td class=\"thCenter\">";
                                 row += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"updateUserInfo('"+val.id+"')\">用户详情</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
                                 if(val.userType!='3' && val.userType!='2'){
-                                	row += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"queryBank('"+val.id+"')\">银行卡</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                	/* row += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"queryBank('"+val.id+"')\">银行卡</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"; */
                                     row += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"showDetails('acc','"+val.userName+"','"+val.userType+"')\">用户账户</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
                                     row += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"showDetails('order','"+val.userName+"','"+val.userType+"')\">订单</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-                                    row += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"showDetails('deposit','"+val.userName+"','"+val.userType+"')\">存款</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-                                    row += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"showDetails('withdraw','"+val.userName+"','"+val.userType+"')\">取款</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                                    /* row += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"showDetails('deposit','"+val.userName+"','"+val.userType+"')\">存款</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"; */
+                                    /* row += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"showDetails('withdraw','"+val.userName+"','"+val.userType+"')\">取款</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"; */
                                     row += "<button type=\"button\" class=\"btn btn-primary\" style=\"height:32px;\" onclick=\"showDetails('transfer','"+val.userName+"','"+val.userType+"')\">转帐</button>";
                                 }                                
                                 row += "</td></tr>";
@@ -334,17 +343,17 @@
                     	用户类型：
                  		<select id="userType" style="width:120px;height:34px">
                  			<option></option>
-	                		<option value="0">玩家</option>
-	                		<option value="1">在线代理</option>
+	                		<!-- <option value="0">玩家</option>
+	                		<option value="1">在线代理</option> -->
 	                		<option value="2">系统用户</option>
 	                		<option value="3">总代</option>
 	                		<option value="4">试玩玩家</option>
-		                	<option value="5">双面玩家</option>
-		                	<option value="6">双面代理</option>
+		                	<!-- <option value="5">双面玩家</option>
+		                	<option value="6">双面代理</option> -->
 		                	<option value="7">信誉玩家</option>
 		                	<option value="8">信誉代理</option>
-		                	<option value="9">委托投注玩家</option>
-		                	<option value="10">委托投注代理</option>
+		                	<!-- <option value="9">委托投注玩家</option>
+		                	<option value="10">委托投注代理</option> -->
                 		</select>
 			        	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     </div>
@@ -374,15 +383,15 @@
                         <tr>
                             <!--<th>ID</th>-->
                             <th class="thCenter" style="width:140px">用户名</th>
-                            <th class="thCenter" style="width:120px">真实姓名</th>
+                            <!-- <th class="thCenter" style="width:120px">真实姓名</th> -->
                             <th class="thCenter" style="width:80px">状态</th>
                             <th class="thCenter" style="width:110px">用户类型</th>
-                            <th class="thCenter" style="width:110px">上级返点</th>
-                            <th class="thCenter" style="width:110px">下级返点</th>
-                            <th class="thCenter" style="width:140px">邮箱是否验证</th>
-                            <th class="thCenter" style="width:140px">手机是否验证</th>
+                            <th class="thCenter" style="width:110px">占成</th>
+                            <th class="thCenter" style="width:110px">退水</th>
+                            <th class="thCenter" style="width:140px">信誉额度</th>
+                            <!-- <th class="thCenter" style="width:140px">手机是否验证</th>
                             <th class="thCenter" style="width:100px">QQ</th>
-                            <th class="thCenter" style="width:100px">微信</th>
+                            <th class="thCenter" style="width:100px">微信</th> -->
                             <th class="thCenter" style="width:600px">操作</th>
                         </tr>
                     </thead>
