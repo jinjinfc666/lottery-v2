@@ -91,5 +91,10 @@
                 <comment>�û�����:0,ƽ̨�ͻ�;1,����;3,�ܴ�</comment>
             </column>
         </property>
+        <property generated="never" lazy="false" name="settlementFlag" optimistic-lock="true" type="java.lang.Integer" unique="false">
+            <column name="settlement_flag">
+                <comment>�û�����:0,ƽ̨�ͻ�;1,����;3,�ܴ�</comment>
+            </column>
+        </property>
     </class>
 </hibernate-mapping>

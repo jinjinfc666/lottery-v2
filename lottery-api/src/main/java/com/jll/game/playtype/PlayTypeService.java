@@ -69,4 +69,8 @@ public interface PlayTypeService
 	List<BitColumn> queryKd(String lotteryType);
 
 	List<BitColumn> queryFs(String lotteryType);
+
+	List<List<PlayTypeNum>> queryPlayTypeNum(String lotteryType, String playType, Integer market);
+
+	void updateLotteNumberOdds(String lotteryType, String playType, Integer market,List<PlayTypeNum> playTypeNumsChanges);
 }

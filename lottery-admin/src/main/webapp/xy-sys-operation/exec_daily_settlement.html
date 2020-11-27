@@ -20,53 +20,68 @@
         <link href="../css/animate.min.css" rel="stylesheet">
         <link href="../css/style.min862f.css" rel="stylesheet">
         <script type="text/javascript" src="../js/jquery-1.10.2.min.js"></script>
-        <script src="../js/bootstrap.min.js" type="text/javascript"></script>
-        <script src="../js/plugins/layer/layer.min.js" type="text/javascript"></script>
-        <script src="../js/content.min.js" type="text/javascript"></script>
+        <script language="javascript" src="../js/layer/layer.min.js"></script>
         <script src="../js/self_js.js" type="text/javascript"></script>
+        <link rel="stylesheet" href="../js/huakuai/main.css">
+        <link rel="stylesheet" href="../js/huakuai/rangeslider.css">
+        <script src="../js/huakuai/rangeslider.min.js"></script>
+        <script src="../js/site.js" type="text/javascript"></script>
         <script type="text/javascript">
             $(document).ready(function () {
+            	var obj = {};
+                obj=getValue();
+                document.getElementById('userName').value=obj['userName'];
+                
                 document.getElementById('startTime').value=getNowFormatDate();
                 document.getElementById('endTime').value=getNowFormatDate();
                 searchrecord("search");
             });
             
+            function getValue(){
+                //首先获取地址
+                var url = window.location.href;
+                //获取传值
+                var arr = url.split("?");
+                //判断是否有传值
+                if(arr.length == 1){
+                        return null;
+                }
+                //获取get传值的个数
+                var value_arr = arr[1].split("&");
+                //循环生成返回的对象
+                var obj = {};
+                for(var i = 0; i < value_arr.length; i++){
+                        var key_val = value_arr[i].split("=");
+                        obj[key_val[0]]=decodeURI(key_val[1]);
+                }
+                return obj;
+            }
+            
             function searchrecord(str) {
                 var pageIndex=page(str);
                 var tableid = $("#tableTRTD").attr("id");
                 var userName = document.getElementById('userName').value;
+                var settlementFlag = document.getElementById('settlementFlag').value;
+                $("#settlementFlag input:checked").each(function(){
+                	settlementFlag = $(this).val();
+                });
+                
                 var startTime = document.getElementById('startTime').value;
                 var endTime = document.getElementById('endTime').value;
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
-                var url= queryDailySettlement;
+                var url= queryDailySettlementByUserURL;
                 
                 if(typeof userName == 'undefined'
                 		|| userName == null
                 		|| userName == ''){
-                	var userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
-                	if(userInfo.userType == 8){
-                		userName = userInfo.userName;
-                		$("#userName").val(userName);
-                		sendTeamReportRequest(url, userName, startTime, endTime, pageIndex, token);
-                	}else{
-                		var deffered = $.Deferred();
-                    	deffered.done(function(generalAgency){
-                    		userName = generalAgency.userName;
-                    		$("#userName").val(userName);
-                    		sendTeamReportRequest(url, userName, startTime, endTime, pageIndex, token);
-                    	});
-                    	
-                        queryGeneralAgency(deffered, token);
-                	}
-                }else{
-                	sendTeamReportRequest(url, userName, startTime, endTime, pageIndex, token);
+                	return;
                 }
                 
-               
+                queryDailySettlement(url, userName, settlementFlag,startTime, endTime, pageIndex, token);
             }
             
-            function sendTeamReportRequest(url, userName, startTime, endTime, pageIndex, token){
+            function queryDailySettlement(url, userName, settlementFlag,startTime, endTime, pageIndex, token){
             	var tableid = $("#tableTRTD").attr("id");
             	
             	 $.ajax({
@@ -75,6 +90,7 @@
                      async: false, // 设置同步方式
                      data: {
                          userName:userName,
+                         settlementFlag:settlementFlag,
                          startTime:startTime,
                          endTime:endTime,
                          pageIndex:pageIndex
@@ -99,16 +115,20 @@
                              document.getElementById('pageIndex_button').value = data.data.pageIndex;
                              var firstIndx = '';
                              
-                             $.each(data.data, function(key, val) {  
+                             $.each(data.data.content, function(key, val) {  
                                  var userType="";
-                                 if(val[13]=='0'){
+                                 if(val.userType=='0'){
                                      userType="平台客户";
-                                 }else if(val[13]=='1'){
+                                 }else if(val.userType=='1'){
                                      userType="代理";
-                                 }else if(val[13]=='2'){
+                                 }else if(val.userType=='2'){
                                      userType="系统用户";
-                                 }else if(val[13]=='3'){
+                                 }else if(val.userType=='3'){
                                      userType="总代";
+                                 }else if(val.userType=='7'){
+                                     userType="信誉玩家";
+                                 }else if(val.userType=='8'){
+                                     userType="信誉代理";
                                  }
                                  
                                  var vUserName = val.userName;
@@ -121,42 +141,42 @@
                                  var vRemainCreditLimit = val.remainCreditLimit == null?'':val.remainCreditLimit;
                                  var vSettlementAmount = val.settlementAmount == null?'':val.settlementAmount;
                                  var vProfit = val.profit == null?'':val.profit;
-                                 if(key != 0){
-	                                 $("#" + tableid).append("<tr>\n\
-	    	                                 <td class=\"thCenter\"><a href='#' onclick=\"NextTeam('"+val.userName+"')\">" + firstIndx +vUserName+"</a></td>\n\
-	    	                                 <td class=\"thCenter\">"+vConsumption+"</td>\n\
-	    	                                 <td class=\"thCenter\">"+vCancelAmount+"</td>\n\
-	    	                                 <td class=\"thCenter\">"+vReturnPrize+"</td>\n\
-	    	                                 <td class=\"thCenter\">"+vZcAmount+"</td>\n\
-	    	                                 <td class=\"thCenter\">"+vTsAmount+"</td>\n\
-	    	                                 <td class=\"thCenter\">"+vUsedCreditLimit+"</td>\n\
-	    	                                 <td class=\"thCenter\">"+vRemainCreditLimit+"</td>\n\
-	    	                                 <td class=\"thCenter\">"+vSettlementAmount+"</td>\n\
-	    	                                 <td class=\"thCenter\">"+vProfit+"</td>\n\
-	    	                                 <td class=\"thCenter\">"+userType+"</td>\n\
-	 	                                    <td class=\"thCenter\">"+val.createTime+"</td></tr>");
-                                 }else{
+                                 var vCreateTime = val.createTime == null?'':val.createTime;
+                                 var settlementFlag = '';
+                                 if(val.settlementFlag=='0'){
+                                	 settlementFlag="未结算";
+                                 }else if(val.settlementFlag=='1'){
+                                	 settlementFlag="已结算";
+                                 }
+                                 
                                 	 var halfLen = val.userName.length / 2;
                                 	 for(var i = 0; i < halfLen; i++){
                                 		 firstIndx += '&nbsp;&nbsp;&nbsp;&nbsp;';
                                 	 }
                                 	 firstIndx += '|------';
                                 	 
-	                                 $("#" + tableid).append("<tr>\n\
-	                                 <td class=\"thCenter\"><a href='#' onclick=\"NextTeam('"+val.userName+"')\">"+val.userName+"</a></td>\n\
-	                                 <td class=\"thCenter\">"+vConsumption+"</td>\n\
-	                                 <td class=\"thCenter\">"+vCancelAmount+"</td>\n\
-	                                 <td class=\"thCenter\">"+vReturnPrize+"</td>\n\
-	                                 <td class=\"thCenter\">"+vZcAmount+"</td>\n\
-	                                 <td class=\"thCenter\">"+vTsAmount+"</td>\n\
-	                                 <td class=\"thCenter\">"+vUsedCreditLimit+"</td>\n\
-	                                 <td class=\"thCenter\">"+vRemainCreditLimit+"</td>\n\
-	                                 <td class=\"thCenter\">"+vSettlementAmount+"</td>\n\
-	                                 <td class=\"thCenter\">"+vProfit+"</td>\n\
-	                                 <td class=\"thCenter\">"+userType+"</td>\n\
-	                                    <td class=\"thCenter\">"+val.createTime+"</td></tr>");
+                                	 var content = "<tr>\n";
+                                	 content += "<td class=\"thCenter\">" + vUserName+"</td>\n";
                                 	 
-                                 }
+                                	 content += "<td class=\"thCenter\">"+vConsumption+"</td>\n";
+                                	 content += "<td class=\"thCenter\">"+vCancelAmount+"</td>\n";
+                                	 content += "<td class=\"thCenter\">"+vReturnPrize+"</td>\n";
+                                	 content += "<td class=\"thCenter\">"+vZcAmount+"</td>\n";
+                                	 content += "<td class=\"thCenter\">"+vTsAmount+"</td>\n";
+                                	 content += "<td class=\"thCenter\">"+vSettlementAmount+"</td>\n";
+                                	 if(val.settlementFlag=='0'){
+                                		 /* content += "<td class=\"thCenter\" onclick=\"exeSettlement('"+val.id+"')\">"+settlementFlag+"</td>\n"; */
+                                		 
+                                		 content += "<td class=\"thCenter\" ><a href='#' onclick=\"exeSettlement('"+val.id+"')\">" + settlementFlag+"</a></td>\n";
+                                	 }else{
+                                		 content += "<td class=\"thCenter\">"+settlementFlag+"</td>\n";
+                                	 }
+                                	 
+                                	 content += "<td class=\"thCenter\">"+userType+"</td>\n";
+                                	 content += "<td class=\"thCenter\">"+vCreateTime+"</td>\n";
+                                	 content += "</tr>";
+                                	 
+	                                 $("#" + tableid).append(content);
                              });
                          }else if(data.status==0){
                              alert(getErroe(data.error_code));
@@ -166,25 +186,16 @@
             }
             
             
-            function NextTeam(userName){
-                var tableid = $("#tableTRTD").attr("id");
-                document.getElementById('totalNumber').value = null;
-                document.getElementById('totalPages').value = null;
-                document.getElementById('pageIndex_button').value = null;
-                var startTime = document.getElementById('startTime').value;
-                var endTime = document.getElementById('endTime').value;
+            function exeSettlement(id){
+                var url = performSettlementURL;
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
-                var domain=parseDomain();
-                var url=domain+"/lottery-api/report/MReportNextTeam";
                 $.ajax({
                     url: url,
-                    type: "GET",
+                    type: "POST",
                     async: false, // 设置同步方式
                     data: {
-                        userName:userName,
-                        startTime:startTime,
-                        endTime:endTime
+                        id:id
                     },
                     dataType: "json",
 //                    beforeSend: function(xhr) {
@@ -199,44 +210,13 @@
                     },
                     success: function (data) {
                         if(data.status===1){
-                            if(data.data!=null&&data.data.length>0){
-                                $("#" + tableid + "tr").remove();
-                                $("#" + tableid).empty();
-                                $.each(data.data, function(key, val) {  
-                                    var userType="";
-                                    if(val.userType=='0'){
-                                        userType="平台客户";
-                                    }else if(val.userType=='1'){
-                                        userType="代理";
-                                    }else if(val.userType=='2'){
-                                        userType="系统用户";
-                                    }else if(val.userType=='3'){
-                                        userType="总代";
-                                    }
-                                    $("#" + tableid).append("<tr>\n\
-                                    <td class=\"thCenter\"><a href='#' onclick=\"NextTeam('"+val.userName+"')\">"+val.userName+"</a></td>\n\
-                                    <td class=\"thCenter\">"+val.deposit == null?'':val.deposit+"</td>\n\
-                                    <td class=\"thCenter\">"+val.withdrawal+"</td>\n\
-                                    <td class=\"thCenter\">"+val.transfer+"</td>\n\
-                                    <td class=\"thCenter\">"+val.transferOut+"</td>\n\
-                                    <td class=\"thCenter\">"+val.deduction+"</td>\n\
-                                    <td class=\"thCenter\">"+val.consumption+"</td>\n\
-                                    <td class=\"thCenter\">"+val.cancelAmount+"</td>\n\
-                                    <td class=\"thCenter\">"+val.returnPrize+"</td>\n\
-                                    <td class=\"thCenter\">"+val.rebate+"</td>\n\
-                                    <td class=\"thCenter\">"+val.rechargeMember+"</td>\n\
-                                    <td class=\"thCenter\">"+val.newMembers+"</td>\n\
-                                    <td class=\"thCenter\">"+val.profit+"</td>\n\
-                                    <td class=\"thCenter\">"+userType+"</td>\n\
-                                    <td class=\"thCenter\">"+val.createTime+"</td></tr>");
-                                });
-                            }
                         }else if(data.status==0){
                             alert(getErroe(data.error_code));
                         }
                     }
                 });
             }
+            
             function page(str){
                 var pageIndex=null;
                 var pageIndexOld=document.getElementById('pageIndex_button').value;
@@ -273,45 +253,21 @@
                    searchrecord('button');
                }
             }
-            
-            function queryGeneralAgency(deffered, token){
-            	var domain = parseDomain();
-                var url = domain+"/lottery-api/users/queryGeneral";
-            	
-            	$.ajax({
-                    url: url,
-                    type: "GET",
-                    async: false, // 设置同步方式                    
-                    dataType: "json",
-                    beforeSend: function (XMLHttpRequest) {
-         				XMLHttpRequest.setRequestHeader("Authorization", token);
-                    },
-                    error: function () {
-                    	deffered.reject(-1);
-                    },
-                    success: function (data) {
-                        if(data.status === 1){
-                            if(data.data != null){
-                            	deffered.resolve(data.data);
-                            }else{
-                            	deffered.reject(-1);
-                            }
-                        }else if(data.status==0){
-                        	deffered.reject(data.error_code);
-                        }
-                    }
-                });
-            }
         </script>
         <script type="text/javascript" src="../js/showdate.js"></script>
     </head>
-    <body class="gray-bg">
+    <body style="width:100%;max-width: 100%;">
         <br />
         <div class="row  border-bottom white-bg dashboard-header">
             <form class="form-horizontal" method="get">
                 <div class="form_box" style="width: 100%;">
                     <div class="input-group" style="margin-left: 20px;">
-                        用户名：<input type="text" class="form-control" id="userName" name="userName" style="width:100px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        用户名：<input type="text" class="form-control" id="userName" name="userName" style="width:100px;" disabled>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        结算状态:<select id="settlementFlag" name="settlementFlag" style="width:90px;" class="form-control">
+				        	<option value=""></option>
+				            <option value="1" >已结算</option>
+				            <option value="0">未结算</option>
+			        	</select>
                         开始时间：<input type="text" id="startTime" placeholder="选择开始时间" onClick="return Calendar('startTime');" class="text_time" name="startTime" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         结束时间：<input type="text" id="endTime" placeholder="选择结束时间" onClick="return Calendar('endTime');" class="text_time" name="endTime" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <span> 
@@ -334,10 +290,7 @@
                             <th class="thCenter">返奖</th>
                             <th class="thCenter">占成</th>
                             <th class="thCenter">退水</th>
-                            <th class="thCenter">已用信誉额度</th>
-                            <th class="thCenter">剩余信誉额度</th>
                             <th class="thCenter">结算金额</th>
-                            <th class="thCenter">盈利</th>
                             <th class="thCenter">是否结算</th>
                             <th class="thCenter">用户类型</th>
                             <th class="thCenter">日期</th>
@@ -347,17 +300,7 @@
                         
                     </tbody>
                 </table>
-<!--                <div class="btn-group" style="float: right; padding-left: 20px">
-                    <button type="button" class="btn btn-white"><i class="fa fa-chevron-left"></i>
-                    </button>
-                    <button class="btn btn-white">1</button>
-                    <button class="btn btn-white  active">2</button>
-                    <button class="btn btn-white">3</button>
-                    <button class="btn btn-white">4</button>
-                    <button type="button" class="btn btn-white"><i class="fa fa-chevron-right"></i>
-                    </button>
-                </div>-->
-                <div class="input-group" style="width: 850px; float: right; display:none">
+                <div class="input-group" style="width: 850px; float: right;">
                     总记录数：<input type="text" class="form-control" value="" id="totalNumber" style="width:50px;" readonly="readonly">
                     总页数：<input type="text" class="form-control" value="" id="totalPages" style="width:50px;" readonly="readonly">&nbsp;&nbsp;&nbsp;&nbsp;
                     <button type="button" class="btn btn-primary" onclick="searchrecord('search')">首页</button>&nbsp;&nbsp;&nbsp;&nbsp;

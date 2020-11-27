@@ -10,4 +10,6 @@ public interface PlayTypeNumDao {
 
 	void changeUserCurrMarket(String userId, String currMarket);
 
+	void updatePlayTypeNum(PlayTypeNum existingPlayTypeNum);
+
 }

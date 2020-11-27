@@ -91,6 +91,45 @@ public class DefaultGenericDaoImpl<T> extends HibernateDaoSupport implements Gen
 		
 	}
 
+	@Override
+	public T queryLast(String HQL, List<Object> params, Class<T> clazz) {
+		String sql = HQL;
+		Session session = null;
+		boolean needClose = false;
+		Query<T> query = null;
+		T ret = null;
+		
+		try {
+			session = getSessionFactory().getCurrentSession();
+		}catch(HibernateException ex) {
+			session = getSessionFactory().openSession();
+			needClose = true;
+		}
+		
+		query = session.createQuery(sql, clazz);
+		
+		if(params != null) {
+			int indx = 0;
+			for(Object para : params) {
+				query.setParameter(indx, para);
+				
+				indx++;
+			}
+		}
+		
+		try{
+			ret = query.setMaxResults(1).getSingleResult();
+		}catch(Exception ex){			
+		}
+		
+		if(needClose && session.isOpen()) {
+			session.close();
+		}
+		
+		return ret;
+		
+	}
+	
 	public <K> List<K> queryObjectArray(String HQL, List<Object> params, Class<K> clazz) {
 		String sql = HQL;
 		Session session = null;

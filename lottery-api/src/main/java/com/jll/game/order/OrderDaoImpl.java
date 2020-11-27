@@ -111,7 +111,7 @@ public class OrderDaoImpl extends DefaultGenericDaoImpl<OrderInfo> implements Or
 
 	@Override
 	public PageBean<OrderInfo> queryOrdersByPage(PageBean<OrderInfo> page) {
-		String sql = "from OrderInfo where issueId=?";
+		String sql = "from OrderInfo where issueId=? order by createTime";
 		List<Object> params = page.getParams();
 		
 		return this.queryByPagination(page, sql, params, OrderInfo.class);

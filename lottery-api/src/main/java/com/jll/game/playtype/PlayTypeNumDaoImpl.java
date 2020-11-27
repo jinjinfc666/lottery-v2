@@ -56,4 +56,9 @@ public class PlayTypeNumDaoImpl extends DefaultGenericDaoImpl<PlayTypeNum> imple
 		/*Query query = session.createQuery(buffer.toString());*/
 		/*query.executeUpdate();*/
 	}
+
+	@Override
+	public void updatePlayTypeNum(PlayTypeNum existingPlayTypeNum) {
+		saveOrUpdate(existingPlayTypeNum);
+	}
 }

@@ -1,7 +1,6 @@
 package com.jll.game.playtype;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -11,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,9 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jll.common.cache.CacheRedisService;
 import com.jll.common.constants.Constants;
-import com.jll.common.constants.Message;
 import com.jll.common.constants.Constants.SysCodeTypes;
+import com.jll.common.constants.Message;
 import com.jll.entity.PlayType;
+import com.jll.entity.PlayTypeNum;
 import com.jll.entity.SysCode;
 import com.terran4j.commons.api2doc.annotations.Api2Doc;
 import com.terran4j.commons.api2doc.annotations.ApiComment;
@@ -420,4 +421,43 @@ public class PlayTypeController {
 			return ret;
 		}
 	}
+	
+	//修改排序
+		@RequestMapping(value={"/queryLotteNumber/{lotteryType}/{playType}/{market}"}, method={RequestMethod.GET}, produces={"application/json"})
+		public Map<String, Object> queryLotteNumber(@PathVariable(name = "lotteryType", required = true) String lotteryType,
+				@PathVariable(name = "playType", required = true) String playType,
+				@PathVariable(name = "market", required = true) Integer market) {
+			Map<String, Object> ret = new HashMap<>();
+			try {
+				List<List<PlayTypeNum>> map = playTypeService.queryPlayTypeNum(lotteryType, playType, market);
+				ret.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
+				ret.put(Message.KEY_DATA, map);
+				return ret;
+			}catch(Exception e){
+				ret.clear();
+				ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+				ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_OTHERS.getCode());
+				ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_OTHERS.getErrorMes());
+				return ret;
+			}
+		}
+		
+		@RequestMapping(value={"/updateLotteNumber/{lotteryType}/{playType}/{market}"}, method={RequestMethod.POST}, produces={"application/json"})
+		public Map<String, Object> updateLotteNumberOdds(@PathVariable(name = "lotteryType", required = true) String lotteryType,
+				@PathVariable(name = "playType", required = true) String playType,
+				@PathVariable(name = "market", required = true) Integer market,
+				@RequestBody List<PlayTypeNum> playTypeNums) {
+			Map<String, Object> ret = new HashMap<>();
+			try {
+				playTypeService.updateLotteNumberOdds(lotteryType, playType,market,playTypeNums);
+				ret.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
+				return ret;
+			}catch(Exception e){
+				ret.clear();
+				ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+				ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_OTHERS.getCode());
+				ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_OTHERS.getErrorMes());
+				return ret;
+			}
+		}
 }

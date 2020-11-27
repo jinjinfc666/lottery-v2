@@ -26,9 +26,9 @@ var queryGeneralURL = SITE + "/users/queryGeneral";
 
 var mReportNextTeamSMURL = SITE + "/report/MReportNextTeamSM";
 
-var queryUserSettlementURL = SITE + "/user-settlements";
+//var queryUserSettlementURL = SITE + "/user-settlements";
 
-var performSettlementURL = SITE + "/user-settlements/{id}";
+//var performSettlementURL = SITE + "/user-settlements/{id}";
 
 var queryAgentXYURL = SITE + "/users/queryAllUserAgentXY";
 
@@ -60,5 +60,17 @@ var querySysUserURL = SITE + "/SysUser/querySysUser";
 
 var queryByUserId = SITE + "/SysUser/byUserId";
 
-var queryDailySettlement = SITE + "/report/daily-settlement";
+var queryDailySettlementURL = SITE + "/report/daily-settlement";
+
+var queryGeneralURL = SITE + "/users/queryGeneral";
+
+var queryGeneralURL = SITE + "/users/queryGeneral";
+
+var queryDailySettlementByUserURL = SITE + "/report/queryDailySettlementByUser";
+
+var performSettlementURL = SITE + "/report/performSettlement";
+
+var queryLotteNumberURL = SITE + "/settingPlayType/queryLotteNumber/{lotteryType}/{playType}/{market}";
+
+var updateLotteNumberURL = SITE + "/settingPlayType/updateLotteNumber/{lotteryType}/{playType}/{market}";
 

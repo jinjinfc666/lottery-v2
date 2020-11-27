@@ -2,6 +2,7 @@ package com.jll.report;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +11,7 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jll.common.constants.Constants;
 import com.jll.dao.PageBean;
 import com.jll.entity.TeamPlReport;
 import com.jll.entity.UserInfo;
@@ -71,12 +73,35 @@ public class TReportServiceImpl implements TReportService {
 	
 	//团队盈亏报表
 		@Override
-		public PageBean queryDailySettlement(Map<String, Object> ret) {
+		public Map<String,Object> queryDailySettlement(Map<String, Object> ret) {
 			String startTime=(String) ret.get("startTime");
 			String endTime=(String) ret.get("endTime");
 			String userName=(String) ret.get("userName");
 			Integer pageIndex=(Integer) ret.get("pageIndex");
 			Integer pageSize=(Integer) ret.get("pageSize");
-			return tReportDao.queryTeamAll(startTime, endTime, userName,pageIndex,pageSize);
+			
+			UserInfo userInfo = userServ.getUserByUserName(userName);
+			if(userInfo == null){
+				return null;
+			}
+			return tReportDao.queryDailySettlement(startTime, endTime, userInfo,pageIndex,pageSize);
+		}
+		@Override
+		public PageBean queryDailySettlementByUser(Map<String, Object> ret) {
+			String startTime=(String) ret.get("startTime");
+			String endTime=(String) ret.get("endTime");
+			String userName=(String) ret.get("userName");
+			String settlementFlag=(String) ret.get("settlementFlag");
+			Integer pageIndex=(Integer) ret.get("pageIndex");
+			Integer pageSize=(Integer) ret.get("pageSize");
+			return tReportDao.queryDailySettlementByUser(startTime, endTime, userName,settlementFlag, pageIndex,pageSize);
+		}
+		@Override
+		public void updateSettlement(Map<String, Object> ret) {
+			Integer id = (Integer)ret.get("id");
+			Map<String, Object> params = new HashMap<>();
+			TeamPlReport report = tReportDao.queryDailySettlementById(id);
+			report.setSettlementFlag(Constants.SettlementState.HANDLED.getCode());
+			tReportDao.saveOrUpdateProfit(report);
 		}
 }

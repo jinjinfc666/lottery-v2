@@ -27,6 +27,7 @@ import com.jll.common.utils.DateUtil;
 import com.jll.common.constants.Message;
 import com.jll.dao.PageBean;
 import com.jll.entity.SysCode;
+import com.jll.entity.TeamPlReport;
 import com.jll.entity.UserAccountDetails;
 import com.jll.entity.UserInfo;
 import com.jll.user.UserInfoService;
@@ -1140,13 +1141,76 @@ public class ReportController {
 		ret.put("userName", userName);
 		ret.put("startTime", startTime);
 		ret.put("endTime", endTime);
+		
+		Map<String,Object> list = null;
 		logger.debug(ret+"------------------------------queryMReportTeam--------------------------------------");
 		try {
-			PageBean list = tReportService.queryDailySettlement(ret);
+			list = tReportService.queryDailySettlement(ret);
 			logger.debug(list+"------------------------------queryMReportTeam--------------------------------------");
 			ret.clear();
 			ret.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
 			ret.put("data", list);
+		}catch(Exception e){
+			ret.clear();
+			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_OTHERS.getCode());
+			ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_OTHERS.getErrorMes());
+		}
+		return list;
+	}
+	
+	
+	@RequestMapping(value={"/queryDailySettlementByUser"}, method={RequestMethod.GET}, produces={"application/json"})
+	public Map<String, Object> queryDailySettlementByUser(@RequestParam(name = "userName", required = false) String userName,
+				@RequestParam(name = "settlementFlag", required = false) String settlementFlag,
+			  @RequestParam(name = "startTime", required = true) String startTime,//时间 String
+			  @RequestParam(name = "endTime", required = true) String endTime,//时间 String
+			  @RequestParam(name = "pageIndex", required = true) Integer pageIndex,//当前请求页
+			  HttpServletRequest request) {
+		Map<String, Object> ret = new HashMap<>();
+		if(StringUtils.isBlank(startTime)||StringUtils.isBlank(endTime)) {
+			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_ERROR_PARAMS.getCode());
+			ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_ERROR_PARAMS.getErrorMes());
+	    	return ret;
+		}
+		if(!DateUtil.isValidYmdDate(startTime)||!DateUtil.isValidYmdDate(endTime)) {
+			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_ERROR_PARAMS.getCode());
+			ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_ERROR_PARAMS.getErrorMes());
+	    	return ret;
+		}
+		Integer pageSize=Constants.Pagination.SUM_NUMBER.getCode();
+		ret.put("pageSize", pageSize);
+		ret.put("pageIndex", pageIndex);
+		ret.put("userName", userName);
+		ret.put("startTime", startTime);
+		ret.put("endTime", endTime);
+		
+		PageBean<TeamPlReport> page = null;
+		try {
+			page = tReportService.queryDailySettlementByUser(ret);
+			ret.clear();
+			ret.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
+			ret.put("data", page);
+		}catch(Exception e){
+			ret.clear();
+			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_OTHERS.getCode());
+			ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_OTHERS.getErrorMes());
+		}
+		return ret;
+	}
+	
+	@RequestMapping(value={"/performSettlement"}, method={RequestMethod.POST}, produces={"application/json"})
+	public Map<String, Object> performSettlement(@RequestParam(name = "id", required = true) Integer id) {
+		Map<String, Object> ret = new HashMap<>();
+		ret.put("id", id);
+		
+		try {
+			tReportService.updateSettlement(ret);
+			ret.clear();
+			ret.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
 		}catch(Exception e){
 			ret.clear();
 			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());

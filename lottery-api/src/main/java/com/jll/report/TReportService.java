@@ -20,5 +20,9 @@ public interface TReportService {
 	public Map<String, Object> queryNextTeamAllSM(Map<String, Object> ret);
 	
 	//团队盈亏报表
-	public PageBean queryDailySettlement(Map<String, Object> ret);
+	public Map<String,Object> queryDailySettlement(Map<String, Object> ret);
+	
+	public PageBean<TeamPlReport> queryDailySettlementByUser(Map<String, Object> ret);
+	
+	public void updateSettlement(Map<String, Object> ret);
 }

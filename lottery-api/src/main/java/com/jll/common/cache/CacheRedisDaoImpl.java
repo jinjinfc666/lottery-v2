@@ -432,4 +432,10 @@ public class CacheRedisDaoImpl  extends AbstractBaseRedisDao implements CacheRed
 	public void deletePlayTypeNum(String keyPlayTypeNum) {
 		this.delete(keyPlayTypeNum);
 	}
+
+	@Override
+	public CacheObject queryLast(String HQL, List<Object> params, Class<CacheObject> clazz) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

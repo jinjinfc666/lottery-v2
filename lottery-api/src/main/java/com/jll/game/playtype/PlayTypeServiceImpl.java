@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import java.util.TreeMap;
 
 import javax.annotation.Resource;
@@ -40,6 +41,8 @@ public class PlayTypeServiceImpl implements PlayTypeService
 	@Resource
 	CacheRedisService cacheRedisService;
 
+	@Resource
+	PlayTypeNumDao playTypeNumDao;
 	
 	@Override
 	public List<PlayType> queryPlayType(String lotteryType) {
@@ -1376,6 +1379,83 @@ public class PlayTypeServiceImpl implements PlayTypeService
 		});
 		
 		return ret;
+	}
+	@Override
+	public List<List<PlayTypeNum>> queryPlayTypeNum(String lotteryType, String playType, Integer market) {
+		PlayType playTypeObj = playTypeDao.queryById(Integer.parseInt(playType));
+		String codeTypeName = Constants.KEY_PLAY_TYPE_NUM;
+		Map<String, Map<String, Map<String, PlayTypeNum>>> allPlayTypeNums = cacheRedisService.queryPlayTypeNum(codeTypeName);
+		Map<String, Map<String, PlayTypeNum>> lotteryTypePlayTypeNums = allPlayTypeNums.get(lotteryType);
+		Map<String, PlayTypeNum> playTypeNums = lotteryTypePlayTypeNums.get(playTypeObj.getClassification());
+		List<PlayTypeNum> ret = playTypeNums.entrySet().stream().map(e->e.getValue()).sorted(Comparator.comparing(PlayTypeNum::getId)).collect(Collectors.toList());
+		List<List<PlayTypeNum>> finalRet = new ArrayList<>();
+		finalRet.add(new ArrayList<PlayTypeNum>());
+		ret.forEach(playTypeNum->{
+			if(market.equals(Constants.CreditMarketEnum.MARKET_A.getCode())){
+				playTypeNum.setCurrentOdds(playTypeNum.getaOdds());
+			}else if(market.equals(Constants.CreditMarketEnum.MARKET_B.getCode())){
+				playTypeNum.setCurrentOdds(playTypeNum.getbOdds());
+			}else if(market.equals(Constants.CreditMarketEnum.MARKET_C.getCode())){
+				playTypeNum.setCurrentOdds(playTypeNum.getcOdds());
+			}
+			
+			List<PlayTypeNum> row = finalRet.get(finalRet.size() - 1);
+			if(row.size() == 5){
+				row = new ArrayList<>();
+				finalRet.add(row);
+			}
+			row.add(playTypeNum);
+		});
+		
+		return finalRet;
+	}
+	@Override
+	public void updateLotteNumberOdds(String lotteryType, String playType, Integer market, List<PlayTypeNum> playTypeNumsChanges) {
+		PlayType playTypeObj = playTypeDao.queryById(Integer.parseInt(playType));
+		String codeTypeName = Constants.KEY_PLAY_TYPE_NUM;
+		Map<String, Map<String, Map<String, PlayTypeNum>>> allPlayTypeNums = cacheRedisService.queryPlayTypeNum(codeTypeName);
+		Map<String, Map<String, PlayTypeNum>> lotteryTypePlayTypeNums = allPlayTypeNums.get(lotteryType);
+		Map<String, PlayTypeNum> playTypeNums = lotteryTypePlayTypeNums.get(playTypeObj.getClassification());
+		playTypeNumsChanges.forEach(playTypeNum->{
+			PlayTypeNum existingPlayTypeNum = playTypeNums.get(playTypeNum.getBetNum());
+			boolean isChanging = false;
+			switch(market){
+			case 1:{
+				if(playTypeNum.getCurrentOdds().compareTo(existingPlayTypeNum.getaOdds()) != 0){
+					isChanging = true;
+					existingPlayTypeNum.setaOdds(playTypeNum.getCurrentOdds());
+				}
+				
+				break;
+			}
+			case 2:{
+				if(playTypeNum.getCurrentOdds().compareTo(existingPlayTypeNum.getbOdds()) != 0){
+					isChanging = true;
+					existingPlayTypeNum.setbOdds(playTypeNum.getCurrentOdds());
+				}
+				break;
+			}
+			case 3:{
+				if(playTypeNum.getCurrentOdds().compareTo(existingPlayTypeNum.getcOdds()) != 0){
+					isChanging = true;
+					existingPlayTypeNum.setcOdds(playTypeNum.getCurrentOdds());
+				}
+				break;
+			}
+			default:{
+				
+			}
+			
+			
+			}
+			
+			if(isChanging){
+				playTypeNumDao.updatePlayTypeNum(existingPlayTypeNum);
+			}
+			
+		});
+		
+		cacheRedisService.setPlayTypeNum(codeTypeName, allPlayTypeNums);
 	}
 }
 

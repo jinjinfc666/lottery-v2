@@ -167,12 +167,12 @@
                                     document.getElementById("report").style.display="inline";
                                 }
                             	
-                            	if(val=='ROLE_CUSTOMER_SERVICE'
+                            	/* if(val=='ROLE_CUSTOMER_SERVICE'
                         			|| val=='ROLE_MANAGER'
                         			|| val=='ROLE_FINANCE'
                         			|| val == 'ROLE_AGENT_SM'){
                                 	document.getElementById("sm_report").style.display="inline";
-                            	}
+                            	} */
                             	
                                 if(val=='ROLE_ADMIN'){
                                 	document.getElementById("administrator").style.display="inline";
@@ -306,9 +306,7 @@
                             <li>
                                 <a class="J_menuItem"  href="report/LReport.html?v=4.0">即时注单报表</a>
                             </li>
-                            <li>
-                                <a class="J_menuItem"  href="report/daily_settlement.html?v=4.0">每日结算报表</a>
-                            </li>
+                            
                             <!-- <li>
                                 <a class="J_menuItem"  href="report/OrderSource.html?v=4.0">订单数据来源</a>
                             </li> -->
@@ -346,6 +344,9 @@
                                     </li>
                                     <li>
                                         <a class="J_menuItem"  href="SystemConfiguration/SmallLotteryType.html?v=4.0">&nbsp;&nbsp;&nbsp;&nbsp;彩种类型配置</a>
+                                    </li>
+                                    <li>
+                                        <a class="J_menuItem"  href="SystemConfiguration/updateOdds.html?v=4.0">&nbsp;&nbsp;&nbsp;&nbsp;赔率配置</a>
                                     </li>
                                     <li>
                                         <a class="J_menuItem"  href="SystemConfiguration/SmallFlowType.html?v=4.0">&nbsp;&nbsp;&nbsp;&nbsp;流水类型配置</a>
@@ -430,7 +431,7 @@
                         </ul>
                     </li>
                                         
-                    <li id="system_operation" style="display: none;">
+                    <li id="system_operation" >
                         <a class="J_menuItem">
                             <i class="fa fa-edit"></i> 
                             <span class="nav-label">系统操作</span>
@@ -440,12 +441,18 @@
                             <li>
                                 <a class="J_menuItem"  href="SystemOperation/UnifiedWwithdrawal.html?v=4.0">期次处理</a>
                             </li>
-                            <li id="betting_order" style="display: none;">
+                            <li id="betting_order" style="display: block;">
+                                <a class="J_menuItem"  href="xy-sys-operation/lottery_transaction.html?v=4.0">投注订单</a>
+                            </li>
+                            <li>
+                                <a class="J_menuItem"  href="xy-sys-operation/daily_settlement.html?v=4.0">每日结算</a>
+                            </li>
+                            <!-- <li id="betting_order" style="display: none;">
                                 <a class="J_menuItem"  href="SystemOperation/lottery_transaction.html?v=4.0" data-id="SystemOperation/lottery_transaction.html">投注订单-在线</a>
-                            </li>
-                             <li id="betting_order_xy" style="display: none;">
+                            </li> -->
+                             <!-- <li id="betting_order_xy" style="display: none;">
                                 <a class="J_menuItem"  href="SystemOperation/lottery_transaction_xy.html?v=4.0" data-id="SystemOperation/lottery_transaction_xy.html">投注订单</a>
-                            </li>
+                            </li> -->
                             <!-- <li>
                                 <a class="J_menuItem"  href="SystemOperation/depositDetails.html?v=4.0" data-id="SystemOperation/depositDetails.html?v=4.0">存款明细列表</a>
                             </li> -->
@@ -460,21 +467,8 @@
                             </li>-->
                         </ul>
                     </li>
-                    
-                   <!--  <li id="sm_system_operation" style="display: none;">
-                        <a class="J_menuItem">
-                            <i class="fa fa-edit"></i> 
-                            <span class="nav-label">双面系统操作</span>
-                            <span class="fa arrow"></span>
-                        </a>
-                        <ul class="nav nav-second-level">
-                            <li id="betting_order" style="display: block;">
-                                <a class="J_menuItem"  href="sm-report/lottery_transaction.html?v=4.0">投注订单</a>
-                            </li>
-                        </ul>
-                    </li> -->
-                    
-                     <!-- <li id="xy_system_operation" style="display: none;">
+                                        
+                     <!-- <li id="xy_system_operation">
                         <a class="J_menuItem">
                             <i class="fa fa-edit"></i> 
                             <span class="nav-label">信誉系统操作</span>
@@ -484,7 +478,7 @@
                             <li id="betting_order" style="display: block;">
                                 <a class="J_menuItem"  href="xy-sys-operation/lottery_transaction.html?v=4.0">投注订单</a>
                             </li>
-                            <li id="user_settlement" style="display: none;">
+                            <li id="user_settlement" >
                                 <a class="J_menuItem"  href="xy-sys-operation/user_settlement.html">用户结算</a>
                             </li>
                         </ul>
