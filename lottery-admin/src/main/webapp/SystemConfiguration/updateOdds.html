@@ -214,7 +214,7 @@
                             $.each(data.data, function(key, val) {  
                             	var content = "<tr>\n";
                             	$.each(val, function(key1, val1) {  
-                            		content += "<td class=\"thCenter\" style=\"vertical-align: middle;\">"+val1.betNum+"</td>\n";
+                            		content += "<td class=\"thCenter\" style=\"vertical-align: middle;\">"+val1.betNumDesc+"</td>\n";
    	                           	 	content += "<td class=\"thCenter\" data-sel=\"1\" data-num=\""+ val1.betNum +"\"><input style=\"width: 70px;\" type=\"text\" id=\""+val1.betNum+"\" value=\""+val1.currentOdds+"\" ></td>\n";
                             	});
 	                           	 content += "</tr>";
@@ -312,7 +312,7 @@
                             </select> 
         </div>
         <div class="input-group" style="margin-left: 20px; float: left;margin-bottom: 70px;margin-top: 30px;">
-                        玩法：<select id="playType" name="playType" style="width:200px;" class="form-control">
+                        玩法：<select id="playType" name="playType" style="width:250px;" class="form-control">
                                 <option value="">&#45;&#45;选择彩种&#45;&#45;</option>
                             </select>
                         <!--<button type="button" class="btn btn-primary" style="height:32px;" onclick="querySysCode()">搜索</button>--> 

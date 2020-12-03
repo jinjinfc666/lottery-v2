@@ -256,32 +256,40 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 				&& userInfo != null){
 				$scope.isLogin = true;
 				
-				$scope.userInfo = JSON.parse(userInfo);
-				
-				userInfoServ.queryUserAcc($scope.userInfo.id).then(function(userAcc){
-					var mainAcc = null;
-					var redPacketAcc = null;
-					
-					for(var i = 0; i < userAcc.length; i++){
-						var val = userAcc[i];
-						if(val.accType == 1){
-							mainAcc = val;
-						}else{
-							redPacketAcc = val;
-						}
-					}
-					
-					if(mainAcc == null){
-						return ;
-					}
-					
-					mainAcc.total = mainAcc.balance + mainAcc.freeze;
-					sessionStorage.setItem("mainAcc", JSON.stringify(mainAcc));
-					sessionStorage.setItem("redPacketAcc", JSON.stringify(redPacketAcc));
-					
-					$scope.mainAcc = mainAcc;
-					$scope.redPacketAcc = redPacketAcc;
-				});
+				userInfoServ.queryUserInfo().then(function(userInfo){
+	    			userInfoServ.queryUserAcc(userInfo.id).then(function(userAcc){
+	    				var mainAcc = null;
+	    				var redPacketAcc = null;
+	    				
+	    				for(var i = 0; i < userAcc.length; i++){
+	    					var val = userAcc[i];
+	    					if(val.accType == 1){
+	    						mainAcc = val;
+	    					}else{
+	    						redPacketAcc = val;
+	    					}
+	    				}
+	    				
+	    				sessionStorage.setItem("userInfo", JSON.stringify(userInfo));
+	    				sessionStorage.setItem("mainAcc", JSON.stringify(mainAcc));
+	    				sessionStorage.setItem("redPacketAcc", JSON.stringify(redPacketAcc));
+	    				
+	    				$scope.userInfo = userInfo;
+	    				$scope.mainAcc = mainAcc;
+	    				$scope.redPacketAcc = redPacketAcc;
+	    				
+	    				$scope.isLogin = true;
+	    				$scope.creditMarkets = userInfo.creditMarkets;
+	    				for(var i = 0; i < userInfo.creditMarkets.length; i++){
+	    					if(userInfo.creditMarkets[i].marketId == userInfo.currentMarket.marketId){
+	    						$scope.currentMarket = userInfo.creditMarkets[i];
+	    						break;
+	    					}
+	    				}
+	    				
+	    				
+	    			});
+	    		});
 			}
 		};
 		
@@ -1821,6 +1829,48 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 		    				bettingNumVal = bettingNumArray[i];
 		    				
 		    				attr = playType_ + "_" + bettingNumIndex;
+		    				break;
+		    			}
+		    		}    		
+		    		
+		        	var codeVal =  sysCodeTranslateFactory.codeTranslate(codeType, attr);
+			    	if(codeVal != null){
+			    		codeVal = codeVal.replace('{number}', bettingNumVal);
+			    	}
+		    	}else if(playType.indexOf('bdw') >= 0 && playType.indexOf('yw') >= 0){
+		    		var playType_ = 'bdw_yw';
+		    		var bettingNumArray = bettingNum.split(',');
+		    		var bettingNumIndex = -1;
+		    		var bettingNumVal = '';
+		    		var attr = null;
+		    		
+		    		for(var i = 0;i < bettingNumArray.length; i++){
+		    			if(bettingNumArray[i]){
+		    				bettingNumIndex = i;
+		    				bettingNumVal = bettingNumArray[i];
+		    				
+		    				attr = playType_;
+		    				break;
+		    			}
+		    		}    		
+		    		
+		        	var codeVal =  sysCodeTranslateFactory.codeTranslate(codeType, attr);
+			    	if(codeVal != null){
+			    		codeVal = codeVal.replace('{number}', bettingNumVal);
+			    	}
+		    	}else if(playType.indexOf('ewhs') >= 0 && playType.indexOf('sg') >= 0 && playType.indexOf('ds') >= 0){
+		    		var playType_ = 'ewhs_sg_ds';
+		    		var bettingNumArray = bettingNum.split(',');
+		    		var bettingNumIndex = -1;
+		    		var bettingNumVal = '';
+		    		var attr = null;
+		    		
+		    		for(var i = 0;i < bettingNumArray.length; i++){
+		    			if(bettingNumArray[i]){
+		    				bettingNumIndex = i;
+		    				bettingNumVal = bettingNumArray[i];
+		    				
+		    				attr = playType_;
 		    				break;
 		    			}
 		    		}    		

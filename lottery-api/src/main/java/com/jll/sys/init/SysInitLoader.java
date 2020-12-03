@@ -99,9 +99,19 @@ public class SysInitLoader implements MessageDelegateListener{
 		initDemoUserCfg();
 		initPanKou();
 		initPlayTypeNum();
+		
+//		initPlayTYpeNumData();
 	}
 	
 	
+
+
+	private void initPlayTYpeNumData() {
+		playTypeNumServ.initPlayTYpeNumData();
+	}
+
+
+
 
 
 	private void initPlayTypeNum() {

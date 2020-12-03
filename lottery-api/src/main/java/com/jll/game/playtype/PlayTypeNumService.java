@@ -12,4 +12,6 @@ public interface PlayTypeNumService {
 	boolean isRateValid(List<OrderInfo> orders);
 
 	void updateUserCurrMarket(String userId, String currMarket);
+
+	void initPlayTYpeNumData();
 }

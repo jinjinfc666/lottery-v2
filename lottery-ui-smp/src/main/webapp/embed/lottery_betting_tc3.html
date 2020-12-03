@@ -120,20 +120,31 @@
 			<div class="sidebar index-sidebar ng-scope">
 				<div class="user-info ng-scope">
 					<div class="user-line user-info-name aside-block-top" style="padding-left: 5px">
-						会员：
-						<b class="text-danger ng-binding accountName" id="account" ng-if="isLogin">{{userInfo.userName}}</b>
+					<span style="float:left">会员：</span>
+						<b class="text-danger ng-binding accountName" id="account" ng-if="isLogin" style="float: left;">{{userInfo.userName}}</b>
 						<a href="javascript:void(0)" target="_blank" id="isLogin" style="font-size: 10px; margin-left: 5px;color:#ffcc00" ng-click="" ng-if="!isLogin">[立即登录]</a>
 					</div>
 					<div class="user-line user-info-money aside-block-bottom"
 						style="padding-left: 5px">
-						余额： 
-						<b id="nowMoney" onclick="refreshMoney()"
-							style="cursor: pointer; text-decoration: underline;"
-							class="text-danger ng-binding ng-scope nowMoney" ng-if="isLogin">{{mainAcc.balance}}</b>
+						<span style="float:left">信誉额度：</span>						 
+						<b id="nowMoney"
+							style="cursor: pointer;float: left;"
+							class="text-danger ng-binding ng-scope nowMoney" ng-if="isLogin">{{userInfo.xyAmount}}</b>
 						
-						<b id="nowMoney" onclick="refreshMoney()"
+						<b id="nowMoney"
 							style="cursor: pointer; text-decoration: underline;"
 							class="text-danger ng-binding ng-scope nowMoney" ng-if="!isLogin"></b>
+					</div>
+					<div class="user-line user-info-money aside-block-bottom"
+						style="padding-left: 5px">
+						<span style="float:left">已用额度：</span>						 
+						<b id="nowMoney"
+							style="cursor: pointer; text-decoration: underline;float: left;"
+							class="text-danger ng-binding ng-scope nowMoney" ng-if="isLogin" ng-click="queryMemberInfo()">{{userInfo.usedCreditAmount}}</b>
+						<!-- 
+						<b id="nowMoney" onclick="refreshMoney()"
+							style="cursor: pointer; text-decoration: underline;"
+							class="text-danger ng-binding ng-scope nowMoney" ng-if="!isLogin"></b> -->
 					</div>
 				</div>
 				<div class="user-link user-center-btn ng-scope" style="display:none">

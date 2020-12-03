@@ -45,6 +45,7 @@ import com.jll.game.LotteryTypeService;
 import com.jll.game.playtype.PlayTypeFacade;
 import com.jll.game.playtype.PlayTypeService;
 import com.jll.game.playtypefacade.PlayTypeFactory;
+import com.jll.user.UserInfoExtService;
 import com.jll.user.UserInfoService;
 import com.jll.user.details.UserAccountDetailsService;
 import com.jll.user.expert.ExpertService;
@@ -87,8 +88,10 @@ public class OrderServiceImpl implements OrderService
 	
 	@Resource
 	OrderInfoExtService orderInfoExtServ;
-	
 
+	@Resource
+	UserInfoExtService userExtServ;
+	
 	@Autowired
 	private KafkaTemplate<Integer, String> kafkaTemplateBetNum;
 	
@@ -172,14 +175,10 @@ public class OrderServiceImpl implements OrderService
 			orderDao.saveOrders(order);
 			
 			//extend the xy function
-			if(user.getUserType().intValue() == Constants.UserType.ENTRUST_PLAYER.getCode()) {
-				if(order.getIsPrize() == null) {
-					order.setIsPrize(0);
-				}
+			if(user.getUserType().intValue() == Constants.UserType.XY_PLAYER.getCode()) {
+				user.setUsedCreditAmount(new BigDecimal(order.getBetAmount()).add(user.getUsedCreditAmount()));
+				userExtServ.saveUserInfoExt(user);
 				
-				if(order.getIsPrize().intValue() == 1) {
-					orderInfoExtServ.saveOrderInfoExt(order);
-				}
 			}
 			
 			UserAccountDetails userDetails = new UserAccountDetails();

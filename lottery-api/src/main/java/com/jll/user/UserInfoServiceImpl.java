@@ -290,6 +290,7 @@ public class UserInfoServiceImpl implements UserInfoService
 			String xyAmount = userExtServ.queryFiledByName(dbInfo.getId(), "xyAmount");
 			String creditMarketIds = userExtServ.queryFiledByName(dbInfo.getId(), "creditMarket");
 			String currCreditMarket = userExtServ.queryFiledByName(dbInfo.getId(), "currCreditMarket");
+			String usedCreditAmount = userExtServ.queryFiledByName(dbInfo.getId(), "usedCreditAmount");
 			
 			if(payoutRate != null) {
 				dbInfo.setXyPayoutRate(Double.parseDouble(payoutRate));
@@ -311,6 +312,10 @@ public class UserInfoServiceImpl implements UserInfoService
 				creditMarketObj.setMarketId(creditMarketEnum.getCode());
 				creditMarketObj.setMarketName(creditMarketEnum.getName());
 				dbInfo.setCurrentMarket(creditMarketObj);
+			}
+			
+			if(usedCreditAmount != null) {
+				dbInfo.setUsedCreditAmount(new BigDecimal(usedCreditAmount));
 			}
 		}
 		
@@ -449,7 +454,43 @@ public class UserInfoServiceImpl implements UserInfoService
 	
 	@Override
 	public UserInfo getUserByUserName(String userName) {
-		return userDao.getUserByUserName(userName);
+		UserInfo userInfo = userDao.getUserByUserName(userName);
+		if(userInfo.getUserType().intValue() == UserType.XY_PLAYER.getCode()
+				|| userInfo.getUserType().intValue() == UserType.XY_AGENCY.getCode()) {
+			String payoutRate = userExtServ.queryFiledByName(userInfo.getId(), "xyPayoutRate");
+			String xyAmount = userExtServ.queryFiledByName(userInfo.getId(), "xyAmount");
+			String creditMarketIds = userExtServ.queryFiledByName(userInfo.getId(), "creditMarket");
+			String currCreditMarket = userExtServ.queryFiledByName(userInfo.getId(), "currCreditMarket");
+			String usedCreditAmount = userExtServ.queryFiledByName(userInfo.getId(), "usedCreditAmount");
+			
+			if(payoutRate != null) {
+				userInfo.setXyPayoutRate(Double.parseDouble(payoutRate));
+			}
+			
+			if(xyAmount != null) {
+				userInfo.setXyAmount(Double.parseDouble(xyAmount));
+			}
+			
+			
+			if(creditMarketIds != null) {
+				List<CreditMarket> creditMarkets = parseCreditMarket(creditMarketIds);
+				userInfo.setCreditMarkets(creditMarkets);
+			}
+			
+			if(!StringUtils.isEmpty(currCreditMarket)) {
+				Constants.CreditMarketEnum creditMarketEnum = Constants.CreditMarketEnum.getByCode(Integer.valueOf(currCreditMarket));
+				CreditMarket creditMarketObj = new CreditMarket();
+				creditMarketObj.setMarketId(creditMarketEnum.getCode());
+				creditMarketObj.setMarketName(creditMarketEnum.getName());
+				userInfo.setCurrentMarket(creditMarketObj);
+			}
+			
+			if(usedCreditAmount != null) {
+				userInfo.setUsedCreditAmount(new BigDecimal(usedCreditAmount));
+			}
+		}
+			
+		return userInfo;
 	}
 	
 	@Override

@@ -61,4 +61,5 @@ public class PlayTypeNumDaoImpl extends DefaultGenericDaoImpl<PlayTypeNum> imple
 	public void updatePlayTypeNum(PlayTypeNum existingPlayTypeNum) {
 		saveOrUpdate(existingPlayTypeNum);
 	}
+
 }

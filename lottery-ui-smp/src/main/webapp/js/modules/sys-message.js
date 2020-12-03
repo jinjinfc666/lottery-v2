@@ -2,82 +2,18 @@
  * 
  */
 var mesModule = angular.module('sysMes', []);
-var messageArray = {
-		"play_type_cqssc":{
-				"5ds_00":"{number} 双",
-				"5ds_01":"{number} 单",
-				"5dx_00":"{number} 小",
-				"5dx_01":"{number} 大",
-				"dwd_0":"万位 {number}",
-				"dwd_1":"千位 {number}",
-				"dwd_2":"百位 {number}",
-				"dwd_3":"十位 {number}",
-				"dwd_4":"个位 {number}"
-			},
-			"play_type_xjssc":{
-				"5ds_00":"{number} 双",
-				"5ds_01":"{number} 单",
-				"5dx_00":"{number} 小",
-				"5dx_01":"{number} 大",
-				"dwd_0":"万位 {number}",
-				"dwd_1":"千位 {number}",
-				"dwd_2":"百位 {number}",
-				"dwd_3":"十位 {number}",
-				"dwd_4":"个位 {number}"
-			},
-			"play_type_xyft":{
+var messageArray = {		
+			"play_type_tc3":{
 				"ds_00":"{number} 双",
 				"ds_01":"{number} 单",
 				"dx_00":"{number} 小",
 				"dx_01":"{number} 大",
-				"dwd_0":"冠军 {number}",
-				"dwd_1":"亚军 {number}",
-				"dwd_2":"季军 {number}",
-				"dwd_3":"第四名 {number}",
-				"dwd_4":"第五名 {number}",
-				"dwd_5":"第六名 {number}",
-				"dwd_6":"第七名 {number}",
-				"dwd_7":"第八名 {number}",
-				"dwd_8":"第九名 {number}",
-				"dwd_9":"第十名 {number}"
-			},
-			"play_type_bjpk10":{
-				"ds_00":"{number} 双",
-				"ds_01":"{number} 单",
-				"dx_00":"{number} 小",
-				"dx_01":"{number} 大",
-				"dwd_0":"冠军 {number}",
-				"dwd_1":"亚军 {number}",
-				"dwd_2":"季军 {number}",
-				"dwd_3":"第四名 {number}",
-				"dwd_4":"第五名 {number}",
-				"dwd_5":"第六名 {number}",
-				"dwd_6":"第七名 {number}",
-				"dwd_7":"第八名 {number}",
-				"dwd_8":"第九名 {number}",
-				"dwd_9":"第十名 {number}"
-			},
-			"play_type_5fc":{
-				"5ds_00":"{number} 双",
-				"5ds_01":"{number} 单",
-				"5dx_00":"{number} 小",
-				"5dx_01":"{number} 大",
-				"dwd_0":"万位 {number}",
-				"dwd_1":"千位 {number}",
-				"dwd_2":"百位 {number}",
-				"dwd_3":"十位 {number}",
-				"dwd_4":"个位 {number}"
-			},
-			"play_type_yfb":{
-				"ds_00":"{number} 双",
-				"ds_01":"{number} 单",
-				"dx_00":"{number} 小",
-				"dx_01":"{number} 大",
-				"dwd_0":"冠军 {number}",
-				"dwd_1":"亚军 {number}",
-				"dwd_2":"季军 {number}",
-				"dwd_3":"第四名 {number}",
-				"dwd_4":"第五名 {number}"
+				"dwd_0":"{number}",
+				"dwd_1":"{number}",
+				"dwd_2":"{number}",
+				"dwd_3":"{number}",
+				"dwd_4":"{number}",
+				"bdw_yw":"不定位 一位 {number}"
 			},
 			"data_item_type":{
 				"0":"余额",

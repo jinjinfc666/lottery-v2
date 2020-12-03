@@ -33,17 +33,55 @@ app.controller('authCtrl',
 		var userInfo = sessionStorage.getItem("userInfo");
 		if(typeof userInfo != 'undefined'
 			&& userInfo != null){
-			$scope.isLogin = true;
 			
-			$scope.userInfo = JSON.parse(userInfo);
+			
+			userInfoServ.queryUserInfo().then(function(userInfo){
+    			userInfoServ.queryUserAcc(userInfo.id).then(function(userAcc){
+    				var mainAcc = null;
+    				var redPacketAcc = null;
+    				
+    				for(var i = 0; i < userAcc.length; i++){
+    					var val = userAcc[i];
+    					if(val.accType == 1){
+    						mainAcc = val;
+    					}else{
+    						redPacketAcc = val;
+    					}
+    				}
+    				
+    				sessionStorage.setItem("userInfo", JSON.stringify(userInfo));
+    				sessionStorage.setItem("mainAcc", JSON.stringify(mainAcc));
+    				sessionStorage.setItem("redPacketAcc", JSON.stringify(redPacketAcc));
+    				
+    				$scope.userInfo = userInfo;
+    				$scope.mainAcc = mainAcc;
+    				$scope.redPacketAcc = redPacketAcc;
+    				
+    				$scope.isLogin = true;
+    				$scope.creditMarkets = userInfo.creditMarkets;
+    				for(var i = 0; i < userInfo.creditMarkets.length; i++){
+    					if(userInfo.creditMarkets[i].marketId == userInfo.currentMarket.marketId){
+    						$scope.currentMarket = userInfo.creditMarkets[i];
+    						break;
+    					}
+    				}
+    				
+    				
+    				$scope.isLogin = true;
+    				
+    			});
+    		});
+			
+			
+			/*$scope.userInfo = JSON.parse(userInfo);
 			$scope.creditMarkets = $scope.userInfo.creditMarkets;
 			for(var i = 0; i < $scope.userInfo.creditMarkets.length; i++){
 				if($scope.userInfo.creditMarkets[i].marketId == $scope.userInfo.currentMarket.marketId){
 					$scope.currentMarket = $scope.userInfo.creditMarkets[i];
 					break;
 				}
-			}
-			userInfoServ.queryUserAcc($scope.userInfo.id).then(function(userAcc){
+			}*/
+			/*userInfoServ.queryUserAcc($scope.userInfo.id).then(function(userAcc){
 				var mainAcc = null;
 				var redPacketAcc = null;
 				
@@ -66,7 +104,7 @@ app.controller('authCtrl',
 				
 				$scope.mainAcc = mainAcc;
 				$scope.redPacketAcc = redPacketAcc;
-			});
+			});*/
 		}
 	};
 	

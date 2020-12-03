@@ -125,6 +125,7 @@
 						</a>
 					</div>
 					<div class="money_info">
+						<span>当前盘口</span>
 						<select 
 							ng-model="selCreditMarket" 
 							ng-options="x.marketName for x in creditMarkets"
@@ -132,7 +133,7 @@
 							ng-change="changeUserCurrMarket(selCreditMarket)">
 						</select>
 						
-						余额：<span class="show_money j-showmoney"  ng-click="queryMemberInfo()">{{mainAcc.balance}}</span>
+						<!-- 余额：<span class="show_money j-showmoney"  ng-click="queryMemberInfo()">{{mainAcc.balance}}</span> -->
 					</div>					
 				</div>
 				<div class="login_btns fl">

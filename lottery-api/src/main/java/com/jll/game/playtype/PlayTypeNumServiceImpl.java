@@ -1,6 +1,8 @@
 package com.jll.game.playtype;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,6 +105,29 @@ public class PlayTypeNumServiceImpl implements PlayTypeNumService{
 	@Override
 	public void updateUserCurrMarket(String userId, String currMarket) {
 		playTypeNumDao.changeUserCurrMarket(userId, currMarket);
+	}
+
+
+	@Override
+	public void initPlayTYpeNumData() {
+		DecimalFormat format = new DecimalFormat("000");
+		Long playTypeId = 245L;
+		BigDecimal odds = new BigDecimal("1.99");
+		for(int i = 10; i < 1000; i++){
+			String betNum = format.format(i);
+			PlayTypeNum playTypeNum = new PlayTypeNum();
+			playTypeNum.setBetNum(betNum);
+			playTypeNum.setaOdds(odds);
+			playTypeNum.setBetNumDesc(betNum);
+			playTypeNum.setbOdds(odds);
+			playTypeNum.getcOdds();
+			playTypeNum.setCreateTime(new Date());
+			playTypeNum.setDisplayName(betNum);
+			playTypeNum.setdOdds(odds);
+			playTypeNum.setPlayTypeId(playTypeId);
+			playTypeNumDao.updatePlayTypeNum(playTypeNum);
+			
+		}
 	}
 	
 }
