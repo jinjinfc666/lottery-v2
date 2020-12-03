@@ -35,7 +35,7 @@ userModule.controller('userInfoCtrl', ["$scope", "$http","$state", "$interval", 
 			$scope.mainAcc = mainAcc;
 			$scope.redPacketAcc = redPacketAcc;
 			
-			$state.go('userCenter.accMan');
+//			$state.go('userCenter.accMan');
 		});
 	};
 	

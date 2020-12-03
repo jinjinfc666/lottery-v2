@@ -124,6 +124,9 @@ app.config(["$httpProvider", function ($httpProvider) {
     }).state('about', {
         url: '/about',
         templateUrl: 'embed/about.html'
+    }).state('notification', {
+        url: '/notification',
+        templateUrl: 'embed/notification.html'
     });
 
 }])

@@ -173,10 +173,13 @@
 						target="_blank" data-more="nav_box_3" ng-mouseenter="fishingNav()" ng-mouseleave="fishingNav()" ng-click="fish()"  ng-controller="lotteryCtrl" style="display:none"> 
 					<span class="nav-fish"></span>信息查询
 				</a> 
-				<a href="#promo" data-link="promotion"> 
+				<a ui-sref="notification" data-link="notification"> 
 					<span class="nav-promotion"></span>系统公告
 				</a> 
-				<a href="#vip" class="yellow" data-link="vip" style="color: #ffcc00;"> 
+				<!-- <a ui-sref="#about" class="yellow" data-link="vip" style="color: #ffcc00;"> 
+					<span class="nav-vip"></span>系统帮助
+				</a> --> 
+				<a  ui-sref="about" class="yellow" data-link="PT" data-more="nav_box_1">
 					<span class="nav-vip"></span>系统帮助
 				</a> 
 			</div>
