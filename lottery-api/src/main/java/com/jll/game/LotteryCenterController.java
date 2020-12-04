@@ -260,7 +260,7 @@ public class LotteryCenterController {
 						return resp;
 					}
 
-					if (!isRateValid(orders)) {
+					if (!isRateValid(orders, user)) {
 						resp.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
 						resp.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_GAME_ORDER_ERROR_RATE.getCode());
 						resp.put(Message.KEY_ERROR_MES, Message.Error.ERROR_GAME_ORDER_ERROR_RATE.getErrorMes());
@@ -321,10 +321,10 @@ public class LotteryCenterController {
 		return resp;
 	}
 
-	private boolean isRateValid(List<OrderInfo> orders) {
-		return playTypeNumServ.isRateValid(orders);
+	private boolean isRateValid(List<OrderInfo> orders, UserInfo userInfo) {
+		return playTypeNumServ.isRateValid(orders, userInfo);
 	}
-
+	
 	private boolean validMaxPayout(String lotteryType, List<OrderInfo> orders, UserInfo user) {
 		// String payoutRate = userExtServ.queryFiledByName(user.getId(),
 		// "xyPayoutRate");

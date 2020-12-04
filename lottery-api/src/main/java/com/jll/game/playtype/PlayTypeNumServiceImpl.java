@@ -23,6 +23,7 @@ import com.jll.entity.Issue;
 import com.jll.entity.OrderInfo;
 import com.jll.entity.PlayType;
 import com.jll.entity.PlayTypeNum;
+import com.jll.entity.UserInfo;
 import com.jll.game.IssueService;
 
 @Service
@@ -46,7 +47,7 @@ public class PlayTypeNumServiceImpl implements PlayTypeNumService{
 	}
 
 
-	public boolean isRateValid(List<OrderInfo> orders) {
+	public boolean isRateValid(List<OrderInfo> orders, UserInfo userInfo) {
 		String codeTypeName = Constants.KEY_PLAY_TYPE_NUM;
 		Map<String, Map<String, Map<String, PlayTypeNum>>> lotteryTypePlayTypeNums = cacheServ.queryPlayTypeNum(codeTypeName);
 //		Map<String,Boolean> rateValid = new HashMap<>();
@@ -60,7 +61,7 @@ public class PlayTypeNumServiceImpl implements PlayTypeNumService{
 		
 //		Map<String, Map<String, Map<String, PlayTypeNum>>> lotteryTypePlayTypeNums_ = new HashMap<String, Map<String, Map<String, PlayTypeNum>>>();
 		
-		OrderInfo order = orders.stream().filter(order_->isRateDiff(order_, lotteryTypePlayTypeNums)).findFirst().orElse(null);
+		OrderInfo order = orders.stream().filter(order_->isRateDiff(order_, lotteryTypePlayTypeNums, userInfo)).findFirst().orElse(null);
 		if(order != null){
 			return false;
 		}
@@ -70,7 +71,7 @@ public class PlayTypeNumServiceImpl implements PlayTypeNumService{
 	}
 
 
-	private boolean isRateDiff(OrderInfo order,Map<String, Map<String, Map<String, PlayTypeNum>>> lotteryTypePlayTypeNums_) {
+	private boolean isRateDiff(OrderInfo order,Map<String, Map<String, Map<String, PlayTypeNum>>> lotteryTypePlayTypeNums_, UserInfo userInfo) {
 		Integer issueId = order.getIssueId();
 		Integer playTypeId = order.getPlayType();
 		BigDecimal prizeRate = order.getPrizeRate();
@@ -85,9 +86,29 @@ public class PlayTypeNumServiceImpl implements PlayTypeNumService{
 				playTypeNum = lotteryTypePlayTypeNums_.get(lotteryType).get(classification).get(String.valueOf(order.getBetNum().charAt(0)));
 			}
 		}
-		if(playTypeNum.getaOdds().compareTo(prizeRate) != 0){
-			return true;
+		
+		Constants.CreditMarketEnum currMarket = Constants.CreditMarketEnum.getByCode(userInfo.getCurrentMarket().getMarketId());
+		switch(currMarket){
+			case MARKET_A:{
+				if(playTypeNum.getaOdds().compareTo(prizeRate) != 0){
+					return true;
+				}
+			}
+			case MARKET_B:{
+				if(playTypeNum.getbOdds().compareTo(prizeRate) != 0){
+					return true;
+				}
+			}
+			case MARKET_C:{
+				if(playTypeNum.getcOdds().compareTo(prizeRate) != 0){
+					return true;
+				}
+			}
+			default:{
+				
+			}
 		}
+		
 		
 		return false;
 	}
