@@ -2859,6 +2859,7 @@ public class Constants {
 		MARKET_A(1, "A 盘"), 
 		MARKET_B(2, "B 盘"), 
 		MARKET_C(3, "C 盘"), 
+		MARKET_D(4, "D 盘"), 
 		;
 		
 		private int code;

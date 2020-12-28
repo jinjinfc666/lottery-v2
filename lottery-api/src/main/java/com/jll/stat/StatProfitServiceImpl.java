@@ -17,16 +17,26 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jll.common.cache.CacheRedisService;
 import com.jll.common.constants.Constants;
+import com.jll.common.constants.Constants.CreditMarketEnum;
 import com.jll.common.constants.Constants.TrgUserAccDetailsFlag;
 import com.jll.common.constants.Constants.UserType;
 import com.jll.dao.PageBean;
+import com.jll.entity.Issue;
+import com.jll.entity.OrderInfo;
+import com.jll.entity.PlayType;
 import com.jll.entity.TeamPlReport;
 //import com.jll.entity.TrgUserAccountDetails;
 import com.jll.entity.UserAccountDetails;
 import com.jll.entity.UserInfo;
+import com.jll.entity.UserTs;
+import com.jll.entity.display.CreditMarket;
+import com.jll.game.IssueService;
 import com.jll.game.mesqueue.kafka.KafkaConsumer;
+import com.jll.game.order.OrderService;
+import com.jll.game.playtype.PlayTypeService;
 import com.jll.report.TReportService;
 import com.jll.user.UserInfoService;
+import com.jll.user.UserTsService;
 
 @Service
 @Transactional
@@ -45,6 +55,18 @@ public class StatProfitServiceImpl implements StatProfitService, KafkaConsumer
 	
 	@Resource
 	CacheRedisService cacheServ;
+	
+	@Resource
+	OrderService orderServ;
+	
+	@Resource
+	IssueService issueServ;
+	
+	@Resource
+	PlayTypeService playTypeServ;
+	
+	@Resource
+	UserTsService userTsServ;
 	
 	@Override
 	public void exeStatistic(UserAccountDetails accDetails) {
@@ -112,9 +134,19 @@ public class StatProfitServiceImpl implements StatProfitService, KafkaConsumer
 		BigDecimal profitVal = null;
 		BigDecimal settlementAmount = null;
 		
+		Integer orderId = trg.getOrderId();
+		if(orderId == null){
+			return;
+		}
+		
+		Integer playTypeId = trg.getPlayTypeId();
+		PlayType playType = playTypeServ.queryById(playTypeId);
+		String lotteryType = trg.getLotteryType();
 		profit = reportServ.queryProfitByUser(userInfo.getId(), 
 				trg.getCreateTime(), 
-				userType);
+				userType,
+				lotteryType,
+				playType);
 		
 		if(profit == null) {
 			profit = new TeamPlReport();
@@ -123,71 +155,22 @@ public class StatProfitServiceImpl implements StatProfitService, KafkaConsumer
 			profit.setUserName(userInfo.getUserName());
 			profit.setUserType(userType);
 			profit.setSettlementFlag(Constants.SettlementState.pending.getCode());
+			profit.setLotteryType(lotteryType);
+			profit.setPlayType(playType.getBriefCla());
 		}
 		
-		if(trg.getOperationType().equals(Constants.AccOperationType.DEPOSIT.getCode())) {
-			BigDecimal deposit = profit.getDeposit() == null?
-					new BigDecimal(trg.getAmount()):
-						profit.getDeposit().add(new BigDecimal(trg.getAmount()));
-					
-			profit.setDeposit(deposit);
-		}else if(trg.getOperationType().equals(Constants.AccOperationType.WITHDRAW.getCode())) {
-			BigDecimal withdraw = profit.getWithdrawal() == null?
-					new BigDecimal(trg.getAmount()):
-						profit.getWithdrawal().add(new BigDecimal(trg.getAmount()));
-			profit.setWithdrawal(withdraw);
-		}else if(trg.getOperationType().equals(Constants.AccOperationType.BETTING.getCode())) {
+		if(trg.getOperationType().equals(Constants.AccOperationType.BETTING.getCode())) {
 			BigDecimal consumption = profit.getConsumption() == null?
 					new BigDecimal(trg.getAmount()):
 						profit.getConsumption().add(new BigDecimal(trg.getAmount()));
 					
 			profit.setConsumption(consumption);
-		}else if(trg.getOperationType().equals(Constants.AccOperationType.TRANSFER.getCode())) {
-			if(trg.getRemark().equals(Constants.Transfer.IN.getCode())) {
-				BigDecimal transfer = profit.getTransfer() == null?
-						new BigDecimal(trg.getAmount()):
-							profit.getTransfer().add(new BigDecimal(trg.getAmount()));
-						
-				profit.setTransfer(transfer);
-			}else if(trg.getRemark().equals(Constants.Transfer.OUT.getCode())) {
-				BigDecimal transferOut = profit.getTransferOut() == null?
-						new BigDecimal(trg.getAmount()):
-							profit.getTransferOut().add(new BigDecimal(trg.getAmount()));
-						
-				profit.setTransferOut(transferOut);
-			}
-			
 		}else if(trg.getOperationType().equals(Constants.AccOperationType.PAYOUT.getCode())) {
 			BigDecimal returnPrize = profit.getReturnPrize() == null?
 					new BigDecimal(trg.getAmount()):
 						profit.getReturnPrize().add(new BigDecimal(trg.getAmount()));
 					
 			profit.setReturnPrize(returnPrize);
-		}else if(trg.getOperationType().equals(Constants.AccOperationType.REBATE.getCode())) {
-			BigDecimal rebate = profit.getRebate() == null?
-					new BigDecimal(trg.getAmount()):
-						profit.getRebate().add(new BigDecimal(trg.getAmount()));
-					
-			profit.setRebate(rebate);
-		}else if(trg.getOperationType().equals(Constants.AccOperationType.REFUND.getCode())) {
-			BigDecimal cancelAmount = profit.getCancelAmount() == null?
-					new BigDecimal(trg.getAmount()):
-						profit.getCancelAmount().add(new BigDecimal(trg.getAmount()));
-					
-			profit.setCancelAmount(cancelAmount);
-		}else if(trg.getOperationType().equals(Constants.AccOperationType.SYS_DEDUCTION.getCode())) {
-			BigDecimal deduction = profit.getDeduction() == null?
-					new BigDecimal(trg.getAmount()):
-						profit.getDeduction().add(new BigDecimal(trg.getAmount()));
-					
-			profit.setDeduction(deduction);
-		}else if(trg.getOperationType().equals(Constants.AccOperationType.DEPOSIT_CASH.getCode())
-				&& (!isInherit || (isInherit && userType.intValue() != UserType.SM_AGENCY.getCode()))) {
-			BigDecimal sysBonus = profit.getSysBonus() == null?
-					new BigDecimal(trg.getAmount()):
-						profit.getSysBonus().add(new BigDecimal(trg.getAmount()));
-					
-			profit.setSysBonus(sysBonus);
 		}else if(trg.getOperationType().equals(Constants.AccOperationType.TS.getCode())) {
 			BigDecimal tsAmount = profit.getTsAmount() == null?
 					new BigDecimal(trg.getAmount()):
@@ -228,9 +211,9 @@ public class StatProfitServiceImpl implements StatProfitService, KafkaConsumer
 						profit.getCancelAmount());
 			
 			//agent team ts
-			settlementAmount = settlementAmount.add(tempVal.multiply(userInfo.getTsAmount() == null?
-					new BigDecimal(0):
-						userInfo.getTsAmount()));
+			UserTs userTs = userTsServ.queryUserTsByPlayTypeId(userInfo.getUserId(), lotteryType, playTypeId);
+			BigDecimal userTsAmount = parseUserTsAmount(userTs, userInfo);
+			settlementAmount = settlementAmount.add(tempVal.multiply(userTsAmount));
 			
 			tempVal = tempVal.subtract(profit.getReturnPrize() == null?
 					new BigDecimal(0):
@@ -264,6 +247,34 @@ public class StatProfitServiceImpl implements StatProfitService, KafkaConsumer
 		
 		
 		reportServ.saveOrUpdateProfit(profit);
+	}
+
+	private BigDecimal parseUserTsAmount(UserTs userTs, UserInfo userInfo) {
+		CreditMarket market = userInfo.getCurrentMarket();
+		CreditMarketEnum marketEnum = Constants.CreditMarketEnum.getByCode(market.getMarketId());
+		BigDecimal ret = null;
+		switch(marketEnum){
+		case MARKET_A:{
+			ret = userTs.getaTs();
+			break;
+		}
+		case MARKET_B:{
+			ret = userTs.getbTs();
+			break;
+		}
+		case MARKET_C:{
+			ret = userTs.getcTs();
+			break;
+		}
+		case MARKET_D:{
+			ret = userTs.getdTs();
+			break;
+		}default:{
+			ret = userTs.getaTs();
+		}
+		}
+		
+		return ret;
 	}
 
 	@Override

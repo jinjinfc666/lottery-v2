@@ -31,7 +31,8 @@ public class OrderInfo implements java.io.Serializable {
 	private Integer terminalType;
 	private Date createTime;
 	private Integer isPrize;
-
+	private BigDecimal ts;
+	
 	public OrderInfo() {
 	}
 
@@ -237,6 +238,14 @@ public class OrderInfo implements java.io.Serializable {
 
 	public void setIsPrize(Integer isPrize) {
 		this.isPrize = isPrize;
+	}
+
+	public BigDecimal getTs() {
+		return ts;
+	}
+
+	public void setTs(BigDecimal ts) {
+		this.ts = ts;
 	}
 	
 	

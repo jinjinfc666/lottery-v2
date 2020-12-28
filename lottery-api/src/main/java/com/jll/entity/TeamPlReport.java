@@ -46,6 +46,12 @@ public class TeamPlReport implements java.io.Serializable {
 	//结算标识 0 未结算  1 已结算
 	private Integer settlementFlag;
 	
+	//彩种
+	private String lotteryType;
+	
+	//玩法
+	private String playType;
+	
 	public TeamPlReport() {
 	}
 
@@ -267,6 +273,22 @@ public class TeamPlReport implements java.io.Serializable {
 
 	public void setSettlementFlag(Integer settlementFlag) {
 		this.settlementFlag = settlementFlag;
+	}
+
+	public String getLotteryType() {
+		return lotteryType;
+	}
+
+	public void setLotteryType(String lotteryType) {
+		this.lotteryType = lotteryType;
+	}
+
+	public String getPlayType() {
+		return playType;
+	}
+
+	public void setPlayType(String playType) {
+		this.playType = playType;
 	}
 
 	

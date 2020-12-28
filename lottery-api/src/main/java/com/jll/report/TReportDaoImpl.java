@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.NoResultException;
 
@@ -29,6 +30,7 @@ import com.jll.common.utils.DateUtil;
 import com.jll.dao.DefaultGenericDaoImpl;
 import com.jll.dao.PageBean;
 import com.jll.entity.MemberPlReport;
+import com.jll.entity.PlayType;
 import com.jll.entity.TeamPlReport;
 import com.jll.entity.UserInfo;
 import com.jll.user.UserInfoServiceImpl;
@@ -67,14 +69,13 @@ public class TReportDaoImpl extends DefaultGenericDaoImpl<TeamPlReport> implemen
 	@Override
 	public Map<String,Object> queryNextTeamAll(String startTime, String endTime, UserInfo user) {
 		Map<String,Object> map = new HashMap<String,Object>();
-		TeamPlReport selfProfit = querySelfProfit(startTime, endTime, user);
+//		TeamPlReport selfProfit = querySelfProfit(startTime, endTime, user);
 		List<TeamPlReport> nextAgencyLevelProfit = queryAgencyNextLevelProfit(startTime, endTime, user);
 		List<TeamPlReport> nextUserLevelProfit = queryUserNextLevelProfit(startTime, endTime, user);
 		
 		if(nextAgencyLevelProfit == null) {
 			nextAgencyLevelProfit = new ArrayList<>();
 		}
-		
 		
 		if(nextUserLevelProfit != null && nextUserLevelProfit.size() > 0) {
 			/*for(TeamPlReport report : nextUserLevelProfit) {
@@ -85,9 +86,9 @@ public class TReportDaoImpl extends DefaultGenericDaoImpl<TeamPlReport> implemen
 			}
 		}
 		
-		if(selfProfit != null) {
+		/*if(selfProfit != null) {
 			nextAgencyLevelProfit.add(0, selfProfit);
-		}
+		}*/
 		
 		if(nextAgencyLevelProfit.size() > 0) {
 			String userName = nextAgencyLevelProfit.get(0).getUserName();
@@ -95,11 +96,50 @@ public class TReportDaoImpl extends DefaultGenericDaoImpl<TeamPlReport> implemen
 			nextAgencyLevelProfit.get(0).setUserName(userName);
 			
 		}
-		map.put("data", nextAgencyLevelProfit);
+		
+		Map<String, Object> data = parseData(nextAgencyLevelProfit);
+		map.put("data", data);
 		map.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
 		return map;
 	}
 	
+	private Map<String, Object> parseData(List<TeamPlReport> nextAgencyLevelProfit) {
+		Map<String, Object> ret = new HashMap<>();
+		Map<String, List<TeamPlReport>> lotteryGroup = new HashMap<>();
+		Map<String, TeamPlReport> userGroup = new HashMap<>();
+		nextAgencyLevelProfit.stream().forEach(teamPlReport->{
+			String lotteryType = teamPlReport.getLotteryType();
+			List<TeamPlReport> lotteryTypeTempList = lotteryGroup.get(lotteryType);
+			TeamPlReport userReport = userGroup.get(teamPlReport.getUserName());
+			if(CollectionUtils.isEmpty(lotteryTypeTempList)){
+				lotteryTypeTempList = new ArrayList<>();
+				lotteryGroup.put(lotteryType, lotteryTypeTempList);
+			}
+			lotteryTypeTempList.add(teamPlReport);
+			
+			if(userReport == null){
+				userReport = teamPlReport;
+			}else{
+				userReport = combineReport(userReport, teamPlReport);
+			}
+			
+			userGroup.put(teamPlReport.getUserName(), userReport);
+		});
+		
+		List<TeamPlReport> userGroupList = userGroup.entrySet().stream().map(e->e.getValue()).collect(Collectors.toList());
+		
+		ret.put("lotteryType", lotteryGroup);
+		ret.put("userGroup", userGroupList);
+		return ret;
+	}
+	private TeamPlReport combineReport(TeamPlReport userReport, TeamPlReport teamPlReport) {
+		userReport.setProfit(userReport.getProfit().add(teamPlReport.getProfit()));
+		userReport.setReturnPrize(userReport.getReturnPrize().add(teamPlReport.getReturnPrize()));
+		userReport.setSettlementAmount(userReport.getSettlementAmount().add(teamPlReport.getSettlementAmount()));
+		userReport.setTsAmount(userReport.getTsAmount().add(teamPlReport.getTsAmount()));
+		userReport.setZcAmount(userReport.getZcAmount().add(teamPlReport.getZcAmount()));
+		return userReport;
+	}
 	private List<TeamPlReport> queryAgencyNextLevelProfit(String startTime, String endTime, UserInfo user) {
 		Integer id = user.getId();
 		StringBuffer sqlBuffer = new StringBuffer();
@@ -112,6 +152,7 @@ public class TReportDaoImpl extends DefaultGenericDaoImpl<TeamPlReport> implemen
 		sqlBuffer.append("select userInfo.user_name user_name,userInfo.user_type, t.* from ")
 		.append("(")
 		.append("select ")
+		.append("lottery_type,")
 		.append("user_id,")
 		.append("SUM(consumption) as consumption,")
 		.append("SUM(cancel_amount) as cancel_amount,")
@@ -122,7 +163,7 @@ public class TReportDaoImpl extends DefaultGenericDaoImpl<TeamPlReport> implemen
 		.append("from team_pl_report ")
 		.append("where user_id in (select id from user_info where FIND_IN_SET(?,superior) = 1 and user_type =8) ")
 		.append("and create_time >= ? and create_time <= ? ")
-		.append("group by user_id ")
+		.append("group by user_id , lottery_type ")
 		
 		.append(")t ")
 		.append("left join ")
@@ -147,13 +188,14 @@ public class TReportDaoImpl extends DefaultGenericDaoImpl<TeamPlReport> implemen
 			Object[] obj=(Object[]) it.next();
 			m.setUserName(obj[0] == null?null:(String)obj[0]);
 			m.setUserType(obj[1] == null?null:(Integer)obj[1]);
-			m.setUserId(obj[2] == null?null:(Integer)obj[2]);			
-			m.setConsumption(obj[3] == null?null:(BigDecimal) obj[3]);
-			m.setCancelAmount(obj[4] == null?null:(BigDecimal) obj[4]);
-			m.setReturnPrize(obj[5] == null?null:(BigDecimal) obj[5]);
-			m.setZcAmount(obj[6] == null?null:(BigDecimal) obj[6]);
-			m.setTsAmount(obj[7] == null?null:(BigDecimal) obj[7]);			
-			m.setProfit(obj[8] == null?null:(BigDecimal) obj[8]);
+			m.setLotteryType(obj[2] == null?null:(String)obj[2]);
+			m.setUserId(obj[3] == null?null:(Integer)obj[3]);			
+			m.setConsumption(obj[4] == null?null:(BigDecimal) obj[4]);
+			m.setCancelAmount(obj[5] == null?null:(BigDecimal) obj[5]);
+			m.setReturnPrize(obj[6] == null?null:(BigDecimal) obj[6]);
+			m.setZcAmount(obj[7] == null?null:(BigDecimal) obj[7]);
+			m.setTsAmount(obj[8] == null?null:(BigDecimal) obj[8]);			
+			m.setProfit(obj[9] == null?null:(BigDecimal) obj[9]);
 		    listRecord.add(m);
 		}
 		return listRecord;
@@ -237,6 +279,7 @@ public class TReportDaoImpl extends DefaultGenericDaoImpl<TeamPlReport> implemen
 		sqlBuffer.append("select userInfo.user_name user_name,userInfo.user_type, t.* from ")
 		.append("(")
 		.append("select ")
+		.append("lottery_type,")
 		.append("user_id,")
 		.append("SUM(consumption) as consumption,")
 		.append("SUM(cancel_amount) as cancel_amount,")
@@ -251,7 +294,7 @@ public class TReportDaoImpl extends DefaultGenericDaoImpl<TeamPlReport> implemen
 		.append("(user_id = ? and user_type = 7) ")
 		.append(") ")
 		.append("and create_time >= ? and create_time <= ? ")
-		.append("group by user_id ")
+		.append("group by user_id , lottery_type ")
 		
 		.append(")t ")
 		.append("left join ")
@@ -296,24 +339,18 @@ public class TReportDaoImpl extends DefaultGenericDaoImpl<TeamPlReport> implemen
 	}
 	
 	@Override
-	public TeamPlReport queryProfitByUser(Integer userId, Date createTime, Integer userType) {
-		String sql = "from TeamPlReport t where t.userId=? and t.createTime=? and t.userType=?";
+	public TeamPlReport queryProfitByUser(Integer userId, Date createTime, Integer userType, String lotteryType, PlayType playType) {
+		String sql = "from TeamPlReport t where t.userId=? and t.createTime=? and t.userType=? and t.lotteryType=? and t.playType=?";
 		List<Object> params = new ArrayList<>();
 		TeamPlReport profit = null;
-		List<TeamPlReport> profits = null;
 		
 		params.add(userId);
 		params.add(createTime);
 		params.add(userType);
-		
-		profits = query(sql, params, TeamPlReport.class);
-		
-		if(profits == null || profits.size() == 0) {
-			return profit;
-		}
-		
-		profit = profits.get(0);
-		
+		params.add(lotteryType);
+		params.add(playType.getBriefCla());
+		profit = queryLast(sql, params, TeamPlReport.class);
+				
 		return profit;
 	}
 	

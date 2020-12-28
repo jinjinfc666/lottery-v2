@@ -19,7 +19,9 @@ public class UserAccountDetails implements java.io.Serializable {
 	private int dataItemType;
 	private Date createTime;
 	private String remark;
-
+	private Integer playTypeId;
+	private String lotteryType;
+	
 	public UserAccountDetails() {
 	}
 
@@ -125,5 +127,22 @@ public class UserAccountDetails implements java.io.Serializable {
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
 	}
+
+	public Integer getPlayTypeId() {
+		return playTypeId;
+	}
+
+	public void setPlayTypeId(Integer playTypeId) {
+		this.playTypeId = playTypeId;
+	}
+
+	public String getLotteryType() {
+		return lotteryType;
+	}
+
+	public void setLotteryType(String lotteryType) {
+		this.lotteryType = lotteryType;
+	}
+	
 	
 }

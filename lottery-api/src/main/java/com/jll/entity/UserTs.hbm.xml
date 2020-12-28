@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generated 2018-8-14 16:52:58 by Hibernate Tools 5.2.10.Final --><!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="true" default-access="property" default-cascade="none" default-lazy="true">
+    <class catalog="lottery" dynamic-insert="false" dynamic-update="false" mutable="true" name="com.jll.entity.UserTs" optimistic-lock="version" polymorphism="implicit" select-before-update="false" table="user_ts">
+        <id name="id" type="java.lang.Integer">
+            <column name="id"/>
+            <generator class="identity"/>
+        </id>
+        <property generated="never" lazy="false" name="userId" optimistic-lock="true" type="java.lang.Integer" unique="false">
+            <column length="30" name="user_id">
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="lotteryType" optimistic-lock="true" type="string" unique="false">
+            <column length="30" name="lottery_type">
+            </column>
+        </property>
+        
+        <property generated="never" lazy="false" name="playTypeId" optimistic-lock="true" type="java.lang.Integer" unique="false">
+            <column length="30" name="play_type_id">
+            </column>
+        </property>
+        
+        <property generated="never" lazy="false" name="createTime" optimistic-lock="true" type="timestamp" unique="false">
+            <column length="19" name="create_time">
+                <comment>����ʱ��</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="aTs" optimistic-lock="true" type="big_decimal" unique="false">
+            <column length="19" name="a_ts">
+                <comment>����ʱ��</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="bTs" optimistic-lock="true" type="big_decimal" unique="false">
+            <column length="19" name="b_ts">
+                <comment>����ʱ��</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="cTs" optimistic-lock="true" type="big_decimal" unique="false">
+            <column length="19" name="c_ts">
+                <comment>����ʱ��</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="dTs" optimistic-lock="true" type="big_decimal" unique="false">
+            <column length="19" name="d_ts">
+                <comment>����ʱ��</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="playTypeBrief" optimistic-lock="true" type="string" unique="false">
+            <column length="19" name="play_type_brief">
+                <comment>����ʱ��</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="singleBetLimitAmount" optimistic-lock="true" type="big_decimal" unique="false">
+            <column length="19" name="single_bet_limit_amount">
+                <comment>����ʱ��</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="totalBetLimitAmount" optimistic-lock="true" type="big_decimal" unique="false">
+            <column length="19" name="total_bet_limit_amount">
+                <comment>����ʱ��</comment>
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

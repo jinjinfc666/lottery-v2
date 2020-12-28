@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -43,6 +44,7 @@ import com.jll.entity.UserAccount;
 import com.jll.entity.UserAccountDetails;
 import com.jll.entity.UserBankCard;
 import com.jll.entity.UserInfo;
+import com.jll.entity.UserTs;
 import com.jll.entity.WithdrawApplication;
 import com.jll.sys.siteMsg.SysSiteMsgService;
 import com.jll.tp.EmailService;
@@ -94,6 +96,9 @@ public class UserController {
 	
 	@Resource
 	WalletService walletServ;
+	
+	@Resource
+	UserTsService userTsServ;
 	
 	/**
 	 * 
@@ -1947,4 +1952,48 @@ public class UserController {
 			return ret;
 		}
 	}
+	
+	//修改
+			@RequestMapping(value={"/ts/{userName}/{lotteryType}"}, method={RequestMethod.GET}, produces={"application/json"})
+			public Map<String, Object> queryTs(@PathVariable(name = "userName", required=true) String userName,
+					@PathVariable(name = "lotteryType", required=true) String lotteryType) {//实体里面id和LotteryType是必须传过来的，LotteryType是不能修改的
+				Map<String, Object> ret = new HashMap<>();
+								
+				try {
+					ret.clear();
+					ret = userTsServ.queryUserTs(userName, lotteryType);
+					return ret;
+				}catch(Exception e){
+					e.printStackTrace();
+					ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+					ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_OTHERS.getCode());
+					ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_OTHERS.getErrorMes());
+				}
+				return ret;
+			}
+			
+	//修改
+		@RequestMapping(value={"/ts"}, method={RequestMethod.PUT}, produces={"application/json"})
+		public Map<String, Object> updateTs(@RequestBody List<UserTs> userTses) {
+			Map<String, Object> ret = new HashMap<>();
+			if(CollectionUtils.isEmpty(userTses)) {
+				ret.clear();
+				ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+				ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_ERROR_PARAMS.getCode());
+				ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_ERROR_PARAMS.getErrorMes());
+				return ret;
+			}
+			
+			try {
+				ret.clear();
+				ret = userTsServ.saveOrUpdateUserTs(userTses);
+				return ret;
+			}catch(Exception e){
+				e.printStackTrace();
+				ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
+				ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_OTHERS.getCode());
+				ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_OTHERS.getErrorMes());
+			}
+			return ret;
+		}
 }

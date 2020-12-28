@@ -68,6 +68,7 @@ public class SportLottery3ServiceImpl extends DefaultLottoTypeServiceImpl
 	@Override
 	public List<Issue> makeAPlan() {		
 		//22:00-20:00 24小时一期
+		//native 16:00 - 20:00
 		List<Issue> issues = new ArrayList<>();
 		int maxAmount = 1;
 		Calendar calendar = Calendar.getInstance();
@@ -80,7 +81,10 @@ public class SportLottery3ServiceImpl extends DefaultLottoTypeServiceImpl
 		today = DateUtil.addMinutes(today, 10);
 		
 		calendar.setTime(today);
+		/*official time
 		calendar.set(Calendar.HOUR_OF_DAY, 22);
+		*/
+		calendar.set(Calendar.HOUR_OF_DAY, 16);
 		calendar.set(Calendar.MINUTE, 0);
 		calendar.set(Calendar.SECOND, 0);
 		calendar.set(Calendar.MILLISECOND, 0);
@@ -94,7 +98,7 @@ public class SportLottery3ServiceImpl extends DefaultLottoTypeServiceImpl
 			seq.setSeqVal(seqVal);
 			Issue issue = new Issue();
 			issue.setStartTime(calendar.getTime());
-			calendar.add(Calendar.HOUR, 22);
+			calendar.add(Calendar.HOUR, 12);
 			issue.setEndTime(calendar.getTime());
 			issue.setIssueNum(generateLottoNumber(seq.getSeqVal().longValue(), today));
 			issue.setLotteryType(lotteryType);
@@ -163,7 +167,7 @@ public class SportLottery3ServiceImpl extends DefaultLottoTypeServiceImpl
 				return;
 			}
 			
-			if(winningNum.split(",").length != 10) {
+			if(winningNum.split(",").length != 3) {
 				return;
 			}
 			

@@ -96,5 +96,30 @@
                 <comment>�û�����:0,ƽ̨�ͻ�;1,����;3,�ܴ�</comment>
             </column>
         </property>
+        <property generated="never" lazy="false" name="lotteryType" optimistic-lock="true" type="string" unique="false">
+            <column name="lottery_type">
+                <comment>�û�����:0,ƽ̨�ͻ�;1,����;3,�ܴ�</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="playType" optimistic-lock="true" type="string" unique="false">
+            <column name="play_type">
+                <comment>�û�����:0,ƽ̨�ͻ�;1,����;3,�ܴ�</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="settlementAmount" optimistic-lock="true" type="big_decimal" unique="false">
+            <column name="settlement_amount">
+                <comment>�û�����:0,ƽ̨�ͻ�;1,����;3,�ܴ�</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="tsAmount" optimistic-lock="true" type="big_decimal" unique="false">
+            <column name="ts_amount">
+                <comment>�û�����:0,ƽ̨�ͻ�;1,����;3,�ܴ�</comment>
+            </column>
+        </property>
+        <property generated="never" lazy="false" name="zcAmount" optimistic-lock="true" type="big_decimal" unique="false">
+            <column name="zc_amount">
+                <comment>�û�����:0,ƽ̨�ͻ�;1,����;3,�ܴ�</comment>
+            </column>
+        </property>
     </class>
 </hibernate-mapping>

@@ -780,7 +780,7 @@ public class IssueServiceImpl implements IssueService
 			return ;
 		}
 		//calculate the refund from parent
-		prize = calRebate(user, order);
+		prize = calTs(user, order);
 		
 		if(prize == null 
 				|| prize.compareTo(new BigDecimal(0)) == 0) {
@@ -807,9 +807,15 @@ public class IssueServiceImpl implements IssueService
 	 * @param order
 	 * @return
 	 */
-	private BigDecimal calRebate(UserInfo user, OrderInfo order) {
+	private BigDecimal calTs(UserInfo user, OrderInfo order) {
 		BigDecimal rebate = null;
-		BigDecimal rebateRate = user.getTsAmount();
+//		BigDecimal rebateRate = user.getTsAmount();
+		/*Integer playTypeId = order.getPlayType();
+		PlayType playType = playTypeDao.queryById(playTypeId);
+		if(playType == null){
+			return null;
+		}*/
+		BigDecimal rebateRate = order.getTs();
 		if(rebateRate == null){
 			return null;
 		}

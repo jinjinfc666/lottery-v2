@@ -74,3 +74,8 @@ var queryLotteNumberURL = SITE + "/settingPlayType/queryLotteNumber/{lotteryType
 
 var updateLotteNumberURL = SITE + "/settingPlayType/updateLotteNumber/{lotteryType}/{playType}/{market}";
 
+var updatePlayTypeURL = SITE + "/settingPlayType/updatePlayType";
+
+var updateUserTsURL = SITE + "/users/ts";
+
+var queryUserTsURL = SITE + "/users/ts/{userName}/{lotteryType}";

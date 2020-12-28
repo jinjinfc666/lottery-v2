@@ -38,6 +38,7 @@ import com.jll.entity.SysCode;
 import com.jll.entity.UserAccount;
 import com.jll.entity.UserAccountDetails;
 import com.jll.entity.UserInfo;
+import com.jll.entity.display.CreditMarket;
 import com.jll.game.BulletinBoard;
 import com.jll.game.IssueService;
 import com.jll.game.LotteryTypeFactory;
@@ -154,12 +155,13 @@ public class OrderServiceImpl implements OrderService
 		
 		
 		for (OrderInfo order : orders) {
-			
+			BigDecimal ts = parseTs(order, user);
 			seqVal = Utils.gen16DigitsSeq(Utils.getInstance().getSeq());
 			order.setWalletId(walletId);
 			order.setOrderNum(seqVal);
 			order.setUserId(user.getId());
 			order.setCreateTime(new Date());
+			order.setTs(ts);
 			if(order.getIsZhBlock() == null) {
 				order.setIsZhBlock(Constants.ZhBlockState.NON_BLOCK.getCode());
 			}
@@ -196,6 +198,8 @@ public class OrderServiceImpl implements OrderService
 			userDetails.setUserId(order.getUserId());
 			userDetails.setWalletId(walletId);
 			userDetails.setDataItemType(Constants.DataItemType.BALANCE.getCode());
+			userDetails.setPlayTypeId(order.getPlayType());
+			userDetails.setLotteryType(lotteryType);
 			accDetailsServ.saveAccDetails(userDetails);
 			
 			wallet.setBalance(postAmount);
@@ -224,6 +228,23 @@ public class OrderServiceImpl implements OrderService
 		
 				
 		return String.valueOf(Message.status.SUCCESS.getCode());
+	}
+
+	private BigDecimal parseTs(OrderInfo order, UserInfo user) {
+		CreditMarket currentMarket = user.getCurrentMarket();
+		Integer playTypeId = order.getPlayType();
+		PlayType playType = playTypeServ.queryById(playTypeId);
+		BigDecimal ts = null;
+		if(currentMarket.getMarketId().equals(Constants.CreditMarketEnum.MARKET_A.getCode())){
+			ts = playType.getaTs();
+		}else if(currentMarket.getMarketId().equals(Constants.CreditMarketEnum.MARKET_B.getCode())){
+			ts = playType.getbTs();
+		}else if(currentMarket.getMarketId().equals(Constants.CreditMarketEnum.MARKET_C.getCode())){
+			ts = playType.getcTs();
+		}else if(currentMarket.getMarketId().equals(Constants.CreditMarketEnum.MARKET_D.getCode())){
+			ts = playType.getdTs();
+		}
+		return ts;
 	}
 
 	private boolean processMMCIssue(List<OrderInfo> orders) {

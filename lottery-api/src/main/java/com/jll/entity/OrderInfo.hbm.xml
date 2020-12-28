@@ -102,5 +102,8 @@
         <property generated="never" lazy="false" name="createTime" optimistic-lock="true" type="timestamp" unique="false">
             <column length="19" name="create_time"/>
         </property>
+        <property generated="never" lazy="false" name="ts" optimistic-lock="true" type="big_decimal" unique="false">
+            <column length="19" name="ts"/>
+        </property>
     </class>
 </hibernate-mapping>
