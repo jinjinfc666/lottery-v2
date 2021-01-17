@@ -33,6 +33,7 @@ import com.jll.entity.MemberPlReport;
 import com.jll.entity.PlayType;
 import com.jll.entity.TeamPlReport;
 import com.jll.entity.UserInfo;
+import com.jll.entity.UserTs;
 import com.jll.user.UserInfoServiceImpl;
 
 @Repository
@@ -339,7 +340,7 @@ public class TReportDaoImpl extends DefaultGenericDaoImpl<TeamPlReport> implemen
 	}
 	
 	@Override
-	public TeamPlReport queryProfitByUser(Integer userId, Date createTime, Integer userType, String lotteryType, PlayType playType) {
+	public TeamPlReport queryProfitByUser(Integer userId, Date createTime, Integer userType, String lotteryType, UserTs userTs) {
 		String sql = "from TeamPlReport t where t.userId=? and t.createTime=? and t.userType=? and t.lotteryType=? and t.playType=?";
 		List<Object> params = new ArrayList<>();
 		TeamPlReport profit = null;
@@ -348,7 +349,7 @@ public class TReportDaoImpl extends DefaultGenericDaoImpl<TeamPlReport> implemen
 		params.add(createTime);
 		params.add(userType);
 		params.add(lotteryType);
-		params.add(playType.getBriefCla());
+		params.add(userTs.getPlayTypeBrief());
 		profit = queryLast(sql, params, TeamPlReport.class);
 				
 		return profit;

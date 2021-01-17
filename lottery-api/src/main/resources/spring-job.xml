@@ -15,8 +15,8 @@
 	<!-- <bean id="statProfitServiceImpl" class="com.jll.stat.StatProfitServiceImpl">
 	</bean> -->
 
-	<!-- <bean id="settlementServiceImpl" class="com.jll.settlement.SettlementServiceImpl">
-	</bean> -->
+	<bean id="settlementServiceImpl" class="com.jll.settlement.SettlementServiceImpl">
+	</bean>
 	
 	<bean id="makeAPlanJobDetail"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
@@ -75,7 +75,7 @@
 				<ref bean="makeAPlanTrigger"/>
 				<ref bean="processScheduleIssueCronTrigger"/>
 				<!-- <ref bean="statProfitServiceImplJobDetailCtronTrigger"/> -->
-				<!-- <ref bean="settlementServiceImplJobDetailCtronTrigger"/> -->
+				<ref bean="settlementServiceImplJobDetailCtronTrigger"/>
 			</list>
 		</property>
 	</bean>

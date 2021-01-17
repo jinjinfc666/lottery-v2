@@ -6,6 +6,7 @@ import java.util.Map;
 import com.jll.dao.PageBean;
 import com.jll.entity.PlayType;
 import com.jll.entity.TeamPlReport;
+import com.jll.entity.UserTs;
 
 public interface TReportService {
 
@@ -14,7 +15,7 @@ public interface TReportService {
 	//查找下级
 	public Map<String,Object> queryNextTeamAll(Map<String, Object> ret);
 	
-	public TeamPlReport queryProfitByUser(Integer userId, Date createTime, Integer userType, String lotteryType, PlayType playType);
+	public TeamPlReport queryProfitByUser(Integer userId, Date createTime, Integer userType, String lotteryType, UserTs userTpe);
 	
 	public void saveOrUpdateProfit(TeamPlReport profit);
 	

@@ -88,7 +88,7 @@ public class StatProfitServiceImpl implements StatProfitService, KafkaConsumer
 
 		handleProfit(accDetails, user, userType, false);
 
-		// 普通玩家的盈利直接算上级，对于代理类型用户的盈利需要从本身开始算累加盈利
+		// 鏅�氱帺瀹剁殑鐩堝埄鐩存帴绠椾笂绾э紝瀵逛簬浠ｇ悊绫诲瀷鐢ㄦ埛鐨勭泩鍒╅渶瑕佷粠鏈韩寮�濮嬬畻绱姞鐩堝埄
 		if (user.getUserType() == Constants.UserType.PLAYER.getCode()
 				|| user.getUserType() == Constants.UserType.SM_PLAYER.getCode()
 				|| user.getUserType() == Constants.UserType.XY_PLAYER.getCode()
@@ -141,12 +141,16 @@ public class StatProfitServiceImpl implements StatProfitService, KafkaConsumer
 		
 		Integer playTypeId = trg.getPlayTypeId();
 		PlayType playType = playTypeServ.queryById(playTypeId);
+		
 		String lotteryType = trg.getLotteryType();
+		
+		UserTs userTs = userTsServ.queryUserTsByPlayTypeId(userInfo.getUserId(), lotteryType, playTypeId);
+		
 		profit = reportServ.queryProfitByUser(userInfo.getId(), 
 				trg.getCreateTime(), 
 				userType,
 				lotteryType,
-				playType);
+				userTs);
 		
 		if(profit == null) {
 			profit = new TeamPlReport();
@@ -156,7 +160,7 @@ public class StatProfitServiceImpl implements StatProfitService, KafkaConsumer
 			profit.setUserType(userType);
 			profit.setSettlementFlag(Constants.SettlementState.pending.getCode());
 			profit.setLotteryType(lotteryType);
-			profit.setPlayType(playType.getBriefCla());
+			profit.setPlayType(playType.getClassification());
 		}
 		
 		if(trg.getOperationType().equals(Constants.AccOperationType.BETTING.getCode())) {
@@ -211,7 +215,7 @@ public class StatProfitServiceImpl implements StatProfitService, KafkaConsumer
 						profit.getCancelAmount());
 			
 			//agent team ts
-			UserTs userTs = userTsServ.queryUserTsByPlayTypeId(userInfo.getUserId(), lotteryType, playTypeId);
+//			UserTs userTs = userTsServ.queryUserTsByPlayTypeId(userInfo.getUserId(), lotteryType, playTypeId);
 			BigDecimal userTsAmount = parseUserTsAmount(userTs, userInfo);
 			settlementAmount = settlementAmount.add(tempVal.multiply(userTsAmount));
 			

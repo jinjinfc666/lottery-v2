@@ -1,9 +1,8 @@
 package com.jll.settlement;
 
+import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -15,7 +14,6 @@ import com.jll.common.cache.CacheRedisService;
 import com.jll.common.constants.Constants;
 import com.jll.common.constants.Constants.SettlementState;
 import com.jll.common.constants.Constants.UserType;
-import com.jll.common.constants.Constants.WalletState;
 import com.jll.common.constants.Constants.WalletType;
 import com.jll.common.utils.DateUtil;
 import com.jll.dao.PageBean;
@@ -76,49 +74,8 @@ public class SettlementServiceImpl implements SettlementService
 					users = page.getContent();
 					
 					for(UserInfo user : users) {
-						UserSettlement settlement = userSettlementServ.queryPendingExisting(user);
-												
-						UserSettlement settlementNew = produceStatement(user);
-						
-						//已经存在
-						if(settlement != null
-								&& settlementNew != null 
-								&& settlementNew.getAvailableCredit().doubleValue() == settlement.getAvailableCredit().doubleValue()) {
-							continue;
-						}
-						
-						if(settlement == null
-								&& settlementNew != null) {
-							settlement = settlementNew;
-						}else if(settlement != null
-								&& settlementNew != null
-								&& settlementNew.getAvailableCredit().doubleValue() != settlement.getAvailableCredit().doubleValue()) {
-							settlement.setAvailableCredit(settlementNew.getAvailableCredit());
-						}
-						
-						
-						if(settlement != null) {
-							userSettlementServ.saveSettlement(settlement);
-						}
-						
-						
-						Map<String, Object> param = new HashMap<>();
-						param.put("userId", user.getId());
-						Map<String, Object> accs = walletServ.queryByUserIdUserAccount(param);
-						if(accs != null) {
-							List accList = (List)accs.get("data");
-							if(accList != null && accList.size() > 0) {
-								for(Object accObj : accList) {
-									UserAccount acc = (UserAccount)accObj;
-									if(acc.getState().intValue() == WalletState.FROZEN.getCode()) {
-										continue;
-									}
-									acc.setState(WalletState.FROZEN.getCode());
-									
-									walletServ.updateWallet(acc);
-								}
-							}
-						}
+						resetUsedCreditAmount(user);
+						resetUserBal(user);
 					}
 					
 					page.setPageIndex(page.getPageIndex()+1);
@@ -138,6 +95,18 @@ public class SettlementServiceImpl implements SettlementService
 			logger.debug(String.format("Thread ID %s try to stat profit, but failed to obtain locker ", Thread.currentThread().getId()));
 		}
 		
+	}
+
+	private void resetUserBal(UserInfo user) {
+		String xyAmount = userExtServ.queryFiledByName(user.getId(), "xyAmount");
+		UserAccount wallet = walletServ.queryUserAccount(user.getId(), WalletType.MAIN_WALLET.getCode());
+		wallet.setBalance(new BigDecimal(xyAmount).doubleValue());
+		walletServ.updateWallet(wallet);
+	}
+
+	private void resetUsedCreditAmount(UserInfo user) {
+		user.setUsedCreditAmount(new BigDecimal("0.0"));
+		userExtServ.saveUserInfoExt(user);
 	}
 
 	private UserSettlement produceStatement(UserInfo user) {

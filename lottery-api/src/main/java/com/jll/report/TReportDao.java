@@ -7,6 +7,7 @@ import com.jll.dao.PageBean;
 import com.jll.entity.PlayType;
 import com.jll.entity.TeamPlReport;
 import com.jll.entity.UserInfo;
+import com.jll.entity.UserTs;
 
 public interface TReportDao {
 	//团队盈亏报表
@@ -18,7 +19,7 @@ public interface TReportDao {
 	
 	public TeamPlReport queryProfitByUser(Integer userId, 
 			Date createTime, 
-			Integer userType, String lotteryType, PlayType playType);
+			Integer userType, String lotteryType, UserTs userTs);
 	
 	public Map<String, Object> queryNextTeamAllSm(String startTime, 
 			String endTime, 

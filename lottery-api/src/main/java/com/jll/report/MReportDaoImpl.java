@@ -49,22 +49,42 @@ public class MReportDaoImpl extends DefaultGenericDaoImpl<MemberPlReport> implem
 			map.put("endTime", endDate);
 		}
 		
-		if(userType != null) {
+		/*if(userType != null) {
 			buffer.append("and user_type=:userType ");
 			map.put("userType", userType);
-		}
+		}*/
 		
 		
 		//String sql = "select user_name,SUM(deposit) as deposit,SUM(withdrawal) as withdrawal ,SUM(transfer) as transfer ,SUM(transfer_out) as transfer_out,SUM(deduction) as deduction,sum(consumption) as consumption,SUM(cancel_amount) as cancel_amount,SUM(return_prize) as return_prize,SUM(rebate) as rebate,sum(profit) as profit,user_type from member_pl_report "+timeSql+userNameSql+" GROUP BY user_name,user_type";
-		String sql = "select user_name,deposit,withdrawal,transfer,transfer_out,deduction,consumption,cancel_amount,return_prize,rebate,profit,user_type,create_time,sys_bonus from team_pl_report where 1=1 "+ buffer.toString() + " order by create_time desc";
+//		String sql = "select user_name,deposit,withdrawal,transfer,transfer_out,deduction,consumption,cancel_amount,return_prize,rebate,profit,user_type,create_time,sys_bonus from team_pl_report where 1=1 "+ buffer.toString() + " order by create_time desc";
+//		String sql = "select user_name,SUM(deposit) as deposit,SUM(withdrawal) as withdrawal,SUM(transfer) as transfer ,SUM(transfer_out) as transfer_out,SUM(deduction) as deduction,sum(consumption) as consumption,SUM(cancel_amount) as cancel_amount,SUM(return_prize) as return_prize,SUM(rebate) as rebate,SUM(recharge_member) AS recharge_member,SUM(new_members) as new_members,sum(profit) as profit,user_type from team_pl_report where 1=1 "+buffer.toString()+" GROUP BY user_name";
+		StringBuffer sqlBuffer = new StringBuffer();
+		sqlBuffer.append("select userInfo.user_name user_name,userInfo.user_type, t.* from ")
+		.append("(")
+		.append("select ")
+		.append("lottery_type,")
+		.append("user_id,")
+		.append("SUM(consumption) as consumption,")
+		.append("SUM(cancel_amount) as cancel_amount,")
+		.append("SUM(return_prize) as return_prize,")
+		.append("SUM(zc_amount) as zc,")
+		.append("SUM(ts_amount) as ts,")
+		.append("SUM(profit)*(-1) as profit ")
+		.append("from team_pl_report ")
+		.append("where user_name=:userName ")
+		.append("and create_time >=:startTime and create_time <=:endTime ")
 		
-		logger.debug(sql+"-----------------------------queryLoyTst----SQL--------------------------------");
+		.append(")t ")
+		.append("left join ")
+		.append("user_info userInfo on t.user_id = userInfo.id ")
+		.append("order by t.user_id ");
+//		logger.debug(sql+"-----------------------------queryLoyTst----SQL--------------------------------");
 		PageBean page=new PageBean();
 		page.setPageIndex(pageIndex);
 		page.setPageSize(pageSize);
 		PageBean pageBean=null;
 		try {
-			pageBean=queryBySqlPagination(page, sql,map);
+			pageBean=queryBySqlPagination(page, sqlBuffer.toString(),map);
 		}catch(Exception e) {
 			e.printStackTrace();
 		}

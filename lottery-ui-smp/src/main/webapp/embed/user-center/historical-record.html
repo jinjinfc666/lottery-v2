@@ -158,31 +158,31 @@
 			                    			onfocus="WdatePicker({dateFmt:'yyyy-MM-dd'})" 
 			                    			my97mark="false">
 			                    			
+			                    	<button class="u_btn j-btnSearch" ng-click="queryProfitRec(1)">本周</button>
+			                    	<button class="u_btn j-btnSearch" ng-click="queryProfitRec(1)">本月</button>
+			                    	<button class="u_btn j-btnSearch" ng-click="queryProfitRec(1)">上周</button>
+			                    	<button class="u_btn j-btnSearch" ng-click="queryProfitRec(1)">上月</button>
 			                    	<button class="u_btn j-btnSearch" ng-click="queryProfitRec(1)">查 询</button>
                                 </div>
                                 <div class="tblwrapper" style="background: none;">
                                     <table class="table u_table no-footer" id="DataTables_Table_5" role="grid" style="">
 	                                    <thead>
 		                                    <tr role="row">
-		                                    	<th class="" rowspan="1" colspan="1" style="width: 0px;">日期</th>
-		                                    	<th class="" rowspan="1" colspan="1" style="width: 0px;">用户</th>
-			                                    <th class="" rowspan="1" colspan="1" style="width: 0px;">消费</th>
-			                                    <th class="" rowspan="1" colspan="1" style="width: 0px;">返奖</th>
-			                                    <th class="" rowspan="1" colspan="1" style="width: 0px;">返点</th>
-			                                    <th class="" rowspan="1" colspan="1" style="width: 0px;">平台奖励</th>
-			                                    <th class="" rowspan="1" colspan="1" style="width: 0px;">利润</th>
+		                                    	<th class="" rowspan="1" colspan="1" style="width: 0px;">消费</th>
+		                                    	<th class="" rowspan="1" colspan="1" style="width: 0px;">返奖</th>
+			                                    <th class="" rowspan="1" colspan="1" style="width: 0px;">占成</th>
+			                                    <th class="" rowspan="1" colspan="1" style="width: 0px;">退水</th>
+			                                    <th class="" rowspan="1" colspan="1" style="width: 0px;">盈利</th>
 			                                    
 		                                    </tr>
 	                                    </thead>
 	                                    <tbody>
 			                            	<tr class="odd" ng-repeat="v in profitRecs.content">
-			                            			<td valign="top" colspan="1" class="dataTables_empty">{{v[12]}}</td>
-			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[0]}}</td>
+			                            			<td valign="top" colspan="1" class="dataTables_empty">{{v[4]}}</td>
 			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[6]}}</td>
+			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[7]}}</td>
 			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[8]}}</td>
 			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[9]}}</td>
-			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[13]}}</td>
-			                                    	<td valign="top" colspan="1" class="dataTables_empty">{{v[10]}}</td>
 			                                    	
 			                           		</tr>
 		                               </tbody>

@@ -16,6 +16,7 @@ import com.jll.dao.PageBean;
 import com.jll.entity.PlayType;
 import com.jll.entity.TeamPlReport;
 import com.jll.entity.UserInfo;
+import com.jll.entity.UserTs;
 import com.jll.user.UserInfoService;
 
 
@@ -52,8 +53,8 @@ public class TReportServiceImpl implements TReportService {
 	}
 	
 	@Override
-	public TeamPlReport queryProfitByUser(Integer userId, Date createTime, Integer userType, String lotteryType, PlayType playType) {		
-		return tReportDao.queryProfitByUser(userId, createTime, userType, lotteryType, playType);
+	public TeamPlReport queryProfitByUser(Integer userId, Date createTime, Integer userType, String lotteryType, UserTs userTs) {		
+		return tReportDao.queryProfitByUser(userId, createTime, userType, lotteryType, userTs);
 	}
 	
 	@Override

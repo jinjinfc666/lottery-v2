@@ -38,6 +38,7 @@ import com.jll.entity.SysCode;
 import com.jll.entity.UserAccount;
 import com.jll.entity.UserAccountDetails;
 import com.jll.entity.UserInfo;
+import com.jll.entity.UserTs;
 import com.jll.entity.display.CreditMarket;
 import com.jll.game.BulletinBoard;
 import com.jll.game.IssueService;
@@ -48,6 +49,7 @@ import com.jll.game.playtype.PlayTypeService;
 import com.jll.game.playtypefacade.PlayTypeFactory;
 import com.jll.user.UserInfoExtService;
 import com.jll.user.UserInfoService;
+import com.jll.user.UserTsService;
 import com.jll.user.details.UserAccountDetailsService;
 import com.jll.user.expert.ExpertService;
 import com.jll.user.wallet.WalletService;
@@ -79,7 +81,10 @@ public class OrderServiceImpl implements OrderService
 	GenSequenceService genSeqServ;
 	
 	@Resource
-	PlayTypeService playTypeServ;	
+	PlayTypeService playTypeServ;
+
+	@Resource
+	UserTsService userTsServ;
 	
 	@Resource
 	IssueService issueServ;
@@ -234,15 +239,16 @@ public class OrderServiceImpl implements OrderService
 		CreditMarket currentMarket = user.getCurrentMarket();
 		Integer playTypeId = order.getPlayType();
 		PlayType playType = playTypeServ.queryById(playTypeId);
+		UserTs userTs = userTsServ.queryUserTsByPlayTypeId(user.getUserId(), playType.getLotteryType(), playTypeId);
 		BigDecimal ts = null;
 		if(currentMarket.getMarketId().equals(Constants.CreditMarketEnum.MARKET_A.getCode())){
-			ts = playType.getaTs();
+			ts = userTs.getaTs();
 		}else if(currentMarket.getMarketId().equals(Constants.CreditMarketEnum.MARKET_B.getCode())){
-			ts = playType.getbTs();
+			ts = userTs.getbTs();
 		}else if(currentMarket.getMarketId().equals(Constants.CreditMarketEnum.MARKET_C.getCode())){
-			ts = playType.getcTs();
+			ts = userTs.getcTs();
 		}else if(currentMarket.getMarketId().equals(Constants.CreditMarketEnum.MARKET_D.getCode())){
-			ts = playType.getdTs();
+			ts = userTs.getdTs();
 		}
 		return ts;
 	}
