@@ -6,13 +6,16 @@ import java.util.Date;
 import javax.annotation.Resource;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.kafka.core.KafkaTemplate;
 
 import com.jll.common.cache.CacheRedisService;
 import com.jll.common.cache.CacheRedisServiceImpl;
 import com.jll.common.constants.Constants;
+import com.jll.common.constants.Constants.KafkaTopics;
 import com.jll.common.threadpool.ThreadPoolManager;
 import com.jll.common.utils.StringUtils;
 import com.jll.entity.Issue;
@@ -34,6 +37,9 @@ public class PayoutListenerImpl implements MessageDelegateListener {
 	
 	@Value("${sys_lottery_type_impl}")
 	private String lotteryTypeImpl;
+	
+	@Autowired
+	private KafkaTemplate<Integer, String> kafkaTemplate;
 	
 	@Override
 	public void handleMessage(Serializable message) {
@@ -93,6 +99,8 @@ public class PayoutListenerImpl implements MessageDelegateListener {
 								break;
 							}
 						}
+						
+						kafkaTemplate.send(KafkaTopics.SETTLEMENT.getDesc(), "settlement");
 					}finally {
 						lockEnd = new Date();
 						logger.debug(String.format("Thread ID %s release locker , consume %s ms", 

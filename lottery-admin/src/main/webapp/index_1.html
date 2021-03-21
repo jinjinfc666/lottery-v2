@@ -163,7 +163,8 @@
                             $.each(data.data, function(key, val) {
                             	if(val=='ROLE_CUSTOMER_SERVICE'
                             			|| val=='ROLE_MANAGER'
-                            			|| val=='ROLE_FINANCE' ){
+                            			|| val=='ROLE_FINANCE' 
+                            			|| val=='ROLE_AGENT_XY'){
                                     document.getElementById("report").style.display="inline";
                                 }
                             	
@@ -190,7 +191,8 @@
                                     
                                     if(val=='ROLE_CUSTOMER_SERVICE' 
                                 		|| val=='ROLE_FINANCE' 
-                                    	|| val=='ROLE_MANAGER'){
+                                    	|| val=='ROLE_MANAGER'
+                                    		|| val=='ROLE_AGENT_XY'){
                                     	document.getElementById("user_management").style.display="inline";
                                     	document.getElementById("account_management").style.display="inline";
                                     }
@@ -198,17 +200,13 @@
                                     
                                 }
                                 
-                                if(val=='ROLE_CUSTOMER_SERVICE'||val=='ROLE_MANAGER'){
+                                if(val=='ROLE_CUSTOMER_SERVICE'
+                                		||val=='ROLE_MANAGER'
+                                		||val=='ROLE_AGENT_XY'){
                                     document.getElementById("betting_order").style.display="inline";
                                 }
                                 
-                                if(val=='ROLE_CUSTOMER_SERVICE'
-                                		||val=='ROLE_MANAGER'
-                                		|| val == 'ROLE_AGENT_SM'
-                                		|| val == 'ROLE_AGENT_XY'
-                                		|| val == 'ROLE_AGENT_ENTRUST'){
-                                    document.getElementById("betting_order_xy").style.display="inline";
-                                }
+                                
                                 
                                 if(val=='ROLE_MANAGER'){
                                     document.getElementById("agent_maintaince").style.display="inline";
@@ -216,8 +214,12 @@
                                 
                                 if(val=='ROLE_CUSTOMER_SERVICE'
                                 		|| val=='ROLE_MANAGER'
-                                		|| val=='ROLE_FINANCE'){
+                                		|| val=='ROLE_FINANCE'
+                                		|| val == 'ROLE_AGENT_XY'){
                                     document.getElementById("system_operation").style.display="inline";
+                                    if(val == 'ROLE_AGENT_XY'){
+                                    	document.getElementById("issue_operation").style.display="none";
+                                    }                                    
                                 }
                                                                 
                                 if(val=='ROLE_ADMIN'||val=='ROLE_RISK_MANAGEMENT'){
@@ -339,18 +341,18 @@
                                     <span class="fa arrow"></span>
                                 </a>
                                 <ul class="nav nav-second-level">
-                                    <li>
+                                    <!-- <li>
                                         <a class="J_menuItem"  href="SystemConfiguration/SysCodeBigType.html?v=4.0">&nbsp;&nbsp;&nbsp;&nbsp;代码类型管理</a>
-                                    </li>
+                                    </li> -->
                                     <li>
                                         <a class="J_menuItem"  href="SystemConfiguration/SmallLotteryType.html?v=4.0">&nbsp;&nbsp;&nbsp;&nbsp;彩种类型配置</a>
                                     </li>
                                     <li>
                                         <a class="J_menuItem"  href="SystemConfiguration/updateOdds.html?v=4.0">&nbsp;&nbsp;&nbsp;&nbsp;赔率配置</a>
                                     </li>
-                                    <li>
+                                    <!-- <li>
                                         <a class="J_menuItem"  href="SystemConfiguration/SmallFlowType.html?v=4.0">&nbsp;&nbsp;&nbsp;&nbsp;流水类型配置</a>
-                                    </li>
+                                    </li> -->
                                     <!-- <li>
                                         <a class="J_menuItem"  href="SystemConfiguration/SmallLuckyDraw.html?v=4.0">&nbsp;&nbsp;&nbsp;&nbsp;幸运抽奖配置</a>
                                     </li> -->
@@ -362,6 +364,9 @@
                                     </li> -->
                                     <!-- <li>
                                         <a class="J_menuItem"  href="SystemConfiguration/SmallPTypeClassicfication.html?v=4.0">&nbsp;&nbsp;&nbsp;&nbsp;玩法类型配置</a>
+                                    </li> -->
+                                    <!-- <li>
+                                        <a class="J_menuItem"  href="SystemConfiguration/SmallLotteryConfig.html?v=4.0">&nbsp;&nbsp;&nbsp;&nbsp;彩种属性配置</a>
                                     </li> -->
                                     <li>
                                         <a class="J_menuItem"  href="SystemConfiguration/SmallLotteryConfig.html?v=4.0">&nbsp;&nbsp;&nbsp;&nbsp;彩种属性配置</a>
@@ -422,7 +427,7 @@
                             <li id="user_management" style="display: none;">
                                 <a class="J_menuItem"  href="MemberManagement/UserInfo.html?v=4.0" data-id="MemberManagement/UserInfo.html">会员信息</a>
                             </li>
-                            <li>
+                            <li style="display: none;">
                                 <a class="J_menuItem"  href="MemberManagement/userTs.html?v=4.0">用户退水</a>
                             </li>
                             <li id="account_management" style="display: none;">
@@ -434,14 +439,14 @@
                         </ul>
                     </li>
                                         
-                    <li id="system_operation" >
+                    <li id="system_operation" style="display: none;">
                         <a class="J_menuItem">
                             <i class="fa fa-edit"></i> 
                             <span class="nav-label">系统操作</span>
                             <span class="fa arrow"></span>
                         </a>
                         <ul class="nav nav-second-level">
-                            <li>
+                            <li id="issue_operation" style="display: block;">
                                 <a class="J_menuItem"  href="SystemOperation/UnifiedWwithdrawal.html?v=4.0">期次处理</a>
                             </li>
                             <li id="betting_order" style="display: block;">

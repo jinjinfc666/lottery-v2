@@ -1172,29 +1172,14 @@ public class UserController {
 			
 			if(user.getUserType().intValue() == UserType.XY_AGENCY.getCode() 
 					|| user.getUserType().intValue() == UserType.XY_PLAYER.getCode()){
-				if(userInfo.getTsAmount() == null || userInfo.getZcAmount() == null){
+				if(userInfo.getZcAmount() == null){
 					ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
 					ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_USER_NO_TS_ZC.getCode());
 					ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_USER_NO_TS_ZC.getErrorMes());
 					return ret; 
 				}
 				
-				if(userInfo.getTsAmount().compareTo(new BigDecimal(0)) == -1
-						|| userInfo.getZcAmount().compareTo(new BigDecimal(0)) == -1){
-					ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
-					ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_USER_ERROR_TS_ZC_LESS_THAN_ZERO.getCode());
-					ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_USER_ERROR_TS_ZC_LESS_THAN_ZERO.getErrorMes());
-					return ret; 
-				}
-				
-				if(superior != null && superior.getZcAmount() != null && superior.getTsAmount() != null){
-					if(userInfo.getTsAmount().compareTo(superior.getTsAmount()) != -1){
-						ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
-						ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_USER_ERROR_TS_ZC.getCode());
-						ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_USER_ERROR_TS_ZC.getErrorMes());
-						return ret; 
-					}
-					
+				if(superior != null && superior.getZcAmount() != null){					
 					if(userInfo.getZcAmount().compareTo(superior.getZcAmount()) != -1){
 						ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
 						ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_USER_ERROR_TS_ZC.getCode());

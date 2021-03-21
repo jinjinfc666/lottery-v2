@@ -2,7 +2,9 @@ package com.jll.user;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Repository;
@@ -32,12 +34,12 @@ public class UserTsDaoImpl extends DefaultGenericDaoImpl<UserTs> implements User
 	}
 
 	@Override
-	public UserTs queryUserTsByPlayTypeId(String userId, String lotteryType, Integer playTypeId) {
-		String hql = "from UserTs where userId=? and lotteryType=? and playTypeId=?";
-		List<Object> params = new ArrayList<>();
-		params.add(userId);
-		params.add(lotteryType);
-		params.add(playTypeId);
+	public UserTs queryUserTsByPlayTypeId(Integer userId, String lotteryType, Integer playTypeId) {
+		String hql = "from UserTs where userId=:userId and lotteryType=:lotteryType and playTypeId=:playTypeId";
+		Map<String, Object> params = new HashMap<>();
+		params.put("userId", userId);
+		params.put("lotteryType", lotteryType);
+		params.put("playTypeId", playTypeId);
 		return queryLast(hql, params, UserTs.class);
 	}
 }

@@ -33,16 +33,8 @@ public class EwDwBgSZPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 	private Logger logger = Logger.getLogger(EwDwBgSZPlayTypeFacadeImpl.class);
 	
 	protected String playTypeDesc = "sz|数值/bg|百个/ewdw|二位定位/fs";
-	
-	private final int PRIME = 1;
-	
-	private final int COMPOSITE = 0;
-	
+		
 	private String betNumOptions = "0123456789";
-	
-	private String primeStr = "12357";
-	
-	private String smallStr = "04689";
 	
 	@Override
 	public boolean isMatchWinningNum(Issue issue, OrderInfo order) {
@@ -64,13 +56,13 @@ public class EwDwBgSZPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		betNumMul = betNum.split(";");
 		
 		for(String temp : betNumMul) {
-			if(!String.valueOf(temp.charAt(0)).equals(winNumSet[0])
-					|| !String.valueOf(temp.charAt(2)).equals(winNumSet[2])){
-				return false;
+			if(String.valueOf(temp.charAt(0)).equals(winNumSet[0])
+					&& String.valueOf(temp.charAt(2)).equals(winNumSet[2])){
+				return true;
 			}
 		}
 				
-		return true;
+		return false;
 	}
 
 	@Override
@@ -180,36 +172,31 @@ public class EwDwBgSZPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		int winNumFinal = -1;
 		
 		//1700 --- 1960
-		Float prizePattern = userServ.calPrizePattern(user, issue.getLotteryType());
-		BigDecimal winningRate = calWinningRate();
-		singleBettingPrize =  calSingleBettingPrize(prizePattern, winningRate);
+//		Float prizePattern = userServ.calPrizePattern(user, issue.getLotteryType());
+		BigDecimal winningRate = order.getPrizeRate();
+//		singleBettingPrize =  calSingleBettingPrize(prizePattern, winningRate);
 		
 		winNum = issue.getRetNum();
 		betNum = order.getBetNum();
 		//winNum = winNum.substring(0, 5);
 		winNumSet = winNum.split(",");
 		betNumMul = betNum.split(";");
-		
-		if(Integer.parseInt(winNumSet[0]) >= 5) {
-			winNumFinal = PRIME;
-		}else {
-			winNumFinal = COMPOSITE;
-		}
-		
+				
 		for(String singleSel : betNumMul) {
 			//betNumSet = singleSel.split(",");
-			if(singleSel.contains("0" + String.valueOf(winNumFinal))) {
+			if(String.valueOf(singleSel.charAt(0)).equals(winNumSet[0])
+					&& String.valueOf(singleSel.charAt(2)).equals(winNumSet[2])){
 				winningBetAmount++;
 			}
 		}
 		
 		betAmount = MathUtil.multiply(winningBetAmount, times, Float.class);
 		betAmount = MathUtil.multiply(betAmount, monUnit.floatValue(), Float.class);
-		maxWinAmount = MathUtil.multiply(betAmount, singleBettingPrize.floatValue(), Float.class);
+		maxWinAmount = MathUtil.multiply(betAmount, winningRate, Float.class);
 		
 		ret.put(Constants.KEY_WINNING_BET_TOTAL, winningBetAmount);
 		ret.put(Constants.KEY_WIN_AMOUNT, maxWinAmount);
-		ret.put(Constants.KEY_SINGLE_BETTING_PRIZE, singleBettingPrize);
+		ret.put(Constants.KEY_SINGLE_BETTING_PRIZE, winningRate);
 		
 		return ret;
 	}

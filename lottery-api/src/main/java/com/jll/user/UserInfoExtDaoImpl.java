@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
@@ -42,123 +43,104 @@ public class UserInfoExtDaoImpl extends DefaultGenericDaoImpl<UserInfoExt> imple
 		List<Object> params = new ArrayList<>();
 		params.add(user.getId());
 		List<UserInfoExt> exts = query(sql, params, UserInfoExt.class);
-		
-		if(CollectionUtils.isEmpty(exts)) {
-			if(!StringUtils.isEmpty(user.getCreditMarketIds())) {
+		Map<String, UserInfoExt> extsInMap = exts.stream().collect(Collectors.toMap(UserInfoExt::getExtFieldName, v->v,(oldVal, newVal)->newVal));
+
+		if(!StringUtils.isEmpty(user.getCreditMarketIds())) {
+			ext = extsInMap.get("creditMarket");
+			if(ext == null){
 				ext = new UserInfoExt();
-				ext.setUserId(user.getId());
-				ext.setExtFieldName("creditMarket");
-				ext.setExtFieldVal(user.getCreditMarketIds());
-				ext.setCreateTime(today);
-				
-				this.saveOrUpdate(ext);
-				
-				ext = new UserInfoExt();
-				ext.setUserId(user.getId());
-				ext.setExtFieldName("usedCreditAmount");
-				ext.setExtFieldVal("0.00");
-				ext.setCreateTime(today);
-				this.saveOrUpdate(ext);
-				
-				ext = new UserInfoExt();
-				ext.setUserId(user.getId());
-				ext.setExtFieldName("currCreditMarket");
-				ext.setExtFieldVal(String.valueOf(user.getCreditMarketIds().charAt(0)));
-				ext.setCreateTime(today);
-				this.saveOrUpdate(ext);
 			}
 			
-			if(user.getCurrentMarket() != null) {
-				CreditMarket currentMarket = user.getCurrentMarket();
-				
-				ext = new UserInfoExt();
-				ext.setUserId(user.getId());
-				ext.setExtFieldName("currCreditMarket");
-				ext.setExtFieldVal(String.valueOf(currentMarket.getMarketId()));
-				ext.setCreateTime(today);
-				
-				this.saveOrUpdate(ext);
-			}
+			ext.setUserId(user.getId());
+			ext.setExtFieldName("creditMarket");
+			ext.setExtFieldVal(user.getCreditMarketIds());
+			ext.setCreateTime(today);
 			
-			if(user.getXyAmount() != null) {
-				ext = new UserInfoExt();
-				ext.setUserId(user.getId());
-				ext.setExtFieldName("xyAmount");
-				ext.setExtFieldVal(String.valueOf(user.getXyAmount()));
-				ext.setCreateTime(today);
-					
-				this.saveOrUpdate(ext);
-			}
+			this.saveOrUpdate(ext);
 			
-			if(user.getXyPayoutRate() != null) {
-				ext = new UserInfoExt();
-				ext.setUserId(user.getId());
-				ext.setExtFieldName("xyPayoutRate");
-				ext.setExtFieldVal(String.valueOf(user.getXyPayoutRate()));
-				ext.setCreateTime(today);
-					
-				this.saveOrUpdate(ext);
-			}
+			ext = new UserInfoExt();
+			ext.setUserId(user.getId());
+			ext.setExtFieldName("usedCreditAmount");
+			ext.setExtFieldVal("0.00");
+			ext.setCreateTime(today);
+			this.saveOrUpdate(ext);
 			
-			if(user.getZcAmount() != null){
+			ext = extsInMap.get("currCreditMarket");
+			if(ext == null){
 				ext = new UserInfoExt();
-				ext.setUserId(user.getId());
-				ext.setExtFieldName("zcAmount");
-				ext.setExtFieldVal(String.valueOf(user.getZcAmount().divide(new BigDecimal(100))));
-				ext.setCreateTime(today);
-					
-				this.saveOrUpdate(ext);
 			}
-			
-			if(user.getTsAmount() != null){
-				ext = new UserInfoExt();
-				ext.setUserId(user.getId());
-				ext.setExtFieldName("tsAmount");
-				ext.setExtFieldVal(String.valueOf(user.getTsAmount().divide(new BigDecimal(100))));
-				ext.setCreateTime(today);
-					
-				this.saveOrUpdate(ext);
-			}
-			
-			if(user.getUsedCreditAmount() != null){
-				ext = new UserInfoExt();
-				ext.setUserId(user.getId());
-				ext.setExtFieldName("usedCreditAmount");
-				ext.setExtFieldVal(String.valueOf(user.getUsedCreditAmount()));
-				ext.setCreateTime(today);
-					
-				this.saveOrUpdate(ext);
-			}
-		}else {
-			for(UserInfoExt ext_ : exts) {
-				if(ext_.getExtFieldName().equals("creditMarket") && !StringUtils.isEmpty(user.getCreditMarketIds())) {
-					StringBuffer buffer = new StringBuffer();					
-					ext_.setExtFieldVal(user.getCreditMarketIds());
-					this.saveOrUpdate(ext_);
-					
-				}else if(ext_.getExtFieldName().equals("currCreditMarket") && user.getCurrentMarket() != null) {
-					ext_.setExtFieldVal(String.valueOf(user.getCurrentMarket().getMarketId()));
-					this.saveOrUpdate(ext_);
-				}else if(ext_.getExtFieldName().equals("xyAmount") && user.getXyAmount() != null) {
-					ext_.setExtFieldVal(String.valueOf(user.getXyAmount()));
-					this.saveOrUpdate(ext_);
-				}else if(ext_.getExtFieldName().equals("xyPayoutRate") && user.getXyPayoutRate() != null) {
-					ext_.setExtFieldVal(String.valueOf(user.getXyPayoutRate()));
-					this.saveOrUpdate(ext_);
-				}else if(ext_.getExtFieldName().equals("zcAmount") && user.getZcAmount() != null) {
-					ext_.setExtFieldVal(String.valueOf(user.getZcAmount().multiply(new BigDecimal(0.01))));
-					this.saveOrUpdate(ext_);
-				}else if(ext_.getExtFieldName().equals("tsAmount") && user.getTsAmount() != null) {
-					ext_.setExtFieldVal(String.valueOf(user.getTsAmount().multiply(new BigDecimal(0.01))));
-					this.saveOrUpdate(ext_);
-				}else if(ext_.getExtFieldName().equals("usedCreditAmount") && user.getUsedCreditAmount() != null) {
-					ext_.setExtFieldVal(String.valueOf(user.getUsedCreditAmount()));
-					this.saveOrUpdate(ext_);
-				}
-			}
+			ext.setUserId(user.getId());
+			ext.setExtFieldName("currCreditMarket");
+			ext.setExtFieldVal(String.valueOf(user.getCreditMarketIds().charAt(0)));
+			ext.setCreateTime(today);
+			this.saveOrUpdate(ext);
 		}
 		
+		if(user.getCurrentMarket() != null) {
+			CreditMarket currentMarket = user.getCurrentMarket();
+			
+			ext = extsInMap.get("currCreditMarket");
+			if(ext == null){
+				ext = new UserInfoExt();
+			}
+			ext.setUserId(user.getId());
+			ext.setExtFieldName("currCreditMarket");
+			ext.setExtFieldVal(String.valueOf(currentMarket.getMarketId()));
+			ext.setCreateTime(today);
+			
+			this.saveOrUpdate(ext);
+		}
 		
+		if(user.getXyAmount() != null) {
+			ext = extsInMap.get("xyAmount");
+			if(ext == null){
+				ext = new UserInfoExt();
+			}
+			ext.setUserId(user.getId());
+			ext.setExtFieldName("xyAmount");
+			ext.setExtFieldVal(String.valueOf(user.getXyAmount()));
+			ext.setCreateTime(today);
+				
+			this.saveOrUpdate(ext);
+		}
+		
+		if(user.getXyPayoutRate() != null) {
+			ext = extsInMap.get("xyPayoutRate");
+			if(ext == null){
+				ext = new UserInfoExt();
+			}
+			ext.setUserId(user.getId());
+			ext.setExtFieldName("xyPayoutRate");
+			ext.setExtFieldVal(String.valueOf(user.getXyPayoutRate()));
+			ext.setCreateTime(today);
+				
+			this.saveOrUpdate(ext);
+		}
+		
+		if(user.getZcAmount() != null){
+			ext = extsInMap.get("zcAmount");
+			if(ext == null){
+				ext = new UserInfoExt();
+			}
+			ext.setUserId(user.getId());
+			ext.setExtFieldName("zcAmount");
+			ext.setExtFieldVal(String.valueOf(user.getZcAmount().divide(new BigDecimal(100))));
+			ext.setCreateTime(today);
+				
+			this.saveOrUpdate(ext);
+		}
+		if(user.getUsedCreditAmount() != null){
+			ext = extsInMap.get("usedCreditAmount");
+			if(ext == null){
+				ext = new UserInfoExt();
+			}
+			ext.setUserId(user.getId());
+			ext.setExtFieldName("usedCreditAmount");
+			ext.setExtFieldVal(String.valueOf(user.getUsedCreditAmount()));
+			ext.setCreateTime(today);
+				
+			this.saveOrUpdate(ext);
+		}
 	}
 
 

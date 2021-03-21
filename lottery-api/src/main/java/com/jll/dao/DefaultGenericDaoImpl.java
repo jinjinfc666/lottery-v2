@@ -92,7 +92,7 @@ public class DefaultGenericDaoImpl<T> extends HibernateDaoSupport implements Gen
 	}
 
 	@Override
-	public T queryLast(String HQL, List<Object> params, Class<T> clazz) {
+	public T queryLast(String HQL, Map<String, Object> params, Class<T> clazz) {
 		String sql = HQL;
 		Session session = null;
 		boolean needClose = false;
@@ -109,17 +109,23 @@ public class DefaultGenericDaoImpl<T> extends HibernateDaoSupport implements Gen
 		query = session.createQuery(sql, clazz);
 		
 		if(params != null) {
-			int indx = 0;
-			for(Object para : params) {
-				query.setParameter(indx, para);
-				
-				indx++;
+			Set<String> paramsKeys = params.keySet();
+			for(String paraKey : paramsKeys) {
+				Object param = params.get(paraKey);
+				if(param instanceof Date){  
+            		query.setParameter(paraKey, (Date)param, TemporalType.DATE);
+                }else if(param instanceof Object[]){  
+                    query.setParameterList(paraKey, (Object[])param);  
+                }else{  
+                    query.setParameter(paraKey, param);  
+                } 
 			}
 		}
 		
 		try{
 			ret = query.setMaxResults(1).getSingleResult();
-		}catch(Exception ex){			
+		}catch(Exception ex){
+//			ex.printStackTrace();
 		}
 		
 		if(needClose && session.isOpen()) {

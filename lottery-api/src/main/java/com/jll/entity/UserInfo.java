@@ -50,7 +50,7 @@ public class UserInfo implements java.io.Serializable {
 	/**
 	 * 退水
 	 */
-	private BigDecimal tsAmount;
+	/*private BigDecimal tsAmount;*/
 	
 	private BigDecimal usedCreditAmount;
 	
@@ -306,13 +306,13 @@ public class UserInfo implements java.io.Serializable {
 		this.zcAmount = zcAmount;
 	}
 
-	public BigDecimal getTsAmount() {
+	/*public BigDecimal getTsAmount() {
 		return tsAmount;
 	}
 
 	public void setTsAmount(BigDecimal tsAmount) {
 		this.tsAmount = tsAmount;
-	}
+	}*/
 
 	/*public void setPanKou(Integer panKou) {
 		this.panKou = panKou;

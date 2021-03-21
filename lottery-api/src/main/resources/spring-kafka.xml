@@ -53,6 +53,7 @@
      <!-- 实际执行消息消费的类 -->
      <bean id="statProfitMsgConsumer" class="com.jll.stat.StatProfitServiceImpl"/>
      <bean id="statBetNumMsgConsumer" class="com.jll.stat.StatBettingNumServiceImpl"/>
+     <bean id="settlementMsgConsumer" class="com.jll.settlement.SettlementServiceImpl"/>
      
      <!-- 消费者容器配置信息 -->
      <bean id="statProfitMsgContainerProperties" class="org.springframework.kafka.listener.config.ContainerProperties">
@@ -63,6 +64,10 @@
      	<constructor-arg value="stat_betting_num"/>
      	<property name="messageListener" ref="statBetNumMsgConsumer"/>
      </bean>
+     <bean id="settlementMsgContainerProperties" class="org.springframework.kafka.listener.config.ContainerProperties">
+     	<constructor-arg value="settlement"/>
+     	<property name="messageListener" ref="settlementMsgConsumer"/>
+     </bean>
      <!-- 创建kafka template bean，使用的时候，只需要注入这个bean，即可使用template的send消息方法 -->
      <bean id="statProfitMsgContainer" class="org.springframework.kafka.listener.KafkaMessageListenerContainer">
      	<constructor-arg ref="consumerFactory"/>
@@ -71,5 +76,9 @@
      <bean id="statBetNumMsgContainer" class="org.springframework.kafka.listener.KafkaMessageListenerContainer">
      	<constructor-arg ref="consumerFactory"/>
      	<constructor-arg ref="statBetNumMsgContainerProperties"/>
+     </bean>
+     <bean id="settlementNumMsgContainer" class="org.springframework.kafka.listener.KafkaMessageListenerContainer">
+     	<constructor-arg ref="consumerFactory"/>
+     	<constructor-arg ref="settlementMsgContainerProperties"/>
      </bean>
 </beans>

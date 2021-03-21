@@ -50,10 +50,10 @@ public class UserTsServiceImpl implements UserTsService
 		
 		Integer userId = userInfo.getId();
 		List<UserTs> userTses = userTsDao.queryUserTsByUserId(userId, lotteryType);
-		/*if(CollectionUtils.isEmpty(userTses)){
+		if(CollectionUtils.isEmpty(userTses)){
 			List<PlayType> playTypes = playTypeServ.queryPlayType(lotteryType);
 			userTses = convertIntoBlankUserTs(playTypes, userId, lotteryType);
-		}*/
+		}
 		
 		ret.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
 		ret.put(Message.KEY_DATA, userTses);
@@ -61,7 +61,7 @@ public class UserTsServiceImpl implements UserTsService
 		return ret;
 	}
 
-	/*private List<UserTs> convertIntoBlankUserTs(List<PlayType> playTypes, Integer userId, String lotteryType) {
+	private List<UserTs> convertIntoBlankUserTs(List<PlayType> playTypes, Integer userId, String lotteryType) {
 		List<UserTs> userTses = new ArrayList<>();
 		BigDecimal zeroNum = new BigDecimal("0.00");
 		
@@ -81,7 +81,7 @@ public class UserTsServiceImpl implements UserTsService
 			
 		}
 		return userTses;
-	}*/
+	}
 
 	@Override
 	public Map<String, Object> saveOrUpdateUserTs(List<UserTs> userTses) {
@@ -92,7 +92,7 @@ public class UserTsServiceImpl implements UserTsService
 	}
 
 	@Override
-	public UserTs queryUserTsByPlayTypeId(String userId, String lotteryType, Integer playTypeId) {
+	public UserTs queryUserTsByPlayTypeId(Integer userId, String lotteryType, Integer playTypeId) {
 		return userTsDao.queryUserTsByPlayTypeId(userId, lotteryType, playTypeId);
 	}
 }

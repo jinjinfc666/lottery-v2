@@ -159,7 +159,6 @@
                 if(userType == '8' || userType == '7'){
                 	xyAmount = document.getElementById('xyAmount').value;
                 	zcAmount = document.getElementById('zcAmount').value;
-                	tsAmount = document.getElementById('tsAmount').value;
                     /* panKou =  */
                     $("#smPanKou input:checked").each(function(){
                     	if(panKou == 'undefined' || panKou == null){
@@ -179,12 +178,7 @@
                     	$("#zcAmount_error").text("请输入占成!");
                         return false;
                     }
-                    
-                    if(tsAmount == null || tsAmount == ''){
-                    	$("#tsAmount_error").text("请输入退水!");
-                        return false;
-                    }
-                    
+                                        
 					if(panKou == null || panKou == ''){
 						$("#smPanKou_error").text("请选择盘口!");
 	                    return false;
@@ -204,7 +198,6 @@
 	                    "userType":userType,
 	                    "xyAmount":xyAmount,
 	                    "zcAmount":zcAmount,
-	                    "tsAmount":tsAmount,
 	                    'creditMarketIds':panKou
 	                });
                 }else{
@@ -516,14 +509,6 @@
                 	<span id="zcAmount_error" style="color:red;"></span>
                 </td>
             </tr>
-            <tr name="row_xy" class="displayNone">
-                <th class="thstyle">退水</th>
-                <td>
-                	<input type="text" id="tsAmount" name="tsAmount" value="" style="width:250px;" class="login_putin" />
-                	<span id="tsAmount_error" style="color:red;"></span>
-                </td>
-            </tr>
-            
             <tr name="row_sm">
                 <th class="thstyle">下级返点</th>
                 <td>                	

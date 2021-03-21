@@ -275,6 +275,7 @@ public class LotteryCenterController {
 						return resp;
 					}
 
+					
 					if (user.getUserType().intValue() == UserType.ENTRUST_PLAYER.getCode()) {
 //						String payoutRate = userExtServ.queryFiledByName(user.getId(), "xyPayoutRate");
 						String xyAmount = userExtServ.queryFiledByName(user.getId(), "xyAmount");

@@ -144,8 +144,10 @@ public class StatProfitServiceImpl implements StatProfitService, KafkaConsumer
 		
 		String lotteryType = trg.getLotteryType();
 		
-		UserTs userTs = userTsServ.queryUserTsByPlayTypeId(userInfo.getUserId(), lotteryType, playTypeId);
-		
+		UserTs userTs = userTsServ.queryUserTsByPlayTypeId(userInfo.getId(), lotteryType, playTypeId);
+		if(userTs == null){
+			return ;
+		}
 		profit = reportServ.queryProfitByUser(userInfo.getId(), 
 				trg.getCreateTime(), 
 				userType,
@@ -160,7 +162,7 @@ public class StatProfitServiceImpl implements StatProfitService, KafkaConsumer
 			profit.setUserType(userType);
 			profit.setSettlementFlag(Constants.SettlementState.pending.getCode());
 			profit.setLotteryType(lotteryType);
-			profit.setPlayType(playType.getClassification());
+			profit.setPlayType(playType.getBriefCla());
 		}
 		
 		if(trg.getOperationType().equals(Constants.AccOperationType.BETTING.getCode())) {
@@ -192,9 +194,6 @@ public class StatProfitServiceImpl implements StatProfitService, KafkaConsumer
 		profit.setUsedCreditLimit(userInfo.getUsedCreditAmount());
 		BigDecimal usedCreditAmount = userInfo.getUsedCreditAmount()==null?new BigDecimal(0):userInfo.getUsedCreditAmount();
 		Double xyAmount = userInfo.getXyAmount();
-		if(xyAmount == null){
-			logger.debug("");
-		}
 		profit.setRemainCreditLimit(new BigDecimal(xyAmount).subtract(usedCreditAmount));
 		if(userType.intValue() == UserType.XY_AGENCY.getCode()){				
 			profitVal = profit.getTsAmount() == null?

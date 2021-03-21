@@ -18,6 +18,7 @@ public class PlayType implements java.io.Serializable {
 	private Integer isHidden;
 	private Integer seq;
 	private Date createTime;
+	private String briefCla;
 
 	public PlayType() {
 	}
@@ -115,4 +116,13 @@ public class PlayType implements java.io.Serializable {
 		this.createTime = createTime;
 	}
 
+	public String getBriefCla() {
+		return briefCla;
+	}
+
+	public void setBriefCla(String briefCla) {
+		this.briefCla = briefCla;
+	}
+
+	
 }

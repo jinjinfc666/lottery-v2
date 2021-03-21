@@ -2657,6 +2657,7 @@ public class Constants {
 	public static enum KafkaTopics{
 		ACCOUNT_DETAILS(1, "account_details"), 
 		STAT_BETTING_NUM(2, "stat_betting_num"), 
+		SETTLEMENT(3, "settlement"), 
 		;
 		
 		private int code;

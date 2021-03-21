@@ -69,7 +69,7 @@ public class MReportDaoImpl extends DefaultGenericDaoImpl<MemberPlReport> implem
 		.append("SUM(return_prize) as return_prize,")
 		.append("SUM(zc_amount) as zc,")
 		.append("SUM(ts_amount) as ts,")
-		.append("SUM(profit)*(-1) as profit ")
+		.append("SUM(profit) as profit ")
 		.append("from team_pl_report ")
 		.append("where user_name=:userName ")
 		.append("and create_time >=:startTime and create_time <=:endTime ")

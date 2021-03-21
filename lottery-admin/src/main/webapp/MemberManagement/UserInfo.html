@@ -175,11 +175,7 @@
                                 }else{
                                 	row += "<td class=\"thCenter\">"+val.zcAmount+"</td>";
                                 }
-                                if(val.tsAmount == null || val.tsAmount == 'null'){
-                                	row += "<td class=\"thCenter\"></td>";
-                                }else{
-                                	row += "<td class=\"thCenter\">"+val.tsAmount+"</td>";
-                                }
+                                
                                 if(val.xyAmount == null || val.xyAmount == 'null'){
                                 	row += "<td class=\"thCenter\"></td>";
                                 }else{
@@ -309,9 +305,9 @@
             		url = 'MemberManagement/UserAccount.html?v=4.0';
             	}else if(actionType == 'order'){
                     if(userType == '5' || userType == '7' || userType == '9'){
-                    	url = 'SystemOperation/lottery_transaction_xy.html?v=4.0';
+                    	url = 'xy-sys-operation/lottery_transaction_xy.html?v=4.0';
                     }else{
-                    	url = 'SystemOperation/lottery_transaction.html?v=4.0';
+                    	url = 'xy-sys-operation/lottery_transaction.html?v=4.0';
                     }
             	}else if(actionType == 'deposit'){
             		url = 'SystemOperation/depositDetails.html?v=4.0';
@@ -384,7 +380,6 @@
                             <th class="thCenter" style="width:80px">状态</th>
                             <th class="thCenter" style="width:110px">用户类型</th>
                             <th class="thCenter" style="width:110px">占成</th>
-                            <th class="thCenter" style="width:110px">退水</th>
                             <th class="thCenter" style="width:140px">信誉额度</th>
                             <!-- <th class="thCenter" style="width:140px">手机是否验证</th>
                             <th class="thCenter" style="width:100px">QQ</th>

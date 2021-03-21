@@ -1,25 +1,37 @@
 package com.jll.settlement;
 
+import java.io.IOException;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jll.common.cache.CacheRedisService;
 import com.jll.common.constants.Constants;
 import com.jll.common.constants.Constants.SettlementState;
 import com.jll.common.constants.Constants.UserType;
 import com.jll.common.constants.Constants.WalletType;
+import com.jll.common.threadpool.ThreadPoolManager;
 import com.jll.common.utils.DateUtil;
+import com.jll.common.utils.StringUtils;
 import com.jll.dao.PageBean;
+import com.jll.entity.Issue;
+import com.jll.entity.OrderInfo;
 import com.jll.entity.UserAccount;
 import com.jll.entity.UserInfo;
 import com.jll.entity.UserSettlement;
+import com.jll.game.LotteryTypeFactory;
+import com.jll.game.LotteryTypeService;
+import com.jll.game.mesqueue.MessageDelegateListener;
+import com.jll.game.mesqueue.kafka.KafkaConsumer;
 import com.jll.report.TReportService;
 import com.jll.user.UserInfoExtService;
 import com.jll.user.UserInfoService;
@@ -27,7 +39,7 @@ import com.jll.user.wallet.WalletService;
 
 @Service
 @Transactional
-public class SettlementServiceImpl implements SettlementService
+public class SettlementServiceImpl implements SettlementService, KafkaConsumer
 {
 	private Logger logger = Logger.getLogger(SettlementServiceImpl.class);
 
@@ -147,5 +159,16 @@ public class SettlementServiceImpl implements SettlementService
 				}
 			}
 		}*/
+	}
+	
+	@Override
+	public void onMessage(ConsumerRecord<Integer, String> arg0) {
+		ThreadPoolManager.getInstance().exeThread(new Runnable() {
+
+			@Override
+			public void run() {
+				exeSettlement();
+			}
+		});
 	}
 }

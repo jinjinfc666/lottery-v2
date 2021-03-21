@@ -155,11 +155,11 @@
                                 $.each(data.data.content, function(key, val) {
                                     var state="";
                                     var userName=""
-                                    if(val[1].state=='0'){
+                                    if(val[1].state=='1'){
                                         
                                         state="<font color='red'>冻结</font>";
                                         //userName="<a onclick=\"updateUserAccount('"+val[1].id+"','"+val[1].accType+"')\">"+val[0].userName+"</a>";
-                                    }else if(val[1].state=='1'){
+                                    }else if(val[1].state=='0'){
                                     	state="正常";
                                         //userName=val[0].userName;
                                     }

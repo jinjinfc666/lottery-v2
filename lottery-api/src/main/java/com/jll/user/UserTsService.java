@@ -25,5 +25,5 @@ public interface UserTsService
 
 	Map<String, Object> saveOrUpdateUserTs(List<UserTs> userTses);
 
-	UserTs queryUserTsByPlayTypeId(String userId, String lotteryType, Integer playTypeId);
+	UserTs queryUserTsByPlayTypeId(Integer userId, String lotteryType, Integer playTypeId);
 }

@@ -34,6 +34,7 @@ import com.jll.entity.GenSequence;
 import com.jll.entity.Issue;
 import com.jll.entity.OrderInfo;
 import com.jll.entity.PlayType;
+import com.jll.entity.StatBettingNumber;
 import com.jll.entity.SysCode;
 import com.jll.entity.UserAccount;
 import com.jll.entity.UserAccountDetails;
@@ -47,6 +48,7 @@ import com.jll.game.LotteryTypeService;
 import com.jll.game.playtype.PlayTypeFacade;
 import com.jll.game.playtype.PlayTypeService;
 import com.jll.game.playtypefacade.PlayTypeFactory;
+import com.jll.report.StatBettingNumberService;
 import com.jll.user.UserInfoExtService;
 import com.jll.user.UserInfoService;
 import com.jll.user.UserTsService;
@@ -97,9 +99,13 @@ public class OrderServiceImpl implements OrderService
 
 	@Resource
 	UserInfoExtService userExtServ;
-	
+		
 	@Autowired
 	private KafkaTemplate<Integer, String> kafkaTemplateBetNum;
+	
+	@Resource
+	private StatBettingNumberService statBettingNumServ;
+	
 	
 	@Override
 	public String saveOrders(List<OrderInfo> orders, int walletId, int zhFlag, String lotteryType) {
@@ -158,6 +164,10 @@ public class OrderServiceImpl implements OrderService
 			return String.valueOf(Message.Error.ERROR_COMMON_NO_ACCOUNT_OPERATION.getCode());
 		}
 		
+		boolean isExtedLimit = isExtendLimit(orders, user);
+		if (isExtedLimit) {
+			return String.valueOf(Message.Error.ERROR_RISK_MANAGEMENT_EXTEND_LIMIT.getCode());
+		}
 		
 		for (OrderInfo order : orders) {
 			BigDecimal ts = parseTs(order, user);
@@ -235,11 +245,36 @@ public class OrderServiceImpl implements OrderService
 		return String.valueOf(Message.status.SUCCESS.getCode());
 	}
 
+	private boolean isExtendLimit(List<OrderInfo> orders, UserInfo userInfo) {
+		for(OrderInfo order : orders){
+			Integer userId = userInfo.getId();
+			Integer issueId = order.getIssueId();
+			String betNum = order.getBetNum();
+			BigDecimal betAmount = new BigDecimal(order.getBetAmount());
+			Issue issue = issueServ.getIssueById(issueId);
+			String lotteryType = issue.getLotteryType();
+			Integer playTypeId = order.getPlayType();
+			UserTs userTs = userTsServ.queryUserTsByPlayTypeId(userId, lotteryType, playTypeId);
+			if(userTs == null){
+				return true;
+			}
+			if(new BigDecimal(order.getBetAmount()).compareTo(userTs.getSingleBetLimitAmount()) == 1){
+				return true;
+			}
+			
+			StatBettingNumber statBettingNum = statBettingNumServ.queryStatByNumber(lotteryType, issueId, betNum);
+			if(statBettingNum != null && statBettingNum.getBetAmount().add(betAmount).compareTo(userTs.getTotalBetLimitAmount()) == 1){
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private BigDecimal parseTs(OrderInfo order, UserInfo user) {
 		CreditMarket currentMarket = user.getCurrentMarket();
 		Integer playTypeId = order.getPlayType();
 		PlayType playType = playTypeServ.queryById(playTypeId);
-		UserTs userTs = userTsServ.queryUserTsByPlayTypeId(user.getUserId(), playType.getLotteryType(), playTypeId);
+		UserTs userTs = userTsServ.queryUserTsByPlayTypeId(user.getId(), playType.getLotteryType(), playTypeId);
 		BigDecimal ts = null;
 		if(currentMarket.getMarketId().equals(Constants.CreditMarketEnum.MARKET_A.getCode())){
 			ts = userTs.getaTs();
@@ -335,16 +370,6 @@ public class OrderServiceImpl implements OrderService
 				return String.valueOf(Message.Error.ERROR_GAME_INVALID_BET_NUM.getCode());
 			}
 			
-			/*params = new HashMap<>();
-			params.put("betNum", order.getBetNum());
-			params.put("times", order.getTimes());
-			params.put("monUnit", order.getPattern().floatValue());
-			params.put("lottoType", lotteryType);*/
-			
-//			betInfo = playTypeFacade.preProcessNumber(params, user);
-//			order.setBetAmount((Float)betInfo.get("betAmount"));
-//			order.setBetTotal((Integer)betInfo.get("betTotal"));
-//			order.setPrizeRate((BigDecimal)betInfo.get("singleBettingPrize"));
 			
 			BigDecimal betAmount = new BigDecimal(order.getBetAmount());
 			totalAmount = totalAmount.add(betAmount);

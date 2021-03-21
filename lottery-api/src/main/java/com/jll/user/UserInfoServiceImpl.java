@@ -455,6 +455,9 @@ public class UserInfoServiceImpl implements UserInfoService
 	@Override
 	public UserInfo getUserByUserName(String userName) {
 		UserInfo userInfo = userDao.getUserByUserName(userName);
+		if(userInfo == null){
+			return null;
+		}
 		if(userInfo.getUserType().intValue() == UserType.XY_PLAYER.getCode()
 				|| userInfo.getUserType().intValue() == UserType.XY_AGENCY.getCode()) {
 			String payoutRate = userExtServ.queryFiledByName(userInfo.getId(), "xyPayoutRate");
@@ -539,12 +542,8 @@ public class UserInfoServiceImpl implements UserInfoService
 				user.setCurrentMarket(creditMarketObj);
 			}
 			
-			if(tsAmount != null) {
-				user.setTsAmount(new BigDecimal(tsAmount).multiply(new BigDecimal(100)));
-			}
-			
 			if(zcAmount != null) {
-				user.setZcAmount(new BigDecimal(zcAmount).multiply(new BigDecimal(100)));
+				user.setZcAmount(new BigDecimal(zcAmount));
 			}
 		}
 		return user;
@@ -600,20 +599,7 @@ public class UserInfoServiceImpl implements UserInfoService
 		
 		if(user.getUserType().intValue() == UserType.XY_AGENCY.getCode() 
 				|| user.getUserType().intValue() == UserType.XY_PLAYER.getCode()){
-			if(user.getTsAmount() == null || user.getZcAmount() == null){
-				return Message.Error.ERROR_USER_NO_TS_ZC.getCode();
-			}
-			
-			if(user.getTsAmount().compareTo(new BigDecimal(0)) == -1
-					|| user.getZcAmount().compareTo(new BigDecimal(0)) == -1){
-				return Message.Error.ERROR_USER_ERROR_TS_ZC_LESS_THAN_ZERO.getCode();
-			}
-			if(superior != null && superior.getZcAmount() != null && superior.getTsAmount() != null){
-				if(user.getTsAmount().compareTo(superior.getTsAmount()) != -1){
-					
-					return Message.Error.ERROR_USER_ERROR_TS_ZC.getCode();
-				}
-				
+			if(superior != null && superior.getZcAmount() != null){				
 				if(user.getZcAmount().compareTo(superior.getZcAmount()) != -1){
 					return Message.Error.ERROR_USER_ERROR_TS_ZC.getCode();
 				}
@@ -1059,7 +1045,6 @@ public class UserInfoServiceImpl implements UserInfoService
 		String creditMarketIds = userInfo.getCreditMarketIds();
 		Double xyPayoutRate = userInfo.getXyPayoutRate();
 		Double xyAmount = userInfo.getXyAmount();
-		BigDecimal tsAmount = userInfo.getTsAmount();
 		BigDecimal zcAmount = userInfo.getZcAmount();
 		UserInfo user = getUserById(userId);
 		BigDecimal oldPlatRebate = user.getPlatRebate();
@@ -1083,10 +1068,6 @@ public class UserInfoServiceImpl implements UserInfoService
 		
 		if(xyAmount != null) {
 			user.setXyAmount(xyAmount);
-		}
-		
-		if(tsAmount != null) {
-			user.setTsAmount(tsAmount);
 		}
 		
 		if(zcAmount != null) {
@@ -2262,13 +2243,9 @@ public class UserInfoServiceImpl implements UserInfoService
 				userInfo.setCreditMarkets(creditMarkets);
 				userInfo.setCreditMarketIds(creditMarketIds);
 			}
-			
-			if(tsAmount != null) {
-				userInfo.setTsAmount(new BigDecimal(tsAmount).multiply(new BigDecimal(100)));
-			}
-			
+						
 			if(zcAmount != null) {
-				userInfo.setZcAmount(new BigDecimal(zcAmount).multiply(new BigDecimal(100)));
+				userInfo.setZcAmount(new BigDecimal(zcAmount));
 			}
 			
 		}
@@ -2613,13 +2590,9 @@ public class UserInfoServiceImpl implements UserInfoService
 				creditMarketObj.setMarketName(creditMarketEnum.getName());
 				superior.setCurrentMarket(creditMarketObj);
 			}
-			
-			if(tsAmount != null) {
-				superior.setTsAmount(new BigDecimal(tsAmount).multiply(new BigDecimal(100)));
-			}
-			
+						
 			if(zcAmount != null) {
-				superior.setZcAmount(new BigDecimal(zcAmount).multiply(new BigDecimal(100)));
+				superior.setZcAmount(new BigDecimal(zcAmount));
 			}
 			
 		}
@@ -2729,7 +2702,7 @@ public class UserInfoServiceImpl implements UserInfoService
 		CreditMarket creditMarketObj = new CreditMarket();
 		creditMarketObj.setMarketId(Integer.valueOf(currMarket));
 		userInfo.setCurrentMarket(creditMarketObj);
-		playTypeNumServ.updateUserCurrMarket(userInfo.getUserId(), currMarket);
+//		playTypeNumServ.updateUserCurrMarket(userInfo.getUserId(), currMarket);
 		String message = Constants.KEY_INIT_SYS_CODE_PLAY_TYPE_NUM;
 		cacheServ.publishMessage(Constants.KEY_INIT_SYSCODE, message);
 		userExtServ.saveUserInfoExt(userInfo);

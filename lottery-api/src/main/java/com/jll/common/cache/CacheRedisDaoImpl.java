@@ -434,7 +434,7 @@ public class CacheRedisDaoImpl  extends AbstractBaseRedisDao implements CacheRed
 	}
 
 	@Override
-	public CacheObject queryLast(String HQL, List<Object> params, Class<CacheObject> clazz) {
+	public CacheObject queryLast(String HQL, Map<String, Object> params, Class<CacheObject> clazz) {
 		// TODO Auto-generated method stub
 		return null;
 	}

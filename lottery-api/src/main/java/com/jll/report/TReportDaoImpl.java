@@ -341,15 +341,20 @@ public class TReportDaoImpl extends DefaultGenericDaoImpl<TeamPlReport> implemen
 	
 	@Override
 	public TeamPlReport queryProfitByUser(Integer userId, Date createTime, Integer userType, String lotteryType, UserTs userTs) {
-		String sql = "from TeamPlReport t where t.userId=? and t.createTime=? and t.userType=? and t.lotteryType=? and t.playType=?";
-		List<Object> params = new ArrayList<>();
+		String sql = "from TeamPlReport t where t.userId=:userId and t.createTime=:createTime and t.userType=:userType and t.lotteryType=:lotteryType and t.playType=:playType";
+//		String sql = "from TeamPlReport t where t.userId=:userId and t.userType=:userType and t.lotteryType=:lotteryType and t.playType=:playType";
+		Map<String, Object> params = new HashMap<>();
 		TeamPlReport profit = null;
-		
-		params.add(userId);
-		params.add(createTime);
-		params.add(userType);
-		params.add(lotteryType);
-		params.add(userTs.getPlayTypeBrief());
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		Date createTime_ = null;
+		try {
+			createTime_ = format.parse(format.format(createTime));
+		} catch (ParseException e) {}
+		params.put("userId", userId);
+		params.put("createTime", createTime_);
+		params.put("userType", userType);
+		params.put("lotteryType", lotteryType);
+		params.put("playType", userTs.getPlayTypeBrief());
 		profit = queryLast(sql, params, TeamPlReport.class);
 				
 		return profit;
@@ -726,20 +731,20 @@ public class TReportDaoImpl extends DefaultGenericDaoImpl<TeamPlReport> implemen
 		Integer id = user.getId();
 		StringBuffer sqlBuffer = new StringBuffer();
 		PageBean<Object[]> page = new PageBean<>();
-		List<Object> params = new ArrayList<>();
+		Map<String, Object> params = new HashMap<>();
 		TeamPlReport memberPlReport = null;
 		
 		page.setPageIndex(0);
 		page.setPageSize(100000);		
 		
-		sqlBuffer.append("from TeamPlReport t1 where t1.userId=? and t1.createTime >=? and t1.createTime <=? order by createTime desc");
+		sqlBuffer.append("from TeamPlReport t1 where t1.userId=:userId and t1.createTime >=:startTime and t1.createTime <=:endTime order by createTime desc");
 		
 		
-	    params.add(id);
-	    Date beginDate = DateUtil.fmtYmdToDate(startTime);
-	    Date endDate = DateUtil.fmtYmdToDate(endTime);
-	    params.add(beginDate);
-	    params.add(endDate);
+		params.put("userId", id);
+	    /*Date beginDate = DateUtil.fmtYmdToDate(startTime);
+	    Date endDate = DateUtil.fmtYmdToDate(endTime);*/
+	    params.put("startTime", startTime);
+	    params.put("endTime", endTime);
     	
     	memberPlReport = queryLast(sqlBuffer.toString(), params, TeamPlReport.class);
 	    /*if(memberPlReport == null){
@@ -780,19 +785,19 @@ public class TReportDaoImpl extends DefaultGenericDaoImpl<TeamPlReport> implemen
     	memberPlReportList = queryNativeSQL(sqlBuffer.toString(), params);
 	    Iterator<?> it=memberPlReportList.iterator();
 	    List<TeamPlReport> listRecord=new ArrayList<TeamPlReport>();
-	    String hql = "from TeamPlReport where userId=? and createTime=?";
+	    String hql = "from TeamPlReport where userId=:userId and createTime=:createTime";
 		while(it.hasNext()) {
 			TeamPlReport report = null;
 			Object[] obj=(Object[]) it.next();
-			params = new ArrayList<>();
-			params.add(obj[0]);
+			Map<String, Object> params_ = new HashMap<>();
+			params_.put("userId", obj[0]);
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 			try {
-				params.add(format.parse((String)obj[1]));
+				params_.put("createTime", format.parse((String)obj[1]));
 			} catch (ParseException e) {
 				
 			}
-			report = queryLast(hql, params, TeamPlReport.class);
+			report = queryLast(hql, params_, TeamPlReport.class);
 		    listRecord.add(report);
 		}
 		return listRecord;
@@ -827,19 +832,19 @@ public class TReportDaoImpl extends DefaultGenericDaoImpl<TeamPlReport> implemen
     	memberPlReportList = queryNativeSQL(sqlBuffer.toString(), params);
 	    Iterator<?> it=memberPlReportList.iterator();
 	    List<TeamPlReport> listRecord=new ArrayList<TeamPlReport>();
-	    String hql = "from TeamPlReport where userId=? and createTime=?";
+	    String hql = "from TeamPlReport where userId=:userId and createTime=:createTime";
 		while(it.hasNext()) {
 			TeamPlReport report = null;
 			Object[] obj=(Object[]) it.next();
-			params = new ArrayList<>();
-			params.add(obj[0]);
+			Map<String, Object> params_ = new HashMap<>();
+			params_.put("userId", obj[0]);
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 			try {
-				params.add(format.parse((String)obj[1]));
+				params_.put("createTime", format.parse((String)obj[1]));
 			} catch (ParseException e) {
 				
 			}
-			report = queryLast(hql, params, TeamPlReport.class);
+			report = queryLast(hql, params_, TeamPlReport.class);
 		    listRecord.add(report);
 		}
 		return listRecord;
@@ -881,10 +886,10 @@ public class TReportDaoImpl extends DefaultGenericDaoImpl<TeamPlReport> implemen
 	@Override
 	public TeamPlReport queryDailySettlementById(Integer id) {
 		StringBuffer buffer = new StringBuffer();
-		List<Object> params = new ArrayList<>();
+		Map<String, Object> params = new HashMap<>();
 		
-		buffer.append("from TeamPlReport where id=?");
-		params.add(id);
+		buffer.append("from TeamPlReport where id=:id");
+		params.put("id", id);
 		
 		TeamPlReport report = queryLast(buffer.toString(), params, TeamPlReport.class);
 		return report;

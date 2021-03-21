@@ -1,5 +1,6 @@
 package com.jll.game.playtypefacade.tc3;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import com.jll.common.constants.Constants;
 import com.jll.common.utils.DateUtil;
 import com.jll.entity.Issue;
 import com.jll.entity.OrderInfo;
+import com.jll.entity.UserInfo;
 import com.jll.game.playtype.PlayTypeFacade;
 import com.jll.game.playtypefacade.PlayTypeFactory;
 
@@ -107,7 +109,7 @@ public class EwDwBgSZPlayTypeFacadeImplTest extends ServiceJunitBase{
 	}
 	
 	
-	public void testIsMatchWinningNum_winning_00(){
+	public void testIsMatchWinningNum_winning_0x0(){
 		Date startTime = new Date();
 		String betNum = "0x0";
 		Issue issue = new Issue();
@@ -127,7 +129,7 @@ public class EwDwBgSZPlayTypeFacadeImplTest extends ServiceJunitBase{
 		
 	}
 	
-	public void testIsMatchWinningNum_winning_99(){
+	public void testIsMatchWinningNum_winning_9x9(){
 		Date startTime = new Date();
 		String betNum = "9x9";
 		Issue issue = new Issue();
@@ -147,7 +149,7 @@ public class EwDwBgSZPlayTypeFacadeImplTest extends ServiceJunitBase{
 		
 	}
 	
-	public void testIsMatchWinningNum_lost_00(){
+	public void testIsMatchWinningNum_lost_0x0(){
 		Date startTime = new Date();
 		String betNum = "0x0";
 		Issue issue = new Issue();
@@ -167,9 +169,9 @@ public class EwDwBgSZPlayTypeFacadeImplTest extends ServiceJunitBase{
 		
 	}
 	
-	public void testIsMatchWinningNum_lost_01(){
+	public void testIsMatchWinningNum_lost_9x9(){
 		Date startTime = new Date();
-		String betNum = "0x1";
+		String betNum = "9x9";
 		Issue issue = new Issue();
 		issue.setIssueNum("");
 		issue.setLotteryType(Constants.LottoType.TC3.getCode());
@@ -185,5 +187,118 @@ public class EwDwBgSZPlayTypeFacadeImplTest extends ServiceJunitBase{
 		boolean ret = playTypeFacade.isMatchWinningNum(issue, order);
 		Assert.assertFalse(ret);
 		
+	}
+	
+	public void testCalPrize_lost_0x0(){
+		UserInfo user = new UserInfo();
+		user.setId(4);
+		user.setUserName("xy_user_001");
+		Date startTime = new Date();
+		String betNum = "0x0";
+		Issue issue = new Issue();
+		issue.setIssueNum("");
+		issue.setLotteryType(Constants.LottoType.TC3.getCode());
+		issue.setRetNum("0,1,2");
+		issue.setStartTime(startTime);
+		issue.setState(Constants.IssueState.LOTTO_DARW.getCode());
+		issue.setEndTime(DateUtil.addMinutes(startTime, 10));
+		
+		OrderInfo order = new OrderInfo();
+		//order.setIssueId(issueId);
+		order.setBetNum(betNum);
+		order.setIssueId(2);
+		order.setTimes(1);
+		order.setPrizeRate(new BigDecimal(1.9));
+		order.setPattern(new BigDecimal(1));
+		Map<String, Object> ret = playTypeFacade.calPrize(issue, order, user);
+		Assert.assertNotNull(ret);
+		
+		Assert.assertTrue(new BigDecimal(0).compareTo(new BigDecimal((Float)ret.get(Constants.KEY_WIN_AMOUNT))) == 0);
+	}
+	
+
+	public void testCalPrize_win_0x0(){
+		UserInfo user = new UserInfo();
+		user.setId(4);
+		user.setUserName("xy_user_001");
+		Date startTime = new Date();
+		String betNum = "0x0";
+		Issue issue = new Issue();
+		issue.setIssueNum("");
+		issue.setLotteryType(Constants.LottoType.TC3.getCode());
+		issue.setRetNum("0,1,0");
+		issue.setStartTime(startTime);
+		issue.setState(Constants.IssueState.LOTTO_DARW.getCode());
+		issue.setEndTime(DateUtil.addMinutes(startTime, 10));
+		
+		OrderInfo order = new OrderInfo();
+		//order.setIssueId(issueId);
+		order.setBetNum(betNum);
+		order.setIssueId(2);
+		order.setTimes(1);
+		order.setPrizeRate(new BigDecimal(1.9));
+		order.setPattern(new BigDecimal(1));
+		Map<String, Object> ret = playTypeFacade.calPrize(issue, order, user);
+		Assert.assertNotNull(ret);
+		BigDecimal winAmount = new BigDecimal(String.valueOf(ret.get(Constants.KEY_WIN_AMOUNT)));
+		winAmount.setScale(2, BigDecimal.ROUND_HALF_UP);
+		Assert.assertTrue(new BigDecimal("1.9").compareTo(winAmount) == 0);
+	}
+	
+
+	public void testCalPrize_lost_9x9(){
+		UserInfo user = new UserInfo();
+		user.setId(4);
+		user.setUserName("xy_user_001");
+		Date startTime = new Date();
+		String betNum = "9x9";
+		Issue issue = new Issue();
+		issue.setIssueNum("");
+		issue.setLotteryType(Constants.LottoType.TC3.getCode());
+		issue.setRetNum("0,1,2");
+		issue.setStartTime(startTime);
+		issue.setState(Constants.IssueState.LOTTO_DARW.getCode());
+		issue.setEndTime(DateUtil.addMinutes(startTime, 10));
+		
+		OrderInfo order = new OrderInfo();
+		//order.setIssueId(issueId);
+		order.setBetNum(betNum);
+		order.setIssueId(2);
+		order.setTimes(1);
+		order.setPrizeRate(new BigDecimal(1.9));
+		order.setPattern(new BigDecimal(1));
+		Map<String, Object> ret = playTypeFacade.calPrize(issue, order, user);
+		Assert.assertNotNull(ret);
+		
+		Assert.assertTrue(new BigDecimal(0).compareTo(new BigDecimal((Float)ret.get(Constants.KEY_WIN_AMOUNT))) == 0);
+	}
+	
+
+	public void testCalPrize_win_9x9(){
+		UserInfo user = new UserInfo();
+		user.setId(4);
+		user.setUserName("xy_user_001");
+		Date startTime = new Date();
+		String betNum = "0x0";
+		Issue issue = new Issue();
+		issue.setIssueNum("");
+		issue.setLotteryType(Constants.LottoType.TC3.getCode());
+		issue.setRetNum("0,1,0");
+		issue.setStartTime(startTime);
+		issue.setState(Constants.IssueState.LOTTO_DARW.getCode());
+		issue.setEndTime(DateUtil.addMinutes(startTime, 10));
+		
+		OrderInfo order = new OrderInfo();
+		//order.setIssueId(issueId);
+		order.setBetNum(betNum);
+		order.setIssueId(2);
+		order.setTimes(1);
+		order.setPrizeRate(new BigDecimal(1.9));
+		order.setPattern(new BigDecimal(1));
+		Map<String, Object> ret = playTypeFacade.calPrize(issue, order, user);
+		Assert.assertNotNull(ret);
+		BigDecimal winAmount = new BigDecimal(String.valueOf(ret.get(Constants.KEY_WIN_AMOUNT)));
+		winAmount.setScale(2, BigDecimal.ROUND_HALF_UP);
+		Assert.assertTrue(new BigDecimal("1.9").compareTo(winAmount) == 0);
 	}
 }

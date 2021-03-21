@@ -52,7 +52,7 @@ public interface GenericDaoIf<T> {
 	 */
 	List<T> query(String HQL, List<Object> params, Class<T> clazz);
 	
-	T queryLast(String HQL, List<Object> params, Class<T> clazz);
+	T queryLast(String HQL, Map<String,Object> params, Class<T> clazz);
 	
 	<K> List<K> queryObjectArray(String HQL, List<Object> params, Class<K> clazz);
 	

@@ -93,6 +93,15 @@ public class PlayTypeNum implements java.io.Serializable {
 		this.dOdds = dOdds;
 	}
 
+	
+	public BigDecimal getCurrentOdds() {
+		return currentOdds;
+	}
+
+	public void setCurrentOdds(BigDecimal currentOdds) {
+		this.currentOdds = currentOdds;
+	}
+
 	public Date getCreateTime() {
 		return createTime;
 	}
@@ -107,14 +116,6 @@ public class PlayTypeNum implements java.io.Serializable {
 
 	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
-	}
-
-	public BigDecimal getCurrentOdds() {
-		return currentOdds;
-	}
-
-	public void setCurrentOdds(BigDecimal currentOdds) {
-		this.currentOdds = currentOdds;
 	}
 
 	public String getDisplayName() {

@@ -93,16 +93,19 @@ public class PlayTypeNumServiceImpl implements PlayTypeNumService{
 				if(playTypeNum.getaOdds().compareTo(prizeRate) != 0){
 					return true;
 				}
+				return false;
 			}
 			case MARKET_B:{
 				if(playTypeNum.getbOdds().compareTo(prizeRate) != 0){
 					return true;
 				}
+				return false;
 			}
 			case MARKET_C:{
 				if(playTypeNum.getcOdds().compareTo(prizeRate) != 0){
 					return true;
 				}
+				return false;
 			}
 			default:{
 				

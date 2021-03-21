@@ -18,6 +18,7 @@ public class MathUtil {
 		SUPPORTED_DATA_TYPE.add("java.lang.Long");
 		SUPPORTED_DATA_TYPE.add("java.lang.Float");
 		SUPPORTED_DATA_TYPE.add("java.lang.Double");
+		SUPPORTED_DATA_TYPE.add("java.math.BigDecimal");
 	}
 	/**
 	 * performing the add operation
@@ -101,7 +102,7 @@ public class MathUtil {
 	 * @param v2
 	 * @return
 	 */
-	public static <T extends Number, T2 extends Number, T3 extends Number> T3 multiply(T v1, T2 v2, Class<T3> clazz){
+	public static <T , T2 , T3 > T3 multiply(T v1, T2 v2, Class<T3> clazz){
 
 		if(v1 == null || v2 == null || clazz == null){
 			throw new IllegalArgumentException("The T v1, T2 v2, Class<T3> clazz must not be null");
@@ -114,9 +115,9 @@ public class MathUtil {
 		}
 		
 		try {
-			BigDecimal b1 = new BigDecimal(v1.toString());
+			BigDecimal b1 = v1 instanceof BigDecimal?(BigDecimal)v1:new BigDecimal(v1.toString());
 
-			BigDecimal b2 = new BigDecimal(v2.toString());
+			BigDecimal b2 = v2 instanceof BigDecimal?(BigDecimal)v2:new BigDecimal(v2.toString());
 			
 			BigDecimal ret = b1.multiply(b2);
 

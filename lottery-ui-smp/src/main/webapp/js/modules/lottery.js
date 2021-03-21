@@ -1787,6 +1787,12 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
 		    		playType_ = 'ewhs_' + playType_ + '_ds';
 		    		var attr = playType_ + "_" + bettingNum;
 		        	var codeVal =  sysCodeTranslateFactory.codeTranslate(codeType, attr);
+		    	}else if(playType.indexOf('swhs') >= 0 && playType.indexOf('ds') >= 0){
+		    		var sepIdx = playType.indexOf('/');
+		    		var playType_ = playType.substring(sepIdx + 1, sepIdx + 3);
+		    		playType_ = 'swhs_ds';
+		    		var attr = playType_ + "_" + bettingNum;
+		        	var codeVal =  sysCodeTranslateFactory.codeTranslate(codeType, attr);
 		    	}else if(playType.indexOf('dwd') >= 0 && playType.indexOf('sz') >= 0){
 		    		var playType_ = playType.substring(0, playType.indexOf('|'));
 		    		var bettingNumArray = bettingNum.split(',');
@@ -2620,41 +2626,19 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
     $scope.getBettingNum = function(lotteryType, playType, bettingNum) {
     	var codeType = "play_type_" + lotteryType;
     	
-    	if(playType.indexOf('ds') >= 0 || playType.indexOf('dx') >= 0){
-    		var playType_ = playType.substring(0, playType.indexOf('|'));
+    	if(playType.indexOf('ewhs') >= 0 && playType.indexOf('ds') >= 0){
+    		var sepIdx = playType.indexOf('/');
+    		var playType_ = playType.substring(sepIdx + 1, sepIdx + 3);
+    		playType_ = 'ewhs_' + playType_ + '_ds';
     		var attr = playType_ + "_" + bettingNum;
         	var codeVal =  sysCodeTranslateFactory.codeTranslate(codeType, attr);
-	    	if(codeVal != null){
-	    		var number = playType.substring(playType.length - 2, playType.length - 1);
-	    		var numberDes = number;
-	    		if(lotteryType == 'cqssc' || lotteryType == 'xjssc' || lotteryType == '5fc'){
-	    			if(number == '一'){
-	    				numberDes = '万位';
-	    			}else if(number == '二'){
-	    				numberDes = '千位';
-	    			}else if(number == '三'){
-	    				numberDes = '百位';
-	    			}else if(number == '四'){
-	    				numberDes = '十位';
-	    			}else if(number == '五'){
-	    				numberDes = '个位';
-	    			}
-	    		}else if(lotteryType == 'bjpk10' 
-	    			|| lotteryType == 'xyft'
-	    			|| lotteryType == 'yfb'){
-	    			if(number == '一'){
-	    				numberDes = '冠军';
-	    			}else if(number == '二'){
-	    				numberDes = '亚军';
-	    			}else if(number == '三'){
-	    				numberDes = '季军';
-	    			}else{
-	    				numberDes = '第' + number + '名';
-	    			}
-	    		}
-	    		codeVal = codeVal.replace('{number}', numberDes);
-	    	}
-    	}else if(playType.indexOf('dwd') >= 0){
+    	}else if(playType.indexOf('swhs') >= 0 && playType.indexOf('ds') >= 0){
+    		var sepIdx = playType.indexOf('/');
+    		var playType_ = playType.substring(sepIdx + 1, sepIdx + 3);
+    		playType_ = 'swhs_ds';
+    		var attr = playType_ + "_" + bettingNum;
+        	var codeVal =  sysCodeTranslateFactory.codeTranslate(codeType, attr);
+    	}else if(playType.indexOf('dwd') >= 0 && playType.indexOf('sz') >= 0){
     		var playType_ = playType.substring(0, playType.indexOf('|'));
     		var bettingNumArray = bettingNum.split(',');
     		var bettingNumIndex = -1;
@@ -2667,6 +2651,334 @@ app.controller('lotteryCtrl', ["$scope", "$http","$stateParams", "$interval", "p
     				bettingNumVal = bettingNumArray[i];
     				
     				attr = playType_ + "_" + bettingNumIndex;
+    				break;
+    			}
+    		}    		
+    		
+        	var codeVal =  sysCodeTranslateFactory.codeTranslate(codeType, attr);
+	    	if(codeVal != null){
+	    		codeVal = codeVal.replace('{number}', bettingNumVal);
+	    	}
+    	}else if(playType.indexOf('ywdw') >= 0 && playType.indexOf('dx') >= 0){
+    		//dx|大小/bw|百位/ywdw|一位定位
+    		var sepIdx = playType.indexOf('/');
+    		var playType_ = playType.substring(sepIdx + 1, sepIdx + 3);
+    		
+    		var playType_ = 'ywdw_' +playType_+ '_dx';
+    		var bettingNumArray = bettingNum.split(',');
+    		var bettingNumIndex = -1;
+    		var bettingNumVal = '';
+    		var attr = null;
+    		
+    		attr = playType_ + "_" + bettingNum;
+    		
+        	var codeVal =  sysCodeTranslateFactory.codeTranslate(codeType, attr);
+	    	
+    	}else if(playType.indexOf('ywdw') >= 0 && playType.indexOf('ds') >= 0){
+    		//ds|单双/bw|百位/ywdw|一位定位
+    		var sepIdx = playType.indexOf('/');
+    		var playType_ = playType.substring(sepIdx + 1, sepIdx + 3);
+    		
+    		var playType_ = 'ywdw_' +playType_+ '_ds';
+    		var bettingNumArray = bettingNum.split(',');
+    		var bettingNumIndex = -1;
+    		var bettingNumVal = '';
+    		var attr = null;
+    		
+    		attr = playType_ + "_" + bettingNum;
+    		
+        	var codeVal =  sysCodeTranslateFactory.codeTranslate(codeType, attr);
+	    	
+    	}else if(playType.indexOf('ywdw') >= 0 && playType.indexOf('zh') >= 0){
+    		//zh|质和/bw|百位/ywdw|一位定位
+    		var sepIdx = playType.indexOf('/');
+    		var playType_ = playType.substring(sepIdx + 1, sepIdx + 3);
+    		
+    		var playType_ = 'ywdw_' +playType_+ '_zh';
+    		var bettingNumArray = bettingNum.split(',');
+    		var bettingNumIndex = -1;
+    		var bettingNumVal = '';
+    		var attr = null;
+    		
+    		attr = playType_ + "_" + bettingNum;
+    		
+        	var codeVal =  sysCodeTranslateFactory.codeTranslate(codeType, attr);
+	    	
+    	}else if(playType.indexOf('ywdw') >= 0 && playType.indexOf('sz') >= 0){
+    		//sz|数值/bw|百位/ywdw|一位定位
+    		var sepIdx = playType.indexOf('/');
+    		var playType_ = playType.substring(sepIdx + 1, sepIdx + 3);
+    		
+    		var playType_ = 'ywdw_' +playType_+ '_sz';
+    		var bettingNumArray = bettingNum.split(',');
+    		var bettingNumIndex = -1;
+    		var bettingNumVal = '';
+    		var attr = null;
+    		
+    		for(var i = 0;i < bettingNumArray.length; i++){
+    			if(bettingNumArray[i]){
+    				bettingNumIndex = i;
+    				bettingNumVal = bettingNumArray[i];		    				
+    				break;
+    			}
+    		}    
+    		
+    		attr = playType_;
+    		
+        	var codeVal =  sysCodeTranslateFactory.codeTranslate(codeType, attr);
+        	if(codeVal != null){
+	    		codeVal = codeVal.replace('{number}', bettingNumVal);
+	    	}
+//        	
+    	}else if(playType.indexOf('ewdw') >= 0 && playType.indexOf('sz') >= 0){
+    		//sz|数值/bs|百十/ewdw|二位定位
+    		var sepIdx = playType.indexOf('/');
+    		var playType_ = playType.substring(sepIdx + 1, sepIdx + 3);
+    		
+    		var playType_ = 'ewdw_' +playType_+ '_sz';
+    		var bettingNumArray = bettingNum.split(',');
+    		var bettingNumIndex = -1;
+    		var bettingNumVal = '';
+    		var attr = null;
+    		
+    		for(var i = 0;i < bettingNumArray.length; i++){
+    			if(bettingNumArray[i]){
+    				bettingNumIndex = i;
+    				bettingNumVal = bettingNumArray[i];		    				
+    				break;
+    			}
+    		}    
+    		
+    		attr = playType_;
+    		
+        	var codeVal =  sysCodeTranslateFactory.codeTranslate(codeType, attr);
+        	if(codeVal != null){
+	    		codeVal = codeVal.replace('{number}', bettingNumVal);
+	    	}
+    	}else if(playType.indexOf('swdw') >= 0 && playType.indexOf('sz') >= 0){
+    		//sz|数值/swdw|三位定位
+    		/*var sepIdx = playType.indexOf('/');
+    		var playType_ = playType.substring(sepIdx + 1, sepIdx + 3);*/
+    		
+    		var playType_ = 'swdw_sz';
+    		var bettingNumArray = bettingNum.split(',');
+    		var bettingNumIndex = -1;
+    		var bettingNumVal = '';
+    		var attr = null;
+    		
+    		for(var i = 0;i < bettingNumArray.length; i++){
+    			if(bettingNumArray[i]){
+    				bettingNumIndex = i;
+    				bettingNumVal = bettingNumArray[i];		    				
+    				break;
+    			}
+    		}    
+    		
+    		attr = playType_;
+    		
+        	var codeVal =  sysCodeTranslateFactory.codeTranslate(codeType, attr);
+        	if(codeVal != null){
+	    		codeVal = codeVal.replace('{number}', bettingNumVal);
+	    	}
+    	}else if(playType.indexOf('ewhs') >= 0 && playType.indexOf('sz') >= 0){
+    		//sz|数值/bs|百十/ewhs|二位和数
+    		var sepIdx = playType.indexOf('/');
+    		var playType_ = playType.substring(sepIdx + 1, sepIdx + 3);
+    		
+    		var playType_ = 'ewhs_' +playType_+ '_sz';
+    		var bettingNumArray = bettingNum.split(',');
+    		var bettingNumIndex = -1;
+    		var bettingNumVal = '';
+    		var attr = null;
+    		
+    		for(var i = 0;i < bettingNumArray.length; i++){
+    			if(bettingNumArray[i]){
+    				bettingNumIndex = i;
+    				bettingNumVal = bettingNumArray[i];		    				
+    				break;
+    			}
+    		}    
+    		
+    		attr = playType_;
+    		
+        	var codeVal =  sysCodeTranslateFactory.codeTranslate(codeType, attr);
+        	if(codeVal != null){
+	    		codeVal = codeVal.replace('{number}', bettingNumVal);
+	    	}
+    	}else if(playType.indexOf('bdw') >= 0 && playType.indexOf('yw') >= 0){
+    		var playType_ = 'bdw_yw';
+    		var bettingNumArray = bettingNum.split(',');
+    		var bettingNumIndex = -1;
+    		var bettingNumVal = '';
+    		var attr = null;
+    		
+    		for(var i = 0;i < bettingNumArray.length; i++){
+    			if(bettingNumArray[i]){
+    				bettingNumIndex = i;
+    				bettingNumVal = bettingNumArray[i];
+    				
+    				attr = playType_;
+    				break;
+    			}
+    		}    		
+    		
+        	var codeVal =  sysCodeTranslateFactory.codeTranslate(codeType, attr);
+	    	if(codeVal != null){
+	    		codeVal = codeVal.replace('{number}', bettingNumVal);
+	    	}
+	    	////dx|大小/swhs|三位和数
+    	}else if(playType.indexOf('bdw') >= 0 && playType.indexOf('ew') >= 0){
+    		var playType_ = 'bdw_ew';
+    		var bettingNumArray = bettingNum.split(',');
+    		var bettingNumIndex = -1;
+    		var bettingNumVal = '';
+    		var attr = null;
+    		
+    		for(var i = 0;i < bettingNumArray.length; i++){
+    			if(bettingNumArray[i]){
+    				bettingNumIndex = i;
+    				bettingNumVal = bettingNumArray[i];
+    				
+    				attr = playType_;
+    				break;
+    			}
+    		}    		
+    		
+        	var codeVal =  sysCodeTranslateFactory.codeTranslate(codeType, attr);
+	    	if(codeVal != null){
+	    		codeVal = codeVal.replace('{number}', bettingNumVal);
+	    	}
+	    	////dx|大小/swhs|三位和数
+    	}else if(playType.indexOf('bdw') >= 0 && playType.indexOf('sw') >= 0){
+    		var playType_ = 'bdw_sw';
+    		var bettingNumArray = bettingNum.split(',');
+    		var bettingNumIndex = -1;
+    		var bettingNumVal = '';
+    		var attr = null;
+    		
+    		for(var i = 0;i < bettingNumArray.length; i++){
+    			if(bettingNumArray[i]){
+    				bettingNumIndex = i;
+    				bettingNumVal = bettingNumArray[i];
+    				
+    				attr = playType_;
+    				break;
+    			}
+    		}    		
+    		
+        	var codeVal =  sysCodeTranslateFactory.codeTranslate(codeType, attr);
+	    	if(codeVal != null){
+	    		codeVal = codeVal.replace('{number}', bettingNumVal);
+	    	}
+    	}else if(playType.indexOf('swhs') >= 0 && playType.indexOf('dx') >= 0){
+    		var playType_ = 'swhs_dx';
+    		var bettingNumArray = bettingNum.split(',');
+    		var bettingNumIndex = -1;
+    		var bettingNumVal = '';
+    		var attr = null;
+    		
+    		for(var i = 0;i < bettingNumArray.length; i++){
+    			if(bettingNumArray[i]){
+    				bettingNumIndex = i;
+    				bettingNumVal = bettingNumArray[i];
+    				
+    				attr = playType_ + "_" + bettingNum;
+    				break;
+    			}
+    		}    		
+    		
+        	var codeVal =  sysCodeTranslateFactory.codeTranslate(codeType, attr);
+	    	if(codeVal != null){
+	    		codeVal = codeVal.replace('{number}', bettingNumVal);
+	    	}
+    	}else if(playType.indexOf('swhs') >= 0 && playType.indexOf('sz') >= 0){
+    		var playType_ = 'swhs_sz';
+    		var bettingNumArray = bettingNum.split(',');
+    		var bettingNumIndex = -1;
+    		var bettingNumVal = '';
+    		var attr = null;
+    		
+    		for(var i = 0;i < bettingNumArray.length; i++){
+    			if(bettingNumArray[i]){
+    				bettingNumIndex = i;
+    				bettingNumVal = bettingNumArray[i];
+    				
+    				attr = playType_;
+    				break;
+    			}
+    		}    		
+    		
+        	var codeVal =  sysCodeTranslateFactory.codeTranslate(codeType, attr);
+	    	if(codeVal != null){
+	    		codeVal = codeVal.replace('{number}', bettingNumVal);
+	    	}
+    	}else if(playType.indexOf('zx3') >= 0){
+    		//5m|5码/zx3|组选3/zx|组选
+    		var sepIdx = playType.indexOf('/');
+    		var playType_ = playType.substring(0, 2);
+    		
+    		var playType_ = 'zx3_' + playType_;
+    		var bettingNumArray = bettingNum.split(',');
+    		var bettingNumIndex = -1;
+    		var bettingNumVal = '';
+    		var attr = null;
+    		
+    		for(var i = 0;i < bettingNumArray.length; i++){
+    			if(bettingNumArray[i]){
+    				bettingNumIndex = i;
+    				bettingNumVal = bettingNumArray[i];
+    				
+    				attr = playType_;
+    				break;
+    			}
+    		}    		
+    		
+        	var codeVal =  sysCodeTranslateFactory.codeTranslate(codeType, attr);
+	    	if(codeVal != null){
+	    		codeVal = codeVal.replace('{number}', bettingNumVal);
+	    	}
+    	}else if(playType.indexOf('zx6') >= 0){
+    		//5m|5码/zx3|组选3/zx|组选
+    		var sepIdx = playType.indexOf('/');
+    		var playType_ = playType.substring(0, 2);
+    		
+    		var playType_ = 'zx6_' + playType_;
+    		var bettingNumArray = bettingNum.split(',');
+    		var bettingNumIndex = -1;
+    		var bettingNumVal = '';
+    		var attr = null;
+    		
+    		for(var i = 0;i < bettingNumArray.length; i++){
+    			if(bettingNumArray[i]){
+    				bettingNumIndex = i;
+    				bettingNumVal = bettingNumArray[i];
+    				
+    				attr = playType_;
+    				break;
+    			}
+    		}    		
+    		
+        	var codeVal =  sysCodeTranslateFactory.codeTranslate(codeType, attr);
+	    	if(codeVal != null){
+	    		codeVal = codeVal.replace('{number}', bettingNumVal);
+	    	}
+    	}else if(playType.indexOf('kd') >= 0){
+    		//2k|2跨/kd|跨度
+    		var sepIdx = playType.indexOf('/');
+    		var playType_ = playType.substring(0, 2);
+    		
+    		var playType_ = 'kd_' + playType_;
+    		var bettingNumArray = bettingNum.split(',');
+    		var bettingNumIndex = -1;
+    		var bettingNumVal = '';
+    		var attr = null;
+    		
+    		for(var i = 0;i < bettingNumArray.length; i++){
+    			if(bettingNumArray[i]){
+    				bettingNumIndex = i;
+    				bettingNumVal = bettingNumArray[i];
+    				
+    				attr = playType_;
     				break;
     			}
     		}    		

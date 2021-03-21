@@ -31,9 +31,9 @@ public class EwhsBgDsPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 	private Logger logger = Logger.getLogger(EwhsBgDsPlayTypeFacadeImpl.class);
 	
 	protected String playTypeDesc = "ds|单双/bg|百个/ewhs|二位和数/fs";
-	
+	//奇数
 	private final int ODD = 1;
-	
+	//偶
 	private final int EVEN = 0;
 	
 	private String betNumOptions = "00,01";
@@ -189,9 +189,7 @@ public class EwhsBgDsPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		int winNumFinal = -1;
 		
 		//1700 --- 1960
-		Float prizePattern = userServ.calPrizePattern(user, issue.getLotteryType());
-		BigDecimal winningRate = calWinningRate();
-		singleBettingPrize =  calSingleBettingPrize(prizePattern, winningRate);
+		BigDecimal winningRate = order.getPrizeRate();
 		
 		winNum = issue.getRetNum();
 		betNum = order.getBetNum();
@@ -199,7 +197,8 @@ public class EwhsBgDsPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		winNumSet = winNum.split(",");
 		betNumMul = betNum.split(";");
 		
-		if(Integer.parseInt(winNumSet[0]) % 2 != 0) {
+		BigDecimal sum = new BigDecimal(winNumSet[0]).add(new BigDecimal(winNumSet[2]));
+		if(sum.intValue() % 2 != 0) {
 			winNumFinal = ODD;
 		}else {
 			winNumFinal = EVEN;
@@ -214,7 +213,7 @@ public class EwhsBgDsPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		
 		betAmount = MathUtil.multiply(winningBetAmount, times, Float.class);
 		betAmount = MathUtil.multiply(betAmount, monUnit.floatValue(), Float.class);
-		maxWinAmount = MathUtil.multiply(betAmount, singleBettingPrize.floatValue(), Float.class);
+		maxWinAmount = MathUtil.multiply(betAmount, winningRate, Float.class);
 		
 		ret.put(Constants.KEY_WINNING_BET_TOTAL, winningBetAmount);
 		ret.put(Constants.KEY_WIN_AMOUNT, maxWinAmount);

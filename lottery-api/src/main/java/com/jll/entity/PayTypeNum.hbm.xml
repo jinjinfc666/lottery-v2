@@ -40,11 +40,6 @@
                 <comment>�Ƿ��3��ƽ̨:0,�ǵ�3��ƽ̨;1,��3��ƽ̨</comment>
             </column>
         </property>
-        <property generated="never" lazy="false" name="currentOdds" optimistic-lock="true" type="big_decimal" unique="false">
-            <column length="50" name="current_odds">
-                <comment>֧��ƽ̨,ϵͳ����</comment>
-            </column>
-        </property>
         <property generated="never" lazy="false" name="createTime" optimistic-lock="true" type="timestamp" unique="false">
             <column length="50" name="create_time">
                 <comment>֧��ƽ̨,ϵͳ����</comment>

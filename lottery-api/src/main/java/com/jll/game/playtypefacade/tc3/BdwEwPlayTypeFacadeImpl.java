@@ -167,7 +167,7 @@ public class BdwEwPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		betNumMul = betNum.split(";");		
 		
 		for(String singleSel : betNumMul) {
-			if(winNum.contains(singleSel)) {
+			if(winNum.contains(String.valueOf(singleSel.charAt(0))) && winNum.contains(String.valueOf(singleSel.charAt(1)))){
 				winningBetAmount++;
 			}
 			/*for(int i = 0; i < singleSel.length(); i++) {

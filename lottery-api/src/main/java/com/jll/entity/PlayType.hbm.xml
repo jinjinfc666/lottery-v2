@@ -50,5 +50,10 @@
                 <comment>����ʱ��</comment>
             </column>
         </property>
+        <property generated="never" lazy="false" name="briefCla" optimistic-lock="true" type="string" unique="false">
+            <column length="19" name="brief_cla">
+                <comment>����ʱ��</comment>
+            </column>
+        </property>
     </class>
 </hibernate-mapping>
