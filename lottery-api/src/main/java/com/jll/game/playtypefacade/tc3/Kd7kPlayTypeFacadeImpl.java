@@ -32,7 +32,8 @@ public class Kd7kPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 	private final String KEY_MAX = "max_bit";
 	
 	private final Integer kdVal = 7;
-//	private String betNumOptions = "0-6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21-27";
+
+	private String betNumOptions = "000,001,002,003,004,005,006,007,008,009";
 		
 	@Override
 	public boolean isMatchWinningNum(Issue issue, OrderInfo order) {
@@ -42,25 +43,16 @@ public class Kd7kPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		String[] betNumMul= null;
 		String betNum = null;
 		String winNum = null;
-		
+
 		winNum = issue.getRetNum();
 		betNum = order.getBetNum();
 		winNumSet = winNum.split(",");
 		betNumMul = betNum.split(";");
-		
-		
-		Map<String, Integer> winNumMap = splitBetNumMap(winNum);
-		
-		for(String temp : betNumMul) {
-			if(StringUtils.isBlank(temp)) {
-				continue;
-			}
-			Map<String, Integer> betNumMap = splitBetNumMap(betNum);
-			boolean isMatch = isMatch(betNumMap, winNumMap);
-			if(!isMatch){
-				return false;
-			}
-			
+		Map<String, Integer> tempSet = parseMinAndMax(winNum);
+		Integer min = tempSet.get(KEY_MIN);
+		Integer max = tempSet.get(KEY_MAX);
+		if(max - min != kdVal){
+			return false;
 		}
 				
 		return true;
@@ -143,7 +135,10 @@ public class Kd7kPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 			if(temp.length() != 3){
 				return false;
 			}
-			
+
+			if(!betNumOptions.contains(temp)){
+				return false;
+			}
 			Map<String, Integer> tempSet = parseMinAndMax(temp);
 			Integer min = tempSet.get(KEY_MIN);
 			Integer max = tempSet.get(KEY_MAX);
@@ -180,17 +175,12 @@ public class Kd7kPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 //		winNum = winNum.substring(4, 9);
 		//winNumSet = winNum.split(",");
 		betNumMul = betNum.split(";");		
+		Map<String, Integer> tempSet = parseMinAndMax(winNum);
+		Integer min = tempSet.get(KEY_MIN);
+		Integer max = tempSet.get(KEY_MAX);
 		
-		for(String singleSel : betNumMul) {
-			if(winNum.contains(singleSel)) {
-				winningBetAmount++;
-			}
-			/*for(int i = 0; i < singleSel.length(); i++) {
-				String numBit = singleSel.substring(i, i + 1);
-				if(winNum.contains(numBit)) {
-					winningBetAmount++;
-				}
-			}	*/		
+		if(max - min == kdVal){
+			winningBetAmount = betNumMul.length;
 		}
 		
 		betAmount = MathUtil.multiply(winningBetAmount, times, Float.class);
@@ -371,6 +361,7 @@ public class Kd7kPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 			if(ret.get(KEY_MAX) == null || ret.get(KEY_MAX) < Integer.valueOf(bit)){
 				ret.put(KEY_MAX, Integer.valueOf(bit));
 			}
+			i+=1;
 		}
 		return ret;
 	}

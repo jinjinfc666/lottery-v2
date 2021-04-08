@@ -243,4 +243,7 @@ public class EwhsSgDsPlayTypeFacadeImplTest extends ServiceJunitBase{
 		winAmount.setScale(2, BigDecimal.ROUND_HALF_UP);
 		Assert.assertTrue(new BigDecimal("1.9").compareTo(winAmount) == 0);
 	}
+	
+	
+	
 }

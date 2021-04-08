@@ -167,7 +167,7 @@ public class EwhsBsDsPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 	@Override
 	public Map<String, Object> calPrize(Issue issue, OrderInfo order, UserInfo user) {
 		Map<String, Object> ret = new HashMap<String, Object>();
-		
+		String[] winNumSet = null;
 		// 每次点击选号按钮所选号码，多个所选号码以;分割
 		String[] betNumMul = null;
 		String betNum = null;
@@ -178,6 +178,7 @@ public class EwhsBsDsPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		Integer times = order.getTimes();
 		BigDecimal monUnit = order.getPattern();
 //		BigDecimal singleBettingPrize = null;
+		int winNumFinal = -1;
 		
 		//1700 --- 1960
 //		Float prizePattern = userServ.calPrizePattern(user, issue.getLotteryType());
@@ -187,11 +188,18 @@ public class EwhsBsDsPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		winNum = issue.getRetNum();
 		betNum = order.getBetNum();
 //		winNum = winNum.substring(4, 9);
-		//winNumSet = winNum.split(",");
+		winNumSet = winNum.split(",");
 		betNumMul = betNum.split(";");		
 		
+		Integer sum = Integer.valueOf(winNumSet[0]) + Integer.valueOf(winNumSet[1]);
+		if(sum % 2 != 0) {
+			winNumFinal = ODD;
+		}else {
+			winNumFinal = EVEN;
+		}
+		
 		for(String singleSel : betNumMul) {
-			if(winNum.contains(singleSel)) {
+			if(singleSel.contains("0" + String.valueOf(winNumFinal))) {
 				winningBetAmount++;
 			}
 			/*for(int i = 0; i < singleSel.length(); i++) {

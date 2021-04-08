@@ -33,7 +33,7 @@ public class Kd0kPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 	
 	private final Integer kdVal = 0;
 	
-//	private String betNumOptions = "0-6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21-27";
+	private String betNumOptions = "000,001,002,003,004,005,006,007,008,009";
 		
 	@Override
 	public boolean isMatchWinningNum(Issue issue, OrderInfo order) {
@@ -50,36 +50,16 @@ public class Kd0kPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		betNumMul = betNum.split(";");
 		
 		
-		Map<String, Integer> winNumMap = splitBetNumMap(winNum);
-		
-		for(String temp : betNumMul) {
-			if(StringUtils.isBlank(temp)) {
-				continue;
-			}
-			Map<String, Integer> betNumMap = splitBetNumMap(betNum);
-			boolean isMatch = isMatch(betNumMap, winNumMap);
-			if(!isMatch){
-				return false;
-			}
-			
+		Map<String, Integer> tempSet = parseMinAndMax(winNum);
+		Integer min = tempSet.get(KEY_MIN);
+		Integer max = tempSet.get(KEY_MAX);
+		if(max - min != kdVal){
+			return false;
 		}
 				
 		return true;
 	}
 
-	private boolean isMatch(Map<String, Integer> betNumSet, Map<String, Integer> winNumSet){
-		
-		Iterator<String> ite = betNumSet.keySet().iterator();
-		while(ite.hasNext()){
-			String key = ite.next();
-			Integer counter = betNumSet.get(key);
-			Integer counter_ = winNumSet.get(key);
-			if(counter_ == null || !counter_.equals(counter)){
-				return false;
-			}
-		}
-		return true;
-	}
 	@Override
 	public Map<String, Object> preProcessNumber(Map<String, Object> params, UserInfo user) {		
 		Map<String, Object> ret = new HashMap<>();
@@ -158,6 +138,10 @@ public class Kd0kPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 				return false;
 			}
 			
+			if(!betNumOptions.contains(temp)){
+				return false;
+			}
+			
 			Map<String, Integer> tempSet = parseMinAndMax(temp);
 			Integer min = tempSet.get(KEY_MIN);
 			Integer max = tempSet.get(KEY_MAX);
@@ -180,6 +164,7 @@ public class Kd0kPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 			if(ret.get(KEY_MAX) == null || ret.get(KEY_MAX) < Integer.valueOf(bit)){
 				ret.put(KEY_MAX, Integer.valueOf(bit));
 			}
+			i += 1;
 		}
 		return ret;
 	}
@@ -209,18 +194,14 @@ public class Kd0kPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 //		winNum = winNum.substring(4, 9);
 		//winNumSet = winNum.split(",");
 		betNumMul = betNum.split(";");		
+		Map<String, Integer> tempSet = parseMinAndMax(winNum);
+		Integer min = tempSet.get(KEY_MIN);
+		Integer max = tempSet.get(KEY_MAX);
 		
-		for(String singleSel : betNumMul) {
-			if(winNum.contains(singleSel)) {
-				winningBetAmount++;
-			}
-			/*for(int i = 0; i < singleSel.length(); i++) {
-				String numBit = singleSel.substring(i, i + 1);
-				if(winNum.contains(numBit)) {
-					winningBetAmount++;
-				}
-			}	*/		
+		if(max - min == kdVal){
+			winningBetAmount = betNumMul.length;
 		}
+		
 		
 		betAmount = MathUtil.multiply(winningBetAmount, times, Float.class);
 		betAmount = MathUtil.multiply(betAmount, monUnit.floatValue(), Float.class);
@@ -370,7 +351,7 @@ public class Kd0kPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 				bits.put(bit, counter);
 			}
 			
-			i += 1;
+			i += 2;
 		}
 		
 		return bits;

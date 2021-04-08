@@ -115,7 +115,7 @@ public class EwhsBgDsPlayTypeFacadeImplTest extends ServiceJunitBase{
 		Issue issue = new Issue();
 		issue.setIssueNum("");
 		issue.setLotteryType(Constants.LottoType.TC3.getCode());
-		issue.setRetNum("2,0,0");
+		issue.setRetNum("2,1,0");
 		issue.setStartTime(startTime);
 		issue.setState(Constants.IssueState.LOTTO_DARW.getCode());
 		issue.setEndTime(DateUtil.addMinutes(startTime, 10));
@@ -135,7 +135,7 @@ public class EwhsBgDsPlayTypeFacadeImplTest extends ServiceJunitBase{
 		Issue issue = new Issue();
 		issue.setIssueNum("");
 		issue.setLotteryType(Constants.LottoType.TC3.getCode());
-		issue.setRetNum("2,9,9");
+		issue.setRetNum("2,7,9");
 		issue.setStartTime(startTime);
 		issue.setState(Constants.IssueState.LOTTO_DARW.getCode());
 		issue.setEndTime(DateUtil.addMinutes(startTime, 10));

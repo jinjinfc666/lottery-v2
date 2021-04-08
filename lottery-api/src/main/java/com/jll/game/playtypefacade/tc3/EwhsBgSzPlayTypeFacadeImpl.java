@@ -167,6 +167,7 @@ public class EwhsBgSzPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 	public Map<String, Object> calPrize(Issue issue, OrderInfo order, UserInfo user) {
 		Map<String, Object> ret = new HashMap<String, Object>();
 		
+		String[] winNumSet = null;
 		// 每次点击选号按钮所选号码，多个所选号码以;分割
 		String[] betNumMul = null;
 		String betNum = null;
@@ -186,11 +187,23 @@ public class EwhsBgSzPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		winNum = issue.getRetNum();
 		betNum = order.getBetNum();
 //		winNum = winNum.substring(4, 9);
-		//winNumSet = winNum.split(",");
+		winNumSet = winNum.split(",");
 		betNumMul = betNum.split(";");		
 		
+		Integer sum = Integer.valueOf(winNumSet[0]) + Integer.valueOf(winNumSet[2]);
+		String sumStr = null;
+		if(sum < sumDownLimit){
+			sumStr = downLimitRange;
+		}else if(sum > sumUpLimit){
+			sumStr = upLimitRange;
+		}else{
+			sumStr = String.valueOf(sum);
+		}
+		
 		for(String singleSel : betNumMul) {
-			if(winNum.contains(singleSel)) {
+			
+			
+			if(singleSel.equals(sumStr)){
 				winningBetAmount++;
 			}
 			/*for(int i = 0; i < singleSel.length(); i++) {

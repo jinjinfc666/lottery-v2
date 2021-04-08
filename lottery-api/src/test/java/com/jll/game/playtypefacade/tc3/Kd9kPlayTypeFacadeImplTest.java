@@ -18,16 +18,16 @@ import com.jll.entity.UserInfo;
 import com.jll.game.playtype.PlayTypeFacade;
 import com.jll.game.playtypefacade.PlayTypeFactory;
 
-public class Kd0kPlayTypeFacadeImplTest extends ServiceJunitBase{
+public class Kd9kPlayTypeFacadeImplTest extends ServiceJunitBase{
 		
-	public Kd0kPlayTypeFacadeImplTest(String name) {
+	public Kd9kPlayTypeFacadeImplTest(String name) {
 		super(name);
 	}	
 	
 	@Resource
 	PlayTypeFacade playTypeFacade;
 	
-	final String facadeName = "0k|0跨/kd|跨度/fs";
+	final String facadeName = "9k|9跨/kd|跨度/fs";
 	
 	@Override
 	protected void setUp() throws Exception {
@@ -68,8 +68,9 @@ public class Kd0kPlayTypeFacadeImplTest extends ServiceJunitBase{
 		Assert.assertTrue(ret.size() == 216);
 	}
 	
-	public void testValidBetNum_valid_000(){
-		String betNum = "000";
+	
+	public void testValidBetNum_valid_009(){
+		String betNum = "009";
 		OrderInfo order = new OrderInfo();
 		//order.setIssueId(issueId);
 		order.setBetNum(betNum);
@@ -78,8 +79,8 @@ public class Kd0kPlayTypeFacadeImplTest extends ServiceJunitBase{
 		Assert.assertTrue(ret);
 	}
 	
-	public void testValidBetNum_invalid_001(){
-		String betNum = "001";
+	public void testValidBetNum_invalid_0009(){
+		String betNum = "0009";
 		OrderInfo order = new OrderInfo();
 		//order.setIssueId(issueId);
 		order.setBetNum(betNum);
@@ -88,7 +89,7 @@ public class Kd0kPlayTypeFacadeImplTest extends ServiceJunitBase{
 		Assert.assertFalse(ret);
 	}
 	
-	public void testValidBetNum_valid_999(){
+	public void testValidBetNum_invalid_999(){
 		String betNum = "999";
 		OrderInfo order = new OrderInfo();
 		//order.setIssueId(issueId);
@@ -117,25 +118,14 @@ public class Kd0kPlayTypeFacadeImplTest extends ServiceJunitBase{
 		boolean ret = playTypeFacade.validBetNum(order);
 		Assert.assertFalse(ret);
 	}
-	
-	public void testValidBetNum_tooLong(){
-		String betNum = "0000";
-		OrderInfo order = new OrderInfo();
-		//order.setIssueId(issueId);
-		order.setBetNum(betNum);
 		
-		boolean ret = playTypeFacade.validBetNum(order);
-		Assert.assertFalse(ret);
-	}
-	
-	
-	public void testIsMatchWinningNum_winning_000(){
+	public void testIsMatchWinningNum_winning_009(){
 		Date startTime = new Date();
-		String betNum = "000";
+		String betNum = "009";
 		Issue issue = new Issue();
 		issue.setIssueNum("");
 		issue.setLotteryType(Constants.LottoType.TC3.getCode());
-		issue.setRetNum("0,0,0");
+		issue.setRetNum("0,2,9");
 		issue.setStartTime(startTime);
 		issue.setState(Constants.IssueState.LOTTO_DARW.getCode());
 		issue.setEndTime(DateUtil.addMinutes(startTime, 10));
@@ -154,7 +144,7 @@ public class Kd0kPlayTypeFacadeImplTest extends ServiceJunitBase{
 		Issue issue = new Issue();
 		issue.setIssueNum("");
 		issue.setLotteryType(Constants.LottoType.TC3.getCode());
-		issue.setRetNum("0,0,9");
+		issue.setRetNum("0,0,8");
 		issue.setStartTime(startTime);
 		issue.setState(Constants.IssueState.LOTTO_DARW.getCode());
 		issue.setEndTime(DateUtil.addMinutes(startTime, 10));
@@ -168,33 +158,13 @@ public class Kd0kPlayTypeFacadeImplTest extends ServiceJunitBase{
 		
 	}
 	
-	public void testIsMatchWinningNum_lost_000(){
+	public void testIsMatchWinningNum_win_009_069(){
 		Date startTime = new Date();
-		String betNum = "000";
+		String betNum = "009";
 		Issue issue = new Issue();
 		issue.setIssueNum("");
 		issue.setLotteryType(Constants.LottoType.TC3.getCode());
-		issue.setRetNum("1,2,3");
-		issue.setStartTime(startTime);
-		issue.setState(Constants.IssueState.LOTTO_DARW.getCode());
-		issue.setEndTime(DateUtil.addMinutes(startTime, 10));
-		
-		OrderInfo order = new OrderInfo();
-		//order.setIssueId(issueId);
-		order.setBetNum(betNum);
-		
-		boolean ret = playTypeFacade.isMatchWinningNum(issue, order);
-		Assert.assertFalse(ret);
-		
-	}
-	
-	public void testIsMatchWinningNum_win_000_222(){
-		Date startTime = new Date();
-		String betNum = "000";
-		Issue issue = new Issue();
-		issue.setIssueNum("");
-		issue.setLotteryType(Constants.LottoType.TC3.getCode());
-		issue.setRetNum("2,2,2");
+		issue.setRetNum("0,6,9");
 		issue.setStartTime(startTime);
 		issue.setState(Constants.IssueState.LOTTO_DARW.getCode());
 		issue.setEndTime(DateUtil.addMinutes(startTime, 10));
@@ -207,19 +177,18 @@ public class Kd0kPlayTypeFacadeImplTest extends ServiceJunitBase{
 		Assert.assertTrue(ret);
 		
 	}
+		
 	
-	
-	
-	public void testCalPrize_lost_000(){
+	public void testCalPrize_lost_009(){
 		UserInfo user = new UserInfo();
 		user.setId(4);
 		user.setUserName("xy_user_001");
 		Date startTime = new Date();
-		String betNum = "000";
+		String betNum = "009";
 		Issue issue = new Issue();
 		issue.setIssueNum("");
 		issue.setLotteryType(Constants.LottoType.TC3.getCode());
-		issue.setRetNum("1,1,2");
+		issue.setRetNum("1,2,1");
 		issue.setStartTime(startTime);
 		issue.setState(Constants.IssueState.LOTTO_DARW.getCode());
 		issue.setEndTime(DateUtil.addMinutes(startTime, 10));
@@ -238,16 +207,16 @@ public class Kd0kPlayTypeFacadeImplTest extends ServiceJunitBase{
 	}
 	
 
-	public void testCalPrize_win_000(){
+	public void testCalPrize_win_009(){
 		UserInfo user = new UserInfo();
 		user.setId(4);
 		user.setUserName("xy_user_001");
 		Date startTime = new Date();
-		String betNum = "000";
+		String betNum = "009";
 		Issue issue = new Issue();
 		issue.setIssueNum("");
 		issue.setLotteryType(Constants.LottoType.TC3.getCode());
-		issue.setRetNum("0,0,0");
+		issue.setRetNum("0,2,9");
 		issue.setStartTime(startTime);
 		issue.setState(Constants.IssueState.LOTTO_DARW.getCode());
 		issue.setEndTime(DateUtil.addMinutes(startTime, 10));
@@ -266,16 +235,16 @@ public class Kd0kPlayTypeFacadeImplTest extends ServiceJunitBase{
 		Assert.assertTrue(new BigDecimal("1.9").compareTo(winAmount) == 0);
 	}
 	
-	public void testCalPrize_win_000_222(){
+	public void testCalPrize_win_009_039(){
 		UserInfo user = new UserInfo();
 		user.setId(4);
 		user.setUserName("xy_user_001");
 		Date startTime = new Date();
-		String betNum = "000";
+		String betNum = "009";
 		Issue issue = new Issue();
 		issue.setIssueNum("");
 		issue.setLotteryType(Constants.LottoType.TC3.getCode());
-		issue.setRetNum("2,2,2");
+		issue.setRetNum("0,3,9");
 		issue.setStartTime(startTime);
 		issue.setState(Constants.IssueState.LOTTO_DARW.getCode());
 		issue.setEndTime(DateUtil.addMinutes(startTime, 10));
@@ -293,5 +262,4 @@ public class Kd0kPlayTypeFacadeImplTest extends ServiceJunitBase{
 		winAmount.setScale(2, BigDecimal.ROUND_HALF_UP);
 		Assert.assertTrue(new BigDecimal("1.9").compareTo(winAmount) == 0);
 	}
-	
 }

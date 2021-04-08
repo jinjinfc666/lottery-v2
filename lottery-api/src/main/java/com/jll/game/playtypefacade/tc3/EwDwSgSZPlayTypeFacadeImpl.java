@@ -64,13 +64,13 @@ public class EwDwSgSZPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		betNumMul = betNum.split(";");
 		
 		for(String temp : betNumMul) {
-			if(!String.valueOf(temp.charAt(2)).equals(winNumSet[2])
-					|| !String.valueOf(temp.charAt(1)).equals(winNumSet[1])){
-				return false;
+			if(String.valueOf(temp.charAt(2)).equals(winNumSet[2])
+					&& String.valueOf(temp.charAt(1)).equals(winNumSet[1])){
+				return true;
 			}
 		}
 				
-		return true;
+		return false;
 	}
 
 	@Override
@@ -180,9 +180,9 @@ public class EwDwSgSZPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		int winNumFinal = -1;
 		
 		//1700 --- 1960
-		Float prizePattern = userServ.calPrizePattern(user, issue.getLotteryType());
-		BigDecimal winningRate = calWinningRate();
-		singleBettingPrize =  calSingleBettingPrize(prizePattern, winningRate);
+//		Float prizePattern = userServ.calPrizePattern(user, issue.getLotteryType());
+		BigDecimal winningRate = order.getPrizeRate();
+//		singleBettingPrize =  calSingleBettingPrize(prizePattern, winningRate);
 		
 		winNum = issue.getRetNum();
 		betNum = order.getBetNum();
@@ -198,18 +198,19 @@ public class EwDwSgSZPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		
 		for(String singleSel : betNumMul) {
 			//betNumSet = singleSel.split(",");
-			if(singleSel.contains("0" + String.valueOf(winNumFinal))) {
+			if(String.valueOf(singleSel.charAt(2)).equals(winNumSet[2])
+					&& String.valueOf(singleSel.charAt(1)).equals(winNumSet[1])){
 				winningBetAmount++;
 			}
 		}
 		
 		betAmount = MathUtil.multiply(winningBetAmount, times, Float.class);
 		betAmount = MathUtil.multiply(betAmount, monUnit.floatValue(), Float.class);
-		maxWinAmount = MathUtil.multiply(betAmount, singleBettingPrize.floatValue(), Float.class);
+		maxWinAmount = MathUtil.multiply(betAmount, winningRate, Float.class);
 		
 		ret.put(Constants.KEY_WINNING_BET_TOTAL, winningBetAmount);
 		ret.put(Constants.KEY_WIN_AMOUNT, maxWinAmount);
-		ret.put(Constants.KEY_SINGLE_BETTING_PRIZE, singleBettingPrize);
+		ret.put(Constants.KEY_SINGLE_BETTING_PRIZE, winningRate);
 		
 		return ret;
 	}

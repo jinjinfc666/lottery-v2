@@ -32,38 +32,32 @@ public class Kd1kPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 	private final String KEY_MAX = "max_bit";
 	
 	private final Integer kdVal = 1;
-//	private String betNumOptions = "0-6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21-27";
+	
+	private String betNumOptions = "000,001,002,003,004,005,006,007,008,009";
 		
 	@Override
 	public boolean isMatchWinningNum(Issue issue, OrderInfo order) {
 		//开奖号码的每一位
-		String[] winNumSet = null;
-		//每次点击选号按钮所选号码，多个所选号码以;分割
-		String[] betNumMul= null;
-		String betNum = null;
-		String winNum = null;
-		
-		winNum = issue.getRetNum();
-		betNum = order.getBetNum();
-		winNumSet = winNum.split(",");
-		betNumMul = betNum.split(";");
-		
-		
-		Map<String, Integer> winNumMap = splitBetNumMap(winNum);
-		
-		for(String temp : betNumMul) {
-			if(StringUtils.isBlank(temp)) {
-				continue;
-			}
-			Map<String, Integer> betNumMap = splitBetNumMap(betNum);
-			boolean isMatch = isMatch(betNumMap, winNumMap);
-			if(!isMatch){
-				return false;
-			}
-			
-		}
+				String[] winNumSet = null;
+				//每次点击选号按钮所选号码，多个所选号码以;分割
+				String[] betNumMul= null;
+				String betNum = null;
+				String winNum = null;
 				
-		return true;
+				winNum = issue.getRetNum();
+				betNum = order.getBetNum();
+				winNumSet = winNum.split(",");
+				betNumMul = betNum.split(";");
+				
+				
+				Map<String, Integer> tempSet = parseMinAndMax(winNum);
+				Integer min = tempSet.get(KEY_MIN);
+				Integer max = tempSet.get(KEY_MAX);
+				if(max - min != kdVal){
+					return false;
+				}
+						
+				return true;
 	}
 
 	@Override
@@ -144,6 +138,10 @@ public class Kd1kPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 				return false;
 			}
 			
+			if(!betNumOptions.contains(temp)){
+				return false;
+			}
+			
 			Map<String, Integer> tempSet = parseMinAndMax(temp);
 			Integer min = tempSet.get(KEY_MIN);
 			Integer max = tempSet.get(KEY_MAX);
@@ -180,18 +178,14 @@ public class Kd1kPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 //		winNum = winNum.substring(4, 9);
 		//winNumSet = winNum.split(",");
 		betNumMul = betNum.split(";");		
+		Map<String, Integer> tempSet = parseMinAndMax(winNum);
+		Integer min = tempSet.get(KEY_MIN);
+		Integer max = tempSet.get(KEY_MAX);
 		
-		for(String singleSel : betNumMul) {
-			if(winNum.contains(singleSel)) {
-				winningBetAmount++;
-			}
-			/*for(int i = 0; i < singleSel.length(); i++) {
-				String numBit = singleSel.substring(i, i + 1);
-				if(winNum.contains(numBit)) {
-					winningBetAmount++;
-				}
-			}	*/		
+		if(max - min == kdVal){
+			winningBetAmount = betNumMul.length;
 		}
+		
 		
 		betAmount = MathUtil.multiply(winningBetAmount, times, Float.class);
 		betAmount = MathUtil.multiply(betAmount, monUnit.floatValue(), Float.class);
@@ -371,6 +365,7 @@ public class Kd1kPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 			if(ret.get(KEY_MAX) == null || ret.get(KEY_MAX) < Integer.valueOf(bit)){
 				ret.put(KEY_MAX, Integer.valueOf(bit));
 			}
+			i += 1;
 		}
 		return ret;
 	}
