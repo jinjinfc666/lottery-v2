@@ -333,7 +333,8 @@ public class OrderServiceImpl implements OrderService
 	}
 
 	private String verifyBal(List<OrderInfo> orders, UserAccount wallet, String lotteryType, UserInfo user) {
-		BigDecimal bal = new BigDecimal(wallet.getBalance());
+		BigDecimal bal = new BigDecimal(userExtServ.queryFiledByName(user.getId(), "xyAmount"));
+		bal = bal.subtract(new BigDecimal(userExtServ.queryFiledByName(user.getId(), "usedCreditAmount")));
 		BigDecimal totalAmount = new BigDecimal(0);
 		PlayTypeFacade playTypeFacade = null;
 		Integer playTypeId = null;

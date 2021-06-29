@@ -77,7 +77,6 @@ public class TReportServiceImpl implements TReportService {
 		@Override
 		public Map<String,Object> queryDailySettlement(Map<String, Object> ret) {
 			String startTime=(String) ret.get("startTime");
-			String endTime=(String) ret.get("endTime");
 			String userName=(String) ret.get("userName");
 			Integer pageIndex=(Integer) ret.get("pageIndex");
 			Integer pageSize=(Integer) ret.get("pageSize");
@@ -86,7 +85,7 @@ public class TReportServiceImpl implements TReportService {
 			if(userInfo == null){
 				return null;
 			}
-			return tReportDao.queryDailySettlement(startTime, endTime, userInfo,pageIndex,pageSize);
+			return tReportDao.queryDailySettlement(startTime, userInfo,pageIndex,pageSize);
 		}
 		@Override
 		public PageBean queryDailySettlementByUser(Map<String, Object> ret) {

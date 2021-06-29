@@ -605,13 +605,13 @@ public class IssueServiceImpl implements IssueService
 		if(isMatch) {//赢
 			//发奖金
 			Map<String, Object> ret = calPrize(issue, order, user);
-			BigDecimal prize = new BigDecimal((Float)ret.get(Constants.KEY_WIN_AMOUNT));
+			BigDecimal prize = new BigDecimal((Float)ret.get(Constants.KEY_WIN_AMOUNT)).setScale(4, BigDecimal.ROUND_HALF_UP);
 			
 			String codeTypeName = Constants.KEY_LOTTO_ATTRI_PREFIX + issue.getLotteryType();
 			String codeName = Constants.LotteryAttributes.MAX_PRIZE_AMOUNT.getCode();
 			SysCode sysCode = cacheServ.getSysCode(codeTypeName, codeName);
 			if(sysCode != null) {
-				maxWinningAmount = new BigDecimal(sysCode.getCodeVal());
+				maxWinningAmount = new BigDecimal(sysCode.getCodeVal()).setScale(4, BigDecimal.ROUND_HALF_UP);
 				if(prize.compareTo(maxWinningAmount) == 1) {
 					prize = maxWinningAmount;
 				}
@@ -642,7 +642,7 @@ public class IssueServiceImpl implements IssueService
 			//修改订单状态
 			modifyOrderState(order, Constants.OrderState.WINNING, ret);
 			//member win the betting, platform's profit = bet amount - prize 
-			platProfit = new BigDecimal(order.getBetAmount()).subtract(prize);
+			platProfit = new BigDecimal(order.getBetAmount()).subtract(prize).setScale(4, BigDecimal.ROUND_HALF_UP);
 		}else {
 			//修改订单状态
 			modifyOrderState(order, Constants.OrderState.LOSTING, null);
@@ -714,7 +714,7 @@ public class IssueServiceImpl implements IssueService
 		UserAccount wallet = walletServ.queryById(order.getWalletId());
 		walletType = wallet.getAccType();
 		wallet = walletServ.queryUserAccount(user.getId(), walletType);
-		bal = new BigDecimal(wallet.getBalance()).add(prize);
+		bal = new BigDecimal(wallet.getBalance()).add(prize).setScale(4, BigDecimal.ROUND_HALF_UP);
 		wallet.setBalance(bal.doubleValue());
 		
 		walletServ.updateWallet(wallet);
@@ -725,6 +725,7 @@ public class IssueServiceImpl implements IssueService
 			Constants.AccOperationType opeType) {
 		UserAccount wallet = walletServ.queryById(order.getWalletId());
 		wallet = walletServ.queryUserAccount(user.getId(), wallet.getAccType());
+		
 		UserAccountDetails accDetails = new UserAccountDetails();
 		BigDecimal preAmount = null;
 		BigDecimal postAmount = null;
@@ -742,6 +743,8 @@ public class IssueServiceImpl implements IssueService
 		accDetails.setPreAmount(preAmount.doubleValue());
 		accDetails.setUserId(user.getId());
 		accDetails.setWalletId(wallet.getId());
+		accDetails.setLotteryType(issue.getLotteryType());
+		accDetails.setPlayTypeId(order.getPlayType());
 		accDetailsServ.saveAccDetails(accDetails);
 	}
 	
@@ -792,11 +795,11 @@ public class IssueServiceImpl implements IssueService
 		
 		modifyBal(order, user, prize);
 		
-		prize = prize.multiply(new BigDecimal(-1));
+		/*prize = prize.multiply(new BigDecimal(-1));
 		addUserAccountDetails(order, superiorUser, issue, prize, 
 				Constants.AccOperationType.TS);
 		
-		modifyBal(order, superiorUser, prize);
+		modifyBal(order, superiorUser, prize);*/
 		
 		rebate(issue, superiorUser, order);
 	}
@@ -815,13 +818,13 @@ public class IssueServiceImpl implements IssueService
 		if(playType == null){
 			return null;
 		}*/
-		BigDecimal rebateRate = order.getTs();
+		BigDecimal rebateRate = order.getTs().setScale(4, BigDecimal.ROUND_HALF_UP);
 		if(rebateRate == null){
 			return null;
 		}
-		rebateRate = rebateRate.multiply(new BigDecimal(0.01F));
+		rebateRate = rebateRate.multiply(new BigDecimal(0.01F)).setScale(4, BigDecimal.ROUND_HALF_UP);
 		BigDecimal betAmount = new BigDecimal(order.getBetAmount());
-		rebate = betAmount.multiply(rebateRate);
+		rebate = betAmount.multiply(rebateRate).setScale(4, BigDecimal.ROUND_HALF_UP);
 		return rebate;
 	}
 	
@@ -931,7 +934,7 @@ public class IssueServiceImpl implements IssueService
 		//agent share the profit with superior 
 		if(user.getUserType().intValue() == UserType.XY_AGENCY.getCode()){
 			zc = user.getZcAmount();
-			shareProfit = platProfit.multiply(zc);
+			shareProfit = platProfit.multiply(zc).setScale(4, BigDecimal.ROUND_HALF_UP);
 			// agent get the zc
 			addUserAccountDetails(order, user, issue, shareProfit, 
 					Constants.AccOperationType.ZC);

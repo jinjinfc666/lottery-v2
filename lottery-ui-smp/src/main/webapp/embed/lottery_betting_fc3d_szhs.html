@@ -1,0 +1,497 @@
+<html lang="zh-cn">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Content-Language" content="zh-cn">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>博天下</title>
+<link rel="shortcut icon" href="/images/logo.ico" type="image/x-icon">
+<link rel="stylesheet"
+	href="common/template/lottery/jimei/css/bootstrap.min.css"
+	type="text/css">
+<link rel="stylesheet"
+	href="common/template/lottery/jimei/css/style.css?v=2019022317110511"
+	type="text/css">
+<link rel="stylesheet"
+	href="common/template/lottery/jimei/css/balls.css?v=2019022317110511"
+	type="text/css">
+
+<style type="text/css">
+#ticket-base-info .tb-sub {
+	width: 75px;
+	margin: 0;
+}
+
+#ticket-base-info img {
+	width: 75px;
+	height: 75px;
+	position: absolute;
+	top: 0px;
+	left: 7px;
+}
+</style>
+
+<style type="text/css">
+.gamePlay {
+	position: relative;
+	right: 0;
+	top: 3px;
+	padding: 0px 40px;
+}
+
+.gamePlay a {
+	background-position: 0 -731px;
+	text-decoration: none;
+}
+
+.gamePlay a {
+	background: url(/common/template/lottery/lecai/images/base-ico.png)
+		no-repeat
+}
+
+.gamePlay a {
+	display: block;
+	width: 110px;
+	height: 32px;
+}
+
+.gamePlay .page-ico {
+	position: absolute;
+	right: 60px;
+	top: -5px;
+	width: 34px;
+	display: block;
+	background: none;
+	height: auto;
+	margin: auto;
+	outline: none;
+}
+
+.displaySm{
+	display: none;
+}
+
+.betRecArea{
+   	margin-top: 10px;
+    background-color: #267671;
+    width: 16%;
+    height:717px;
+    float: right;
+    padding-bottom: 8px;
+    background: #e2e2e2;
+    padding: 20px 0;
+    font-size: 12px;
+    text-align:center;
+}
+
+.frame_ {
+	height: 730px;
+    width: 100%;
+    position: relative;
+    padding: 0 10px 0 10px;
+}
+
+.betArea{
+	float: left;
+    width: 69%;
+    padding: 0 5px 0 5px;
+}
+
+.placeholdersArea{
+    margin-top: 10px;
+    background-color: #267671;
+    width: 15%;
+    height:717px;
+    float: left;
+    padding-bottom: 8px;
+    background: #e2e2e2;
+    padding: 20px 0;
+    font-size: 12px;
+    text-align:center;
+}
+
+
+</style>
+
+<script src="js/lib/jquery-1.10.2.min.js?v=01"></script>
+</head>
+<body class="index-bg">
+	<div class="frame_"   ng-controller="lotteryCtrl" ng-init="queryBulletinBoard('fc3d')">
+		<div class="placeholdersArea">
+			<div class="sidebar index-sidebar ng-scope">
+				<div class="user-info ng-scope">
+					<div class="user-line user-info-name aside-block-top" style="padding-left: 5px">
+					<span style="float:left">会员：</span>
+						<b class="text-danger ng-binding accountName" id="account" ng-if="isLogin" style="float: left;">{{userInfo.userName}}</b>
+						<a href="javascript:void(0)" target="_blank" id="isLogin" style="font-size: 10px; margin-left: 5px;color:#ffcc00" ng-click="" ng-if="!isLogin">[立即登录]</a>
+					</div>
+					<div class="user-line user-info-money aside-block-bottom"
+						style="padding-left: 5px">
+						<span style="float:left">信誉额度：</span>						 
+						<b id="nowMoney"
+							style="cursor: pointer;float: left;"
+							class="text-danger ng-binding ng-scope nowMoney" ng-if="isLogin">{{userInfo.xyAmount}}</b>
+						
+						<b id="nowMoney"
+							style="cursor: pointer; text-decoration: underline;"
+							class="text-danger ng-binding ng-scope nowMoney" ng-if="!isLogin"></b>
+					</div>
+					<div class="user-line user-info-money aside-block-bottom"
+						style="padding-left: 5px">
+						<span style="float:left">已用额度：</span>						 
+						<b id="nowMoney"
+							style="cursor: pointer; text-decoration: underline;float: left;"
+							class="text-danger ng-binding ng-scope nowMoney" ng-if="isLogin" ng-click="queryMemberInfo()">{{userInfo.usedCreditAmount}}</b>
+						<!-- 
+						<b id="nowMoney" onclick="refreshMoney()"
+							style="cursor: pointer; text-decoration: underline;"
+							class="text-danger ng-binding ng-scope nowMoney" ng-if="!isLogin"></b> -->
+					</div>
+				</div>
+				<div class="user-link user-center-btn ng-scope" style="display:none">
+					<a href="/center/banktrans/deposit/page.do" class="bank-savings"
+						target="_blank"></a> <a href="/center/banktrans/draw/page.do"
+						class="bank-take" target="_blank"></a>
+					<!--  <a href="/center/banktrans/mnychg/page.do" class="money-conversion" target="_blank"></a> -->
+					<div class="clearfix"></div>
+				</div>
+	
+				<div class="news ng-scope" ng-if="SiteMessage" style="display:none">
+					<div class="news-t text-center">最新公告</div>
+					<div class="news-list">
+						<marquee vspace="0" hspace="0" id="newMsg" class="ng-binding"
+							align="right" behavior="scroll" style="height: 100%"
+							direction="up" loop="-1" scrollamount="2" scrolldelay="20"
+							onmouseout="this.start()" onmouseover="this.stop()">
+							尊敬的鼎盛娱乐贵宾：目前彩种幸运飞艇临时维护，维护中带来不便，请您谅解！其他彩票彩种均为正常，建议您可以转款其他彩种进行游艺，鼎盛娱乐祝广大会员游艺愉快，盈利满满
+						</marquee>
+					</div>
+				</div>
+				<div class="list-bet ng-scope" style="display:none">
+					<div class="list-bet-t text-center">
+						最新注单<a href="/lotteryV2/history.do" target="newHistory">(历史下注)</a>
+					</div>
+					<div class="list-bet ng-scope newOrderData"></div>
+				</div>
+			</div>
+			
+			<div id="lotteryV2_content" class="sidebar index-sidebar ng-scope" ng-init="queryIssueRecBrieffc3d('fc3d',1)">
+			<table class="table table-bordered table-bet pull-left ng-scope" style="background-color:white">
+							<thead>
+								<tr>
+									<th class="ng-binding">期号</th>
+									<th class="ng-binding">开奖号码</th>
+								</tr>
+							</thead>
+							<tbody>							
+								<tr  class="ng-scope" ng-repeat="v in issueRecs.content">																			
+									<td class="ng-binding ng-scope" add-color="4">{{v.issueNum}}</td>
+									<td class="" add-color="4" >
+										{{v.retNum == null?'':v.retNum}}
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						
+						<div class="dataTables_paginate paging_simple_numbers" id="DataTables_Table_4_paginate" style="background-color: #267671;text-align:right;padding:0 10px 10px 0">                                    
+                        	<span></span>
+                        	<a style="color:white" href="qushitu/trendAnysis.html?lotteryType=fc3d" target="view_window_cqssc">>>更多</a>
+                        </div>
+                                    
+			</div>
+		
+		</div>
+		<div class="betArea">
+		<!-- 头部 -->
+		<div class="header_nav_bg ng-scope">
+			<div class="header_nav">
+				<header class="index-header ng-scope" id="ticket-base">
+					<div class="tb-body">
+						<div id="ticket-base-info" class="tb-b-column">
+							<div class="tb-sub">
+								<img id="lottery_logoImg" src="images/lottery/fc3d-logo.png">
+							</div>
+						</div>
+						<div class="tb-b-column" id="ticket-cutdown">
+							<div class="tb-sub">
+								<div class="sub tc-refer title">
+									<span>第<em id="curIssueNumberId">{{bulletinBoard.currIssue.issueNum}}</em>期
+									</span> <span id="openOrCloseName">距下一期投注开始还有</span>
+								</div>
+								<div id="cutdown-clock-base" class="sub">
+									<ul class="ocplate">
+										<li ng-repeat="v in downCounter track by $index"><span>{{v}}</span></li>
+									</ul>
+									<ul class="ocplates ng-hide"></ul>
+									<div class="clear"></div>
+								</div>
+							</div>
+						</div>
+						<div id="ticker-drawing-last" class="tb-b-column">
+							<div class="tb-sub menu1">
+								<div class="sub title">
+									<em>第<i id="lotteryV2_Title">{{bulletinBoard.lastIssue.issueNum}}</i>期</em> 
+									<a onclick="result();" javascript="void(0)" style="cursor: pointer;">开奖号码</a>
+								</div>
+								<div class="sub viewer ticker-drawing-viewer ticker-drawing-viewer-base">
+									<a id="lotteryV2_haoMa" class="T_SSC L_CQSSC status--off"> 
+										<span class="item_{{$index}}" ng-repeat="v in lastIssueRetNum track by $index">
+											<b class="b{{v}}">{{v}}</b>
+										</span>
+									</a>
+								</div>
+								<div class="sub option">
+									<a class="tdl-o-chart" href="qushitu/trendAnysis.html?lotteryType=fc3d" target="view_window_cqssc">号码走势
+										<i>&nbsp;</i>
+									</a> 
+									<a class="tdl-o-remark" javascript="void(0)" onclick="rule();" style="cursor: pointer;">游戏说明
+										<i>&nbsp;</i>
+									</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</header>
+			</div>
+		</div>
+	
+	
+	
+		<!-- 主体内容 -->
+		<div class="frame ng-scope">
+			<!-- content_left -->		
+			
+			<div class="main ng-scope" id="_main_view" ng-controller="lotteryUICtrl" ng-init="iniCqsscUI(7)">
+				<section class="ng-scope">
+					<div id="lotteryV2_group" class="ng-scope" >
+						<ul class="twoNav ng-scope">
+							<li ng-class="{'ng-scope':true,'active':isZeroActive}">
+								<a class="ng-binding" lot_code="zhenghe" stid="33" ui-sref="lottery_betting_fc3d">主盘势</a>
+							</li>
+							<li ng-class="{'ng-scope':true,'active':isOneActive}">
+								<a class="ng-binding" lot_code="qianwei" stid="33" ui-sref="lottery_betting_fc3d_yzdw">一字盘势</a>
+							</li>
+							<li ng-class="{'ng-scope':true,'active':isTwoActive}">
+								<a class="ng-binding" lot_code="qianwei" stid="33" ui-sref="lottery_betting_fc3d_ezdw">二字定位</a>
+							</li>
+							<li ng-class="{'ng-scope':true,'active':isThreeActive}">
+								<a class="ng-binding" lot_code="qianwei" stid="33" ui-sref="lottery_betting_fc3d_ezzh">二字组合</a>
+							</li>
+							<li ng-class="{'ng-scope':true,'active':isFourActive}">
+								<a class="ng-binding" lot_code="qianwei" stid="33" ui-sref="lottery_betting_fc3d_ezhs">二字和数</a>
+							</li>
+							<li ng-class="{'ng-scope':true,'active':isFiveActive}">
+								<a class="ng-binding" lot_code="qianwei" stid="33" ui-sref="lottery_betting_fc3d_szdw">三字定位</a>
+							</li>
+							<li ng-class="{'ng-scope':true,'active':isSixActive}">
+								<a class="ng-binding" lot_code="qianwei" stid="33" ui-sref="lottery_betting_fc3d_szzh">三字组合</a>
+							</li>
+							<li ng-class="{'ng-scope':true,'active':isSevenActive}">
+								<a class="ng-binding" lot_code="qianwei" stid="33" ui-sref="lottery_betting_fc3d_szhs">三字和数</a>
+							</li>
+							<li ng-class="{'ng-scope':true,'active':isEightActive}">
+								<a class="ng-binding" lot_code="qianwei" stid="33" ui-sref="lottery_betting_fc3d_zs">组三</a>
+							</li>
+							<li ng-class="{'ng-scope':true,'active':isNineActive}">
+								<a class="ng-binding" lot_code="qianwei" stid="33" ui-sref="lottery_betting_fc3d_zl">组六</a>
+							</li>
+							<li ng-class="{'ng-scope':true,'active':isTenActive}">
+								<a class="ng-binding" lot_code="qianwei" stid="33" ui-sref="lottery_betting_fc3d_fszh">复式组合</a>
+							</li>
+							<li ng-class="{'ng-scope':true,'active':isElevenActive}">
+								<a class="ng-binding" lot_code="qianwei" stid="33" ui-sref="lottery_betting_fc3d_yzgg">一字过关</a>
+							</li>
+							<li ng-class="{'ng-scope':true,'active':isTwelveActive}">
+								<a class="ng-binding" lot_code="qianwei" stid="33" ui-sref="lottery_betting_fc3d_kd">跨度</a>
+							</li>
+							<!-- li class="ng-scope "><a class="ng-binding" lot_code="wanwei" stid="33">万位</a></li>
+				        	<li class="ng-scope "><a class="ng-binding" lot_code="qianwei" stid="33">千位</a></li>
+				        	<li class="ng-scope "><a class="ng-binding" lot_code="baiwei" stid="33">百位</a></li>
+				        	<li class="ng-scope "><a class="ng-binding" lot_code="shiwei" stid="33">十位</a></li>
+				        	<li class="ng-scope "><a class="ng-binding" lot_code="gewei" stid="33">个位</a></li>
+				        	<li class="ng-scope "><a class="ng-binding" lot_code="heweishu" stid="33">和尾数</a></li>
+				        	<li class="ng-scope "><a class="ng-binding" lot_code="longhudou" stid="33">龙虎斗</a></li>
+				        	<li class="ng-scope "><a class="ng-binding" lot_code="heshu" stid="33">和数</a></li>
+				        	<div style="position:relative;display:inline-block" class="moreGroup">
+								<a id="moreWanfa" href="javascript:void(0)" class="ng-binding">更多玩法<span class="caret"></span></a> -->
+										<!-- <ul class="dropdown-menu sub-menu">
+											<li class="ng-scope"><a class="ng-binding" lot_code="sanzi" stid="33">三字</a></li>
+											<li class="ng-scope"><a class="ng-binding" lot_code="erzidingwei" stid="33">二字定位</a></li>
+											<li class="ng-scope"><a class="ng-binding" lot_code="sanzidingwei" stid="33">三字定位</a></li>
+											<li class="ng-scope"><a class="ng-binding" lot_code="kuadu" stid="33">跨度</a></li>
+								</ul> -->
+							<!-- /div>-->
+							<div class="clearfix"></div>
+						</ul>
+					</div>
+	
+					<div class="main-bet-content">	
+						<div class="bar-bet">
+							<div class="input-group pull-left w150 ml20">
+								<span id="basic-addon1" class="input-group-addon">预设金额</span> 
+								<input type="text" 
+										class="form-control ng-pristine ng-untouched ng-valid"
+										name="presetMoney" 
+										ng-model="$parent.presetAmount">
+							</div>
+							<button class="btn btn-danger ml10 resetBtn" style="background: #267671; border-color: #455964;" type="button">重置</button>
+							<button type="button" class="btn btn-danger ml10 ng-scope lotteryV2Btn" ng-click='betting("fc3d")'>提交注单</button>
+							<div class="pull-right clock ng-scope" id="currentQiHaoAndTime">
+								<span id="flushTime" style="font-size: 14px; float: right; width: 40px; text-align: right; margin-top: 4px; margin-left: 6px"></span>
+							</div>
+						</div>
+						
+						<div id="lotteryV2_content" class="ng-scope ssc_ball"
+							style="width: 100%; display: inline-block;"
+								ng-init="querySzhs('fc3d')">
+	
+							<table class="table table-bordered table-bet" style="display:blocked">
+								<thead>
+									<tr>
+										<th colspan="15">
+										<div style="display: inline;float: left;width:100%"><span>三字和数</span></div>
+					</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="row in szhs">
+										<td width="60" add-color="0" ng-click="selNum($event)" data-unit="{{$index}}_0_unit_tab_01" data-bettingNum="{{row[0].betNum}}">{{row[0].betNum}}</td>
+										<td add-color="0" ng-click="selNum($event)"  data-unit="{{$index}}_0_unit_tab_01" data-bettingNum="{{row[0].betNum}}"><b class="text-danger ng-binding">{{row[0].currentOdds}}</b></td>
+										<td add-color="0"										
+												id="{{$index}}_0_unit_tab_01"
+												data-play="{{row[0].playTypeId}}" 
+												data-bettingNum="{{row[0].betNum}}"  
+												data-sel="0"
+												ng-click="selNum($event)"
+												data-unit="{{$index}}_0_unit_tab_01"
+												data_odds="{{row[0].currentOdds}}">
+											<input type="text"
+												class="bet-input ng-pristine ng-untouched ng-valid"
+												maxlength="6"
+												id="{{$index}}_0_unit_tab_01_betAmount"
+												disabled> 
+										</td>
+										<td width="60" add-color="1" ng-click="selNum($event)" data-unit="{{$index}}_1_unit_tab_01" data-bettingNum="{{row[1].betNum}}">{{row[1].betNum}}</td>
+										<td add-color="1" ng-click="selNum($event)" data-unit="{{$index}}_1_unit_tab_01" data-bettingNum="{{row[1].betNum}}"><b class="text-danger ng-binding">{{row[1].currentOdds}}</b></td>
+										<td add-color="1"
+												id="{{$index}}_1_unit_tab_01"
+												data-play="{{row[1].playTypeId}}" 
+												data-bettingNum="{{row[1].betNum}}"  
+												data-sel="0"
+												data-unit="{{$index}}_1_unit_tab_01"
+												data_odds="{{row[1].currentOdds}}"												
+												ng-click="selNum($event)">
+											<input type="text"
+												class="bet-input ng-pristine ng-untouched ng-valid"
+												maxlength="6"
+												id="{{$index}}_1_unit_tab_01_betAmount"
+												disabled> 
+										</td>
+										<td width="60" add-color="2" ng-click="selNum($event)" data-unit="{{$index}}_2_unit_tab_01" data-bettingNum="{{row[2].betNum}}">{{row[2].betNum}}</td>
+										<td add-color="2" ng-click="selNum($event)" data-unit="{{$index}}_2_unit_tab_01" data-bettingNum="{{row[2].betNum}}"><b class="text-danger ng-binding">{{row[2].currentOdds}}</b></td>
+										<td add-color="2"
+												id="{{$index}}_2_unit_tab_01"
+												data-play="{{row[2].playTypeId}}" 
+												data-bettingNum="{{row[2].betNum}}"  
+												data-sel="0"
+												data-unit="{{$index}}_2_unit_tab_01"
+												data_odds="{{row[2].currentOdds}}"												
+												ng-click="selNum($event)">
+											<input type="text"
+												class="bet-input ng-pristine ng-untouched ng-valid"
+												maxlength="6"
+												id="{{$index}}_2_unit_tab_01_betAmount"
+												disabled> 
+										</td>
+										<td width="60" add-color="3" ng-click="selNum($event)" data-unit="{{$index}}_3_unit_tab_01" data-bettingNum="{{row[3].betNum}}">{{row[3].betNum}}</td>
+										<td add-color="3" data-unit="{{$index}}_3_unit_tab_01" ng-click="selNum($event)" data-bettingNum="{{row[3].betNum}}"><b class="text-danger ng-binding">{{row[3].currentOdds}}</b></td>
+										<td add-color="3"
+												id="{{$index}}_3_unit_tab_01"
+												data-play="{{row[3].playTypeId}}" 
+												data-bettingNum="{{row[3].betNum}}"  
+												data-sel="0"
+												data-unit="{{$index}}_3_unit_tab_01"
+												data_odds="{{row[3].currentOdds}}"												
+												ng-click="selNum($event)">
+											<input type="text"
+												class="bet-input ng-pristine ng-untouched ng-valid"
+												maxlength="6"
+												id="{{$index}}_3_unit_tab_01_betAmount"
+												disabled> 
+										</td>
+										
+										<td width="60" add-color="4" ng-click="selNum($event)" data-unit="{{$index}}_4_unit_tab_01" data-bettingNum="{{row[4].betNum}}">{{row[4].betNum}}</td>
+										<td add-color="4" data-unit="{{$index}}_4_unit_tab_01" ng-click="selNum($event)" data-bettingNum="{{row[4].betNum}}"><b class="text-danger ng-binding">{{row[4].currentOdds}}</b></td>
+										<td add-color="4"
+												id="{{$index}}_4_unit_tab_01"
+												data-play="{{row[4].playTypeId}}" 
+												data-bettingNum="{{row[4].betNum}}"  
+												data-sel="0"
+												data-unit="{{$index}}_4_unit_tab_01"
+												data_odds="{{row[4].currentOdds}}"												
+												ng-click="selNum($event)">
+											<input type="text"
+												class="bet-input ng-pristine ng-untouched ng-valid"
+												maxlength="6"												
+												id="{{$index}}_4_unit_tab_01_betAmount"
+												disabled> 
+										</td>
+									</tr>
+								</tbody>
+							</table>
+							
+						</div>
+						
+						<div class="bar-bet">
+							<div class="input-group pull-left w150 ml20">
+								<span id="basic-addon1" class="input-group-addon">预设金额</span> 
+								<input type="text" 
+										class="form-control ng-pristine ng-untouched ng-valid"
+										name="presetMoney" 
+										ng-model="$parent.presetAmount">
+							</div>
+							<button class="btn btn-danger ml10 resetBtn" style="background: #267671; border-color: #455964;" type="button">重置</button>
+							<button type="button" class="btn btn-danger ml10 ng-scope lotteryV2Btn" ng-click='betting("fc3d")'>提交注单</button>
+							<div class="pull-right clock ng-scope" id="currentQiHaoAndTime">
+								<span id="flushTime" style="font-size: 14px; float: right; width: 40px; text-align: right; margin-top: 4px; margin-left: 6px"></span>
+							</div>
+						</div>					
+					</div>
+				</section>
+			</div>		
+			
+		</div>
+	
+		</div>
+	
+		<div id="lotteryV2_content" class="betRecArea ng-scope ssc_ball" ng-init="queryBettingRecBrief('fc3d',1)">	
+			<table class="table table-bordered table-bet pull-left ng-scope" style="background-color:white">
+							<thead>
+								<tr>
+									<th class="ng-binding">期号</th>
+									<th class="ng-binding">投注号码</th>
+									<th class="ng-binding">中奖金额</th>
+								</tr>
+							</thead>
+							<tbody>							
+								<tr  class="ng-scope" ng-repeat="v in bettingRecs.content">																			
+									<td class="ng-binding ng-scope" add-color="4" >{{v[1].issueNum}}</td>
+									<td class="" add-color="4" >
+										{{getBettingNum(v[1].lotteryType, v[2].classification, v[0].betNum)}}
+									</td>
+									<td class="" add-color="4" >
+									
+										{{v[0].winAmount}}
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						
+						<div class="dataTables_paginate paging_simple_numbers" id="DataTables_Table_4_paginate" style="background-color: #267671;text-align:right;padding:0 10px 10px 0">                                    
+                        	<span></span>
+                        	<a style="color:white" ui-sref="userCenter.hisRecord">>>更多</a>
+                        </div>
+                                    
+		</div>
+	</div>
+</body>
+</html>

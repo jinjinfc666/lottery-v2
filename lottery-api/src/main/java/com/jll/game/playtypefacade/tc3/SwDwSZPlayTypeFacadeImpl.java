@@ -183,9 +183,9 @@ public class SwDwSZPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		int winNumFinal = -1;
 		
 		//1700 --- 1960
-		Float prizePattern = userServ.calPrizePattern(user, issue.getLotteryType());
-		BigDecimal winningRate = calWinningRate();
-		singleBettingPrize =  calSingleBettingPrize(prizePattern, winningRate);
+//		Float prizePattern = userServ.calPrizePattern(user, issue.getLotteryType());
+		BigDecimal winningRate = order.getPrizeRate();
+//		singleBettingPrize =  calSingleBettingPrize(prizePattern, winningRate);
 		
 		winNum = issue.getRetNum();
 		betNum = order.getBetNum();
@@ -200,15 +200,16 @@ public class SwDwSZPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		}
 		
 		for(String singleSel : betNumMul) {
-			//betNumSet = singleSel.split(",");
-			if(singleSel.contains("0" + String.valueOf(winNumFinal))) {
+			if(String.valueOf(singleSel.charAt(0)).equals(winNumSet[0])
+					&& String.valueOf(singleSel.charAt(1)).equals(winNumSet[1])
+					&& String.valueOf(singleSel.charAt(2)).equals(winNumSet[2])){
 				winningBetAmount++;
-			}
+			}			
 		}
 		
 		betAmount = MathUtil.multiply(winningBetAmount, times, Float.class);
 		betAmount = MathUtil.multiply(betAmount, monUnit.floatValue(), Float.class);
-		maxWinAmount = MathUtil.multiply(betAmount, singleBettingPrize.floatValue(), Float.class);
+		maxWinAmount = MathUtil.multiply(betAmount, winningRate.floatValue(), Float.class);
 		
 		ret.put(Constants.KEY_WINNING_BET_TOTAL, winningBetAmount);
 		ret.put(Constants.KEY_WIN_AMOUNT, maxWinAmount);

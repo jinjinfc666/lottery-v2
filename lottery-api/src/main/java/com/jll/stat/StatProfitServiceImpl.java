@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jll.common.cache.CacheRedisService;
 import com.jll.common.constants.Constants;
@@ -101,7 +102,8 @@ public class StatProfitServiceImpl implements StatProfitService, KafkaConsumer
 			superior = user;
 		}
 
-		if (!Constants.AccOperationType.TRANSFER.getCode().equals(accDetails.getOperationType())) {
+		if (!Constants.AccOperationType.TRANSFER.getCode().equals(accDetails.getOperationType()) 
+				&& !Constants.AccOperationType.TS.getCode().equals(accDetails.getOperationType())) {
 			handleProfitInInherit(accDetails, superior);
 		}
 
@@ -167,26 +169,25 @@ public class StatProfitServiceImpl implements StatProfitService, KafkaConsumer
 		
 		if(trg.getOperationType().equals(Constants.AccOperationType.BETTING.getCode())) {
 			BigDecimal consumption = profit.getConsumption() == null?
-					new BigDecimal(trg.getAmount()):
-						profit.getConsumption().add(new BigDecimal(trg.getAmount()));
+					new BigDecimal(trg.getAmount()).setScale(4, BigDecimal.ROUND_HALF_UP):
+						profit.getConsumption().add(new BigDecimal(trg.getAmount())).setScale(4, BigDecimal.ROUND_HALF_UP);
 					
 			profit.setConsumption(consumption);
 		}else if(trg.getOperationType().equals(Constants.AccOperationType.PAYOUT.getCode())) {
 			BigDecimal returnPrize = profit.getReturnPrize() == null?
-					new BigDecimal(trg.getAmount()):
-						profit.getReturnPrize().add(new BigDecimal(trg.getAmount()));
+					new BigDecimal(trg.getAmount()).setScale(4, BigDecimal.ROUND_HALF_UP):
+						profit.getReturnPrize().add(new BigDecimal(trg.getAmount())).setScale(4, BigDecimal.ROUND_HALF_UP);
 					
 			profit.setReturnPrize(returnPrize);
 		}else if(trg.getOperationType().equals(Constants.AccOperationType.TS.getCode())) {
 			BigDecimal tsAmount = profit.getTsAmount() == null?
-					new BigDecimal(trg.getAmount()):
-						profit.getTsAmount().add(new BigDecimal(trg.getAmount()));
-					
+					new BigDecimal(trg.getAmount()).setScale(4, BigDecimal.ROUND_HALF_UP):
+						profit.getTsAmount().add(new BigDecimal(trg.getAmount())).setScale(4, BigDecimal.ROUND_HALF_UP);
 			profit.setTsAmount(tsAmount);
 		}else if(trg.getOperationType().equals(Constants.AccOperationType.ZC.getCode())) {
 			BigDecimal zcAmount = profit.getZcAmount() == null?
-					new BigDecimal(trg.getAmount()):
-						profit.getZcAmount().add(new BigDecimal(trg.getAmount()));
+					new BigDecimal(trg.getAmount()).setScale(4, BigDecimal.ROUND_HALF_UP):
+						profit.getZcAmount().add(new BigDecimal(trg.getAmount())).setScale(4, BigDecimal.ROUND_HALF_UP);
 					
 			profit.setZcAmount(zcAmount);
 		}
@@ -198,57 +199,78 @@ public class StatProfitServiceImpl implements StatProfitService, KafkaConsumer
 		if(userType.intValue() == UserType.XY_AGENCY.getCode()){				
 			profitVal = profit.getTsAmount() == null?
 					new BigDecimal(0):
-						profit.getTsAmount();
+						profit.getTsAmount().setScale(4, BigDecimal.ROUND_HALF_UP);
 			
 			profitVal = profitVal.add(profit.getZcAmount() == null?
 					new BigDecimal(0):
-						profit.getZcAmount());			
+						profit.getZcAmount()).setScale(4, BigDecimal.ROUND_HALF_UP);			
 			profit.setProfit(profitVal);
 			
-			settlementAmount = profit.getTsAmount() == null?new BigDecimal(0):profit.getTsAmount();
-			BigDecimal tempVal = profitVal.add(profit.getConsumption() == null?
+			BigDecimal tsAmount = profit.getTsAmount() == null?new BigDecimal(0):profit.getTsAmount().setScale(4, BigDecimal.ROUND_HALF_UP);
+//			logger.info(String.format("init ts amount to settlement  %s", settlementAmount));
+			/*BigDecimal tempVal = profitVal.add(profit.getConsumption() == null?
 					new BigDecimal(0):
-						profit.getConsumption());
-			tempVal = tempVal.subtract(profit.getCancelAmount() == null?
+						profit.getConsumption()).setScale(4, BigDecimal.ROUND_HALF_UP);*/
+			/*tempVal = tempVal.subtract(profit.getCancelAmount() == null?
 					new BigDecimal(0):
-						profit.getCancelAmount());
+						profit.getCancelAmount()).setScale(4, BigDecimal.ROUND_HALF_UP);*/
 			
 			//agent team ts
 //			UserTs userTs = userTsServ.queryUserTsByPlayTypeId(userInfo.getUserId(), lotteryType, playTypeId);
-			BigDecimal userTsAmount = parseUserTsAmount(userTs, userInfo);
-			settlementAmount = settlementAmount.add(tempVal.multiply(userTsAmount));
-			
-			tempVal = tempVal.subtract(profit.getReturnPrize() == null?
+			/*BigDecimal userTsAmount = parseUserTsAmount(userTs, userInfo);
+			settlementAmount = settlementAmount.add(tempVal.multiply(userTsAmount).setScale(4, BigDecimal.ROUND_HALF_UP)).setScale(4, BigDecimal.ROUND_HALF_UP);
+			logger.info(String.format("plus new ts amount to settlement  %s, new ts amount = consumption %s x tsRate %s = %s", settlementAmount, tempVal, userTsAmount,tempVal.multiply(userTsAmount).setScale(4, BigDecimal.ROUND_HALF_UP)));*/
+			/*BigDecimal tempVal = profit.getReturnPrize() == null?
 					new BigDecimal(0):
-						profit.getReturnPrize());
+						profit.getReturnPrize().setScale(4, BigDecimal.ROUND_HALF_UP);*/
+			BigDecimal returnPrize = profit.getReturnPrize() == null?
+					new BigDecimal(0):
+						profit.getReturnPrize().setScale(4, BigDecimal.ROUND_HALF_UP);
+			BigDecimal consumption = profit.getConsumption() == null?
+					new BigDecimal(0):
+						profit.getConsumption().setScale(4, BigDecimal.ROUND_HALF_UP);
+			
+			BigDecimal zcAmount = profit.getZcAmount().setScale(4, BigDecimal.ROUND_HALF_UP);
+//			settlementAmount = returnPrize.subtract(consumption).setScale(4, BigDecimal.ROUND_HALF_UP);
 			//agent team prize
-			settlementAmount = settlementAmount.add(tempVal.multiply(new BigDecimal(-1)));
-			tempVal = tempVal.multiply(userInfo.getZcAmount() == null?
+//			settlementAmount = settlementAmount.add(tempVal.multiply(new BigDecimal(-1))).setScale(4, BigDecimal.ROUND_HALF_UP);
+//			logger.info(String.format("plus (return prize - consumption) to settlement  %s, return prize %s - consumption %s = %s", settlementAmount, tempVal.multiply(new BigDecimal(-1)).setScale(4, BigDecimal.ROUND_HALF_UP)));
+//			BigDecimal zcAmount = new BigDecimal(tempVal.doubleValue());
+			/*tempVal = tempVal.multiply(userInfo.getZcAmount() == null?
 					new BigDecimal(0):
-						userInfo.getZcAmount());
+						userInfo.getZcAmount()).setScale(4, BigDecimal.ROUND_HALF_UP);*/
 			//agent team zc
-			settlementAmount = settlementAmount.add(tempVal);
-			
+			settlementAmount = zcAmount.add(tsAmount).add(returnPrize).subtract(consumption).setScale(4, BigDecimal.ROUND_HALF_UP);
+			logger.info(String.format("settlementAmount %s = zcAmount %s + tsAmount %s + returnPrize %s - consumption %s", settlementAmount, zcAmount,tsAmount, returnPrize,consumption));
 			profit.setSettlementAmount(settlementAmount);
 		}else if(userType.intValue() == UserType.XY_PLAYER.getCode()){
 			profitVal = profit.getReturnPrize() == null?
 					new BigDecimal(0):
-						profit.getReturnPrize();
+						profit.getReturnPrize().setScale(4, BigDecimal.ROUND_HALF_UP);
 			profitVal = profitVal.add(profit.getCancelAmount() == null?
 											new BigDecimal(0):
-												profit.getCancelAmount());
+												profit.getCancelAmount()).setScale(4, BigDecimal.ROUND_HALF_UP);
 			profitVal = profitVal.subtract(profit.getConsumption() == null?
 					new BigDecimal(0):
-						profit.getConsumption());		
+						profit.getConsumption()).setScale(4, BigDecimal.ROUND_HALF_UP);		
 			profitVal = profitVal.add(profit.getTsAmount() == null?
 					new BigDecimal(0):
-						profit.getTsAmount());
+						profit.getTsAmount()).setScale(4, BigDecimal.ROUND_HALF_UP);
 			
 			profit.setProfit(profitVal);
 			profit.setSettlementAmount(profitVal);
 		}		
 		
-		
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			String userAccountDetails = mapper.writeValueAsString(trg);
+			String profitStr = mapper.writeValueAsString(profit);
+			logger.info(userAccountDetails);
+			logger.info(profitStr);
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		reportServ.saveOrUpdateProfit(profit);
 	}
 

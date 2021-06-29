@@ -91,7 +91,65 @@ app.config(["$httpProvider", function ($httpProvider) {
         url: '/lottery_betting_tc3_fszh',
         templateUrl: 'embed/lottery_betting_tc3_fszh.html',
         params:{'seqNo':1}
-    }).state('userCenter', {
+    })
+    
+    
+    .state('lottery_betting_fc3d', {
+        url: '/lottery_betting_fc3d',
+        templateUrl: 'embed/lottery_betting_fc3d.html',
+        params:{'seqNo':1}
+    }).state('lottery_betting_fc3d_yzdw', {
+        url: '/lottery_betting_fc3d_yzdw',
+        templateUrl: 'embed/lottery_betting_fc3d_yzdw.html',
+        params:{'seqNo':1}
+    }).state('lottery_betting_fc3d_ezdw', {
+        url: '/lottery_betting_fc3d_ezdw',
+        templateUrl: 'embed/lottery_betting_fc3d_ezdw.html',
+        params:{'seqNo':1}
+    }).state('lottery_betting_fc3d_ezhs', {
+        url: '/lottery_betting_fc3d_ezhs',
+        templateUrl: 'embed/lottery_betting_fc3d_ezhs.html',
+        params:{'seqNo':1}
+    }).state('lottery_betting_fc3d_ezzh', {
+        url: '/lottery_betting_fc3d_ezzh',
+        templateUrl: 'embed/lottery_betting_fc3d_ezzh.html',
+        params:{'seqNo':1}
+    }).state('lottery_betting_fc3d_szdw', {
+        url: '/lottery_betting_fc3d_szdw',
+        templateUrl: 'embed/lottery_betting_fc3d_szdw.html',
+        params:{'seqNo':1}
+    }).state('lottery_betting_fc3d_szhs', {
+        url: '/lottery_betting_fc3d_szhs',
+        templateUrl: 'embed/lottery_betting_fc3d_szhs.html',
+        params:{'seqNo':1}
+    }).state('lottery_betting_fc3d_szzh', {
+        url: '/lottery_betting_fc3d_szzh',
+        templateUrl: 'embed/lottery_betting_fc3d_szzh.html',
+        params:{'seqNo':1}
+    }).state('lottery_betting_fc3d_zs', {
+        url: '/lottery_betting_fc3d_zs',
+        templateUrl: 'embed/lottery_betting_fc3d_zs.html',
+        params:{'seqNo':1}
+    }).state('lottery_betting_fc3d_zl', {
+        url: '/lottery_betting_fc3d_zl',
+        templateUrl: 'embed/lottery_betting_fc3d_zl.html',
+        params:{'seqNo':1}
+    }).state('lottery_betting_fc3d_yzgg', {
+        url: '/lottery_betting_fc3d_yzgg',
+        templateUrl: 'embed/lottery_betting_fc3d_yzgg.html',
+        params:{'seqNo':1}
+    }).state('lottery_betting_fc3d_kd', {
+        url: '/lottery_betting_fc3d_kd',
+        templateUrl: 'embed/lottery_betting_fc3d_kd.html',
+        params:{'seqNo':1}
+    }).state('lottery_betting_fc3d_fszh', {
+        url: '/lottery_betting_fc3d_fszh',
+        templateUrl: 'embed/lottery_betting_fc3d_fszh.html',
+        params:{'seqNo':1}
+    })
+    
+    
+    .state('userCenter', {
         url: '/userCenter',
         templateUrl: 'embed/user_center.html'
     }).state('userCenter.fundManDeposit', {

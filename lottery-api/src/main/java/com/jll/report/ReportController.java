@@ -1119,17 +1119,16 @@ public class ReportController {
 	@RequestMapping(value={"/daily-settlement"}, method={RequestMethod.GET}, produces={"application/json"})
 	public Map<String, Object> queryDailySettlement(@RequestParam(name = "userName", required = false) String userName,
 			  @RequestParam(name = "startTime", required = true) String startTime,//时间 String
-			  @RequestParam(name = "endTime", required = true) String endTime,//时间 String
 			  @RequestParam(name = "pageIndex", required = true) Integer pageIndex,//当前请求页
 			  HttpServletRequest request) {
 		Map<String, Object> ret = new HashMap<>();
-		if(StringUtils.isBlank(startTime)||StringUtils.isBlank(endTime)) {
+		if(StringUtils.isBlank(startTime)) {
 			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
 			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_ERROR_PARAMS.getCode());
 			ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_ERROR_PARAMS.getErrorMes());
 	    	return ret;
 		}
-		if(!DateUtil.isValidYmdDate(startTime)||!DateUtil.isValidYmdDate(endTime)) {
+		if(!DateUtil.isValidYmdDate(startTime)) {
 			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
 			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_ERROR_PARAMS.getCode());
 			ret.put(Message.KEY_ERROR_MES, Message.Error.ERROR_COMMON_ERROR_PARAMS.getErrorMes());
@@ -1140,7 +1139,6 @@ public class ReportController {
 		ret.put("pageIndex", pageIndex);
 		ret.put("userName", userName);
 		ret.put("startTime", startTime);
-		ret.put("endTime", endTime);
 		
 		Map<String,Object> list = null;
 		logger.debug(ret+"------------------------------queryMReportTeam--------------------------------------");
@@ -1151,6 +1149,7 @@ public class ReportController {
 			ret.put(Message.KEY_STATUS, Message.status.SUCCESS.getCode());
 			ret.put("data", list);
 		}catch(Exception e){
+			e.printStackTrace();
 			ret.clear();
 			ret.put(Message.KEY_STATUS, Message.status.FAILED.getCode());
 			ret.put(Message.KEY_ERROR_CODE, Message.Error.ERROR_COMMON_OTHERS.getCode());

@@ -679,6 +679,7 @@ public class Constants {
 		LOTTERY_CONFIG_XJSSC("lottery_config_xjssc"),//"PK10属性"
 		LOTTERY_CONFIG_YFB("lottery_config_yfb"),//1.5分彩
 		LOTTERY_CONFIG_TC3("lottery_config_tc3"),
+		LOTTERY_CONFIG_FC3D("lottery_config_fc3d"),
 		SIGN_IN_DAY("sign_in_day"),
 		CT_PLAY_TYPE_CLASSICFICATION("ct_play_type_classicfication"),//"玩法类型"
 		WITHDRAWAL_CFG("withdrawal_cfg"),

@@ -25,7 +25,7 @@ public interface TReportDao {
 			String endTime, 
 			UserInfo userInfo);
 	
-	public Map<String,Object> queryDailySettlement(String startTime, String endTime, UserInfo userInfo,Integer pageIndex,Integer pageSize);
+	public Map<String,Object> queryDailySettlement(String startTime, UserInfo userInfo,Integer pageIndex,Integer pageSize);
 	
 	public PageBean queryDailySettlementByUser(String startTime, String endTime, String userName, String settlementFlag,
 			Integer pageIndex, Integer pageSize);

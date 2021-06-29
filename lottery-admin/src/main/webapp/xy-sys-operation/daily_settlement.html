@@ -29,7 +29,6 @@
         <script type="text/javascript">
             $(document).ready(function () {
                 document.getElementById('startTime').value=getNowFormatDate();
-                document.getElementById('endTime').value=getNowFormatDate();
                 searchrecord("search");
             });
             
@@ -38,7 +37,6 @@
                 var tableid = $("#tableTRTD").attr("id");
                 var userName = document.getElementById('userName').value;
                 var startTime = document.getElementById('startTime').value;
-                var endTime = document.getElementById('endTime').value;
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
                 var url= queryDailySettlementURL;
@@ -50,25 +48,25 @@
                 	if(userInfo.userType == 8){
                 		userName = userInfo.userName;
                 		$("#userName").val(userName);
-                		queryDailySettlement(url, userName, startTime, endTime, pageIndex, token);
+                		queryDailySettlement(url, userName, startTime, pageIndex, token);
                 	}else{
                 		var deffered = $.Deferred();
                     	deffered.done(function(generalAgency){
                     		userName = generalAgency.userName;
                     		$("#userName").val(userName);
-                    		queryDailySettlement(url, userName, startTime, endTime, pageIndex, token);
+                    		queryDailySettlement(url, userName, startTime, pageIndex, token);
                     	});
                     	
                         queryGeneralAgency(deffered, token);
                 	}
                 }else{
-                	queryDailySettlement(url, userName, startTime, endTime, pageIndex, token);
+                	queryDailySettlement(url, userName, startTime, pageIndex, token);
                 }
                 
                
             }
             
-            function queryDailySettlement(url, userName, startTime, endTime, pageIndex, token){
+            function queryDailySettlement(url, userName, startTime, pageIndex, token){
             	var tableid = $("#tableTRTD").attr("id");
             	
             	 $.ajax({
@@ -78,7 +76,6 @@
                      data: {
                          userName:userName,
                          startTime:startTime,
-                         endTime:endTime,
                          pageIndex:pageIndex
                      },
                      dataType: "json",
@@ -282,8 +279,7 @@
                 <div class="form_box" style="width: 100%;">
                     <div class="input-group" style="margin-left: 20px;">
                         用户名：<input type="text" class="form-control" id="userName" name="userName" style="width:100px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        开始时间：<input type="text" id="startTime" placeholder="选择开始时间" onClick="return Calendar('startTime');" class="text_time" name="startTime" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        结束时间：<input type="text" id="endTime" placeholder="选择结束时间" onClick="return Calendar('endTime');" class="text_time" name="endTime" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        结算时间：<input type="text" id="startTime" placeholder="选择开始时间" onClick="return Calendar('startTime');" class="text_time" name="startTime" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <span> 
                             <button type="button" class="btn btn-primary" style="height:32px;" onclick="searchrecord('search')">搜索
                             </button> 

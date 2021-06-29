@@ -42,10 +42,28 @@ public class ZxZs10mPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 	
 	private String primeStr = "12357";
 	
-	private String smallStr = "04689";
+	private String qb = "0";
+	
+	private final Integer winNumMaxLen = 2;
 	
 	@Override
 	public boolean isMatchWinningNum(Issue issue, OrderInfo order) {
+		//开奖号码的每一位
+		String[] winNumSet = null;
+		//每次点击选号按钮所选号码，多个所选号码以;分割
+		String[] betNumMul= null;
+		String betNum = null;
+		String winNum = null;
+		
+		winNum = issue.getRetNum();
+		betNum = order.getBetNum();
+		winNumSet = winNum.split(",");
+		betNumMul = betNum.split(";");
+		
+		Map<String, Integer> winNumMap = splitBetNumMap(winNum, 2);
+		if(winNumMap.size() != winNumMaxLen){
+			return false;
+		}
 		return true;
 	}
 
@@ -125,6 +143,9 @@ public class ZxZs10mPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 				return false;
 			}
 			
+			if(!StringUtils.equals(temp, qb)){
+				return false;
+			}
 		}
 		
 		return true;
@@ -150,9 +171,9 @@ public class ZxZs10mPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		int winNumFinal = -1;
 		
 		//1700 --- 1960
-		Float prizePattern = userServ.calPrizePattern(user, issue.getLotteryType());
-		BigDecimal winningRate = calWinningRate();
-		singleBettingPrize =  calSingleBettingPrize(prizePattern, winningRate);
+//		Float prizePattern = userServ.calPrizePattern(user, issue.getLotteryType());
+		BigDecimal winningRate = order.getPrizeRate();
+//		singleBettingPrize =  calSingleBettingPrize(prizePattern, winningRate);
 		
 		winNum = issue.getRetNum();
 		betNum = order.getBetNum();
@@ -166,16 +187,12 @@ public class ZxZs10mPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 			winNumFinal = COMPOSITE;
 		}
 		
-		for(String singleSel : betNumMul) {
-			//betNumSet = singleSel.split(",");
-			if(singleSel.contains("0" + String.valueOf(winNumFinal))) {
-				winningBetAmount++;
-			}
-		}
+		winningBetAmount = betNumMul.length;
+		
 		
 		betAmount = MathUtil.multiply(winningBetAmount, times, Float.class);
 		betAmount = MathUtil.multiply(betAmount, monUnit.floatValue(), Float.class);
-		maxWinAmount = MathUtil.multiply(betAmount, singleBettingPrize.floatValue(), Float.class);
+		maxWinAmount = MathUtil.multiply(betAmount, winningRate.floatValue(), Float.class);
 		
 		ret.put(Constants.KEY_WINNING_BET_TOTAL, winningBetAmount);
 		ret.put(Constants.KEY_WIN_AMOUNT, maxWinAmount);
@@ -376,4 +393,25 @@ public class ZxZs10mPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		}
 		return ret;
 	}
+	
+	private Map<String, Integer> splitBetNumMap(String temp, int interval) {
+		Map<String, Integer> bits = new HashMap<>();
+		int len = temp.length();
+			
+		for(int i = 0; i < len;) {
+			String bit = temp.substring(i, i + 1);
+			if(bits.get(bit) == null){
+				bits.put(bit, 1);
+			}else{
+				Integer counter = bits.get(bit);
+				counter++;
+				bits.put(bit, counter);
+			}
+			
+			i += interval;
+		}
+		
+		return bits;
+	}
+	
 }

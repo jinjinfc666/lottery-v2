@@ -17,6 +17,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,6 +34,8 @@ import com.jll.entity.UserInfo;
 import com.jll.entity.display.BitColumn;
 import com.jll.entity.display.CreditMarket;
 import com.jll.user.UserInfoService;
+
+import net.minidev.json.JSONObject;
 
 @Configuration
 @PropertySource("classpath:sys-setting.properties")
@@ -52,6 +55,7 @@ public class PlayTypeServiceImpl implements PlayTypeService
 	
 	@Resource
 	UserInfoService userInfoServ;
+	
 	
 	@Override
 	public List<PlayType> queryPlayType(String lotteryType) {
@@ -245,7 +249,11 @@ public class PlayTypeServiceImpl implements PlayTypeService
 	@Override
 	public List<List<PlayTypeNum>> queryMainPs(String lotteryType) {
 		UserInfo userInfo = userInfoServ.getCurLoginInfo();
-		CreditMarket currentMarket = userInfo.getCurrentMarket();
+		CreditMarket currentMarket = null;
+		if(userInfo != null){
+			currentMarket = userInfo.getCurrentMarket();
+		}
+		
 		String playType = Constants.PlayType.BDW_YW_SZ.getDesc();
 		List<List<PlayTypeNum>> ret = new ArrayList<>();
 		Map<String, PlayTypeNum> playTypeNumsMap = cacheRedisService.queryPlayTypeNum(lotteryType, playType);
@@ -263,7 +271,10 @@ public class PlayTypeServiceImpl implements PlayTypeService
 		return ret;
 	}
 	
-	private BigDecimal selectCurrentOdds(CreditMarket currentMarket, PlayTypeNum playTypeNum) {		
+	private BigDecimal selectCurrentOdds(CreditMarket currentMarket, PlayTypeNum playTypeNum) {
+		if(currentMarket == null){
+			return playTypeNum.getaOdds();
+		}
 		CreditMarketEnum currentMarketEnum = Constants.CreditMarketEnum.getByCode(currentMarket.getMarketId());
 		switch(currentMarketEnum){
 		case MARKET_A:{
@@ -284,7 +295,11 @@ public class PlayTypeServiceImpl implements PlayTypeService
 	@Override
 	public List<List<PlayTypeNum>> queryMainPsHs(String lotteryType) {
 		UserInfo userInfo = userInfoServ.getCurLoginInfo();
-		CreditMarket currentMarket = userInfo.getCurrentMarket();
+		CreditMarket currentMarket = null;
+		if(userInfo != null){
+			currentMarket = userInfo.getCurrentMarket();
+		}
+		final CreditMarket currentMarket_ = currentMarket;
 		String codeTypeName = Constants.KEY_PLAY_TYPE_NUM;
 		
 		List<List<PlayTypeNum>> ret = new ArrayList<>();
@@ -302,7 +317,7 @@ public class PlayTypeServiceImpl implements PlayTypeService
 					bettingNum = bettingNum.split("\\|")[1];
 					buffer.append(bettingNum).append(playTypeNum.getBetNumDesc());
 					playTypeNum.setDisplayName(buffer.toString());
-					playTypeNum.setCurrentOdds(selectCurrentOdds(currentMarket, playTypeNum));
+					playTypeNum.setCurrentOdds(selectCurrentOdds(currentMarket_ , playTypeNum));
 					if(row1.size() < 5){
 						row1.add(playTypeNum);
 					}else{
@@ -381,7 +396,11 @@ public class PlayTypeServiceImpl implements PlayTypeService
 	@Override
 	public List<BitColumn> queryMainPsDwd(String lotteryType) {
 		UserInfo userInfo = userInfoServ.getCurLoginInfo();
-		CreditMarket currentMarket = userInfo.getCurrentMarket();
+		CreditMarket currentMarket = null;
+		if(userInfo != null){
+			currentMarket = userInfo.getCurrentMarket();
+		}
+		final CreditMarket currentMarket_ = currentMarket;
 		String codeTypeName = Constants.KEY_PLAY_TYPE_NUM;
 		
 		List<BitColumn> ret = new ArrayList<>();
@@ -392,7 +411,7 @@ public class PlayTypeServiceImpl implements PlayTypeService
 			playTypePlayTypeMap.entrySet().stream().filter(playTypeEntry->isYwdw(playTypeEntry.getKey())).forEach(playTypeEntry->{
 				
 				playTypeEntry.getValue().forEach((k,playTypeNum)->{
-					playTypeNum.setCurrentOdds(selectCurrentOdds(currentMarket, playTypeNum));
+					playTypeNum.setCurrentOdds(selectCurrentOdds(currentMarket_, playTypeNum));
 					if(isYwdwBw(playTypeEntry.getKey())){
 						BitColumn column = ret.get(0);
 						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
@@ -755,7 +774,10 @@ public class PlayTypeServiceImpl implements PlayTypeService
 	@Override
 	public List<List<PlayTypeNum>> queryBwsz(String lotteryType) {
 		UserInfo userInfo = userInfoServ.getCurLoginInfo();
-		CreditMarket currentMarket = userInfo.getCurrentMarket();
+		CreditMarket currentMarket = null;
+		if(userInfo != null){
+			currentMarket = userInfo.getCurrentMarket();
+		}
 		String playType = Constants.PlayType.YWDW_BW_SZ.getDesc();
 		List<List<PlayTypeNum>> ret = new ArrayList<>();
 		Map<String, PlayTypeNum> playTypeNumsMap = cacheRedisService.queryPlayTypeNum(lotteryType, playType);
@@ -777,7 +799,10 @@ public class PlayTypeServiceImpl implements PlayTypeService
 	@Override
 	public List<List<PlayTypeNum>> querySwsz(String lotteryType) {
 		UserInfo userInfo = userInfoServ.getCurLoginInfo();
-		CreditMarket currentMarket = userInfo.getCurrentMarket();
+		CreditMarket currentMarket = null;
+		if(userInfo != null){
+			currentMarket = userInfo.getCurrentMarket();
+		}
 		String playType = Constants.PlayType.YWDW_SW_SZ.getDesc();
 		List<List<PlayTypeNum>> ret = new ArrayList<>();
 		Map<String, PlayTypeNum> playTypeNumsMap = cacheRedisService.queryPlayTypeNum(lotteryType, playType);
@@ -798,7 +823,10 @@ public class PlayTypeServiceImpl implements PlayTypeService
 	@Override
 	public List<List<PlayTypeNum>> queryGwsz(String lotteryType) {
 		UserInfo userInfo = userInfoServ.getCurLoginInfo();
-		CreditMarket currentMarket = userInfo.getCurrentMarket();
+		CreditMarket currentMarket = null;
+		if(userInfo != null){
+			currentMarket = userInfo.getCurrentMarket();
+		}
 		String playType = Constants.PlayType.YWDW_GW_SZ.getDesc();
 		List<List<PlayTypeNum>> ret = new ArrayList<>();
 		Map<String, PlayTypeNum> playTypeNumsMap = cacheRedisService.queryPlayTypeNum(lotteryType, playType);
@@ -819,8 +847,10 @@ public class PlayTypeServiceImpl implements PlayTypeService
 	@Override
 	public List<List<PlayTypeNum>> queryEzdw(String lotteryType, String numType) {
 		UserInfo userInfo = userInfoServ.getCurLoginInfo();
-		CreditMarket currentMarket = userInfo.getCurrentMarket();
-		
+		CreditMarket currentMarket = null;
+		if(userInfo != null){
+			currentMarket = userInfo.getCurrentMarket();
+		}
 		String playType = parseEzdwPlayTypeFromNumType(numType == null?"0":numType.trim());
 		List<List<PlayTypeNum>> ret = new ArrayList<>();
 		Map<String, PlayTypeNum> playTypeNumsMap = cacheRedisService.queryPlayTypeNum(lotteryType, playType);
@@ -876,8 +906,10 @@ public class PlayTypeServiceImpl implements PlayTypeService
 	@Override
 	public List<List<PlayTypeNum>> querySzdw(String lotteryType) {
 		UserInfo userInfo = userInfoServ.getCurLoginInfo();
-		CreditMarket currentMarket = userInfo.getCurrentMarket();
-		
+		CreditMarket currentMarket = null;
+		if(userInfo != null){
+			currentMarket = userInfo.getCurrentMarket();
+		}
 		String playType = Constants.PlayType.SWDW_SZ.getDesc();
 		List<List<PlayTypeNum>> ret = new ArrayList<>();
 		Map<String, PlayTypeNum> playTypeNumsMap = cacheRedisService.queryPlayTypeNum(lotteryType, playType);
@@ -906,8 +938,10 @@ public class PlayTypeServiceImpl implements PlayTypeService
 	@Override
 	public List<List<PlayTypeNum>> queryEzzh(String lotteryType) {
 		UserInfo userInfo = userInfoServ.getCurLoginInfo();
-		CreditMarket currentMarket = userInfo.getCurrentMarket();
-		
+		CreditMarket currentMarket = null;
+		if(userInfo != null){
+			currentMarket = userInfo.getCurrentMarket();
+		}
 		String playType = Constants.PlayType.BDW_EW_SZ.getDesc();
 		List<List<PlayTypeNum>> ret = new ArrayList<>();
 		Map<String, PlayTypeNum> playTypeNumsMap = cacheRedisService.queryPlayTypeNum(lotteryType, playType);
@@ -936,8 +970,10 @@ public class PlayTypeServiceImpl implements PlayTypeService
 	@Override
 	public List<List<PlayTypeNum>> queryEzhs(String lotteryType, String numType) {
 		UserInfo userInfo = userInfoServ.getCurLoginInfo();
-		CreditMarket currentMarket = userInfo.getCurrentMarket();
-		
+		CreditMarket currentMarket = null;
+		if(userInfo != null){
+			currentMarket = userInfo.getCurrentMarket();
+		}
 		String playType = parseEzhsPlayTypeFromNumType(numType == null?"0":numType.trim());
 		List<List<PlayTypeNum>> ret = new ArrayList<>();
 		Map<String, PlayTypeNum> playTypeNumsMap = cacheRedisService.queryPlayTypeNum(lotteryType, playType);
@@ -966,8 +1002,10 @@ public class PlayTypeServiceImpl implements PlayTypeService
 	@Override
 	public List<List<PlayTypeNum>> querySzhs(String lotteryType) {
 		UserInfo userInfo = userInfoServ.getCurLoginInfo();
-		CreditMarket currentMarket = userInfo.getCurrentMarket();
-		
+		CreditMarket currentMarket = null;
+		if(userInfo != null){
+			currentMarket = userInfo.getCurrentMarket();
+		}
 		String playType = Constants.PlayType.SWHS_SZ.getDesc();
 		List<List<PlayTypeNum>> ret = new ArrayList<>();
 		Map<String, PlayTypeNum> playTypeNumsMap = cacheRedisService.queryPlayTypeNum(lotteryType, playType);
@@ -996,8 +1034,10 @@ public class PlayTypeServiceImpl implements PlayTypeService
 	@Override
 	public List<List<PlayTypeNum>> querySzzh(String lotteryType) {
 		UserInfo userInfo = userInfoServ.getCurLoginInfo();
-		CreditMarket currentMarket = userInfo.getCurrentMarket();
-		
+		CreditMarket currentMarket = null;
+		if(userInfo != null){
+			currentMarket = userInfo.getCurrentMarket();
+		}
 		String playType = Constants.PlayType.BDW_SW_SZ.getDesc();
 		List<List<PlayTypeNum>> ret = new ArrayList<>();
 		Map<String, PlayTypeNum> playTypeNumsMap = cacheRedisService.queryPlayTypeNum(lotteryType, playType);
@@ -1027,7 +1067,12 @@ public class PlayTypeServiceImpl implements PlayTypeService
 	@Override
 	public List<BitColumn> queryZx3(String lotteryType) {
 		UserInfo userInfo = userInfoServ.getCurLoginInfo();
-		CreditMarket currentMarket = userInfo.getCurrentMarket();
+		CreditMarket currentMarket = null;
+		if(userInfo != null){
+			currentMarket = userInfo.getCurrentMarket();
+		}
+		final CreditMarket currentMarket_ = currentMarket;
+		
 		String codeTypeName = Constants.KEY_PLAY_TYPE_NUM;
 		
 		List<BitColumn> ret = new ArrayList<>();
@@ -1039,7 +1084,7 @@ public class PlayTypeServiceImpl implements PlayTypeService
 				System.out.println(playTypeEntry.getKey());
 				playTypeEntry.getValue().forEach((k,playTypeNum)->{
 					System.out.println(k);
-					playTypeNum.setCurrentOdds(selectCurrentOdds(currentMarket, playTypeNum));
+					playTypeNum.setCurrentOdds(selectCurrentOdds(currentMarket_, playTypeNum));
 					if(isZx35m(playTypeEntry.getKey())){
 						BitColumn column = ret.get(0);
 						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
@@ -1086,7 +1131,11 @@ public class PlayTypeServiceImpl implements PlayTypeService
 	@Override
 	public List<BitColumn> queryZx6(String lotteryType) {
 		UserInfo userInfo = userInfoServ.getCurLoginInfo();
-		CreditMarket currentMarket = userInfo.getCurrentMarket();
+		CreditMarket currentMarket = null;
+		if(userInfo != null){
+			currentMarket = userInfo.getCurrentMarket();
+		}
+		final CreditMarket currentMarket_ = currentMarket;
 		String codeTypeName = Constants.KEY_PLAY_TYPE_NUM;
 		
 		List<BitColumn> ret = new ArrayList<>();
@@ -1098,7 +1147,7 @@ public class PlayTypeServiceImpl implements PlayTypeService
 				System.out.println(playTypeEntry.getKey());
 				playTypeEntry.getValue().forEach((k,playTypeNum)->{
 					System.out.println(k);
-					playTypeNum.setCurrentOdds(selectCurrentOdds(currentMarket, playTypeNum));
+					playTypeNum.setCurrentOdds(selectCurrentOdds(currentMarket_, playTypeNum));
 					if(isZx64m(playTypeEntry.getKey())){
 						BitColumn column = ret.get(0);
 						List<PlayTypeNum> playTypeNums = column.getPlayTypeNums();
@@ -1294,7 +1343,11 @@ public class PlayTypeServiceImpl implements PlayTypeService
 	@Override
 	public List<BitColumn> queryKd(String lotteryType) {
 		UserInfo userInfo = userInfoServ.getCurLoginInfo();
-		CreditMarket currentMarket = userInfo.getCurrentMarket();
+		CreditMarket currentMarket = null;
+		if(userInfo != null){
+			currentMarket = userInfo.getCurrentMarket();
+		}
+		final CreditMarket currentMarket_ = currentMarket;
 		String codeTypeName = Constants.KEY_PLAY_TYPE_NUM;
 		
 		List<BitColumn> ret = new ArrayList<>();
@@ -1306,7 +1359,7 @@ public class PlayTypeServiceImpl implements PlayTypeService
 				System.out.println(playTypeEntry.getKey());
 				playTypeEntry.getValue().forEach((k,playTypeNum)->{
 					System.out.println(k);
-					playTypeNum.setCurrentOdds(selectCurrentOdds(currentMarket, playTypeNum));
+					playTypeNum.setCurrentOdds(selectCurrentOdds(currentMarket_, playTypeNum));
 					if(is0k(playTypeEntry.getKey())){
 						BitColumn column = null;
 						if(ret.size() < 3){
@@ -1425,7 +1478,11 @@ public class PlayTypeServiceImpl implements PlayTypeService
 	@Override
 	public List<BitColumn> queryFs(String lotteryType) {
 		UserInfo userInfo = userInfoServ.getCurLoginInfo();
-		CreditMarket currentMarket = userInfo.getCurrentMarket();
+		CreditMarket currentMarket = null;
+		if(userInfo != null){
+			currentMarket = userInfo.getCurrentMarket();
+		}
+		final CreditMarket currentMarket_ = currentMarket;
 		String codeTypeName = Constants.KEY_PLAY_TYPE_NUM;
 		
 		List<BitColumn> ret = new ArrayList<>();
@@ -1437,7 +1494,7 @@ public class PlayTypeServiceImpl implements PlayTypeService
 				System.out.println(playTypeEntry.getKey());
 				playTypeEntry.getValue().forEach((k,playTypeNum)->{
 					System.out.println(k);
-					playTypeNum.setCurrentOdds(selectCurrentOdds(currentMarket, playTypeNum));
+					playTypeNum.setCurrentOdds(selectCurrentOdds(currentMarket_, playTypeNum));
 					if(isFsBw(playTypeEntry.getKey())){
 						BitColumn column = ret.get(0);
 						
@@ -1471,6 +1528,7 @@ public class PlayTypeServiceImpl implements PlayTypeService
 		String codeTypeName = Constants.KEY_PLAY_TYPE_NUM;
 		Map<String, Map<String, Map<String, PlayTypeNum>>> allPlayTypeNums = cacheRedisService.queryPlayTypeNum(codeTypeName);
 		Map<String, Map<String, PlayTypeNum>> lotteryTypePlayTypeNums = allPlayTypeNums.get(lotteryType);
+		
 		Map<String, PlayTypeNum> playTypeNums = lotteryTypePlayTypeNums.get(playTypeObj.getClassification());
 		List<PlayTypeNum> ret = playTypeNums.entrySet().stream().map(e->e.getValue()).sorted(Comparator.comparing(PlayTypeNum::getId)).collect(Collectors.toList());
 		List<List<PlayTypeNum>> finalRet = new ArrayList<>();

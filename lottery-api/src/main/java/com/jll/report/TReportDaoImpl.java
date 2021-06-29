@@ -341,15 +341,17 @@ public class TReportDaoImpl extends DefaultGenericDaoImpl<TeamPlReport> implemen
 	
 	@Override
 	public TeamPlReport queryProfitByUser(Integer userId, Date createTime, Integer userType, String lotteryType, UserTs userTs) {
-		String sql = "from TeamPlReport t where t.userId=:userId and t.createTime=:createTime and t.userType=:userType and t.lotteryType=:lotteryType and t.playType=:playType";
+		String sql = "from TeamPlReport t where t.userId=:userId and date_format(t.createTime,'%Y-%m-%d')=:createTime and t.userType=:userType and t.lotteryType=:lotteryType and t.playType=:playType";
 //		String sql = "from TeamPlReport t where t.userId=:userId and t.userType=:userType and t.lotteryType=:lotteryType and t.playType=:playType";
 		Map<String, Object> params = new HashMap<>();
 		TeamPlReport profit = null;
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-		Date createTime_ = null;
-		try {
+//		Date createTime_ = null;
+		String createTime_ = null;
+		createTime_ = format.format(createTime);
+		/*try {
 			createTime_ = format.parse(format.format(createTime));
-		} catch (ParseException e) {}
+		} catch (ParseException e) {}*/
 		params.put("userId", userId);
 		params.put("createTime", createTime_);
 		params.put("userType", userType);
@@ -679,7 +681,7 @@ public class TReportDaoImpl extends DefaultGenericDaoImpl<TeamPlReport> implemen
 	}
 	
 	@Override
-	public Map<String,Object> queryDailySettlement(String startTime, String endTime, UserInfo userInfo,Integer pageIndex,Integer pageSize) {
+	public Map<String,Object> queryDailySettlement(String startTime, UserInfo userInfo,Integer pageIndex,Integer pageSize) {
 		Map<String,Object> map = new HashMap<String,Object>();
 		TeamPlReport selfProfit = null;
 		if(userInfo.getUserType().equals(Constants.UserType.GENERAL_AGENCY.getCode())){
@@ -688,10 +690,10 @@ public class TReportDaoImpl extends DefaultGenericDaoImpl<TeamPlReport> implemen
 			selfProfit.setUserName(userInfo.getUserName());
 			selfProfit.setUserType(userInfo.getUserType());
 		}else{
-			selfProfit = querySelfSettlement(startTime, endTime, userInfo);
+			selfProfit = querySelfSettlement(startTime, userInfo);
 		}
-		List<TeamPlReport> nextAgencyLevelProfit = queryAgencyNextLevelSettlement(startTime, endTime, userInfo);
-		List<TeamPlReport> nextUserLevelProfit = queryUserNextLevelSettlement(startTime, endTime, userInfo);
+		List<TeamPlReport> nextAgencyLevelProfit = queryAgencyNextLevelSettlement(startTime, userInfo, Constants.UserType.XY_AGENCY.getCode());
+		List<TeamPlReport> nextUserLevelProfit = queryAgencyNextLevelSettlement(startTime, userInfo, Constants.UserType.XY_PLAYER.getCode());
 		
 		if(nextAgencyLevelProfit == null) {
 			nextAgencyLevelProfit = new ArrayList<>();
@@ -727,7 +729,7 @@ public class TReportDaoImpl extends DefaultGenericDaoImpl<TeamPlReport> implemen
 		return map;
 	}
 	
-	private TeamPlReport querySelfSettlement(String startTime, String endTime, UserInfo user) {
+	private TeamPlReport querySelfSettlement(String startTime, UserInfo user) {
 		Integer id = user.getId();
 		StringBuffer sqlBuffer = new StringBuffer();
 		PageBean<Object[]> page = new PageBean<>();
@@ -737,14 +739,13 @@ public class TReportDaoImpl extends DefaultGenericDaoImpl<TeamPlReport> implemen
 		page.setPageIndex(0);
 		page.setPageSize(100000);		
 		
-		sqlBuffer.append("from TeamPlReport t1 where t1.userId=:userId and t1.createTime >=:startTime and t1.createTime <=:endTime order by createTime desc");
-		
+		sqlBuffer.append("from TeamPlReport t1 where t1.userId=:userId and t1.createTime =:startTime");
+//		sqlBuffer.append("select sum(consumption) AS consumption,sum(cancel_amount) AS cancelAmount, sum(return_prize) AS returnPrize, sum(rebate) AS rebate,sum(profit) AS profit,sum(ts_amount) AS tsAmount,sum(zc_amount) AS zcAmount,sum(used_credit_limit) AS usedCreditLimit,sum(remain_credit_limit) AS remainCreditLimit,sum(settlement_amount) AS settlementAmount,user_name from team_pl_report where user_id=? and create_time=?");
 		
 		params.put("userId", id);
 	    /*Date beginDate = DateUtil.fmtYmdToDate(startTime);
 	    Date endDate = DateUtil.fmtYmdToDate(endTime);*/
 	    params.put("startTime", startTime);
-	    params.put("endTime", endTime);
     	
     	memberPlReport = queryLast(sqlBuffer.toString(), params, TeamPlReport.class);
 	    /*if(memberPlReport == null){
@@ -756,7 +757,7 @@ public class TReportDaoImpl extends DefaultGenericDaoImpl<TeamPlReport> implemen
 		return memberPlReport;
 	}
 	
-	private List<TeamPlReport> queryAgencyNextLevelSettlement(String startTime, String endTime, UserInfo user) {
+	private List<TeamPlReport> queryAgencyNextLevelSettlement(String startTime, UserInfo user, Integer userType) {
 		Integer id = user.getId();
 		StringBuffer sqlBuffer = new StringBuffer();
 		PageBean<Object[]> page = new PageBean<>();
@@ -771,34 +772,74 @@ public class TReportDaoImpl extends DefaultGenericDaoImpl<TeamPlReport> implemen
 		.append("from ")
 		.append("team_pl_report report,user_info userInfo ")
 		.append("where ")
-		.append("report.user_id = userInfo.id and find_in_set(?,userInfo.superior) = 1 and report.create_time >=? and report.create_time <=? and report.user_type=8 ")
+		.append("report.user_id = userInfo.id and find_in_set(?,userInfo.superior) = 1 and report.create_time =? and report.user_type=? ")
 		.append("group by user_id order by create_time desc ");
 		
 	    params.add(id);
 	    Date beginDate = DateUtil.fmtYmdToDate(startTime);
-	    Date endDate = DateUtil.fmtYmdToDate(endTime);
 	    params.add(beginDate);
-	    params.add(endDate);
+	    params.add(userType);
 	    
     	List<?> memberPlReportList=null;
     	
     	memberPlReportList = queryNativeSQL(sqlBuffer.toString(), params);
 	    Iterator<?> it=memberPlReportList.iterator();
 	    List<TeamPlReport> listRecord=new ArrayList<TeamPlReport>();
-	    String hql = "from TeamPlReport where userId=:userId and createTime=:createTime";
+	    String hql = "select sum(consumption) AS consumption,sum(cancel_amount) AS cancelAmount, sum(return_prize) AS returnPrize, sum(rebate) AS rebate,sum(profit) AS profit,sum(ts_amount) AS tsAmount,sum(zc_amount) AS zcAmount,sum(used_credit_limit) AS usedCreditLimit,sum(remain_credit_limit) AS remainCreditLimit,sum(settlement_amount) AS settlementAmount,user_name from team_pl_report where user_id=? and create_time=?";
 		while(it.hasNext()) {
-			TeamPlReport report = null;
-			Object[] obj=(Object[]) it.next();
-			Map<String, Object> params_ = new HashMap<>();
-			params_.put("userId", obj[0]);
+			List<TeamPlReport> report = new ArrayList<>();
+			Object[] obj_=(Object[]) it.next();
+			List<Object> params_ = new ArrayList<>();
+			params_.add(obj_[0]);
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 			try {
-				params_.put("createTime", format.parse((String)obj[1]));
+				params_.add(format.parse((String)obj_[1]));
 			} catch (ParseException e) {
 				
 			}
-			report = queryLast(hql, params_, TeamPlReport.class);
-		    listRecord.add(report);
+			List<?> reportCol = queryNativeSQL(hql, params_);
+			report = reportCol.stream().map(item->{
+				
+				
+				
+				TeamPlReport m=new TeamPlReport();
+				Object[] obj=(Object[]) item;
+				m.setUserName(user.getUserName());
+				
+				BigDecimal bd6 = (BigDecimal) obj[0];
+				m.setConsumption(bd6);
+				BigDecimal bd7 = (BigDecimal) obj[1];
+				m.setCancelAmount(bd7);
+				BigDecimal bd8 = (BigDecimal) obj[2];
+				m.setReturnPrize(bd8);
+				BigDecimal bd9 = (BigDecimal) obj[3];
+				m.setRebate(bd9);
+				
+				/*sum(consumption) AS consumption,sum(cancel_amount) AS cancelAmount, 
+				sum(return_prize) AS returnPrize, sum(rebate) AS rebate,sum(profit) AS profit,
+				sum(ts_amount) AS tsAmount,sum(zc_amount) AS zcAmount,sum(used_credit_limit) AS usedCreditLimit,
+				sum(remain_credit_limit) AS remainCreditLimit,sum(settlement_amount) AS settlementAmount*/
+				
+				BigDecimal bd10=(BigDecimal)obj[4];
+				m.setProfit(bd10);
+				BigDecimal bd11=(BigDecimal)obj[5];
+				m.setTsAmount(bd11);
+				BigDecimal bd12 = (BigDecimal) obj[6];
+				m.setZcAmount(bd12);
+				
+				BigDecimal bd13 = (BigDecimal) obj[7];
+				m.setUsedCreditLimit(bd13);
+				
+				m.setRemainCreditLimit((BigDecimal)obj[8]);
+				
+				m.setSettlementAmount((BigDecimal)obj[9]);
+				
+				m.setUserName((String)obj[10]);
+				
+				return m;
+			}).collect(Collectors.toList());
+			
+		    listRecord.addAll(report);
 		}
 		return listRecord;
 	}
@@ -810,7 +851,7 @@ public class TReportDaoImpl extends DefaultGenericDaoImpl<TeamPlReport> implemen
 		List<Object> params = new ArrayList<>();
 		
 		page.setPageIndex(0);
-		page.setPageSize(100000);		
+		page.setPageSize(100000);
 		
 //		select report.user_id,substring_index(group_concat(report.create_time order by report.create_time desc),",",1) as create_time from team_pl_report report,user_info userInfo where report.user_id = userInfo.id and find_in_set(1,userInfo.superior) = 1 group by user_id order by create_time desc
 		sqlBuffer.append("select ")
@@ -832,7 +873,7 @@ public class TReportDaoImpl extends DefaultGenericDaoImpl<TeamPlReport> implemen
     	memberPlReportList = queryNativeSQL(sqlBuffer.toString(), params);
 	    Iterator<?> it=memberPlReportList.iterator();
 	    List<TeamPlReport> listRecord=new ArrayList<TeamPlReport>();
-	    String hql = "from TeamPlReport where userId=:userId and createTime=:createTime";
+	    String hql = "select sum(consumption) AS consumption,sum(cancel_amount) AS cancelAmount, sum(return_prize) returnPrize, sum(rebate) rebate,sum(profit) profit,sum(ts_amount) tsAmount,sum(zc_amount) zcAmount,sum(used_credit_limit) usedCreditLimit,sum(remain_credit_limit) remainCreditLimit,sum(settlement_amount) settlementAmount from TeamPlReport where userId=:userId and createTime=:createTime";
 		while(it.hasNext()) {
 			TeamPlReport report = null;
 			Object[] obj=(Object[]) it.next();

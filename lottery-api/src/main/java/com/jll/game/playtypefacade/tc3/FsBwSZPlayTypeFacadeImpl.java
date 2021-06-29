@@ -185,9 +185,9 @@ public class FsBwSZPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		int winNumFinal = -1;
 		
 		//1700 --- 1960
-		Float prizePattern = userServ.calPrizePattern(user, issue.getLotteryType());
-		BigDecimal winningRate = calWinningRate();
-		singleBettingPrize =  calSingleBettingPrize(prizePattern, winningRate);
+//		Float prizePattern = userServ.calPrizePattern(user, issue.getLotteryType());
+		BigDecimal winningRate = order.getPrizeRate();
+//		singleBettingPrize =  calSingleBettingPrize(prizePattern, winningRate);
 		
 		winNum = issue.getRetNum();
 		betNum = order.getBetNum();
@@ -210,7 +210,7 @@ public class FsBwSZPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		
 		betAmount = MathUtil.multiply(winningBetAmount, times, Float.class);
 		betAmount = MathUtil.multiply(betAmount, monUnit.floatValue(), Float.class);
-		maxWinAmount = MathUtil.multiply(betAmount, singleBettingPrize.floatValue(), Float.class);
+		maxWinAmount = MathUtil.multiply(betAmount, winningRate.floatValue(), Float.class);
 		
 		ret.put(Constants.KEY_WINNING_BET_TOTAL, winningBetAmount);
 		ret.put(Constants.KEY_WIN_AMOUNT, maxWinAmount);

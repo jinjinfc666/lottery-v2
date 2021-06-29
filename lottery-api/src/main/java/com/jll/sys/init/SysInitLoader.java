@@ -1,6 +1,7 @@
 package com.jll.sys.init;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -16,6 +17,7 @@ import javax.annotation.Resource;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 
 import com.jll.common.cache.CacheRedisService;
 import com.jll.common.constants.Constants;
@@ -34,6 +36,7 @@ import com.jll.game.LotteryCenterServiceImpl;
 import com.jll.game.LotteryTypeFactory;
 import com.jll.game.LotteryTypeService;
 import com.jll.game.mesqueue.MessageDelegateListener;
+import com.jll.game.playtype.PlayTypeNumDao;
 import com.jll.game.playtype.PlayTypeNumService;
 import com.jll.game.playtype.PlayTypeService;
 import com.jll.pay.PaymentService;
@@ -69,6 +72,79 @@ public class SysInitLoader implements MessageDelegateListener{
 	
 	@Resource
 	PlayTypeNumService playTypeNumServ;
+	
+	@Resource
+	PlayTypeNumDao playTypeNumDao;
+	
+	private final static Map<String, String> keyMap = new HashMap<>();
+	static{
+		keyMap.put("213","279");
+		keyMap.put("214","280");
+		keyMap.put("215","281");
+		keyMap.put("216","282");
+		keyMap.put("217","283");
+		keyMap.put("218","284");
+		keyMap.put("219","285");
+		keyMap.put("220","286");
+		keyMap.put("221","287");
+		keyMap.put("222","288");
+		keyMap.put("223","289");
+		keyMap.put("224","290");
+		keyMap.put("225","291");
+		keyMap.put("226","292");
+		keyMap.put("227","293");
+		keyMap.put("228","294");
+		keyMap.put("229","295");
+		keyMap.put("230","296");
+		keyMap.put("231","297");
+		keyMap.put("232","298");
+		keyMap.put("233","299");
+		keyMap.put("234","300");
+		keyMap.put("235","301");
+		keyMap.put("236","302");
+		keyMap.put("237","303");
+		keyMap.put("238","304");
+		keyMap.put("239","305");
+		keyMap.put("240","306");
+		keyMap.put("241","307");
+		keyMap.put("242","308");
+		keyMap.put("243","309");
+		keyMap.put("244","310");
+		keyMap.put("245","311");
+		keyMap.put("246","312");
+		keyMap.put("247","313");
+		keyMap.put("248","314");
+		keyMap.put("249","315");
+		keyMap.put("250","316");
+		keyMap.put("251","317");
+		keyMap.put("252","318");
+		keyMap.put("253","319");
+		keyMap.put("254","320");
+		keyMap.put("255","321");
+		keyMap.put("256","322");
+		keyMap.put("257","323");
+		keyMap.put("258","324");
+		keyMap.put("259","325");
+		keyMap.put("260","326");
+		keyMap.put("261","327");
+		keyMap.put("262","328");
+		keyMap.put("263","329");
+		keyMap.put("264","330");
+		keyMap.put("265","331");
+		keyMap.put("266","332");
+		keyMap.put("267","333");
+		keyMap.put("268","334");
+		keyMap.put("269","335");
+		keyMap.put("270","336");
+		keyMap.put("271","337");
+		keyMap.put("272","338");
+		keyMap.put("273","339");
+		keyMap.put("274","340");
+		keyMap.put("275","341");
+		keyMap.put("276","342");
+		keyMap.put("277","343");
+		keyMap.put("278","344");
+	}
 	
 	public void init() {
 		init5DigitsOne2Ten();
@@ -117,6 +193,29 @@ public class SysInitLoader implements MessageDelegateListener{
 	private void initPlayTypeNum() {
 		String codeTypeName = Constants.KEY_PLAY_TYPE_NUM;
 		Map<String, Map<String, Map<String, PlayTypeNum>>> lotteryTypePlayTypeNums = cacheServ.queryPlayTypeNum(codeTypeName);
+		
+		/*Map<String, Map<String, PlayTypeNum>> lotteryTypePlayTypeNumsTc3 = lotteryTypePlayTypeNums.get("tc3");
+		List<PlayTypeNum> fc3dPlayTypeNums = new ArrayList<>();
+		lotteryTypePlayTypeNumsTc3.entrySet().stream().forEach(entry->{
+			String classification = entry.getKey();
+			lotteryTypePlayTypeNumsTc3.get(classification).entrySet().stream().forEach(entry1->{
+				String key = entry1.getKey();
+				PlayTypeNum playTypeNum = entry1.getValue();
+				PlayTypeNum fc3dPlayTypeNum = new PlayTypeNum();
+				
+				BeanUtils.copyProperties(playTypeNum, fc3dPlayTypeNum);
+				logger.info(String.format("current playType id %s, playTypeId %s", playTypeNum.getId(), playTypeNum.getPlayTypeId()));
+				fc3dPlayTypeNum.setPlayTypeId(Long.parseLong(keyMap.get(String.valueOf(playTypeNum.getPlayTypeId()))));
+				fc3dPlayTypeNum.setId(null);
+				fc3dPlayTypeNums.add(fc3dPlayTypeNum);
+				
+				playTypeNumDao.updatePlayTypeNum(playTypeNum);
+			});
+		});
+		
+		fc3dPlayTypeNums.stream().forEach(item->{
+			playTypeNumDao.updatePlayTypeNum(item);
+		});*/
 		
 		if(MapUtils.isEmpty(lotteryTypePlayTypeNums)) {
 			Map<String, Map<String, Map<String, PlayTypeNum>>> lotteryTypePlayTypeNums_ = new HashMap<String, Map<String, Map<String, PlayTypeNum>>>();

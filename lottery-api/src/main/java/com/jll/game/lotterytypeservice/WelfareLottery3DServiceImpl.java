@@ -77,10 +77,14 @@ public class WelfareLottery3DServiceImpl extends DefaultLottoTypeServiceImpl
 		
 		Date today = new Date();
 		
-		today = DateUtil.addMinutes(today, 10);
+		today = DateUtil.addMinutes(today, 1);
 		
 		calendar.setTime(today);
+		/*official time
 		calendar.set(Calendar.HOUR_OF_DAY, 22);
+		*/
+		/*calendar.set(Calendar.HOUR_OF_DAY, 16);*/
+		calendar.set(Calendar.HOUR_OF_DAY, 21);
 		calendar.set(Calendar.MINUTE, 0);
 		calendar.set(Calendar.SECOND, 0);
 		calendar.set(Calendar.MILLISECOND, 0);

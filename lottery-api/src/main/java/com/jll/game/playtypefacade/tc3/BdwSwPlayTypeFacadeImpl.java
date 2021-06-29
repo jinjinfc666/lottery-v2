@@ -39,11 +39,16 @@ public class BdwSwPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		winNumSet = winNum.split(",");
 		betNumMul = betNum.split(";");
 		
+//		Map<String, Integer> winNumMap = splitBetNumMap(winNum, 2);
+		
 		for(String temp : betNumMul) {
 			if(StringUtils.isBlank(temp)) {
 				continue;
 			}
-			
+			/*Map<String, Integer> tempMap = splitBetNumMap(temp, 1);
+			if(tempMap.size() != winNumMap.size()){
+				return false;
+			}*/
 			return winNum.contains(String.valueOf(temp.charAt(0))) && winNum.contains(String.valueOf(temp.charAt(1))) && winNum.contains(String.valueOf(temp.charAt(2)));
 			
 		}
@@ -263,5 +268,25 @@ public class BdwSwPlayTypeFacadeImpl extends DefaultPlayTypeFacadeImpl {
 		betNum.append(Integer.toString(bit));
 				
 		return betNum.toString();
+	}
+	
+	private Map<String, Integer> splitBetNumMap(String temp, int interval) {
+		Map<String, Integer> bits = new HashMap<>();
+		int len = temp.length();
+			
+		for(int i = 0; i < len;) {
+			String bit = temp.substring(i, i + 1);
+			if(bits.get(bit) == null){
+				bits.put(bit, 1);
+			}else{
+				Integer counter = bits.get(bit);
+				counter++;
+				bits.put(bit, counter);
+			}
+			
+			i += interval;
+		}
+		
+		return bits;
 	}
 }
