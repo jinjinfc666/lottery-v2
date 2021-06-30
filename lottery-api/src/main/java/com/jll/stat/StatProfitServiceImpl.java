@@ -180,31 +180,50 @@ public class StatProfitServiceImpl implements StatProfitService, KafkaConsumer
 					
 			profit.setReturnPrize(returnPrize);
 		}else if(trg.getOperationType().equals(Constants.AccOperationType.TS.getCode())) {
-			BigDecimal tsAmount = profit.getTsAmount() == null?
-					new BigDecimal(trg.getAmount()).setScale(4, BigDecimal.ROUND_HALF_UP):
-						profit.getTsAmount().add(new BigDecimal(trg.getAmount())).setScale(4, BigDecimal.ROUND_HALF_UP);
-			profit.setTsAmount(tsAmount);
+			if(userType.intValue() == UserType.XY_AGENCY.getCode()){
+				BigDecimal userTsAmountRate = parseUserTsAmount(userTs, userInfo);
+				BigDecimal consumptionAmount = profit.getConsumption();
+				BigDecimal userTsAmount = consumptionAmount.multiply(userTsAmountRate).setScale(4, BigDecimal.ROUND_HALF_UP);
+				profit.setTsAmount(userTsAmount);
+				
+				BigDecimal currTsAmount = new BigDecimal(trg.getAmount());
+				BigDecimal zcAmount = profit.getZcAmount()==null?new BigDecimal(0):profit.getZcAmount();
+				//利润 =代理退水 - 本次退水 + 占成
+				profitVal = userTsAmount.add(zcAmount).subtract(currTsAmount).setScale(4, BigDecimal.ROUND_HALF_UP);
+				profit.setProfit(profitVal);
+				
+			}else{
+				BigDecimal tsAmount = profit.getTsAmount() == null?
+						new BigDecimal(trg.getAmount()).setScale(4, BigDecimal.ROUND_HALF_UP):
+							profit.getTsAmount().add(new BigDecimal(trg.getAmount())).setScale(4, BigDecimal.ROUND_HALF_UP);
+				profit.setTsAmount(tsAmount);
+			}
+			
 		}else if(trg.getOperationType().equals(Constants.AccOperationType.ZC.getCode())) {
 			BigDecimal zcAmount = profit.getZcAmount() == null?
 					new BigDecimal(trg.getAmount()).setScale(4, BigDecimal.ROUND_HALF_UP):
 						profit.getZcAmount().add(new BigDecimal(trg.getAmount())).setScale(4, BigDecimal.ROUND_HALF_UP);
 					
 			profit.setZcAmount(zcAmount);
+			
 		}
 		
 		profit.setUsedCreditLimit(userInfo.getUsedCreditAmount());
 		BigDecimal usedCreditAmount = userInfo.getUsedCreditAmount()==null?new BigDecimal(0):userInfo.getUsedCreditAmount();
 		Double xyAmount = userInfo.getXyAmount();
 		profit.setRemainCreditLimit(new BigDecimal(xyAmount).subtract(usedCreditAmount));
-		if(userType.intValue() == UserType.XY_AGENCY.getCode()){				
-			profitVal = profit.getTsAmount() == null?
-					new BigDecimal(0):
-						profit.getTsAmount().setScale(4, BigDecimal.ROUND_HALF_UP);
+		if(userType.intValue() == UserType.XY_AGENCY.getCode()){
+			if(!trg.getOperationType().equals(Constants.AccOperationType.TS.getCode())){
+				profitVal = profit.getTsAmount() == null?
+						new BigDecimal(0):
+							profit.getTsAmount().setScale(4, BigDecimal.ROUND_HALF_UP);
+				
+				profitVal = profitVal.add(profit.getZcAmount() == null?
+						new BigDecimal(0):
+							profit.getZcAmount()).setScale(4, BigDecimal.ROUND_HALF_UP);			
+				profit.setProfit(profitVal);
+			}
 			
-			profitVal = profitVal.add(profit.getZcAmount() == null?
-					new BigDecimal(0):
-						profit.getZcAmount()).setScale(4, BigDecimal.ROUND_HALF_UP);			
-			profit.setProfit(profitVal);
 			
 			BigDecimal tsAmount = profit.getTsAmount() == null?new BigDecimal(0):profit.getTsAmount().setScale(4, BigDecimal.ROUND_HALF_UP);
 //			logger.info(String.format("init ts amount to settlement  %s", settlementAmount));
@@ -230,7 +249,7 @@ public class StatProfitServiceImpl implements StatProfitService, KafkaConsumer
 					new BigDecimal(0):
 						profit.getConsumption().setScale(4, BigDecimal.ROUND_HALF_UP);
 			
-			BigDecimal zcAmount = profit.getZcAmount().setScale(4, BigDecimal.ROUND_HALF_UP);
+			BigDecimal zcAmount = profit.getZcAmount() == null?new BigDecimal(0).setScale(4, BigDecimal.ROUND_HALF_UP):profit.getZcAmount().setScale(4, BigDecimal.ROUND_HALF_UP);
 //			settlementAmount = returnPrize.subtract(consumption).setScale(4, BigDecimal.ROUND_HALF_UP);
 			//agent team prize
 //			settlementAmount = settlementAmount.add(tempVal.multiply(new BigDecimal(-1))).setScale(4, BigDecimal.ROUND_HALF_UP);
