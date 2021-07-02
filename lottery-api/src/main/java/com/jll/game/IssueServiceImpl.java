@@ -600,7 +600,7 @@ public class IssueServiceImpl implements IssueService
 		}
 		
 		boolean isMatch = isMatchWinningNum(issue, order);
-		
+		BigDecimal tsAmount = calTs(user, order);
 		
 		if(isMatch) {//赢
 			//发奖金
@@ -641,14 +641,15 @@ public class IssueServiceImpl implements IssueService
 			
 			//修改订单状态
 			modifyOrderState(order, Constants.OrderState.WINNING, ret);
-			//member win the betting, platform's profit = bet amount - prize 
-			platProfit = new BigDecimal(order.getBetAmount()).subtract(prize).setScale(4, BigDecimal.ROUND_HALF_UP);
+			//member win the betting, platform's profit = bet amount - prize - tsAmount
+			platProfit = new BigDecimal(order.getBetAmount()).subtract(prize).subtract(tsAmount).setScale(4, BigDecimal.ROUND_HALF_UP);
 		}else {
 			//修改订单状态
 			modifyOrderState(order, Constants.OrderState.LOSTING, null);
 			//member lost the betting, platform's profit = bet amount;
-			platProfit = new BigDecimal(order.getBetAmount());
+			platProfit = new BigDecimal(order.getBetAmount()).subtract(tsAmount).setScale(4, BigDecimal.ROUND_HALF_UP);
 		}
+		
 		
 		calZc(order, issue, user, platProfit);
 	}

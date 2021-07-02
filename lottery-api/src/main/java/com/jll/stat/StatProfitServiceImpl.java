@@ -200,11 +200,26 @@ public class StatProfitServiceImpl implements StatProfitService, KafkaConsumer
 			}
 			
 		}else if(trg.getOperationType().equals(Constants.AccOperationType.ZC.getCode())) {
-			BigDecimal zcAmount = profit.getZcAmount() == null?
-					new BigDecimal(trg.getAmount()).setScale(4, BigDecimal.ROUND_HALF_UP):
-						profit.getZcAmount().add(new BigDecimal(trg.getAmount())).setScale(4, BigDecimal.ROUND_HALF_UP);
-					
-			profit.setZcAmount(zcAmount);
+			if(userType.intValue() == UserType.XY_AGENCY.getCode()){
+				BigDecimal consumption = profit.getConsumption() == null?new BigDecimal(0):profit.getConsumption();
+				BigDecimal returnPrize = profit.getReturnPrize() == null?new BigDecimal(0):profit.getReturnPrize();
+				BigDecimal tsAmount = profit.getTsAmount() == null?new BigDecimal(0):profit.getTsAmount();
+				BigDecimal zcRate = userInfo.getZcAmount() == null?new BigDecimal(0):userInfo.getZcAmount();
+				
+				BigDecimal zcAmount = consumption.subtract(returnPrize).subtract(tsAmount).multiply(zcRate).setScale(4, BigDecimal.ROUND_HALF_UP);
+				profit.setZcAmount(zcAmount);
+			
+				profitVal = profit.getProfit() == null?new BigDecimal(0):profit.getProfit();
+				profitVal = profitVal.add(zcAmount);
+				profit.setProfit(profitVal);
+			}else{
+				BigDecimal zcAmount = profit.getZcAmount() == null?
+						new BigDecimal(trg.getAmount()).setScale(4, BigDecimal.ROUND_HALF_UP):
+							profit.getZcAmount().add(new BigDecimal(trg.getAmount())).setScale(4, BigDecimal.ROUND_HALF_UP);
+						
+				profit.setZcAmount(zcAmount);
+			}
+			
 			
 		}
 		
@@ -213,7 +228,8 @@ public class StatProfitServiceImpl implements StatProfitService, KafkaConsumer
 		Double xyAmount = userInfo.getXyAmount();
 		profit.setRemainCreditLimit(new BigDecimal(xyAmount).subtract(usedCreditAmount));
 		if(userType.intValue() == UserType.XY_AGENCY.getCode()){
-			if(!trg.getOperationType().equals(Constants.AccOperationType.TS.getCode())){
+			/*if(!trg.getOperationType().equals(Constants.AccOperationType.TS.getCode())
+					&& !trg.getOperationType().equals(Constants.AccOperationType.ZC.getCode())){
 				profitVal = profit.getTsAmount() == null?
 						new BigDecimal(0):
 							profit.getTsAmount().setScale(4, BigDecimal.ROUND_HALF_UP);
@@ -222,7 +238,7 @@ public class StatProfitServiceImpl implements StatProfitService, KafkaConsumer
 						new BigDecimal(0):
 							profit.getZcAmount()).setScale(4, BigDecimal.ROUND_HALF_UP);			
 				profit.setProfit(profitVal);
-			}
+			}*/
 			
 			
 			BigDecimal tsAmount = profit.getTsAmount() == null?new BigDecimal(0):profit.getTsAmount().setScale(4, BigDecimal.ROUND_HALF_UP);
