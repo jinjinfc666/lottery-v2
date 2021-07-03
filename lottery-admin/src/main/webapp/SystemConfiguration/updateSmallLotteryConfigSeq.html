@@ -124,7 +124,7 @@
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/settings/querySmallLotteryConfig";
+                var url= querySmallLotteryConfigURL;
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -161,7 +161,7 @@
                 var bigCodeName = document.getElementById('bigCodeName').value;
                 var allId=getDrag();
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/settings/updateSmallLotteryConfigSeq";
+                var url= updateSmallLotteryConfigSeqURL;
                 $.ajax({
                     url: url,
                     type: "PUT",

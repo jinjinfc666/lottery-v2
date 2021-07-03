@@ -59,8 +59,7 @@
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
                 var tableid = $("#tableTRTD").attr("id");
-                var domain=parseDomain();
-                var url=domain+"/lottery-api/users/byUIBankList";
+                var url = queryByBankURL;
                 $.ajax({
                     url: url,
                     type: "GET",

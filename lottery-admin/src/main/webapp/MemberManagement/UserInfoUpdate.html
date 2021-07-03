@@ -92,8 +92,7 @@
                 updateToken();
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
-                var domain=parseDomain();
-                var url=domain+"/lottery-api/settings/querySmPanKou";
+                var url = querySmPanKouURL;
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -142,9 +141,7 @@
                 updateToken();
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
-//                var tableid = $("#tableTRTD").attr("id");
-                var domain=parseDomain();
-                var url=domain+"/lottery-api/users/queryUserInfo";
+                var url = queryUserInfoURL;
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -268,8 +265,7 @@
                 var domain=parseDomain();
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
-                var url=domain+"/lottery-api/users/updateUserType";
-                
+                var url = updateUserTypeURL;
                 var xyAmount = null;
                 var panKou = null;
                 var data = null;
@@ -405,8 +401,7 @@
                 }
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
-                var domain=parseDomain();
-                var url=domain+"/lottery-api/users/resetLoginPwd";
+                var url = resetLoginPwdURL;
                 $.ajax({
                     url: url,
                     type: "PUT",
@@ -444,8 +439,7 @@
                 }
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
-                var domain=parseDomain();
-                var url=domain+"/lottery-api/users/resetFundPwd";
+                var url = resetFundPwdURL;
                 $.ajax({
                     url: url,
                     type: "PUT",
@@ -508,8 +502,7 @@
                 updateToken();
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
-                var domain=parseDomain();
-                var url=domain+"/lottery-api/SysUser/queryGetByUserId";
+                var url = queryUserURL;
                 $.ajax({
                     url: url,
                     type: "GET",

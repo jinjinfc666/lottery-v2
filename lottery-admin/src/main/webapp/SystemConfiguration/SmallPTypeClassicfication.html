@@ -39,7 +39,7 @@
                 var token="Bearer " + access_token;
                 var tableid = $("#tableTRTD").attr("id");
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/settings/querySmallPTypeClassicfication";
+                var url= querySmallPTypeClassicficationURL;
                 $.ajax({
                     url: url,
                     type: "GET",

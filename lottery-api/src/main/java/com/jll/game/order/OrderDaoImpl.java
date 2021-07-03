@@ -137,4 +137,12 @@ public class OrderDaoImpl extends DefaultGenericDaoImpl<OrderInfo> implements Or
 	    return list;
 	}
 	
+	@Override
+	public List<OrderInfo> queryOrderById(Integer id) {
+		String sql="from OrderInfo where id=:id";
+		Query<OrderInfo> query = getSessionFactory().getCurrentSession().createQuery(sql,OrderInfo.class);
+	    query.setParameter("id", id);
+	    List<OrderInfo> list= query.list();
+	    return list;
+	}
 }

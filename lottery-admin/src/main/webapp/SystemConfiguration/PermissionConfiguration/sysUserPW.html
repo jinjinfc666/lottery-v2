@@ -87,7 +87,7 @@
                     return false;
                 }
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/users/attrs/login-pwdAdmin";
+                var url= updatePwdURL;
                 var data=JSON.stringify({
                     "id":id,
                     "oldPwd":oldPwd,

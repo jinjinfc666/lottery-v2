@@ -57,8 +57,7 @@
                 var state = document.getElementById('state').value;
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
-                var domain=parseDomain();
-                var url=domain+"/lottery-api/sys/oper/order/"+orderNum+"/cancel";
+                var url = orderCancelURL.replace("{orderNum}",orderNum);
                 $.ajax({
                     url: url,
                     type: "POST",
@@ -92,8 +91,7 @@
                 var state = document.getElementById('state').value;
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
-                var domain=parseDomain();
-                var url=domain+"/lottery-api/sys/oper/issue/"+issueNum+"/delay-payout";
+                var url = issueDeplayPayoutURL.replace("{issueNum}",issueNum);
                 var data=JSON.stringify({
                     "lottoType":lotteryType,
                     "orderNum":orderNum
@@ -132,8 +130,7 @@
                 var state = document.getElementById('state').value;
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
-                var domain=parseDomain();
-                var url=domain+"/lottery-api/sys/oper/issue/"+issueNum+"/delay-payout";
+                var url = issueDeplayPayoutURL.replace("{issueNum}",issueNum);
                 var data=JSON.stringify({
                     "lottoType":lotteryType,
                     "userName":userName
@@ -170,8 +167,7 @@
                 var state = document.getElementById('state').value;
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
-                var domain=parseDomain();
-                var url=domain+"/lottery-api/sys/oper/order/"+orderNum+"/manual-payout";
+                var url = manualPayoutURL.replace("{orderNum}",orderNum);
                 $.ajax({
                     url: url,
                     type: "POST",

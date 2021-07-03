@@ -120,7 +120,7 @@
                 var token="Bearer " + access_token;
                 var smallSeq = $("#smallSeq").attr("id");
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/settings/querySmallPaymentPlatform";
+                var url= querySmallPaymentPlatformURL;
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -154,7 +154,7 @@
                 var token="Bearer " + access_token;
                 var allId=getDrag();
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/settings/updateSmallPaymentPlatformSeq";
+                var url= updateSmallPaymentPlatformSeqURL;
                 $.ajax({
                     url: url,
                     type: "PUT",

@@ -77,7 +77,7 @@
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/ip-black-lists/updateIpBlackList";
+                var url=updateIpBlackListURL;
                 $.ajax({
                     url: url,
                     type: "PUT",

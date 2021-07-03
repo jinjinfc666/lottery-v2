@@ -29,6 +29,7 @@
         <script src="../js/self_js.js" type="text/javascript"></script>
         <script type="text/javascript" src="../js/popwin.js"></script>
         <script language="javascript" src="../js/layer/layer.min.js"></script>
+        <script src="../js/site.js" type="text/javascript"></script>
         <script type="text/javascript">
             $(document).ready(function () {
                 querySysCode();
@@ -39,7 +40,7 @@
                 var token="Bearer " + access_token;
                 var tableid = $("#tableTRTD").attr("id");
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/settings/querySmallLotteryType";
+                var url= querySmallLotteryTypeURL;
                 $.ajax({
                     url: url,
                     type: "GET",

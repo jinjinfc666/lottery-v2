@@ -19,6 +19,7 @@
     </style>
     <script type="text/javascript" src="../js/jquery-1.10.2.min.js"></script>
     <script type="text/javascript" src="../js/self_js.js"></script>
+    <script src="../js/site.js" type="text/javascript"></script>
     <script type="text/javascript">
         function parseDomain() {
             var currURL = location.href;
@@ -56,8 +57,7 @@
                     "newPwd":newPWD,
                     "confirmPwd":checkPWD
             });
-            var domain=parseDomain();
-            var url=domain+"/lottery-api/users/attrs/login-pwd";
+            var url = updateLoginPwdURL;
             $.ajax({
                 url: url,
                 type: "POST",

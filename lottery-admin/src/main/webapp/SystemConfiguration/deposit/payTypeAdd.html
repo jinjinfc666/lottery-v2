@@ -61,7 +61,7 @@
                 var token="Bearer " + access_token;
                 var state = $("#state").attr("id");
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/pay-types/queryIsOrNo";
+                var url= queryIsOrNoURL;
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -96,7 +96,7 @@
                 var token="Bearer " + access_token;
                 var isTp = $("#isTp").attr("id");
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/pay-types/queryCaptchaIs";
+                var url= queryCaptchaIsURL;
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -130,7 +130,7 @@
                 var token="Bearer " + access_token;
                 var platId = $("#platId").attr("id");
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/settings/querySmallPaymentPlatform";
+                var url= querySmallPaymentPlatformURL;
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -165,7 +165,7 @@
                 var token="Bearer " + access_token;
                 var typeClass = $("#typeClass").attr("id");
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/pay-types/queryTypeClasspay";
+                var url= queryTypeClasspayURL;
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -223,7 +223,7 @@
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/pay-types/addPayTypeName";
+                var url= addPayTypeNameURL;
                 $.ajax({
                     url: url,
                     type: "POST",

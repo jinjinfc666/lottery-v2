@@ -87,7 +87,7 @@
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/settingPlayType/updatePlayType";
+                var url= updatePlayTypeURL;
                 $.ajax({
                     url: url,
                     type: "PUT",

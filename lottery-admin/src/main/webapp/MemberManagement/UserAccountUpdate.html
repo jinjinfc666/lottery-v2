@@ -63,8 +63,7 @@
                 updateToken();
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
-                var domain=parseDomain();
-                var url=domain+"/lottery-api/wallet/queryByIdUserAccount";
+                var url = queryByIdUserAccountURL;
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -109,11 +108,11 @@
                 var domain=parseDomain();
                 var urlOld="";
                 if(accType==1){
-                    urlOld="/lottery-api/wallet/queryMainWallet";
+                    urlOld= queryMainWalletURL;
                 }else if(accType==2){
-                    urlOld="/lottery-api/wallet/queryMainWallet";
+                    urlOld= queryMainWalletURL;
                 }
-                var url=domain+urlOld;
+                var url = urlOld;
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -170,8 +169,7 @@
                 var params = getValue();
                 var accType = params.accType;
                 var operationType=document.getElementById('operationType').value;
-                var domain=parseDomain();
-                var url=domain+"/lottery-api/users/operation/amount";
+                var url = usersOperationAmountURL;
                 var data=JSON.stringify({
                     "userId":userId,
                     "amount":amount,

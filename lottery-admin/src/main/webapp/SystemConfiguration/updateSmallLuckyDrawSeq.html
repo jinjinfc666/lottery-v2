@@ -120,7 +120,7 @@
                 var token="Bearer " + access_token;
                 var smallSeq = $("#smallSeq").attr("id");
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/settings/querySmallLuckyDraw";
+                var url= querySmallLuckyDrawURL;
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -155,7 +155,7 @@
                 var token="Bearer " + access_token;
                 var allId=getDrag();
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/settings/updateSmallLuckyDrawSeq";
+                var url= updateSmallLuckyDrawSeqURL;
                 $.ajax({
                     url: url,
                     type: "PUT",

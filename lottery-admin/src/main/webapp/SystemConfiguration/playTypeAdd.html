@@ -63,7 +63,7 @@
                 var token="Bearer " + access_token;
                 var state = $("#state").attr("id");
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/settingPlayType/isOrNo";
+                var url= isOrNoURL;
                 $.ajax({
                     url: url,
                     type: "GET",

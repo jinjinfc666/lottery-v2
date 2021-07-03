@@ -62,7 +62,7 @@
                 var token="Bearer " + access_token;
                 var type="2";
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/report/DWD/DWDState?type="+type;
+                var url = reportDWDStateURL +"?type="+type;
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -96,7 +96,7 @@
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/report/DWD/DWDRemark";
+                var url = dwrRemarkURL;
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -152,7 +152,7 @@
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/users/withdraw/notices";
+                var url = withdrwaNotiesURL;
                 var data=JSON.stringify({
                     "orderNum":orderNum,
                     "state":state,

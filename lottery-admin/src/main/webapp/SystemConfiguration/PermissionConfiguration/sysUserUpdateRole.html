@@ -88,7 +88,7 @@
                 var roleIdStr = document.getElementById('roleIdStr').value;
                 var tdTRUD = $("#tdTRUD").attr("id");
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/permission-control/querySysRole";
+                var url= querySysRoleURL;
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -184,7 +184,7 @@
                     return false;
                 }
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/SysUser/updateSysAuthority";
+                var url= updateSysAuthorityURL;
                 $.ajax({
                     url: url,
                     type: "PUT",

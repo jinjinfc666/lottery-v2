@@ -36,8 +36,7 @@
                 var token="Bearer " + access_token;
                 var userId=document.getElementById('id').value;
                 var tableid = $("#tableTRTD").attr("id");
-                var domain=parseDomain();
-                var url=domain+"/lottery-api/wallet/queryByUserIdUserAccount";
+                var url = queryByUserIdUserAccountURL;
                 $.ajax({
                     url: url,
                     type: "GET",

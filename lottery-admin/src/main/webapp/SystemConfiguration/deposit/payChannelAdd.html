@@ -62,7 +62,7 @@
                 var token="Bearer " + access_token;
                 var showType = $("#showType").attr("id");
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/pay-types/queryShowType";
+                var url= queryShowTypeURL;
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -96,7 +96,7 @@
                 var token="Bearer " + access_token;
                 var typeClass = $("#typeClass").attr("id");
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/pay-types/queryTypeClasspay";
+                var url= queryTypeClasspayURL;
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -130,7 +130,7 @@
                 var token="Bearer " + access_token;
                 var payType = $("#payType").attr("id");
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/pay-types/queryPayTypeId";
+                var url= queryPayTypeIdURL;
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -164,7 +164,7 @@
                 var token="Bearer " + access_token;
                 var state = $("#state").attr("id");
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/pay-types/queryPayChannelIsOrNo";
+                var url= queryPayChannelIsOrNoURL;
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -198,7 +198,7 @@
                 var token="Bearer " + access_token;
                 var enableMaxAmount = $("#enableMaxAmount").attr("id");
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/pay-types/queryEMA";
+                var url= queryEMAURL;
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -287,7 +287,7 @@
                 if(qrUrlNew!=''){
                     qrUrl = qrUrlNew;
                 }
-                var url=domain+"/lottery-api/pay-types/addPayChannel";
+                var url= addPayChannelURL;
                 var data=JSON.stringify({
                     "channelName":channelName,
                     "nickName":nickName,
@@ -455,7 +455,7 @@
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/pay-types/uploadQRCode";
+                var url= uploadQRCodeURL;
                 $.ajax({
                     url: url,
                     type: "POST",

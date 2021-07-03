@@ -243,7 +243,7 @@
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/settingPlayType/state";
+                var url= playTypeStateURL;
                 if(state == 1){
                 	state1 = 0;
                 }else{
@@ -285,7 +285,7 @@
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/settingPlayType/mulSinFlag";
+                var url= playTypeMulSinFlagURL;
                 $.ajax({
                     url: url,
                     type: "PUT",
@@ -321,7 +321,7 @@
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/settingPlayType/isHidden";
+                var url= playTypeIsHiddenURL;
                 $.ajax({
                     url: url,
                     type: "PUT",

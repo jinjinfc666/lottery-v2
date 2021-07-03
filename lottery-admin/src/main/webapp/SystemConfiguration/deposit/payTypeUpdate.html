@@ -83,7 +83,7 @@
                 var token="Bearer " + access_token;
                 var typeClass = $("#typeClass").attr("id");
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/pay-types/queryTypeClasspay";
+                var url= queryTypeClasspayURL;
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -131,7 +131,7 @@
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/pay-types/updatePayType";
+                var url= updatePayTypeURL;
                 $.ajax({
                     url: url,
                     type: "PUT",

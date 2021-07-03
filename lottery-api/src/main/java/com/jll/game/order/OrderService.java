@@ -36,5 +36,7 @@ public interface OrderService
 	List<OrderInfo> queryZhOrder(String transactionNum);
 	//通过id查询订单
 	OrderInfo queryById(Integer id);
+
+	OrderInfo queryOrderById(Integer orderId);
 	
 }

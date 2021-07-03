@@ -36,7 +36,7 @@
                 var token="Bearer " + access_token;
                 var tableid = $("#tableTRTD").attr("id");
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/pay-types/queryAllPayType";
+                var url= queryAllPayTypeURL;
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -168,7 +168,7 @@
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/pay-types/updatePayTypeState";
+                var url= updatePayTypeStateURL;
                 $.ajax({
                     url: url,
                     type: "PUT",
@@ -208,7 +208,7 @@
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/pay-types/updatePayTypeIsTp";
+                var url= updatePayTypeIsTpURL;
                 $.ajax({
                     url: url,
                     type: "PUT",

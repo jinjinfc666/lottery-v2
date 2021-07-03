@@ -64,8 +64,8 @@
                     "newPwd":newPWD,
                     "confirmPwd":checkPWD
             });
-            var domain=parseDomain();
-            var url=domain+"/lottery-api/users/attrs/login-pwd";
+            
+            var url = updateLoginPwdURL;
             $.ajax({
                 url: url,
                 type: "POST",

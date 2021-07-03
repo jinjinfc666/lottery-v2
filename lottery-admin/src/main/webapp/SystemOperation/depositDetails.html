@@ -94,7 +94,7 @@
                 var token="Bearer " + access_token;
                 var type = $("#type").attr("id");
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/report/DWD/DWType";
+                var url= reportDWTypeURL;
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -129,7 +129,7 @@
                 var type = 1;
                 var state = $("#state").attr("id");
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/report/DWD/DWDState";
+                var url= reportDWDStateURL;
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -198,7 +198,7 @@
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/report/DWD";
+                var url= reportDWDURL;
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -336,7 +336,7 @@
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/payment/order/end";
+                var url= paymentOrderEndURL;
                 var data=JSON.stringify({
                         "orderNum":orderNum
                 });
@@ -370,7 +370,7 @@
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/report/DWD/UpdateDepositState";
+                var url= updateDepositStateURL;
                 $.ajax({
                     url: url,
                     type: "PUT",

@@ -140,7 +140,7 @@ public class StatProfitServiceImpl implements StatProfitService, KafkaConsumer
 		if(orderId == null){
 			return;
 		}
-		
+		OrderInfo orderInfo = orderServ.queryOrderById(orderId);
 		Integer playTypeId = trg.getPlayTypeId();
 		PlayType playType = playTypeServ.queryById(playTypeId);
 		
@@ -181,17 +181,20 @@ public class StatProfitServiceImpl implements StatProfitService, KafkaConsumer
 			profit.setReturnPrize(returnPrize);
 		}else if(trg.getOperationType().equals(Constants.AccOperationType.TS.getCode())) {
 			if(userType.intValue() == UserType.XY_AGENCY.getCode()){
-				BigDecimal userTsAmountRate = parseUserTsAmount(userTs, userInfo);
-				BigDecimal consumptionAmount = profit.getConsumption();
+				BigDecimal userTsAmountRate = parseUserTsAmount(userTs, userInfo);				
+				BigDecimal consumptionAmount = orderInfo.getBetAmount() == null?new BigDecimal(0) : new BigDecimal(orderInfo.getBetAmount()).setScale(4, BigDecimal.ROUND_HALF_UP);
 				BigDecimal userTsAmount = consumptionAmount.multiply(userTsAmountRate).setScale(4, BigDecimal.ROUND_HALF_UP);
-				profit.setTsAmount(userTsAmount);
+				BigDecimal originalTsAmount = profit.getTsAmount() == null?new BigDecimal(0):profit.getTsAmount();
+				profit.setTsAmount(userTsAmount.add(originalTsAmount));
 				
-				BigDecimal currTsAmount = new BigDecimal(trg.getAmount());
-				BigDecimal zcAmount = profit.getZcAmount()==null?new BigDecimal(0):profit.getZcAmount();
-				//利润 =代理退水 - 本次退水 + 占成
-				profitVal = userTsAmount.add(zcAmount).subtract(currTsAmount).setScale(4, BigDecimal.ROUND_HALF_UP);
+				//betting ts amount
+				BigDecimal bettingTsAmount = new BigDecimal(trg.getAmount()).setScale(4, BigDecimal.ROUND_HALF_UP);
+				BigDecimal originalProfit = profit.getProfit() == null?new BigDecimal(0) : profit.getProfit();
+				//profit equals agent ts amount - betting ts amount + original profit 
+				profitVal = userTsAmount.subtract(bettingTsAmount).add(originalProfit).setScale(4, BigDecimal.ROUND_HALF_UP);
 				profit.setProfit(profitVal);
 				
+				logger.info(String.format("profit %s = agent ts %s - bet ts Amount %s + originalProfit %s", profitVal, userTsAmount, bettingTsAmount, originalProfit));
 			}else{
 				BigDecimal tsAmount = profit.getTsAmount() == null?
 						new BigDecimal(trg.getAmount()).setScale(4, BigDecimal.ROUND_HALF_UP):
@@ -201,17 +204,26 @@ public class StatProfitServiceImpl implements StatProfitService, KafkaConsumer
 			
 		}else if(trg.getOperationType().equals(Constants.AccOperationType.ZC.getCode())) {
 			if(userType.intValue() == UserType.XY_AGENCY.getCode()){
-				BigDecimal consumption = profit.getConsumption() == null?new BigDecimal(0):profit.getConsumption();
-				BigDecimal returnPrize = profit.getReturnPrize() == null?new BigDecimal(0):profit.getReturnPrize();
-				BigDecimal tsAmount = profit.getTsAmount() == null?new BigDecimal(0):profit.getTsAmount();
+//				BigDecimal consumption = profit.getConsumption() == null?new BigDecimal(0):profit.getConsumption();
+				BigDecimal consumption = orderInfo.getBetAmount() == null?new BigDecimal(0) : new BigDecimal(orderInfo.getBetAmount()).setScale(4, BigDecimal.ROUND_HALF_UP);
+				BigDecimal returnPrize = consumption.multiply(orderInfo.getPrizeRate()).setScale(4, BigDecimal.ROUND_HALF_UP);
+				BigDecimal userTsAmountRate = parseUserTsAmount(userTs, userInfo);				
+//				BigDecimal consumptionAmount = orderInfo.getBetAmount() == null?new BigDecimal(0) : new BigDecimal(orderInfo.getBetAmount()).setScale(4, BigDecimal.ROUND_HALF_UP);
+				BigDecimal tsAmount = consumption.multiply(userTsAmountRate).setScale(4, BigDecimal.ROUND_HALF_UP);
+//				BigDecimal originalTsAmount = profit.getTsAmount() == null?new BigDecimal(0):profit.getTsAmount();
+				
 				BigDecimal zcRate = userInfo.getZcAmount() == null?new BigDecimal(0):userInfo.getZcAmount();
 				
 				BigDecimal zcAmount = consumption.subtract(returnPrize).subtract(tsAmount).multiply(zcRate).setScale(4, BigDecimal.ROUND_HALF_UP);
-				profit.setZcAmount(zcAmount);
-			
-				profitVal = profit.getProfit() == null?new BigDecimal(0):profit.getProfit();
-				profitVal = profitVal.add(zcAmount);
+				BigDecimal oriZcAmount = profit.getZcAmount() == null?new BigDecimal(0):profit.getZcAmount();
+				profit.setZcAmount(zcAmount.add(oriZcAmount));
+				logger.info(String.format("zcAmount %s = original zc amount %s + zcAmount %s", profit.getZcAmount(), oriZcAmount, zcAmount));
+				
+				//profit equals original profit plus zc amount
+				BigDecimal originalProfit = profit.getProfit() == null?new BigDecimal(0):profit.getProfit();
+				profitVal = originalProfit.add(zcAmount);
 				profit.setProfit(profitVal);
+				logger.info(String.format("profit %s = original profit %s + zcAmount %s", profitVal, originalProfit, zcAmount));
 			}else{
 				BigDecimal zcAmount = profit.getZcAmount() == null?
 						new BigDecimal(trg.getAmount()).setScale(4, BigDecimal.ROUND_HALF_UP):

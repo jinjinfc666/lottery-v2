@@ -61,7 +61,7 @@
                 var token="Bearer " + access_token;
                 var id=document.getElementById('id').value;
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/pay-types/queryPayTypeById";
+                var url= queryPayTypeByIdURL;
                 $.ajax({
                     url: url,
                     type: "GET",

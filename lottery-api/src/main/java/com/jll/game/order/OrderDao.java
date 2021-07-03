@@ -26,4 +26,6 @@ public interface OrderDao
 	List<OrderInfo> queryZhOrder(String transactionNum);
 	//通过id查询订单
 	List<OrderInfo> queryById(Integer id);
+
+	List<OrderInfo> queryOrderById(Integer id);
 }

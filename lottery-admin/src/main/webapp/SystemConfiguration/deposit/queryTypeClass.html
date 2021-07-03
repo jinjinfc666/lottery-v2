@@ -54,7 +54,7 @@
                 var token="Bearer " + access_token;
                 var codeName=document.getElementById('typeClass').value;
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/settings/queryPayTypeByCodeName";
+                var url= queryPayTypeByCodeNameURL;
                 $.ajax({
                     url: url,
                     type: "GET",

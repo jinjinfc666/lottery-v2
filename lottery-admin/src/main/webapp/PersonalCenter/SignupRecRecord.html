@@ -72,8 +72,7 @@
                 }
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
-                var domain=parseDomain();
-                var url=domain+"/lottery-api/signup/sgnupRecRecord";
+                var url = sgnupRecRecordURL;
                 $.ajax({
                     url: url,
                     type: "GET",

@@ -26,6 +26,7 @@
         <script src="../js/self_js.js" type="text/javascript"></script>
         <script type="text/javascript" src="../js/popwin.js"></script>
         <script language="javascript" src="../js/layer/layer.min.js"></script>
+        <script src="../js/site.js" type="text/javascript"></script>
         <script type="text/javascript">
             $(document).ready(function () {
 //                document.getElementById('startTime').value=getNowFormatDate();
@@ -85,8 +86,7 @@
                 }
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
-                var domain=parseDomain();
-                var url=domain+"/lottery-api/wallet/updateUserAccountState";
+                var url = updateUserAccountStateURL;
                 $.ajax({
                     url: url,
                     type: "PUT",
@@ -124,8 +124,7 @@
                 var userName=document.getElementById('userName').value;
                 var walletType = $('#WalletType').val();
                 var tableid = $("#tableTRTD").attr("id");
-                var domain=parseDomain();
-                var url=domain+"/lottery-api/wallet/queryUserAccount";
+                var url = queryUserAccountURL;
                 $.ajax({
                     url: url,
                     type: "GET",

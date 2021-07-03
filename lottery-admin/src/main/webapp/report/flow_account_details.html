@@ -24,6 +24,7 @@
         <script src="../js/plugins/layer/layer.min.js" type="text/javascript"></script>
         <script src="../js/content.min.js" type="text/javascript"></script>
         <script src="../js/self_js.js" type="text/javascript"></script>
+        <script src="../js/site.js" type="text/javascript"></script>
         <script language="javascript" src="../js/layer/layer.min.js"></script>
         <script type="text/javascript">
             $(document).ready(function () {
@@ -37,8 +38,7 @@
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
                 var selectid = $("#operationType").attr("id");
-                var domain=parseDomain();
-                var url=domain+"/lottery-api/report/userFlowDetail/type";
+                var url = userFlowDetailTypeURL;
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -71,8 +71,7 @@
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
                 var selectid = $("#operationType").attr("id");
-                var domain=parseDomain();
-                var url=domain+"/lottery-api/report/userFlowDetail/type";
+                var url = userFlowDetailTypeURL;
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -159,8 +158,7 @@
                 }
                 var access_token = sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
-                var domain=parseDomain();
-                var url=domain+"/lottery-api/report/userFlowDetail";
+                var url = userFlowDetailURL;
                 $.ajax({
                     url: url,
                     type: "GET",

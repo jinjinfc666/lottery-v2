@@ -129,9 +129,7 @@
                 
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
-                var domain=parseDomain();
-                var url=domain+"/lottery-api/report/MReportNextTeam";
-                
+                var url = mReportNextTeamURL;
                 
                 if(typeof userName == 'undefined'
                 		|| userName == null
@@ -347,8 +345,7 @@
                 var endTime = document.getElementById('endTime').value;
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
-                var domain=parseDomain();
-                var url=domain+"/lottery-api/report/MReportNextTeam";
+                var url = mReportNextTeamURL;
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -444,9 +441,7 @@
             }
             
             function queryGeneralAgency(deffered, token){
-            	var domain = parseDomain();
-                var url = domain+"/lottery-api/users/queryGeneral";
-            	
+            	var url = queryGeneralURL;
             	$.ajax({
                     url: url,
                     type: "GET",

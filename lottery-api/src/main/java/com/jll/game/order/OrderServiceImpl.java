@@ -519,4 +519,13 @@ public class OrderServiceImpl implements OrderService
 		}
 		return null;
 	}
+	
+	@Override
+	public OrderInfo queryOrderById(Integer id) {
+		List<OrderInfo> list=orderDao.queryOrderById(id);
+		if(list!=null&&list.size()>0) {
+			return list.get(0);
+		}
+		return null;
+	}
 }

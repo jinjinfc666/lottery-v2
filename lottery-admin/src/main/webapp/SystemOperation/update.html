@@ -58,7 +58,7 @@
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/sys/oper/issue/"+issueNum+"/disbale";
+                var url = issueDisbaleURL.replace("{issueNum}",issueNum);
                 var data=JSON.stringify({
                     "lottoType":lotteryType
                 });
@@ -96,7 +96,7 @@
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/sys/oper/issue/"+issueNum+"/payout";
+                var url = issuePayoutURL.replace("{issueNum}",issueNum);
                 var data=JSON.stringify({
                     "lottoType":lotteryType
                 });
@@ -134,7 +134,7 @@
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/sys/oper/issue/"+issueNum+"/re-payout";
+                var url = issueRepayoutURL.replace("{issueNum}",issueNum);
                 var data=JSON.stringify({
                     "lottoType":lotteryType
                 });

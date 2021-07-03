@@ -70,7 +70,7 @@
                 var token="Bearer " + access_token;
                 var typeClass = $("#typeClass").attr("id");
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/pay-types/queryTypeClass";
+                var url= queryTypeClassURL;
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -108,7 +108,7 @@
                 var token="Bearer " + access_token;
                 var payType = $("#payType").attr("id");
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/pay-types/queryPayTypeId";
+                var url= queryPayTypeIdURL;
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -200,7 +200,7 @@
                 var access_token=sessionStorage.getItem("access_token");
                 var token="Bearer " + access_token;
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/pay-types/updatePayChannel";
+                var url= updatePayChannelURL;
                 $.ajax({
                     url: url,
                     type: "PUT",
@@ -236,7 +236,7 @@
                 document.getElementById('qrUrlNew').value=imgName;
                 var urlName="D:\\img\\"+imgName;
                 var domain=parseDomain();
-                var url=domain+"/lottery-api/pay-types/uploadQRCode";
+                var url= uploadQRCodeURL;
                 $.ajax({
                     url: url,
                     type: "POST",

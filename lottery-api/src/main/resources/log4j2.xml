@@ -3,7 +3,7 @@
 	<!-- log4j规定了默认的几个级别：trace < debug < info < warn < error< fatal -->
 
 	<properties>
-		<property name="LOG_HOME">/home/gamepackage/tomcat_cock_service/logs</property>
+		<property name="LOG_HOME">/opt/tomcat_log</property>
 	   <!-- <property name="LOG_HOME">D://dev//tomcat-8.5.30//logs</property> -->
 		 <!-- <property name="LOG_HOME">/home/gamepackage/quartz_job/logs</property> -->
 
