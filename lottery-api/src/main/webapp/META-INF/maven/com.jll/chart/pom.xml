@@ -15,7 +15,7 @@
 		<jackson-version>2.6.3</jackson-version>
 		<redis-version>2.9.0</redis-version>
 		<spring-data-redis-version>1.8.0.RELEASE</spring-data-redis-version>
-		<jetty-version>9.4.2.v20170220</jetty-version>
+		<jetty-version>10.0.10</jetty-version>
 		<httpunit-version>1.7.2</httpunit-version>
 		<quartz-version>2.2.1</quartz-version>
 		<druid-version>1.1.9</druid-version>
